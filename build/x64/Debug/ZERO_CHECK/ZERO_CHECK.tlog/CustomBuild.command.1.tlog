@@ -1,0 +1,10 @@
+^G:\! NEW\XENGINE\BUILD\CMAKEFILES\5344DB8BA406A2D296DCB8DBB682B45A\GENERATE.STAMP.RULE
+setlocal
+G:\CMake\bin\cmake.exe "-SG:/! New/XEngine" "-BG:/! New/XEngine/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "G:/! New/XEngine/build/XEngine.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

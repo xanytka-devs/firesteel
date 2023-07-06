@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="G:\! New\XEngine\build\CMakeFiles\5344db8ba406a2d296dcb8dbb682b45a\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="G:\! New\XEngine\XEngineCore\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\XEngineCore</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\XEngineEditor\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\XEngineEditor</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{EE2C765F-4636-3016-9E2B-F6248009D162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\XEngineCore">
+      <UniqueIdentifier>{21FBECD2-9471-3169-9FD8-3DAE0947A5EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\XEngineEditor">
+      <UniqueIdentifier>{5C9C0CD7-37C2-39B9-B113-E9DC64674617}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

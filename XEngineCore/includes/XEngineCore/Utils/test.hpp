@@ -1,0 +1,5 @@
+namespace XEngine {
+
+	void hello();
+
+}
