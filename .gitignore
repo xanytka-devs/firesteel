@@ -50,3 +50,7 @@ out
 *.exe
 *.out
 *.app
+
+# Submodules
+external/glfw/
+external/spdlog/
