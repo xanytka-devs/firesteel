@@ -1,12 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Utils\test.cpp">
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Utils\test.hpp">
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\App.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Log.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

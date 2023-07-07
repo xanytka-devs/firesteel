@@ -1,13 +1,20 @@
 #include <iostream>
-#include <XEngineCore/Utils/test.hpp>
+#include <memory>
+#include <XEngineCore/App.hpp>
+
+class NewApp : public XEngine::App {
+	
+	virtual void update() override { }
+
+};
 
 int main() {
 
-	std::cout << "Hello from XEngine, and from Editor specially." << std::endl;
+	auto newApp = std::make_unique<NewApp>();
 
-	XEngine::hello();
+	int returnC = newApp->start(1024, 768, "Hello XEngine!");
 
 	std::cin.get();
-	return 0;
+	return returnC;
 
 }

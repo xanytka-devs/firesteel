@@ -181,6 +181,24 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Project>{1C7F7F30-F83F-3A6F-945A-5A16E4327F4D}</Project>
       <Name>XEngineEditor</Name>
     </ProjectReference>
+    <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\glfw\docs\docs.vcxproj">
+      <Project>{E7FE27F7-BDCE-3D1F-82AA-138419499076}</Project>
+      <Name>docs</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\glad\glad.vcxproj">
+      <Project>{DE407A5F-D7CA-362D-ABD0-65B4C0CB34EE}</Project>
+      <Name>glad</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\glfw\src\glfw.vcxproj">
+      <Project>{BDD972C4-8491-3D35-BECF-F195463BB1EB}</Project>
+      <Name>glfw</Name>
+    </ProjectReference>
+    <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\spdlog\spdlog.vcxproj">
+      <Project>{AFAAF69A-C44A-3D52-96BA-FA56B95E98B3}</Project>
+      <Name>spdlog</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

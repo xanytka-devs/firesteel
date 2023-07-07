@@ -1,5 +1,0 @@
-namespace XEngine {
-
-	void hello();
-
-}

@@ -12,16 +12,73 @@
     <None Include="G:\! New\XEngine\XEngineEditor\CMakeLists.txt">
       <Filter>Buildsystem Input Files\XEngineEditor</Filter>
     </None>
+    <None Include="G:\! New\XEngine\external\glad\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glad</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\CMake\cmake_uninstall.cmake.in">
+      <Filter>Buildsystem Input Files\external\glfw\CMake</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\CMake\glfw3.pc.in">
+      <Filter>Buildsystem Input Files\external\glfw\CMake</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\CMake\glfw3Config.cmake.in">
+      <Filter>Buildsystem Input Files\external\glfw\CMake</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glfw</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\docs\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glfw\docs</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\docs\Doxyfile.in">
+      <Filter>Buildsystem Input Files\external\glfw\docs</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glfw\src\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glfw\src</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\spdlog\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\spdlog</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\spdlog\cmake\ide.cmake">
+      <Filter>Buildsystem Input Files\external\spdlog\cmake</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\spdlog\cmake\utils.cmake">
+      <Filter>Buildsystem Input Files\external\spdlog\cmake</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
       <UniqueIdentifier>{EE2C765F-4636-3016-9E2B-F6248009D162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{1CB4114F-8E8A-3CE0-B920-93B6F6304571}</UniqueIdentifier>
     </Filter>
     <Filter Include="Buildsystem Input Files\XEngineCore">
       <UniqueIdentifier>{21FBECD2-9471-3169-9FD8-3DAE0947A5EA}</UniqueIdentifier>
     </Filter>
     <Filter Include="Buildsystem Input Files\XEngineEditor">
       <UniqueIdentifier>{5C9C0CD7-37C2-39B9-B113-E9DC64674617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glad">
+      <UniqueIdentifier>{A00ACC01-52BA-3049-83CA-108B9D87C617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glfw">
+      <UniqueIdentifier>{3E758F12-C256-3109-9757-D4A025B5490E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glfw\CMake">
+      <UniqueIdentifier>{35BE9C06-F9D4-3943-BB6C-C7B14EB7F80D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glfw\docs">
+      <UniqueIdentifier>{6614358A-CA32-39FF-A2A4-D290CFBFF5C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glfw\src">
+      <UniqueIdentifier>{70090686-EA2E-3E0B-B50E-240F16269F9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\spdlog">
+      <UniqueIdentifier>{2DD91D61-ADF8-3F0D-8F2A-6539EB8B0612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\spdlog\cmake">
+      <UniqueIdentifier>{7C5E9409-1C39-3D89-8057-7F3327799177}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
