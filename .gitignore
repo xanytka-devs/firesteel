@@ -54,3 +54,4 @@ out
 # Submodules
 external/glfw/
 external/spdlog/
+external/imgui/
