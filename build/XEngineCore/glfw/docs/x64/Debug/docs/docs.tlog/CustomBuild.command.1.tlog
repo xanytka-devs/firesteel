@@ -1,0 +1,24 @@
+^G:\! NEW\XENGINE\BUILD\XENGINECORE\GLFW\DOCS\DOXYFILE
+setlocal
+cd "G:\! New\XEngine\build\XEngineCore\glfw\docs"
+if %errorlevel% neq 0 goto :cmEnd
+G:
+if %errorlevel% neq 0 goto :cmEnd
+G:\doxygen\bin\doxygen.exe
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^G:\! NEW\XENGINE\EXTERNAL\GLFW\DOCS\CMAKELISTS.TXT
+setlocal
+G:\CMake\bin\cmake.exe "-SG:/! New/XEngine" "-BG:/! New/XEngine/build" --check-stamp-file "G:/! New/XEngine/build/XEngineCore/glfw/docs/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

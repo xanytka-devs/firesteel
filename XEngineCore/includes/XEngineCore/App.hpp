@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+
 #include "XEngineCore/Event.hpp"
 
 namespace XEngine {

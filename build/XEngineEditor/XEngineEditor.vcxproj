@@ -115,7 +115,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\XEngineCore\Debug\XEngineCore.lib;..\XEngineCore\glfw\src\Debug\glfw3.lib;..\XEngineCore\spdlog\Debug\spdlogd.lib;..\XEngineCore\glad\Debug\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\XEngineCore\Debug\XEngineCore.lib;..\XEngineCore\spdlog\Debug\spdlogd.lib;..\XEngineCore\Debug\ImGui.lib;..\XEngineCore\glfw\src\Debug\glfw3.lib;..\XEngineCore\glad\Debug\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -159,7 +159,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\XEngineCore\Release\XEngineCore.lib;..\XEngineCore\glfw\src\Release\glfw3.lib;..\XEngineCore\spdlog\Release\spdlog.lib;..\XEngineCore\glad\Release\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\XEngineCore\Release\XEngineCore.lib;..\XEngineCore\spdlog\Release\spdlog.lib;..\XEngineCore\Release\ImGui.lib;..\XEngineCore\glfw\src\Release\glfw3.lib;..\XEngineCore\glad\Release\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -203,7 +203,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\XEngineCore\MinSizeRel\XEngineCore.lib;..\XEngineCore\glfw\src\MinSizeRel\glfw3.lib;..\XEngineCore\spdlog\MinSizeRel\spdlog.lib;..\XEngineCore\glad\MinSizeRel\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\XEngineCore\MinSizeRel\XEngineCore.lib;..\XEngineCore\spdlog\MinSizeRel\spdlog.lib;..\XEngineCore\MinSizeRel\ImGui.lib;..\XEngineCore\glfw\src\MinSizeRel\glfw3.lib;..\XEngineCore\glad\MinSizeRel\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -246,7 +246,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\XEngineCore\RelWithDebInfo\XEngineCore.lib;..\XEngineCore\glfw\src\RelWithDebInfo\glfw3.lib;..\XEngineCore\spdlog\RelWithDebInfo\spdlog.lib;..\XEngineCore\glad\RelWithDebInfo\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\XEngineCore\RelWithDebInfo\XEngineCore.lib;..\XEngineCore\spdlog\RelWithDebInfo\spdlog.lib;..\XEngineCore\RelWithDebInfo\ImGui.lib;..\XEngineCore\glfw\src\RelWithDebInfo\glfw3.lib;..\XEngineCore\glad\RelWithDebInfo\glad.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -325,6 +325,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\ImGui.vcxproj">
+      <Project>{CA458EF0-0BF5-3B96-8F0E-96BCE57B0AC8}</Project>
+      <Name>ImGui</Name>
     </ProjectReference>
     <ProjectReference Include="G:\! New\XEngine\build\XEngineCore\XEngineCore.vcxproj">
       <Project>{4F06BFF1-E904-36EA-BAC2-97C667091C57}</Project>

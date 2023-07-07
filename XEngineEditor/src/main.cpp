@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+
 #include <XEngineCore/App.hpp>
 
 class NewApp : public XEngine::App {
@@ -14,7 +15,6 @@ int main() {
 
 	int returnC = newApp->start(1024, 768, "Hello XEngine!");
 
-	std::cin.get();
 	return returnC;
 
 }

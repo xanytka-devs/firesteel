@@ -1,8 +1,12 @@
-#include "XEngineCore/Window.hpp"
-#include "XEngineCore/Log.hpp"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+
 #include "XEngineCore/Event.hpp"
+#include "XEngineCore/Window.hpp"
+#include "XEngineCore/Log.hpp"
 
 namespace XEngine {
 
@@ -10,13 +14,19 @@ namespace XEngine {
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
 		: w_data({std::move(title), width, height}) {
+        //Initialize basis.
 		int result = initialize();
+        //Initialize ImGui.
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init();
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
 	}
 	Window::~Window() {
 		shutdown();
 	}
 
-    int Window:: initialize() {
+    int Window::initialize() {
 
         LOG_INFO("Creating instance of window '{0}', with size of {1}x{2}.", w_data.title, w_data.width, w_data.height);
 
@@ -63,6 +73,7 @@ namespace XEngine {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
             EventWindowClose event;
             data.eventCallbackFn(event);
+            LOG_INFO("Window '{0}' closed.", data.title);
         });
 
         return 0;
@@ -75,8 +86,31 @@ namespace XEngine {
 	void Window::update() {
 
         //Clear color buffer.
-        glClearColor(1, 0, 0, 0);
+        glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        //Update InGui values.
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = static_cast<float>(getWidth());
+        io.DisplaySize.y = static_cast<float>(getHeight());
+        //Create new frame for ImGui.
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        //Draw ImGui.
+        
+        //Demo window.
+        ImGui::ShowDemoWindow();
+        //XEngine Testing Window.
+        ImGui::Begin("XEngine Testing Window");
+        ImGui::Text("General Testing");
+        ImGui::ColorEdit4("Background Color", bgColor);
+        ImGui::End();
+
+        //Render ImGui.
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         //Swap front and back buffers.
         glfwSwapBuffers(window);
         //Poll for and process events.

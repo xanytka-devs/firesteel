@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include "XEngineCore/App.hpp"
 #include "XEngineCore/Log.hpp"
 #include "XEngineCore/Window.hpp"
@@ -32,14 +33,7 @@ namespace XEngine {
 		//Create window pointer.
 		mainWindow = std::make_unique<Window>(title, win_width, win_height);
 		//Add event listeners.
-		eventDispatcher.addEventListener<EventMouseMove>([](EventMouseMove& e) {
-			LOG_INFO("[EVENT] Mouse moved to {0}x{1}", e.x, e.y);
-		});
-		eventDispatcher.addEventListener<EventWindowResize>([](EventWindowResize& e) {
-			LOG_INFO("[EVENT] Changed size to {0}x{1}", e.width, e.height);
-		});
 		eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
-			LOG_INFO("[EVENT] Window closed.");
 			closeWindow = true;
 		});
 		//Apply them.
