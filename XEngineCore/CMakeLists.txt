@@ -11,12 +11,14 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/XEngineCore/Window.hpp
 	src/XEngineCore/Rendering/OpenGL/ShaderProgram.hpp
 	src/XEngineCore/Rendering/OpenGL/VertexBuffer.hpp
+	src/XEngineCore/Rendering/OpenGL/VertexArray.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngineCore/App.cpp
 	src/XEngineCore/Window.cpp
 	src/XEngineCore/Rendering/OpenGL/ShaderProgram.cpp
 	src/XEngineCore/Rendering/OpenGL/VertexBuffer.cpp
+	src/XEngineCore/Rendering/OpenGL/VertexArray.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}

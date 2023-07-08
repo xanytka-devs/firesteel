@@ -9,6 +9,7 @@
 #include "XEngineCore/Log.hpp"
 #include "XEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "XEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
+#include "XEngineCore/Rendering/OpenGL/VertexArray.hpp"
 
 namespace XEngine {
 
@@ -24,6 +25,12 @@ namespace XEngine {
         1.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 1.0f
+    };
+
+    GLfloat positions_colors[] = {
+        0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f
     };
 
     const char* vertexShader =
@@ -47,7 +54,10 @@ namespace XEngine {
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<VertexBuffer> pointsVBO;
     std::unique_ptr<VertexBuffer> colorsVBO;
-    GLuint vao;
+    std::unique_ptr<VertexArray> vao_many;
+
+    std::unique_ptr<VertexBuffer> positions_colorsVBO;
+    std::unique_ptr<VertexArray> vao;
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
 		: w_data({std::move(title), width, height}) {
@@ -124,21 +134,28 @@ namespace XEngine {
             LOG_CRIT("Error while compiling main shader.");
             return -110;
         }
-        //Vertex buffers.
-        pointsVBO = std::make_unique<VertexBuffer>(points, sizeof(points));
-        colorsVBO = std::make_unique<VertexBuffer>(colors, sizeof(colors));
-        //Vertex array object.
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-        //Link position to buffer.
-        glEnableVertexAttribArray(0);
-        pointsVBO->bind();
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-        //Link color to buffer.
-        glEnableVertexAttribArray(1);
-        colorsVBO->bind();
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        //Vertex buffers and array.
+        
+        //2 buffers//
+        BufferLayout bufLayout_1vec3 {
+            ShaderDataType::Float3
+        };
+        vao_many = std::make_unique<VertexArray>();
+        pointsVBO = std::make_unique<VertexBuffer>(points, sizeof(points), bufLayout_1vec3);
+        colorsVBO = std::make_unique<VertexBuffer>(colors, sizeof(colors), bufLayout_1vec3);
+        //Add buffers to array.
+        vao_many->addBuffer(*pointsVBO);
+        vao_many->addBuffer(*colorsVBO);
 
+        //1 buffer//
+        BufferLayout bufLayout_2vec3{
+            ShaderDataType::Float3,
+            ShaderDataType::Float3
+        };
+        vao = std::make_unique<VertexArray>();
+        positions_colorsVBO = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), bufLayout_2vec3);
+        //Add buffers to array.
+        vao->addBuffer(*positions_colorsVBO);
         return 0;
 
 	}
@@ -152,11 +169,6 @@ namespace XEngine {
         glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //Render triangle.
-        shaderProgram->bind();
-        glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
         //Update InGui values.
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(getWidth());
@@ -166,14 +178,23 @@ namespace XEngine {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         //Draw ImGui.
-        
-        //Demo window.
-        ImGui::ShowDemoWindow();
+        static bool use2Buffers = true;
+        static bool drawDemoWindow = false;
+        //Draw Demo window.
+        if (drawDemoWindow) ImGui::ShowDemoWindow();
         //XEngine Testing Window.
         ImGui::Begin("XEngine Testing Window");
         ImGui::Text("General Testing");
         ImGui::ColorEdit4("Background Color", bgColor);
+        ImGui::Checkbox("2 buffers", &use2Buffers);
+        ImGui::Checkbox("Draw Demo window", &drawDemoWindow);
         ImGui::End();
+
+        //Render triangle.
+        shaderProgram->bind();
+        if (!use2Buffers) vao->bind();
+        else vao_many->bind();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //Render ImGui.
         ImGui::Render();
