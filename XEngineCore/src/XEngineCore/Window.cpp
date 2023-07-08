@@ -3,6 +3,8 @@
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
+#include <glm/mat3x3.hpp>
+#include <glm/trigonometric.hpp>
 
 #include "XEngineCore/Event.hpp"
 #include "XEngineCore/Window.hpp"
@@ -11,8 +13,7 @@
 #include "XEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 #include "XEngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 #include "XEngineCore/Rendering/OpenGL/VertexArray.hpp"
-#include <glm/mat3x3.hpp>
-#include <glm/trigonometric.hpp>
+#include "XEngineCore/Camera.hpp"
 
 namespace XEngine {
 
@@ -34,10 +35,11 @@ namespace XEngine {
            layout(location = 0) in vec3 vertex_position;
            layout(location = 1) in vec3 vertex_color;
            uniform mat4 model_matrix;
+           uniform mat4 view_proj_matrix;
            out vec3 color;
            void main() {
               color = vertex_color;
-              gl_Position = model_matrix * vec4(vertex_position, 1.0);
+              gl_Position = view_proj_matrix * model_matrix * vec4(vertex_position, 1.0);
            })";
 
     const char* fragmentShader =
@@ -55,6 +57,11 @@ namespace XEngine {
     float position[3] = { 0.f, 0.f, 0.f };
     float rotation[3] = { 0.f, 0.f, 0.f };
     float scale[3] = { 1.f, 1.f, 1.f };
+
+    float camPosition[3] = { 0.f, 0.f, 1.f };
+    float camRotation[3] = { 0.f, 0.f, 0.f };
+    bool camIsPresp = false;
+    Camera camera;
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
 		: w_data({std::move(title), width, height}) {
@@ -176,6 +183,10 @@ namespace XEngine {
         ImGui::SliderFloat3("Position", position, -1.f, 1.f);
         ImGui::SliderFloat3("Rotation", rotation, 0.f, 360.f);
         ImGui::SliderFloat3("Scale", scale, 0.f, 2.f);
+        ImGui::Text("Camera");
+        ImGui::SliderFloat3("Camera Position", camPosition, -10.f, 10.f);
+        ImGui::SliderFloat3("Camera Rotation", camRotation, 0.f, 360.f);
+        ImGui::Checkbox("Prespective", &camIsPresp);
 
         //Render triangle.
         shaderProgram->bind();
@@ -197,6 +208,14 @@ namespace XEngine {
         //Model matrix.
         glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
         shaderProgram->setMatrix4("model_matrix", model_matrix);
+        //Camera.
+        camera.setPositionRotation(glm::vec3(camPosition[0], camPosition[1], camPosition[2]),
+            glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
+        camera.setProjectionMode(camIsPresp ? Camera::ProjectionMode::Perspective :
+            Camera::ProjectionMode::Ortographic);
+        shaderProgram->setMatrix4("view_proj_matrix",
+            camera.getProjectionMatrix() * camera.getViewMatrix());
+        //Render.
         vao->bind();
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->getIndicesCount()), GL_UNSIGNED_INT, nullptr);
         ImGui::End();

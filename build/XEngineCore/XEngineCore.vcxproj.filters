@@ -7,6 +7,9 @@
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.cpp">
       <Filter>src\XEngineCore</Filter>
     </ClCompile>
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Camera.cpp">
+      <Filter>src\XEngineCore</Filter>
+    </ClCompile>
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.cpp">
       <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClCompile>
@@ -43,6 +46,9 @@
       <Filter>includes\XEngineCore</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Event.hpp">
+      <Filter>includes\XEngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Camera.hpp">
       <Filter>includes\XEngineCore</Filter>
     </ClInclude>
   </ItemGroup>

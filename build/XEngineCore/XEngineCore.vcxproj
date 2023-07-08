@@ -271,6 +271,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\App.cpp" />
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.cpp" />
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Camera.cpp" />
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.cpp" />
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexBuffer.cpp" />
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexArray.cpp" />
@@ -283,6 +284,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\App.hpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Log.hpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Event.hpp" />
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Camera.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="G:\! New\XEngine\build\ZERO_CHECK.vcxproj">

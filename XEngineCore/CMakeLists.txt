@@ -6,6 +6,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngineCore/App.hpp
 	includes/XEngineCore/Log.hpp
 	includes/XEngineCore/Event.hpp
+	includes/XEngineCore/Camera.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngineCore/Window.hpp
@@ -17,6 +18,7 @@ set(ENGINE_PRIVATE_INCLUDES
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngineCore/App.cpp
 	src/XEngineCore/Window.cpp
+	src/XEngineCore/Camera.cpp
 	src/XEngineCore/Rendering/OpenGL/ShaderProgram.cpp
 	src/XEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 	src/XEngineCore/Rendering/OpenGL/VertexArray.cpp
