@@ -16,6 +16,9 @@
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexArray.cpp">
       <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\IndexBuffer.cpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.hpp">
@@ -28,6 +31,9 @@
       <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexArray.hpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\IndexBuffer.hpp">
       <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\App.hpp">

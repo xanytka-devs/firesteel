@@ -12,6 +12,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/XEngineCore/Rendering/OpenGL/ShaderProgram.hpp
 	src/XEngineCore/Rendering/OpenGL/VertexBuffer.hpp
 	src/XEngineCore/Rendering/OpenGL/VertexArray.hpp
+	src/XEngineCore/Rendering/OpenGL/IndexBuffer.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngineCore/App.cpp
@@ -19,6 +20,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngineCore/Rendering/OpenGL/ShaderProgram.cpp
 	src/XEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 	src/XEngineCore/Rendering/OpenGL/VertexArray.cpp
+	src/XEngineCore/Rendering/OpenGL/IndexBuffer.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}

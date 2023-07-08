@@ -38,10 +38,10 @@ namespace XEngine {
 	}
 
 	/// <summary>
-	/// Adds buffer to array.
+	/// Adds vertex buffer to array.
 	/// </summary>
 	/// <param name="vertexBuffer">New element.</param>
-	void VertexArray::addBuffer(const VertexBuffer& vertexBuffer) {
+	void VertexArray::addVertexBuffer(const VertexBuffer& vertexBuffer) {
 		//Apply vertex array and buffer to OpenGL.
 		bind();
 		vertexBuffer.bind();
@@ -58,6 +58,17 @@ namespace XEngine {
 			//Add 1 to elements count.
 			elementsCount++;
 		}
+	}
+
+	/// <summary>
+	/// Sets index buffer to array.
+	/// </summary>
+	/// <param name="indexBuffer">New element.</param>
+	void VertexArray::setIndexBuffer(const IndexBuffer& indexBuffer) {
+		//Apply index array and buffer to OpenGL.
+		bind();
+		indexBuffer.bind();
+		indicesCount = indexBuffer.getCount();
 	}
 
 }

@@ -9,28 +9,22 @@
 #include "XEngineCore/Log.hpp"
 #include "XEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
 #include "XEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
+#include "XEngineCore/Rendering/OpenGL/IndexBuffer.hpp"
 #include "XEngineCore/Rendering/OpenGL/VertexArray.hpp"
 
 namespace XEngine {
 
     static bool glfwInitialized = false;
 
-    GLfloat points[] = {
-        0.0f, 0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f
-    };
-
-    GLfloat colors[] = {
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f
-    };
-
     GLfloat positions_colors[] = {
-        0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f
+        -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 1.0f,
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f
+    };
+
+    GLuint indices[] = {
+        0, 1, 2, 3, 2, 1
     };
 
     const char* vertexShader =
@@ -52,11 +46,8 @@ namespace XEngine {
         "}";
 
     std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<VertexBuffer> pointsVBO;
-    std::unique_ptr<VertexBuffer> colorsVBO;
-    std::unique_ptr<VertexArray> vao_many;
-
     std::unique_ptr<VertexBuffer> positions_colorsVBO;
+    std::unique_ptr<IndexBuffer> indexBuffer;
     std::unique_ptr<VertexArray> vao;
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
@@ -135,27 +126,16 @@ namespace XEngine {
             return -110;
         }
         //Vertex buffers and array.
-        
-        //2 buffers//
-        BufferLayout bufLayout_1vec3 {
-            ShaderDataType::Float3
-        };
-        vao_many = std::make_unique<VertexArray>();
-        pointsVBO = std::make_unique<VertexBuffer>(points, sizeof(points), bufLayout_1vec3);
-        colorsVBO = std::make_unique<VertexBuffer>(colors, sizeof(colors), bufLayout_1vec3);
-        //Add buffers to array.
-        vao_many->addBuffer(*pointsVBO);
-        vao_many->addBuffer(*colorsVBO);
-
-        //1 buffer//
-        BufferLayout bufLayout_2vec3{
+        BufferLayout bufLayout {
             ShaderDataType::Float3,
             ShaderDataType::Float3
         };
         vao = std::make_unique<VertexArray>();
-        positions_colorsVBO = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), bufLayout_2vec3);
+        positions_colorsVBO = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), bufLayout);
+        indexBuffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
         //Add buffers to array.
-        vao->addBuffer(*positions_colorsVBO);
+        vao->addVertexBuffer(*positions_colorsVBO);
+        vao->setIndexBuffer(*indexBuffer);
         return 0;
 
 	}
@@ -168,8 +148,12 @@ namespace XEngine {
         //Clear color buffer.
         glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
         glClear(GL_COLOR_BUFFER_BIT);
+        //Render triangle.
+        shaderProgram->bind();
+        vao->bind();
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vao->getIndicesCount()), GL_UNSIGNED_INT, nullptr);
 
-        //Update InGui values.
+        //Update ImGui values.
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = static_cast<float>(getWidth());
         io.DisplaySize.y = static_cast<float>(getHeight());
@@ -178,7 +162,6 @@ namespace XEngine {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         //Draw ImGui.
-        static bool use2Buffers = true;
         static bool drawDemoWindow = false;
         //Draw Demo window.
         if (drawDemoWindow) ImGui::ShowDemoWindow();
@@ -186,16 +169,8 @@ namespace XEngine {
         ImGui::Begin("XEngine Testing Window");
         ImGui::Text("General Testing");
         ImGui::ColorEdit4("Background Color", bgColor);
-        ImGui::Checkbox("2 buffers", &use2Buffers);
         ImGui::Checkbox("Draw Demo window", &drawDemoWindow);
         ImGui::End();
-
-        //Render triangle.
-        shaderProgram->bind();
-        if (!use2Buffers) vao->bind();
-        else vao_many->bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
         //Render ImGui.
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
