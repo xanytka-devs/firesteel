@@ -43,7 +43,7 @@ namespace XEngine {
 
 		GLFWwindow* window = nullptr;
 		WindowData w_data;
-		float bgColor[4] = { 1.f, 0.f, 0.f, 0.f };
+		float bgColor[4] = { 1.f, 0.5f, 0.f, 0.f };
 
 	};
 

@@ -12,6 +12,39 @@ namespace XEngine {
 
     static bool glfwInitialized = false;
 
+    GLfloat points[] = {
+        0.0f, 0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f
+    };
+
+    GLfloat colors[] = {
+        1.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 1.0f
+    };
+
+    const char* vertexShader =
+        "#version 440\n"
+        "layout(location = 0) in vec3 vertex_position;"
+        "layout(location = 1) in vec3 vertex_color;"
+        "out vec3 color;"
+        "void main() {"
+        "   color = vertex_color;"
+        "   gl_Position = vec4(vertex_position, 1.0);"
+        "}";
+
+    const char* fragmentShader =
+        "#version 440\n"
+        "in vec3 color;"
+        "out vec4 frag_color;"
+        "void main() {"
+        "   frag_color = vec4(color, 1.0);"
+        "}";
+
+    GLuint shaderProgram;
+    GLuint vao;
+
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
 		: w_data({std::move(title), width, height}) {
         //Initialize basis.
@@ -76,6 +109,49 @@ namespace XEngine {
             LOG_INFO("Window '{0}' closed.", data.title);
         });
 
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
+            glViewport(0, 0, width, height);
+        });
+
+        //Instance all data to draw triangle.
+        //Vertex shader.
+        GLuint vS = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vS, 1, &vertexShader, nullptr);
+        glCompileShader(vS);
+        //Fragment shader.
+        GLuint fS = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fS, 1, &fragmentShader, nullptr);
+        glCompileShader(fS);
+        //Link shader program.
+        shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vS);
+        glAttachShader(shaderProgram, fS);
+        glLinkProgram(shaderProgram);
+        //Delete not needed shaders.
+        glDeleteShader(vS);
+        glDeleteShader(fS);
+        //GPU Vertex buffer.
+        GLuint pointsVBO = 0;
+        glGenBuffers(1, &pointsVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+        //GPU Color buffer.
+        GLuint colorsVBO = 0;
+        glGenBuffers(1, &colorsVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+        //Vertex array object.
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+        //Link position to buffer.
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+        //Link color to buffer.
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
         return 0;
 
 	}
@@ -88,6 +164,11 @@ namespace XEngine {
         //Clear color buffer.
         glClearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3]);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        //Render triangle.
+        glUseProgram(shaderProgram);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //Update InGui values.
         ImGuiIO& io = ImGui::GetIO();
