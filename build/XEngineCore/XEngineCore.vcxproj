@@ -78,7 +78,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -96,10 +96,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -112,7 +112,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -130,10 +130,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -146,7 +146,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
@@ -164,10 +164,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -180,7 +180,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -197,10 +197,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;SPDLOG_COMPILED_LIB;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\! New\XEngine\XEngineCore\includes;G:\! New\XEngine\XEngineCore\src;G:\! New\XEngine\external\glfw\include;G:\! New\XEngine\external\spdlog\include;G:\! New\XEngine\external\glad\include;G:\! New\XEngine\external\glm;G:\! New\XEngine\XEngineCore\..\external;G:\! New\XEngine\XEngineCore\..\external\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>

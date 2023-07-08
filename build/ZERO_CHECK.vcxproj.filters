@@ -36,6 +36,12 @@
     <None Include="G:\! New\XEngine\external\glfw\src\CMakeLists.txt">
       <Filter>Buildsystem Input Files\external\glfw\src</Filter>
     </None>
+    <None Include="G:\! New\XEngine\external\glm\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glm</Filter>
+    </None>
+    <None Include="G:\! New\XEngine\external\glm\glm\CMakeLists.txt">
+      <Filter>Buildsystem Input Files\external\glm\glm</Filter>
+    </None>
     <None Include="G:\! New\XEngine\external\spdlog\CMakeLists.txt">
       <Filter>Buildsystem Input Files\external\spdlog</Filter>
     </None>
@@ -73,6 +79,12 @@
     </Filter>
     <Filter Include="Buildsystem Input Files\external\glfw\src">
       <UniqueIdentifier>{70090686-EA2E-3E0B-B50E-240F16269F9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glm">
+      <UniqueIdentifier>{F9AEF1FF-E7AB-3976-93BB-B2D82599D3CE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\external\glm\glm">
+      <UniqueIdentifier>{F6C93D69-A42F-3585-A5EF-9A14CA248E76}</UniqueIdentifier>
     </Filter>
     <Filter Include="Buildsystem Input Files\external\spdlog">
       <UniqueIdentifier>{2DD91D61-ADF8-3F0D-8F2A-6539EB8B0612}</UniqueIdentifier>

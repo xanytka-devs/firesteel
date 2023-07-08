@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include <string>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <XEngineCore/Rendering/OpenGL/ShaderProgram.hpp>
 #include <XEngineCore/Log.hpp>
@@ -117,6 +118,10 @@ namespace XEngine {
 		//Clean other instance.
 		shaderProgram.curID = 0;
 		shaderProgram.pIsCompiled = false;
+	}
+
+	void ShaderProgram::setMatrix4(const char* name, const glm::mat4& matrix) const {
+		glUniformMatrix4fv(glGetUniformLocation(curID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
 }

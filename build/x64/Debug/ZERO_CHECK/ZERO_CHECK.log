@@ -7,6 +7,23 @@
   -- Including Win32 support
   -- Build spdlog: 1.11.0
   -- Build type: Release
-  -- Configuring done (0.1s)
-  -- Generating done (0.3s)
+  CMake Deprecation Warning at external/glm/CMakeLists.txt:1 (cmake_minimum_required):
+    Compatibility with CMake < 3.5 will be removed from a future version of
+    CMake.
+  
+    Update the VERSION argument <min> value or use a ...<max> suffix to tell
+    CMake that the project does not need compatibility with older versions.
+  
+  
+  CMake Deprecation Warning at external/glm/CMakeLists.txt:2 (cmake_policy):
+    Compatibility with CMake < 3.5 will be removed from a future version of
+    CMake.
+  
+    Update the VERSION argument <min> value or use a ...<max> suffix to tell
+    CMake that the project does not need compatibility with older versions.
+  
+  
+  -- GLM: Version 0.9.9.9
+  -- Configuring done (0.7s)
+  -- Generating done (0.5s)
   -- Build files have been written to: G:/! New/XEngine/build
