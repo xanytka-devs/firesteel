@@ -271,7 +271,11 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   <ItemGroup>
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\App.cpp" />
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.cpp" />
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.cpp" />
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexBuffer.cpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.hpp" />
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.hpp" />
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexBuffer.hpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\App.hpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Log.hpp" />
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Event.hpp" />

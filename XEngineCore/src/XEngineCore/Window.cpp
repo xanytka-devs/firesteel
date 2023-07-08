@@ -7,6 +7,8 @@
 #include "XEngineCore/Event.hpp"
 #include "XEngineCore/Window.hpp"
 #include "XEngineCore/Log.hpp"
+#include "XEngineCore/Rendering/OpenGL/ShaderProgram.hpp"
+#include "XEngineCore/Rendering/OpenGL/VertexBuffer.hpp"
 
 namespace XEngine {
 
@@ -25,7 +27,7 @@ namespace XEngine {
     };
 
     const char* vertexShader =
-        "#version 440\n"
+        "#version 460\n"
         "layout(location = 0) in vec3 vertex_position;"
         "layout(location = 1) in vec3 vertex_color;"
         "out vec3 color;"
@@ -35,14 +37,16 @@ namespace XEngine {
         "}";
 
     const char* fragmentShader =
-        "#version 440\n"
+        "#version 460\n"
         "in vec3 color;"
         "out vec4 frag_color;"
         "void main() {"
         "   frag_color = vec4(color, 1.0);"
         "}";
 
-    GLuint shaderProgram;
+    std::unique_ptr<ShaderProgram> shaderProgram;
+    std::unique_ptr<VertexBuffer> pointsVBO;
+    std::unique_ptr<VertexBuffer> colorsVBO;
     GLuint vao;
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)
@@ -114,42 +118,25 @@ namespace XEngine {
         });
 
         //Instance all data to draw triangle.
-        //Vertex shader.
-        GLuint vS = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vS, 1, &vertexShader, nullptr);
-        glCompileShader(vS);
-        //Fragment shader.
-        GLuint fS = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fS, 1, &fragmentShader, nullptr);
-        glCompileShader(fS);
-        //Link shader program.
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vS);
-        glAttachShader(shaderProgram, fS);
-        glLinkProgram(shaderProgram);
-        //Delete not needed shaders.
-        glDeleteShader(vS);
-        glDeleteShader(fS);
-        //GPU Vertex buffer.
-        GLuint pointsVBO = 0;
-        glGenBuffers(1, &pointsVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-        //GPU Color buffer.
-        GLuint colorsVBO = 0;
-        glGenBuffers(1, &colorsVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+        //Create shader program.
+        shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
+        if (!shaderProgram->isCompilied()) {
+            LOG_CRIT("Error while compiling main shader.");
+            return -110;
+        }
+        //Vertex buffers.
+        pointsVBO = std::make_unique<VertexBuffer>(points, sizeof(points));
+        colorsVBO = std::make_unique<VertexBuffer>(colors, sizeof(colors));
         //Vertex array object.
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
         //Link position to buffer.
         glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+        pointsVBO->bind();
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
         //Link color to buffer.
         glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, colorsVBO);
+        colorsVBO->bind();
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 
         return 0;
@@ -166,7 +153,7 @@ namespace XEngine {
         glClear(GL_COLOR_BUFFER_BIT);
 
         //Render triangle.
-        glUseProgram(shaderProgram);
+        shaderProgram->bind();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 

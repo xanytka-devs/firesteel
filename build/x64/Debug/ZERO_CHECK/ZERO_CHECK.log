@@ -1,1 +1,12 @@
-﻿
+﻿  1>Checking Build System
+  CMake is re-running because G:/! New/XEngine/build/XEngineCore/CMakeFiles/generate.stamp is out-of-date.
+    the file 'G:/! New/XEngine/XEngineCore/CMakeLists.txt'
+    is newer than 'G:/! New/XEngine/build/XEngineCore/CMakeFiles/generate.stamp.depend'
+    result='-1'
+  -- Selecting Windows SDK version 10.0.22000.0 to target Windows 10.0.19045.
+  -- Including Win32 support
+  -- Build spdlog: 1.11.0
+  -- Build type: Release
+  -- Configuring done (0.1s)
+  -- Generating done (0.4s)
+  -- Build files have been written to: G:/! New/XEngine/build

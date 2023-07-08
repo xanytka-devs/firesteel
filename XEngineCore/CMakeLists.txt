@@ -9,16 +9,27 @@ set(ENGINE_PUBLIC_INCLUDES
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngineCore/Window.hpp
+	src/XEngineCore/Rendering/OpenGL/ShaderProgram.hpp
+	src/XEngineCore/Rendering/OpenGL/VertexBuffer.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngineCore/App.cpp
 	src/XEngineCore/Window.cpp
+	src/XEngineCore/Rendering/OpenGL/ShaderProgram.cpp
+	src/XEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 )
-
-add_library(${ENGINE_PROJECT_NAME} STATIC
+set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
 	${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PUBLIC_INCLUDES}
+)
+
+add_library(${ENGINE_PROJECT_NAME} STATIC
+	${ENGINE_ALL}
+)
+
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
+	${ENGINE_ALL}
 )
 
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC includes)

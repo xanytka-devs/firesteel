@@ -2,35 +2,59 @@
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\App.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src\XEngineCore</Filter>
     </ClCompile>
     <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src\XEngineCore</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.cpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexBuffer.cpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Window.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>src\XEngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\ShaderProgram.hpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="G:\! New\XEngine\XEngineCore\src\XEngineCore\Rendering\OpenGL\VertexBuffer.hpp">
+      <Filter>src\XEngineCore\Rendering\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\App.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>includes\XEngineCore</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Log.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>includes\XEngineCore</Filter>
     </ClInclude>
     <ClInclude Include="G:\! New\XEngine\XEngineCore\includes\XEngineCore\Event.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>includes\XEngineCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="G:\! New\XEngine\XEngineCore\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{1CB4114F-8E8A-3CE0-B920-93B6F6304571}</UniqueIdentifier>
+    <Filter Include="includes">
+      <UniqueIdentifier>{6C1CC98F-81DE-3AF6-8F5E-5B00F94C8FF1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{5305ADF8-EABD-373E-9036-F97D9334F341}</UniqueIdentifier>
+    <Filter Include="includes\XEngineCore">
+      <UniqueIdentifier>{6EF9CA69-E12A-3B66-9128-7AA07615AA0C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{DA3488A3-071E-340A-B37E-4D1B1B08B764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\XEngineCore">
+      <UniqueIdentifier>{E8207CAF-45EC-327E-AA7C-364C08F92F52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\XEngineCore\Rendering">
+      <UniqueIdentifier>{7528A0E1-6FF4-3105-A5B6-F411C799FB40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\XEngineCore\Rendering\OpenGL">
+      <UniqueIdentifier>{28529F0C-8147-3B4D-9BD7-0B214A82014B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
