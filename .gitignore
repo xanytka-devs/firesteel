@@ -56,3 +56,4 @@ out
 external/glfw/
 external/spdlog/
 external/imgui/
+external/glm/
