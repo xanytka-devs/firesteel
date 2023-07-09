@@ -1,9 +1,0 @@
-﻿  Building Custom Rule G:/! New/XEngine/external/spdlog/CMakeLists.txt
-  spdlog.cpp
-  stdout_sinks.cpp
-  color_sinks.cpp
-  file_sinks.cpp
-  async.cpp
-  cfg.cpp
-  bundled_fmtlib_format.cpp
-  spdlog.vcxproj -> G:\! New\XEngine\build\XEngineCore\spdlog\Debug\spdlogd.lib
