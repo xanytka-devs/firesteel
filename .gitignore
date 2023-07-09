@@ -18,6 +18,7 @@ ZERO_CHECK.log
 # Other folders
 bin
 out
+build
 
 # Prerequisites
 *.d
