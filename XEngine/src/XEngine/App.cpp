@@ -17,6 +17,7 @@
 #include "XEngine/Rendering/OpenGL/VertexArray.hpp"
 #include "XEngine/Rendering/OpenGL/Renderer.hpp"
 #include "XEngine/Camera.hpp"
+#include "XEngine/Input.hpp"
 
 namespace XEngine {
 	
@@ -24,10 +25,10 @@ namespace XEngine {
     using namespace XEngine::UI;
 
     GLfloat positions_colors[] = {
-        -0.5f, -0.5f, 0.0f,   1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 1.0f,
-        -0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 1.0f,
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f
+        0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,
+        0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,
+        0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,
+        0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f
     };
 
     GLuint indices[] = {
@@ -58,22 +59,19 @@ namespace XEngine {
     std::unique_ptr<VertexBuffer> positions_colorsVBO;
     std::unique_ptr<IndexBuffer> indexBuffer;
     std::unique_ptr<VertexArray> vao;
-    float position[3] = { 0.f, 0.f, 0.f };
-    float rotation[3] = { 0.f, 0.f, 0.f };
-    float scale[3] = { 1.f, 1.f, 1.f };
 
 	/// <summary>
 	/// Occures at app startup (instantiation).
 	/// </summary>
 	App::App() {
-        LOG_INFO("Initializing XEngine Core App.");
+        LOG_INFO("Initializing XEngine App.");
     }
 
 	/// <summary>
 	/// Occures on app shutdown (destruction).
 	/// </summary>
 	App::~App() {
-		LOG_INFO("Shuting down XEngine Core App.");
+		LOG_INFO("Shuting down XEngine App.");
 	}
 
 	/// <summary>
@@ -88,15 +86,28 @@ namespace XEngine {
 		//Create window pointer.
 		mainWindow = std::make_unique<Window>(title, win_width, win_height);
 		//Add event listeners.
+        eventDispatcher.addEventListener<EventWindowResize>([&](EventWindowResize& event) {});
 		eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
 			closeWindow = true;
 		});
+        eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {});
+        eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) {
+            Input::pressKey(event.keyCode);
+        });
+        eventDispatcher.addEventListener<EventKeyUp>([&](EventKeyUp& event) {
+            Input::releaseKey(event.keyCode);
+        });
+        eventDispatcher.addEventListener<EventMouseButtonDown>([&](EventMouseButtonDown& event) {
+            Input::pressMouseKey(event.mouseButton);
+        });
+        eventDispatcher.addEventListener<EventMouseButtonUp>([&](EventMouseButtonUp& event) {
+            Input::releaseMouseKey(event.mouseButton);
+        });
 		//Apply them.
 		mainWindow->setEventCallback([&](BaseEvent& e) {
 			eventDispatcher.dispatch(e);
 		});
 
-#pragma region TriangleInstance
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Create shader program.
@@ -116,7 +127,6 @@ namespace XEngine {
         //Add buffers to array.
         vao->addVertexBuffer(*positions_colorsVBO);
         vao->setIndexBuffer(*indexBuffer);
-#pragma endregion
 
         //Update cycle.
 		while (!closeWindow) {
@@ -124,8 +134,6 @@ namespace XEngine {
             //Clear color buffer.
             Renderer::setClearColorRGB(bgColor[0], bgColor[1], bgColor[2]);
             Renderer::clear();
-
-#pragma region TriangleUpdate
             // TODO: Move to other class.
             //Render triangle.
             shaderProgram->bind();
@@ -148,16 +156,12 @@ namespace XEngine {
             glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
             shaderProgram->setMatrix4("model_matrix", model_matrix);
             //Camera.
-            camera.setPositionRotation(glm::vec3(camPosition[0], camPosition[1], camPosition[2]),
-                glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
-            camera.setProjectionMode(camIsPresp ? Camera::ProjectionMode::Perspective :
+            baseCamera.setProjectionMode(camIsPresp ? Camera::ProjectionMode::Perspective :
                 Camera::ProjectionMode::Ortographic);
             shaderProgram->setMatrix4("view_proj_matrix",
-                camera.getProjectionMatrix() * camera.getViewMatrix());
+                baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
             //Render.
             Renderer::draw(*vao);
-#pragma endregion
-
             //Create new frame for ImGui.
             TUI::update();
             bool eADSshow = true;
@@ -175,5 +179,9 @@ namespace XEngine {
         return 0;
 
 	}
+
+    glm::vec2 App::getCursorPosition() const {
+        return mainWindow->getMousePos();
+    }
 
 }

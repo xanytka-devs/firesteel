@@ -21,11 +21,17 @@ namespace XEngine {
 		virtual void update() { }
 		virtual void onUIDraw() { }
 
-		float camPosition[3] = { 0.f, 0.f, 1.f };
+		glm::vec2 getCursorPosition() const;
+
+		float camPosition[3] = { 0.f, 0.f, 0.f };
 		float camRotation[3] = { 0.f, 0.f, 0.f };
-		bool camIsPresp = false;
-		Camera camera;
-		float bgColor[3] = { 0.25f, 0.25f, 0.25f };
+		bool camIsPresp = true;
+		Camera baseCamera{glm::vec3(-5.f, 0.f, 0.f)};
+
+		float bgColor[3] = { 0.5f, 0.5f, 0.5f };
+		float position[3] = { 0.f, 0.f, 0.f };
+		float rotation[3] = { 0.f, 0.f, 0.f };
+		float scale[3] = { 1.f, 1.f, 1.f };
 
 	private:
 		std::unique_ptr<class Window> mainWindow;

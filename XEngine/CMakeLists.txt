@@ -7,6 +7,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Log.hpp
 	includes/XEngine/Event.hpp
 	includes/XEngine/Camera.hpp
+	includes/XEngine/Keys.hpp
+	includes/XEngine/Input.hpp
+	includes/XEngine/Cursor.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Window.hpp
@@ -20,6 +23,8 @@ set(ENGINE_PRIVATE_INCLUDES
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
 	src/XEngine/Window.cpp
+	src/XEngine/Input.cpp
+	src/XEngine/Cursor.cpp
 	src/XEngine/Camera.cpp
 	src/XEngine/UI/TUI.cpp
 	src/XEngine/Rendering/OpenGL/ShaderProgram.cpp

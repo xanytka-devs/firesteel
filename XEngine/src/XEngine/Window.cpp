@@ -53,6 +53,44 @@ namespace XEngine {
 
         //Handle events.
         glfwSetWindowUserPointer(window, &w_data);
+        glfwSetKeyCallback(window, [](GLFWwindow* pWindow, int key, int scanCode, int action, int mods) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            switch (action) {
+                case GLFW_PRESS: {
+                    EventKeyDown event(static_cast<KeyCode>(key), false);
+                    data.eventCallbackFn(event);
+                    break;
+                }
+                case GLFW_RELEASE: {
+                    EventKeyUp event(static_cast<KeyCode>(key));
+                    data.eventCallbackFn(event);
+                    break;
+                }
+                case GLFW_REPEAT: {
+                    EventKeyDown event(static_cast<KeyCode>(key), true);
+                    data.eventCallbackFn(event);
+                    break;
+                }
+            }
+        });
+        glfwSetMouseButtonCallback(window, [](GLFWwindow* pWindow, int button, int action, int mods) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            double xPos;
+            double yPos;
+            glfwGetCursorPos(pWindow, &xPos, &yPos);
+            switch (action) {
+                case GLFW_PRESS: {
+                    EventMouseButtonDown event(static_cast<MouseButton>(button), xPos, yPos);
+                    data.eventCallbackFn(event);
+                    break;
+                }
+                case GLFW_RELEASE: {
+                    EventMouseButtonUp event(static_cast<MouseButton>(button), xPos, yPos);
+                    data.eventCallbackFn(event);
+                    break;
+                }
+            }
+        });
         glfwSetWindowSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
             data.width = width;
@@ -74,11 +112,10 @@ namespace XEngine {
         glfwSetFramebufferSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
             Renderer::setViewport(width, height);
         });
-
         //Initialize ImGui.
         TUI::init(window);
         TUI::SetTheme();
-        
+       
         return 0;
 
 	}
@@ -95,5 +132,11 @@ namespace XEngine {
         glfwPollEvents();
 
 	}
+
+    glm::vec2 Window::getMousePos() const {
+        double xPos, yPos;
+        glfwGetCursorPos(window, &xPos, &yPos);
+        return glm::vec2(xPos, yPos);
+    }
 
 }

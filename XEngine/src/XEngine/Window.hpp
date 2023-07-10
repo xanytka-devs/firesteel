@@ -2,6 +2,7 @@
 
 #include <string>
 #include <functional>
+#include <glm/ext/vector_float2.hpp>
 
 #include "XEngine/Event.hpp"
 
@@ -25,6 +26,7 @@ namespace XEngine {
 
 		unsigned int getWidth() const { return w_data.width; };
 		unsigned int getHeight() const { return w_data.height; };
+		glm::vec2 getMousePos() const;
 
 		void setEventCallback(const EventCallback& callback) {
 			w_data.eventCallbackFn = callback;

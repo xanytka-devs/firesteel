@@ -3,6 +3,8 @@
 #include <functional>
 #include <array>
 
+#include "Keys.hpp"
+
 namespace XEngine {
 
 	enum class EventType {
@@ -90,6 +92,71 @@ namespace XEngine {
 		}
 
 		static const EventType type = EventType::WindowClose;
+	};
+
+	struct EventKeyDown : public BaseEvent {
+		EventKeyDown(const KeyCode key_code, const bool repeated)
+			: keyCode(key_code), repeated(repeated) {
+		}
+
+		virtual EventType getType() const override {
+			return type;
+		}
+
+		KeyCode keyCode;
+		bool repeated;
+
+		static const EventType type = EventType::KeyDown;
+	};
+
+	struct EventKeyUp : public BaseEvent{
+		EventKeyUp(const KeyCode key_code)
+			: keyCode(key_code) {
+		}
+
+		virtual EventType getType() const override {
+			return type;
+		}
+
+		KeyCode keyCode;
+
+		static const EventType type = EventType::KeyUp;
+	};
+
+	struct EventMouseButtonDown : public BaseEvent {
+		EventMouseButtonDown(const MouseButton mouse_button, const double xPos, const double yPos)
+			: mouseButton(mouse_button)
+			, x(xPos)
+			, y(yPos) {
+		}
+
+		virtual EventType getType() const override {
+			return type;
+		}
+
+		MouseButton mouseButton;
+		double x;
+		double y;
+
+		static const EventType type = EventType::MouseButtonDown;
+	};
+
+	struct EventMouseButtonUp : public BaseEvent {
+		EventMouseButtonUp(const MouseButton mouse_button, const double xPos, const double yPos)
+			: mouseButton(mouse_button)
+			, x(xPos)
+			, y(yPos) {
+		}
+
+		virtual EventType getType() const override {
+			return type;
+		}
+
+		MouseButton mouseButton;
+		double x;
+		double y;
+
+		static const EventType type = EventType::MouseButtonUp;
 	};
 	
 }
