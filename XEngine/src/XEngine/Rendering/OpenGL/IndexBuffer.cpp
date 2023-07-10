@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 
 #include "IndexBuffer.hpp"
-#include "XEngineCore/Log.hpp"
+#include "XEngine/Log.hpp"
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	/// <summary>
 	/// Converts VertexBuffer::VBUsage to OpenGL's usage type.

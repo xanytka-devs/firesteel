@@ -1,28 +1,32 @@
 cmake_minimum_required(VERSION 3.12)
-project(XEngineCore)
-set(ENGINE_PROJECT_NAME XEngineCore)
+project(XEngine)
+set(ENGINE_PROJECT_NAME XEngine)
 
 set(ENGINE_PUBLIC_INCLUDES
-	includes/XEngineCore/App.hpp
-	includes/XEngineCore/Log.hpp
-	includes/XEngineCore/Event.hpp
-	includes/XEngineCore/Camera.hpp
+	includes/XEngine/App.hpp
+	includes/XEngine/Log.hpp
+	includes/XEngine/Event.hpp
+	includes/XEngine/Camera.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
-	src/XEngineCore/Window.hpp
-	src/XEngineCore/Rendering/OpenGL/ShaderProgram.hpp
-	src/XEngineCore/Rendering/OpenGL/VertexBuffer.hpp
-	src/XEngineCore/Rendering/OpenGL/VertexArray.hpp
-	src/XEngineCore/Rendering/OpenGL/IndexBuffer.hpp
+	src/XEngine/Window.hpp
+	src/XEngine/UI/TUI.hpp
+	src/XEngine/Rendering/OpenGL/ShaderProgram.hpp
+	src/XEngine/Rendering/OpenGL/VertexBuffer.hpp
+	src/XEngine/Rendering/OpenGL/VertexArray.hpp
+	src/XEngine/Rendering/OpenGL/IndexBuffer.hpp
+	src/XEngine/Rendering/OpenGL/Renderer.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
-	src/XEngineCore/App.cpp
-	src/XEngineCore/Window.cpp
-	src/XEngineCore/Camera.cpp
-	src/XEngineCore/Rendering/OpenGL/ShaderProgram.cpp
-	src/XEngineCore/Rendering/OpenGL/VertexBuffer.cpp
-	src/XEngineCore/Rendering/OpenGL/VertexArray.cpp
-	src/XEngineCore/Rendering/OpenGL/IndexBuffer.cpp
+	src/XEngine/App.cpp
+	src/XEngine/Window.cpp
+	src/XEngine/Camera.cpp
+	src/XEngine/UI/TUI.cpp
+	src/XEngine/Rendering/OpenGL/ShaderProgram.cpp
+	src/XEngine/Rendering/OpenGL/VertexBuffer.cpp
+	src/XEngine/Rendering/OpenGL/VertexArray.cpp
+	src/XEngine/Rendering/OpenGL/IndexBuffer.cpp
+	src/XEngine/Rendering/OpenGL/Renderer.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
@@ -63,7 +67,6 @@ set(IMGUI_SOURCES
 	../external/imgui/imgui.cpp
 	../external/imgui/backends/imgui_impl_glfw.cpp
 	../external/imgui/backends/imgui_impl_opengl3.cpp
-	../external/imgui/imgui_demo.cpp
 	../external/imgui/imgui_draw.cpp
 	../external/imgui/imgui_tables.cpp
 	../external/imgui/imgui_widgets.cpp

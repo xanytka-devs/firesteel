@@ -1,4 +1,4 @@
-#include "XEngineCore/Camera.hpp"
+#include "XEngine/Camera.hpp"
 #include <glm/trigonometric.hpp>
 
 namespace XEngine {

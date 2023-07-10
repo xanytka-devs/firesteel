@@ -1,9 +1,9 @@
 #include <glad/glad.h>
 
 #include "VertexBuffer.hpp"
-#include "XEngineCore/Log.hpp"
+#include "XEngine/Log.hpp"
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	/// <summary>
 	/// Converts ShaderDataType to amount of components.

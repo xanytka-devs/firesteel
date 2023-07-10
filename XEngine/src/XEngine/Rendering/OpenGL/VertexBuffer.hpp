@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	enum class ShaderDataType {
 		Float,

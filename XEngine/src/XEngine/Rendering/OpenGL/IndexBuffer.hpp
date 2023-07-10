@@ -1,7 +1,7 @@
 #pragma once
 #include "VertexBuffer.hpp"
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	class IndexBuffer {
 	public:

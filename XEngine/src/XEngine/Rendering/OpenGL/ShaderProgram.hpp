@@ -2,7 +2,7 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	class ShaderProgram {
 

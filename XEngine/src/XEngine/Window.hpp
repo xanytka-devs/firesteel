@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-#include "XEngineCore/Event.hpp"
+#include "XEngine/Event.hpp"
 
 struct GLFWwindow;
 
@@ -43,7 +43,6 @@ namespace XEngine {
 
 		GLFWwindow* window = nullptr;
 		WindowData w_data;
-		float bgColor[4] = { 1.f, 0.5f, 0.f, 0.f };
 
 	};
 

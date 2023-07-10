@@ -2,7 +2,8 @@
 
 #include <memory>
 
-#include "XEngineCore/Event.hpp"
+#include "XEngine/Event.hpp"
+#include "Camera.hpp"
 
 namespace XEngine {
 
@@ -18,6 +19,13 @@ namespace XEngine {
 
 		virtual int start(unsigned int win_width, unsigned int win_height, const char* title);
 		virtual void update() { }
+		virtual void onUIDraw() { }
+
+		float camPosition[3] = { 0.f, 0.f, 1.f };
+		float camRotation[3] = { 0.f, 0.f, 0.f };
+		bool camIsPresp = false;
+		Camera camera;
+		float bgColor[3] = { 0.25f, 0.25f, 0.25f };
 
 	private:
 		std::unique_ptr<class Window> mainWindow;

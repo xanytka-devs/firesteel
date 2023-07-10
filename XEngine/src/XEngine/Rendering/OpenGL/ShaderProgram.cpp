@@ -2,10 +2,10 @@
 #include <string>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <XEngineCore/Rendering/OpenGL/ShaderProgram.hpp>
-#include <XEngineCore/Log.hpp>
+#include <XEngine/Rendering/OpenGL/ShaderProgram.hpp>
+#include <XEngine/Log.hpp>
 
-namespace XEngine {
+namespace XEngine::OpenGL {
 
 	/// <summary>
 	/// Tries compiling given shader.
