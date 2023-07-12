@@ -26,10 +26,10 @@ namespace XEngine {
     using namespace XEngine::UI;
 
     GLfloat positions_colors[] = {
-        0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,     15.f, -14.f,
-        0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,     -14.f, -14.f,
-        0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,     15.f,  15.f,
-        0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,     -14.f,  15.f
+        0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,     2.f, -1.f,
+        0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,     -1.f, -1.f,
+        0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,     2.f,  2.f,
+        0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,     -1.f,  2.f
     };
 
     GLuint indices[] = {
@@ -178,8 +178,8 @@ namespace XEngine {
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Create texture.
-        const unsigned int width = 1000;
-        const unsigned int height = 1000;
+        const unsigned int width = 100;
+        const unsigned int height = 100;
         const unsigned int channels = 3;
         auto* uvData = new unsigned char[width * height * channels];
         const GLsizei mipLevels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
@@ -191,7 +191,7 @@ namespace XEngine {
         glTextureParameteri(textureHandleSmile, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(textureHandleSmile, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTextureParameteri(textureHandleSmile, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTextureParameteri(textureHandleSmile, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTextureParameteri(textureHandleSmile, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glGenerateTextureMipmap(textureHandleSmile);
         glBindTextureUnit(0, textureHandleSmile);
 
