@@ -1,5 +1,4 @@
 #include <iostream>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -17,6 +16,7 @@
 #include "XEngine/Rendering/OpenGL/IndexBuffer.hpp"
 #include "XEngine/Rendering/OpenGL/VertexArray.hpp"
 #include "XEngine/Rendering/OpenGL/Renderer.hpp"
+#include "XEngine/Rendering/OpenGL/Texture2D.hpp"
 #include "XEngine/Camera.hpp"
 #include "XEngine/Input.hpp"
 
@@ -103,7 +103,7 @@ namespace XEngine {
            void main() {
               color = vertex_color;
               tex_coord_smile = texture_coord;
-              tex_coord_quads = texture_coord + vec2(anim_frame / 250.f, anim_frame / 250.f);
+              tex_coord_quads = texture_coord + vec2(anim_frame / 500.f, anim_frame / 500.f);
               gl_Position = view_proj_matrix * model_matrix * vec4(vertex_position, 1.0);
            })";
 
@@ -125,6 +125,8 @@ namespace XEngine {
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<VertexBuffer> positions_colorsVBO;
     std::unique_ptr<IndexBuffer> indexBuffer;
+    std::unique_ptr<Texture2D> circleTexture;
+    std::unique_ptr<Texture2D> quadsTexture;
     std::unique_ptr<VertexArray> vao;
 
 	/// <summary>
@@ -178,34 +180,18 @@ namespace XEngine {
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Create texture.
-        const unsigned int width = 100;
-        const unsigned int height = 100;
+        const unsigned int width = 1000;
+        const unsigned int height = 1000;
         const unsigned int channels = 3;
         auto* uvData = new unsigned char[width * height * channels];
-        const GLsizei mipLevels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
-        GLuint textureHandleSmile;
-        glCreateTextures(GL_TEXTURE_2D, 1, &textureHandleSmile);
-        glTextureStorage2D(textureHandleSmile, mipLevels, GL_RGB8, width, height);
-        generateCentredCircleTexture(uvData, width, height);
-        glTextureSubImage2D(textureHandleSmile, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, uvData);
-        glTextureParameteri(textureHandleSmile, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(textureHandleSmile, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTextureParameteri(textureHandleSmile, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTextureParameteri(textureHandleSmile, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glGenerateTextureMipmap(textureHandleSmile);
-        glBindTextureUnit(0, textureHandleSmile);
 
-        GLuint textureHandleQuads;
-        glCreateTextures(GL_TEXTURE_2D, 1, &textureHandleQuads);
-        glTextureStorage2D(textureHandleQuads, mipLevels, GL_RGB8, width, height);
+        generateCentredCircleTexture(uvData, width, height);
+        const GLsizei mipLevels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
+        circleTexture = std::make_unique<Texture2D>(uvData, width, height);
+        circleTexture->bind(0);
         generateQuadsTexture(uvData, width, height);
-        glTextureSubImage2D(textureHandleQuads, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, uvData);
-        glTextureParameteri(textureHandleQuads, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(textureHandleQuads, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTextureParameteri(textureHandleQuads, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTextureParameteri(textureHandleQuads, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glGenerateTextureMipmap(textureHandleQuads);
-        glBindTextureUnit(1, textureHandleQuads);
+        quadsTexture = std::make_unique<Texture2D>(uvData, width, height);
+        quadsTexture->bind(1);
         delete[] uvData;
         //Create shader program.
         shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
@@ -275,8 +261,6 @@ namespace XEngine {
 			mainWindow->update();
 			update();
 		}
-        glDeleteTextures(1, &textureHandleSmile);
-        glDeleteTextures(1, &textureHandleQuads);
 		mainWindow = nullptr;
 
         return 0;
