@@ -19,6 +19,7 @@ namespace XEngine::OpenGL {
 		static void unbind();
 		bool isCompilied() const { return pIsCompiled; }
 		void setMatrix4(const char* name, const glm::mat4& matrix) const;
+		void setInt(const char* name, const int value) const;
 
 	private:
 		bool pIsCompiled = false;

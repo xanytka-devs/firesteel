@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 
 namespace XEngine {
 
@@ -24,8 +24,9 @@ namespace XEngine {
 		void moveRight(const float delta);
 		void moveUp(const float delta);
 		void moveRot(const glm::vec3& movDelta, const glm::vec3& rotDelta);
-		const glm::mat4 getViewMatrix();
-		const glm::mat4 getProjectionMatrix() const { return projectionMatrix; }
+
+		const glm::mat4& getViewMatrix();
+		const glm::mat4& getProjectionMatrix() const { return projectionMatrix; }
 		const glm::vec3& getPosition() const { return position; }
 		const glm::vec3& getRotation() const { return rotation; }
 	private:

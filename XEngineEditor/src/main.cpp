@@ -65,18 +65,19 @@ class EditorApp : public XEngine::App {
             rotDelta.z += 0.5f;
         //Check for mouse changed.
         if (XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_RIGHT)) {
+            glm::vec2 newMousePos = glm::vec2(0, 0);
             if (!cameraPanStarted) {
+                initialPanPos = App::getCursorPosition();
                 cameraPanStarted = true;
-                glm::vec2 initialMousePos = App::getCursorPosition();
             }
-            glm::vec2 newMousePos = App::getCursorPosition();
+            newMousePos = App::getCursorPosition();
             if (XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_LEFT)) {
                 baseCamera.moveRight((initialPanPos.x - newMousePos.x) / 100.f);
                 baseCamera.moveUp((initialPanPos.y - newMousePos.y) / 100.f);
             }
             else {
                 rotDelta.z += (initialPanPos.x - newMousePos.x) / 5.f;
-                rotDelta.y += (initialPanPos.y - newMousePos.y) / 5.f;
+                rotDelta.y -= (initialPanPos.y - newMousePos.y) / 5.f;
             }
             initialPanPos = newMousePos;
         }

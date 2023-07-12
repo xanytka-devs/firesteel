@@ -30,7 +30,7 @@ namespace XEngine {
 
 		float bgColor[3] = { 0.5f, 0.5f, 0.5f };
 		float position[3] = { 0.f, 0.f, 0.f };
-		float rotation[3] = { 0.f, 90.f, 0.f };
+		float rotation[3] = { 0.f, 0.f, 0.f };
 		float scale[3] = { 1.f, 1.f, 1.f };
 
 	private:

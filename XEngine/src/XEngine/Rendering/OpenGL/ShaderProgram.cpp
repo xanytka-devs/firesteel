@@ -124,4 +124,8 @@ namespace XEngine::OpenGL {
 		glUniformMatrix4fv(glGetUniformLocation(curID, name), 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
+	void ShaderProgram::setInt(const char* name, const int value) const {
+		glUniform1i(glGetUniformLocation(curID, name), value);
+	}
+
 }

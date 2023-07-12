@@ -14,8 +14,11 @@ namespace XEngine {
 		updateProjectionMatrix();
 	}
 
-	const glm::mat4 Camera::getViewMatrix() {
-		if (doUpdateViewMatrix) updateViewMatrix();
+	const glm::mat4& Camera::getViewMatrix() {
+		if (doUpdateViewMatrix) {
+			updateViewMatrix();
+			doUpdateViewMatrix = false;
+		}
 		return viewMatrix;
 	}
 
@@ -85,15 +88,19 @@ namespace XEngine {
 			float t = 0.1f;
 			float f = 10;
 			float n = 0.1f;
-			projectionMatrix = glm::mat4(n/r, 0, 0, 0, 0, n/t, 0, 0,
-				0, 0, (-f-n)/(f-n), -1, 0, 0, -2 * f * n / (f-n), 0);
+			projectionMatrix = glm::mat4(n / r, 0, 0, 0,
+				0, n / t, 0, 0,
+				0, 0, (-f - n) / (f - n), -1,
+				0, 0, -2 * f * n / (f - n), 0);
 		} else {
 			float r = 2;
 			float t = 2;
 			float f = 100;
 			float n = 0.1f;
-			projectionMatrix = glm::mat4(1/r, 0, 0, 0, 0, 1/t, 0, 0,
-				0, 0, -2/(f-n), 0, 0, 0, (-f-n)/(f-n), 1);
+			projectionMatrix = glm::mat4(1 / r, 0, 0, 0,
+				0, 1 / t, 0, 0,
+				0, 0, -2 / (f - n), 0,
+				0, 0, (-f - n) / (f - n), 1);
 		}
 	}
 
