@@ -6,15 +6,15 @@
 #include <XEngine/Input.hpp>
 
 class EditorApp : public XEngine::App {
-	
+
     bool cameraPanStarted = false;
     glm::vec2 initialPanPos{ 0, 0 };
 
-	virtual void update() override {
+    virtual void update() override {
 
         checkInputs();
     }
-	virtual void onUIDraw() override {
+    virtual void onUIDraw() override {
 
         camPosition[0] = baseCamera.getPosition().x;
         camPosition[1] = baseCamera.getPosition().y;
@@ -39,7 +39,7 @@ class EditorApp : public XEngine::App {
         ImGui::Checkbox("Prespective", &camIsPresp);
         ImGui::End();
 
-	}
+    }
 
     void checkInputs() {
         //Instance vectors.
@@ -64,8 +64,8 @@ class EditorApp : public XEngine::App {
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT))
             rotDelta.z += 0.5f;
         //Check for mouse changed.
-        if(XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_RIGHT)) {
-            if(!cameraPanStarted) {
+        if (XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_RIGHT)) {
+            if (!cameraPanStarted) {
                 cameraPanStarted = true;
                 glm::vec2 initialMousePos = App::getCursorPosition();
             }
@@ -73,12 +73,14 @@ class EditorApp : public XEngine::App {
             if (XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_LEFT)) {
                 baseCamera.moveRight((initialPanPos.x - newMousePos.x) / 100.f);
                 baseCamera.moveUp((initialPanPos.y - newMousePos.y) / 100.f);
-            } else {
+            }
+            else {
                 rotDelta.z += (initialPanPos.x - newMousePos.x) / 5.f;
                 rotDelta.y += (initialPanPos.y - newMousePos.y) / 5.f;
             }
             initialPanPos = newMousePos;
-        } else cameraPanStarted = false;
+        }
+        else cameraPanStarted = false;
         //Move and rotate.
         baseCamera.moveRot(movDelta, rotDelta);
 
@@ -89,7 +91,9 @@ class EditorApp : public XEngine::App {
 int main() {
 
 	auto app = std::make_unique<EditorApp>();
+
 	int returnC = app->start(1024, 768, "Hello XEngine!");
+
 	return returnC;
 
 }

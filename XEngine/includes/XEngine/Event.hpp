@@ -93,7 +93,7 @@ namespace XEngine {
 
 		static const EventType type = EventType::WindowClose;
 	};
-
+	
 	struct EventKeyDown : public BaseEvent {
 		EventKeyDown(const KeyCode key_code, const bool repeated)
 			: keyCode(key_code), repeated(repeated) {
