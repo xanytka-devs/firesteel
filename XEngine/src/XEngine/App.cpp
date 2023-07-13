@@ -125,8 +125,9 @@ namespace XEngine {
            layout(location = 1) in vec3 vertex_normal;
            layout(location = 2) in vec2 texture_coord;
 
-           uniform mat4 model_matrix;
-           uniform mat4 view_proj_matrix;
+           uniform mat4 model_view_matrix;
+           uniform mat4 mvp_matrix;
+           uniform mat3 normal_matrix;
            uniform int anim_frame;
 
            out vec2 tex_coord_circle;
@@ -137,10 +138,9 @@ namespace XEngine {
            void main() {
               tex_coord_circle = texture_coord;
               tex_coord_quads = texture_coord + vec2(anim_frame / 500.f, anim_frame / 500.f);
-              frag_normal = mat3(transpose(inverse(model_matrix))) * vertex_normal;
-              vec4 vertex_pos_world = model_matrix * vec4(vertex_position, 1.0);
-              frag_position = vertex_pos_world.xyz;
-              gl_Position = view_proj_matrix * vertex_pos_world;
+              frag_normal = normal_matrix * vertex_normal;
+              frag_position = vec3(model_view_matrix * vec4(vertex_position, 1.0));
+              gl_Position = mvp_matrix * vec4(vertex_position, 1.0);
            })";
 
     const char* fragmentShader =
@@ -153,9 +153,8 @@ namespace XEngine {
            layout(binding = 0) uniform sampler2D InTexture_Circle;
            layout(binding = 1) uniform sampler2D InTexture_Quads;
 
-           uniform vec3 camera_position;
-           uniform vec3 light_color;
            uniform vec3 light_position;
+           uniform vec3 light_color;
            uniform float ambient_factor;
            uniform float diffuse_factor;
            uniform float specular_factor;
@@ -171,7 +170,7 @@ namespace XEngine {
               vec3 light_dir = normalize(light_position - frag_position);
               vec3 diffuse = diffuse_factor * light_color * max(dot(normal, light_dir), 0.0);
               //Specular
-              vec3 camera_dir = normalize(camera_position - frag_position);
+              vec3 camera_dir = normalize(-frag_position);
               vec3 reflect_dir = reflect(-light_dir, normal);
               float specular_value = pow(max(dot(camera_dir, reflect_dir), 0.0), shininess);
               vec3 specular = specular_factor * specular_value * light_color;
@@ -187,11 +186,10 @@ namespace XEngine {
            layout(location = 1) in vec3 vertex_normal;
            layout(location = 2) in vec2 texture_coord;
 
-           uniform mat4 model_matrix;
-           uniform mat4 view_projection_matrix;
+           uniform mat4 mvp_matrix;
 
            void main() {
-              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position * 0.1f, 1.0);
+              gl_Position = mvp_matrix * vec4(vertex_position * 0.1f, 1.0);
            }
         )";
 
@@ -351,14 +349,10 @@ namespace XEngine {
             position[0], position[1], position[2], 1);
         //Model matrix.
         glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
-        shaderProgram->setMatrix4("model_matrix", model_matrix);
         if(!disableAnimations)
             shaderProgram->setInt("anim_frame", frame++);
-        shaderProgram->setMatrix4("view_proj_matrix",
-            baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
+        shaderProgram->setVector3("light_position", glm::vec3(baseCamera.getViewMatrix() * glm::vec4(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1.f)));
         shaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
-        shaderProgram->setVector3("light_position", glm::vec3(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2]));
-        shaderProgram->setVector3("camera_position", baseCamera.getPosition());
         shaderProgram->setFloat("ambient_factor", ambientFactor);
         shaderProgram->setFloat("diffuse_factor", diffuseFactor);
         shaderProgram->setFloat("specular_factor", specularFactor);
@@ -368,15 +362,17 @@ namespace XEngine {
         for (const glm::vec3& curPos : positions) {
             glm::mat4 translateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
                 0, 0, 1, 0, curPos[0], curPos[1], curPos[2], 1);
-            shaderProgram->setMatrix4("model_matrix", translateMatrix);
+            const glm::mat4 modelViewMatrix = baseCamera.getViewMatrix() * translateMatrix;
+            shaderProgram->setMatrix4("model_view_matrix", modelViewMatrix);
+            shaderProgram->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * modelViewMatrix);
+            shaderProgram->setMatrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(modelViewMatrix))));
             Renderer::draw(*vao);
         }
         //Light source.        
         lsShaderProgram->bind();
-        lsShaderProgram->setMatrix4("view_projection_matrix", baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
         glm::mat4 lsTranslateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
             0, 0, 1, 0, lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1);
-        lsShaderProgram->setMatrix4("model_matrix", lsTranslateMatrix);
+        lsShaderProgram->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix() * lsTranslateMatrix);
         lsShaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
         Renderer::draw(*vao);
         //Create new frame for ImGui.
