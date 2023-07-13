@@ -1,11 +1,15 @@
 #include <glm/trigonometric.hpp>
-#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "XEngine/Camera.hpp"
 
 namespace XEngine {
 
-	float Camera::farPlane = 100.f;
+	float Camera::farClipPlane = 100.f;
+	float Camera::nearClipPlane = 0.1f;
+	float Camera::viewportWidth = 800.f;
+	float Camera::viewportHeight = 600.f;
+	float Camera::fieldOfView = 60.f;
 
 	Camera::Camera(const glm::vec3& pos,
 		const glm::vec3& rot,
@@ -85,16 +89,10 @@ namespace XEngine {
 	}
 
 	void Camera::updateProjectionMatrix() {
-		if (projMode == ProjectionMode::Perspective) {
-			float r = 0.1f;
-			float t = 0.1f;
-			float f = farPlane;
-			float n = 0.1f;
-			projectionMatrix = glm::mat4(n / r, 0, 0, 0,
-				0, n / t, 0, 0,
-				0, 0, (-f - n) / (f - n), -1,
-				0, 0, -2 * f * n / (f - n), 0);
-		} else {
+		if (projMode == ProjectionMode::Perspective)
+			projectionMatrix = glm::perspective(glm::radians(fieldOfView), viewportWidth / viewportHeight,
+				nearClipPlane, farClipPlane);
+		else {
 			float r = 2;
 			float t = 2;
 			float f = 100;
@@ -104,6 +102,33 @@ namespace XEngine {
 				0, 0, -2 / (f - n), 0,
 				0, 0, (-f - n) / (f - n), 1);
 		}
+	}
+
+	void Camera::setViewportSize(const float width, const float height) {
+		viewportWidth = width;
+		viewportHeight = height;
+		updateProjectionMatrix();
+	}
+
+	void Camera::setViewportWidth(const float width) {
+		viewportWidth = width;
+		updateProjectionMatrix();
+	}
+	void Camera::setViewportHeight(const float height) {
+		viewportHeight = height;
+		updateProjectionMatrix();
+	}
+	void Camera::setNearClipPlane(const float value) {
+		nearClipPlane = value;
+		updateProjectionMatrix();
+	}
+	void Camera::setFarClipPlane(const float value) {
+		farClipPlane = value;
+		updateProjectionMatrix();
+	}
+	void Camera::setFieldOfView(const float value) {
+		fieldOfView = value;
+		updateProjectionMatrix();
 	}
 
 }

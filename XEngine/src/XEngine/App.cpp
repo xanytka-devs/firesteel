@@ -26,14 +26,14 @@ namespace XEngine {
     using namespace XEngine::UI;
 
     GLfloat cubeDataArray[] = {
-        -1.f, -1.f, -1.f,   1.f, 0.f,
+        -1.f, -1.f, -1.f,   3.f, 0.f,
         -1.f,  1.f, -1.f,   0.f, 0.f,
-        -1.f, -1.f,  1.f,   1.f, 1.f,
-        -1.f,  1.f,  1.f,   0.f, 1.f,
-         1.f, -1.f, -1.f,   1.f, 0.f,
+        -1.f, -1.f,  1.f,   3.f, 3.f,
+        -1.f,  1.f,  1.f,   0.f, 3.f,
+         1.f, -1.f, -1.f,   3.f, 0.f,
          1.f,  1.f, -1.f,   0.f, 0.f,
-         1.f, -1.f,  1.f,   1.f, 1.f,
-         1.f,  1.f,  1.f,   0.f, 1.f
+         1.f, -1.f,  1.f,   3.f, 3.f,
+         1.f,  1.f,  1.f,   0.f, 3.f
     };
 
     GLuint indices[] = {
@@ -158,10 +158,14 @@ namespace XEngine {
 
 		//Create window pointer.
 		mainWindow = std::make_unique<Window>(title, win_width, win_height);
+        baseCamera.setViewportSize(static_cast<float>(win_width),static_cast<float>(win_height));
 		//Add event listeners.
-        eventDispatcher.addEventListener<EventWindowResize>([&](EventWindowResize& event) {});
-		eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
-			closeWindow = true;
+        eventDispatcher.addEventListener<EventWindowResize>([&](EventWindowResize& event) {
+            baseCamera.setViewportSize(event.width, event.height);
+            App::draw();
+        });
+        eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
+            App::exit();
 		});
         eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {});
         eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) {
@@ -216,52 +220,10 @@ namespace XEngine {
         vao->setIndexBuffer(*cubeIndexBuffer);
         //Enable depth.
         Renderer::enableDepthTesting();
-        static int frame = 0;
-
+        onInitialized();
         //Update cycle.
 		while (!closeWindow) {
-
-            //Clear color buffer.
-            Renderer::setClearColorRGB(bgColor[0], bgColor[1], bgColor[2]);
-            Renderer::clear();
-            // TODO: Move to other class.
-            //Render triangle.
-            shaderProgram->bind();
-            //Scale matrix.
-            glm::mat4 scaleMatrix(scale[0], 0, 0, 0, 0, scale[1], 0, 0, 0, 0, scale[2], 0, 0, 0, 0, 1);
-            //Rotate matrix.
-            float rIRX = glm::radians(rotation[0]);
-            glm::mat4 rotationXMatrix(1, 0, 0, 0, 0, cos(rIRX), -sin(rIRX), 0,
-                0, sin(rIRX), cos(rIRX), 0, 0, 0, 0, 1);
-            float rIRY = glm::radians(rotation[1]);
-            glm::mat4 rotationYMatrix(cos(rIRY), 0, sin(rIRY), 0, 0, 1, 0, 0,
-                -sin(rIRY), 0, cos(rIRY), 0, 0, 0, 0, 1);
-            float rIRZ = glm::radians(rotation[2]);
-            glm::mat4 rotationZMatrix(cos(rIRZ), sin(rIRZ), 0, 0,
-                -sin(rIRZ), cos(rIRZ), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-            //Translate matrix.
-            glm::mat4 positionMatrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
-                position[0], position[1], position[2], 1);
-            //Model matrix.
-            glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
-            shaderProgram->setMatrix4("model_matrix", model_matrix);
-            //shaderProgram->setInt("anim_frame", frame ++);
-            //Camera.
-            baseCamera.setProjectionMode(camIsPresp ? Camera::ProjectionMode::Perspective :
-                Camera::ProjectionMode::Ortographic);
-            shaderProgram->setMatrix4("view_proj_matrix",
-                baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
-            //Render.
-            Renderer::draw(*vao);
-            //Create new frame for ImGui.
-            TUI::update();
-            bool eADSshow = true;
-            TUI::ShowExampleAppDockSpace(&eADSshow);
-            //Draw ImGui.
-            onUIDraw();
-            //Render ImGui.
-            TUI::draw();
-
+            draw();
 			mainWindow->update();
 			update();
 		}
@@ -271,8 +233,53 @@ namespace XEngine {
 
 	}
 
+    void App::draw() {
+        static int frame = 0;
+        //Clear color buffer.
+        Renderer::setClearColorRGB(bgColor[0], bgColor[1], bgColor[2]);
+        Renderer::clear();
+        // TODO: Move to other class.
+        //Render triangle.
+        shaderProgram->bind();
+        //Scale matrix.
+        glm::mat4 scaleMatrix(scale[0], 0, 0, 0, 0, scale[1], 0, 0, 0, 0, scale[2], 0, 0, 0, 0, 1);
+        //Rotate matrix.
+        float rIRX = glm::radians(rotation[0]);
+        glm::mat4 rotationXMatrix(1, 0, 0, 0, 0, cos(rIRX), -sin(rIRX), 0,
+            0, sin(rIRX), cos(rIRX), 0, 0, 0, 0, 1);
+        float rIRY = glm::radians(rotation[1]);
+        glm::mat4 rotationYMatrix(cos(rIRY), 0, sin(rIRY), 0, 0, 1, 0, 0,
+            -sin(rIRY), 0, cos(rIRY), 0, 0, 0, 0, 1);
+        float rIRZ = glm::radians(rotation[2]);
+        glm::mat4 rotationZMatrix(cos(rIRZ), sin(rIRZ), 0, 0,
+            -sin(rIRZ), cos(rIRZ), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+        //Translate matrix.
+        glm::mat4 positionMatrix(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+            position[0], position[1], position[2], 1);
+        //Model matrix.
+        glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
+        shaderProgram->setMatrix4("model_matrix", model_matrix);
+        shaderProgram->setInt("anim_frame", frame++);
+        //Camera.
+        shaderProgram->setMatrix4("view_proj_matrix",
+            baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
+        //Render.
+        Renderer::draw(*vao);
+        //Create new frame for ImGui.
+        TUI::update();
+        bool eADSshow = true;
+        //Draw ImGui.
+        onUIDraw();
+        //Render ImGui.
+        TUI::draw();
+    }
+
     glm::vec2 App::getCursorPosition() const {
         return mainWindow->getMousePos();
+    }
+
+    void App::exit() {
+        closeWindow = true;
     }
 
 }

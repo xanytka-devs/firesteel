@@ -1,14 +1,20 @@
 #include <iostream>
 #include <memory>
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include <XEngine/App.hpp>
 #include <XEngine/Input.hpp>
+#include "UI.hpp"
 
 class EditorApp : public XEngine::App {
 
     bool cameraPanStarted = false;
     glm::vec2 initialPanPos{ 0, 0 };
+
+    virtual void onInitialized() override {
+        UI::setTheme();
+    }
 
     virtual void update() override {
 
@@ -16,13 +22,14 @@ class EditorApp : public XEngine::App {
     }
     virtual void onUIDraw() override {
 
+        //Setup.
+        setupDock();
         camPosition[0] = baseCamera.getPosition().x;
         camPosition[1] = baseCamera.getPosition().y;
         camPosition[2] = baseCamera.getPosition().z;
         camRotation[0] = baseCamera.getRotation().x;
         camRotation[1] = baseCamera.getRotation().y;
         camRotation[2] = baseCamera.getRotation().z;
-
         //Draw ImGui.
         ImGui::Begin("Editor");
         ImGui::Text("General Testing");
@@ -36,10 +43,65 @@ class EditorApp : public XEngine::App {
             baseCamera.setPosition(glm::vec3(camPosition[0], camPosition[1], camPosition[2]));
         if (ImGui::SliderFloat3("Camera rot", camRotation, 0, 360.f))
             baseCamera.setRotation(glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
-        ImGui::Checkbox("Prespective", &camIsPresp);
-        ImGui::DragFloat("Far plane", &baseCamera.farPlane, 0.1f, 10000.f);
+        if(ImGui::Checkbox("Prespective", &camIsPresp))
+            baseCamera.setProjectionMode(camIsPresp ?
+                XEngine::Camera::ProjectionMode::Perspective : XEngine::Camera::ProjectionMode::Ortographic);
+        if(ImGui::SliderFloat("Far plane", &baseCamera.farClipPlane, 0.1f, 1000.f)) baseCamera.setFarClipPlane(baseCamera.farClipPlane);
+        if(ImGui::SliderFloat("Near plane", &baseCamera.nearClipPlane, 0.1f, 1000.f)) baseCamera.setNearClipPlane(baseCamera.nearClipPlane);
+        if(ImGui::SliderFloat("FOV", &baseCamera.fieldOfView, 0.1f, 120.f)) baseCamera.setFieldOfView(baseCamera.fieldOfView);
         ImGui::End();
 
+    }
+
+    void setupDock() {
+        //Variables.
+        bool open = true;
+        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+        window_flags |= ImGuiWindowFlags_NoBackground;
+        //Do fullscreen.
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("XEditor UI", &open, window_flags);
+        ImGui::PopStyleVar(3);
+        ImGuiIO& io = ImGui::GetIO();
+        ImGuiID dockspace_id = ImGui::GetID("XEditor UI");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+        //Start menu.
+        if (ImGui::BeginMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("New Project")) {
+
+                }
+                if (ImGui::MenuItem("Open Project")) {
+
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Save")) {
+
+                }
+                if (ImGui::MenuItem("Save as...")) {
+
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Exit")) {
+                    App::exit();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+        }
+
+        ImGui::End();
     }
 
     void checkInputs() {

@@ -18,8 +18,10 @@ namespace XEngine {
 		App& operator = (App&&) = delete;
 
 		virtual int start(unsigned int win_width, unsigned int win_height, const char* title);
+		void exit();
 		virtual void update() { }
 		virtual void onUIDraw() { }
+		virtual void onInitialized() { }
 
 		glm::vec2 getCursorPosition() const;
 
@@ -34,6 +36,7 @@ namespace XEngine {
 		float scale[3] = { 1.f, 1.f, 1.f };
 
 	private:
+		void draw();
 		std::unique_ptr<class Window> mainWindow;
 
 		EventDispatcher eventDispatcher;

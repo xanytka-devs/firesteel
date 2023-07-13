@@ -20,6 +20,12 @@ namespace XEngine {
 		void setRotation(const glm::vec3& rot);
 		void setPositionRotation(const glm::vec3& pos, const glm::vec3& rot);
 		void setProjectionMode(const ProjectionMode mode);
+		void setViewportWidth(const float width);
+		void setViewportHeight(const float height);
+		void setViewportSize(const float width, const float height);
+		void setNearClipPlane(const float value);
+		void setFarClipPlane(const float value);
+		void setFieldOfView(const float value);
 		void moveForward(const float delta);
 		void moveRight(const float delta);
 		void moveUp(const float delta);
@@ -30,7 +36,11 @@ namespace XEngine {
 		const glm::vec3& getPosition() const { return position; }
 		const glm::vec3& getRotation() const { return rotation; }
 
-		static float farPlane;
+		static float farClipPlane;
+		static float nearClipPlane;
+		static float viewportWidth;
+		static float viewportHeight;
+		static float fieldOfView;
 	private:
 		void updateViewMatrix();
 		void updateProjectionMatrix();
