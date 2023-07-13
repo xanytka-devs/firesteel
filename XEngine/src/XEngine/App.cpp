@@ -26,23 +26,46 @@ namespace XEngine {
     using namespace XEngine::UI;
 
     GLfloat cubeDataArray[] = {
-        -1.f, -1.f, -1.f,   3.f, 0.f,
-        -1.f,  1.f, -1.f,   0.f, 0.f,
-        -1.f, -1.f,  1.f,   3.f, 3.f,
-        -1.f,  1.f,  1.f,   0.f, 3.f,
-         1.f, -1.f, -1.f,   3.f, 0.f,
-         1.f,  1.f, -1.f,   0.f, 0.f,
-         1.f, -1.f,  1.f,   3.f, 3.f,
-         1.f,  1.f,  1.f,   0.f, 3.f
+        //   Position              Normal               UV        Index
+        //    FRONT
+        -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 0.f,    /*0*/
+        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*1*/
+        -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 1.f,    /*2*/
+        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*3*/
+        //     BACK                                  
+         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*4*/
+         1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 0.f,    /*5*/
+         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*6*/
+         1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 1.f,    /*7*/
+         //    RIGHT
+         -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,    /*8*/
+          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     1.f, 0.f,    /*9*/
+          1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 1.f,    /*10*/
+         -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*11*/
+         //    LEFT
+         -1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     1.f, 0.f,    /*12*/
+          1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 0.f,    /*13*/
+          1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     0.f, 1.f,    /*14*/
+         -1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 1.f,    /*15*/
+         //    TOP
+         -1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 0.f,    /*16*/
+         -1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 0.f,    /*17*/
+          1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 1.f,    /*18*/
+          1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 1.f,    /*19*/
+          //  BOTTOM
+          -1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 1.f,    /*20*/
+          -1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 1.f,    /*21*/
+           1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 0.f,    /*22*/
+           1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 0.f,    /*23*/
     };
 
     GLuint indices[] = {
-        0, 1, 2, 3, 2, 1, //Front.
-        4, 5, 6, 7, 6, 5, //Back.
-        0, 4, 6, 0, 2, 6, //Right.
-        1, 5, 3, 3, 7, 5, //Left.
-        3, 7, 2, 7, 6, 2, //Top.
-        1, 5, 0, 5, 0, 4  //Bottom.
+        0, 1, 2, 2, 3, 0,       //FRONT
+        4, 5, 6, 6,  7, 4,      //BACK
+        8, 9, 10, 10, 11, 8,    //RIGHT
+        12, 13, 14, 14, 15, 12, //LEFT
+        16, 17, 18, 18, 19, 16, //TOP
+        20, 21, 22, 22, 23, 20  //BOTTOM
     };
 
     void generateCircle(unsigned char* data,
@@ -99,39 +122,103 @@ namespace XEngine {
     const char* vertexShader =
         R"(#version 460
            layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec2 texture_coord;
+           layout(location = 1) in vec3 vertex_normal;
+           layout(location = 2) in vec2 texture_coord;
 
            uniform mat4 model_matrix;
            uniform mat4 view_proj_matrix;
            uniform int anim_frame;
-           out vec2 tex_coord_smile;
+
+           out vec2 tex_coord_circle;
            out vec2 tex_coord_quads;
+           out vec3 frag_position;
+           out vec3 frag_normal;
 
            void main() {
-              tex_coord_smile = texture_coord;
+              tex_coord_circle = texture_coord;
               tex_coord_quads = texture_coord + vec2(anim_frame / 500.f, anim_frame / 500.f);
-              gl_Position = view_proj_matrix * model_matrix * vec4(vertex_position, 1.0);
+              frag_normal = mat3(transpose(inverse(model_matrix))) * vertex_normal;
+              vec4 vertex_pos_world = model_matrix * vec4(vertex_position, 1.0);
+              frag_position = vertex_pos_world.xyz;
+              gl_Position = view_proj_matrix * vertex_pos_world;
            })";
 
     const char* fragmentShader =
         R"(#version 460
-           in vec2 tex_coord_smile;
+           in vec2 tex_coord_circle;
            in vec2 tex_coord_quads;
+           in vec3 frag_position;
+           in vec3 frag_normal;
 
-           layout(binding = 0) uniform sampler2D InTexture_Smile;
+           layout(binding = 0) uniform sampler2D InTexture_Circle;
            layout(binding = 1) uniform sampler2D InTexture_Quads;
+
+           uniform vec3 camera_position;
+           uniform vec3 light_color;
+           uniform vec3 light_position;
+           uniform float ambient_factor;
+           uniform float diffuse_factor;
+           uniform float specular_factor;
+           uniform float shininess;
+
            out vec4 frag_color;
 
            void main() {
-              frag_color = texture(InTexture_Smile, tex_coord_smile) * texture(InTexture_Quads, tex_coord_quads);
+              //Ambient
+              vec3 ambient = ambient_factor * light_color;
+              //Diffuse
+              vec3 normal = normalize(frag_normal);
+              vec3 light_dir = normalize(light_position - frag_position);
+              vec3 diffuse = diffuse_factor * light_color * max(dot(normal, light_dir), 0.0);
+              //Specular
+              vec3 camera_dir = normalize(camera_position - frag_position);
+              vec3 reflect_dir = reflect(-light_dir, normal);
+              float specular_value = pow(max(dot(camera_dir, reflect_dir), 0.0), shininess);
+              vec3 specular = specular_factor * specular_value * light_color;
+              //Final
+              frag_color = texture(InTexture_Circle, tex_coord_circle)
+                * texture(InTexture_Quads, tex_coord_quads)
+                * vec4(ambient + diffuse + specular, 1.f);
            })";
 
+    const char* lsVertexShader =
+        R"(#version 460
+           layout(location = 0) in vec3 vertex_position;
+           layout(location = 1) in vec3 vertex_normal;
+           layout(location = 2) in vec2 texture_coord;
+
+           uniform mat4 model_matrix;
+           uniform mat4 view_projection_matrix;
+
+           void main() {
+              gl_Position = view_projection_matrix * model_matrix * vec4(vertex_position * 0.1f, 1.0);
+           }
+        )";
+
+    const char* lsFragmentShader =
+        R"(#version 460
+           out vec4 frag_color;
+           uniform vec3 light_color;
+
+           void main() {
+              frag_color = vec4(light_color, 1.f);
+           }
+        )";
+
     std::unique_ptr<ShaderProgram> shaderProgram;
+    std::unique_ptr<ShaderProgram> lsShaderProgram;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
     std::unique_ptr<Texture2D> circleTexture;
     std::unique_ptr<Texture2D> quadsTexture;
     std::unique_ptr<VertexArray> vao;
+    std::array<glm::vec3, 5> positions = {
+            glm::vec3(-2.f, -2.f, -4.f),
+            glm::vec3(-5.f,  0.f,  3.f),
+            glm::vec3(2.f,  1.f, -2.f),
+            glm::vec3(4.f, -3.f,  3.f),
+            glm::vec3(1.f, -7.f,  1.f)
+    };
 
 	/// <summary>
 	/// Occures at app startup (instantiation).
@@ -207,8 +294,14 @@ namespace XEngine {
             LOG_CRIT("Error while compiling main shader.");
             return -110;
         }
+        lsShaderProgram = std::make_unique<ShaderProgram>(lsVertexShader, lsFragmentShader);
+        if (!lsShaderProgram->isCompilied()) {
+            LOG_CRIT("Error while compiling light shader.");
+            return -110;
+        }
         //Vertex buffers and array.
         BufferLayout bufLayout{
+            ShaderDataType::Float3,
             ShaderDataType::Float3,
             ShaderDataType::Float2
         };
@@ -259,11 +352,32 @@ namespace XEngine {
         //Model matrix.
         glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
         shaderProgram->setMatrix4("model_matrix", model_matrix);
-        shaderProgram->setInt("anim_frame", frame++);
-        //Camera.
+        if(!disableAnimations)
+            shaderProgram->setInt("anim_frame", frame++);
         shaderProgram->setMatrix4("view_proj_matrix",
             baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
+        shaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
+        shaderProgram->setVector3("light_position", glm::vec3(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2]));
+        shaderProgram->setVector3("camera_position", baseCamera.getPosition());
+        shaderProgram->setFloat("ambient_factor", ambientFactor);
+        shaderProgram->setFloat("diffuse_factor", diffuseFactor);
+        shaderProgram->setFloat("specular_factor", specularFactor);
+        shaderProgram->setFloat("shininess", shininess);
         //Render.
+        Renderer::draw(*vao);
+        for (const glm::vec3& curPos : positions) {
+            glm::mat4 translateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
+                0, 0, 1, 0, curPos[0], curPos[1], curPos[2], 1);
+            shaderProgram->setMatrix4("model_matrix", translateMatrix);
+            Renderer::draw(*vao);
+        }
+        //Light source.        
+        lsShaderProgram->bind();
+        lsShaderProgram->setMatrix4("view_projection_matrix", baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix());
+        glm::mat4 lsTranslateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
+            0, 0, 1, 0, lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1);
+        lsShaderProgram->setMatrix4("model_matrix", lsTranslateMatrix);
+        lsShaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
         Renderer::draw(*vao);
         //Create new frame for ImGui.
         TUI::update();

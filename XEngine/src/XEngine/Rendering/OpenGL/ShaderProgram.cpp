@@ -120,12 +120,18 @@ namespace XEngine::OpenGL {
 		shaderProgram.pIsCompiled = false;
 	}
 
-	void ShaderProgram::setMatrix4(const char* name, const glm::mat4& matrix) const {
-		glUniformMatrix4fv(glGetUniformLocation(curID, name), 1, GL_FALSE, glm::value_ptr(matrix));
+	void ShaderProgram::setMatrix4(const char* name, const glm::mat4& value) const {
+		glUniformMatrix4fv(glGetUniformLocation(curID, name), 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	void ShaderProgram::setInt(const char* name, const int value) const {
 		glUniform1i(glGetUniformLocation(curID, name), value);
+	}
+	void ShaderProgram::setFloat(const char* name, const float value) const {
+		glUniform1f(glGetUniformLocation(curID, name), value);
+	}
+	void ShaderProgram::setVector3(const char* name, const glm::vec3 value) const {
+		glUniform3f(glGetUniformLocation(curID, name), value.x, value.y, value.z);
 	}
 
 }

@@ -17,11 +17,9 @@ class EditorApp : public XEngine::App {
     }
 
     virtual void update() override {
-
         checkInputs();
     }
     virtual void onUIDraw() override {
-
         //Setup.
         setupDock();
         camPosition[0] = baseCamera.getPosition().x;
@@ -31,17 +29,22 @@ class EditorApp : public XEngine::App {
         camRotation[1] = baseCamera.getRotation().y;
         camRotation[2] = baseCamera.getRotation().z;
         //Draw ImGui.
+        //Editor main
         ImGui::Begin("Editor");
         ImGui::Text("General Testing");
         ImGui::ColorEdit3("Bg Color", App::bgColor);
         ImGui::Text("Matrix Operations");
-        ImGui::SliderFloat3("Position", position, -1.f, 1.f);
-        ImGui::SliderFloat3("Rotation", rotation, 0.f, 360.f);
-        ImGui::SliderFloat3("Scale", scale, 0.f, 2.f);
+        ImGui::DragFloat3("Position", position, -1.f, 1.f);
+        ImGui::DragFloat3("Rotation", rotation, 0.f, 360.f);
+        ImGui::DragFloat3("Scale", scale, 0.f, 2.f);
+        ImGui::Checkbox("Disable animations", &disableAnimations);
+        ImGui::End();
+        //Editor camera
+        ImGui::Begin("Camera");
         ImGui::Text("Camera");
-        if (ImGui::SliderFloat3("Camera pos", camPosition, -10.f, 10.f))
+        if(ImGui::DragFloat3("Camera pos", camPosition, -10.f, 10.f))
             baseCamera.setPosition(glm::vec3(camPosition[0], camPosition[1], camPosition[2]));
-        if (ImGui::SliderFloat3("Camera rot", camRotation, 0, 360.f))
+        if(ImGui::DragFloat3("Camera rot", camRotation, 0, 360.f))
             baseCamera.setRotation(glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
         if(ImGui::Checkbox("Prespective", &camIsPresp))
             baseCamera.setProjectionMode(camIsPresp ?
@@ -50,7 +53,16 @@ class EditorApp : public XEngine::App {
         if(ImGui::SliderFloat("Near plane", &baseCamera.nearClipPlane, 0.1f, 1000.f)) baseCamera.setNearClipPlane(baseCamera.nearClipPlane);
         if(ImGui::SliderFloat("FOV", &baseCamera.fieldOfView, 0.1f, 120.f)) baseCamera.setFieldOfView(baseCamera.fieldOfView);
         ImGui::End();
-
+        //Editor light
+        ImGui::Begin("Light");
+        ImGui::Text("Light Source");
+        ImGui::DragFloat3("LS Position", App::lightSourcePos, -1.f, 1.f);
+        ImGui::ColorEdit3("LS Color", App::lightSourceColor);
+        ImGui::SliderFloat("Ambient factor", &ambientFactor, 0.f, 1.f);
+        ImGui::SliderFloat("Diffuse factor", &diffuseFactor, 0.f, 1.f);
+        ImGui::SliderFloat("Specular factor", &specularFactor, 0.f, 1.f);
+        ImGui::SliderFloat("Shininess", &shininess, 1.f, 128.f);
+        ImGui::End();
     }
 
     void setupDock() {

@@ -124,12 +124,10 @@ namespace XEngine {
         glfwTerminate();
 	}
 	void Window::update() {
-
         //Swap front and back buffers.
         glfwSwapBuffers(window);
         //Poll for and process events.
         glfwPollEvents();
-
 	}
 
     glm::vec2 Window::getMousePos() const {

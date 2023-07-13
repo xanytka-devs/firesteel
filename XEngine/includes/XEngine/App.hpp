@@ -31,10 +31,17 @@ namespace XEngine {
 		Camera baseCamera{glm::vec3(-5.f, 0.f, 0.f)};
 
 		float bgColor[3] = { 0.5f, 0.5f, 0.5f };
-		float position[3] = { 0.f, 0.f, 0.f };
+		float position[3] = { 5.f, 5.f, 5.f };
 		float rotation[3] = { 0.f, 0.f, 0.f };
 		float scale[3] = { 1.f, 1.f, 1.f };
+		bool disableAnimations = true;
 
+		float lightSourcePos[3] = { 0.f, 0.f, 1.f };
+		float lightSourceColor[3] = { 1.f, 1.f, 1.f };
+		float ambientFactor = 0.1f;
+		float diffuseFactor = 1.f;
+		float specularFactor = 0.5f;
+		float shininess = 32.f;
 	private:
 		void draw();
 		std::unique_ptr<class Window> mainWindow;
