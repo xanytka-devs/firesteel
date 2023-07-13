@@ -25,15 +25,24 @@ namespace XEngine {
     using namespace XEngine::OpenGL;
     using namespace XEngine::UI;
 
-    GLfloat positions_colors[] = {
-        0.0f, -0.5f, -0.5f,   1.0f, 1.0f, 0.0f,     2.f, -1.f,
-        0.0f,  0.5f, -0.5f,   0.0f, 1.0f, 1.0f,     -1.f, -1.f,
-        0.0f, -0.5f,  0.5f,   1.0f, 0.0f, 1.0f,     2.f,  2.f,
-        0.0f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,     -1.f,  2.f
+    GLfloat cubeDataArray[] = {
+        -1.f, -1.f, -1.f,   1.f, 0.f,
+        -1.f,  1.f, -1.f,   0.f, 0.f,
+        -1.f, -1.f,  1.f,   1.f, 1.f,
+        -1.f,  1.f,  1.f,   0.f, 1.f,
+         1.f, -1.f, -1.f,   1.f, 0.f,
+         1.f,  1.f, -1.f,   0.f, 0.f,
+         1.f, -1.f,  1.f,   1.f, 1.f,
+         1.f,  1.f,  1.f,   0.f, 1.f
     };
 
     GLuint indices[] = {
-        0, 1, 2, 3, 2, 1
+        0, 1, 2, 3, 2, 1, //Front.
+        4, 5, 6, 7, 6, 5, //Back.
+        0, 4, 6, 0, 2, 6, //Right.
+        1, 5, 3, 3, 7, 5, //Left.
+        3, 7, 2, 7, 6, 2, //Top.
+        1, 5, 0, 5, 0, 4  //Bottom.
     };
 
     void generateCircle(unsigned char* data,
@@ -90,18 +99,15 @@ namespace XEngine {
     const char* vertexShader =
         R"(#version 460
            layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec3 vertex_color;
-           layout(location = 2) in vec2 texture_coord;
+           layout(location = 1) in vec2 texture_coord;
 
            uniform mat4 model_matrix;
            uniform mat4 view_proj_matrix;
            uniform int anim_frame;
-           out vec3 color;
            out vec2 tex_coord_smile;
            out vec2 tex_coord_quads;
 
            void main() {
-              color = vertex_color;
               tex_coord_smile = texture_coord;
               tex_coord_quads = texture_coord + vec2(anim_frame / 500.f, anim_frame / 500.f);
               gl_Position = view_proj_matrix * model_matrix * vec4(vertex_position, 1.0);
@@ -109,7 +115,6 @@ namespace XEngine {
 
     const char* fragmentShader =
         R"(#version 460
-           in vec3 color;
            in vec2 tex_coord_smile;
            in vec2 tex_coord_quads;
 
@@ -118,13 +123,12 @@ namespace XEngine {
            out vec4 frag_color;
 
            void main() {
-              //frag_color = vec4(color, 1.0);
               frag_color = texture(InTexture_Smile, tex_coord_smile) * texture(InTexture_Quads, tex_coord_quads);
            })";
 
     std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<VertexBuffer> positions_colorsVBO;
-    std::unique_ptr<IndexBuffer> indexBuffer;
+    std::unique_ptr<VertexBuffer> cubeVBO;
+    std::unique_ptr<IndexBuffer> cubeIndexBuffer;
     std::unique_ptr<Texture2D> circleTexture;
     std::unique_ptr<Texture2D> quadsTexture;
     std::unique_ptr<VertexArray> vao;
@@ -202,16 +206,16 @@ namespace XEngine {
         //Vertex buffers and array.
         BufferLayout bufLayout{
             ShaderDataType::Float3,
-            ShaderDataType::Float3,
             ShaderDataType::Float2
         };
         vao = std::make_unique<VertexArray>();
-        positions_colorsVBO = std::make_unique<VertexBuffer>(positions_colors, sizeof(positions_colors), bufLayout);
-        indexBuffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
+        cubeVBO = std::make_unique<VertexBuffer>(cubeDataArray, sizeof(cubeDataArray), bufLayout);
+        cubeIndexBuffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
         //Add buffers to array.
-        vao->addVertexBuffer(*positions_colorsVBO);
-        vao->setIndexBuffer(*indexBuffer);
-
+        vao->addVertexBuffer(*cubeVBO);
+        vao->setIndexBuffer(*cubeIndexBuffer);
+        //Enable depth.
+        Renderer::enableDepthTesting();
         static int frame = 0;
 
         //Update cycle.
@@ -241,7 +245,7 @@ namespace XEngine {
             //Model matrix.
             glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
             shaderProgram->setMatrix4("model_matrix", model_matrix);
-            shaderProgram->setInt("anim_frame", frame ++);
+            //shaderProgram->setInt("anim_frame", frame ++);
             //Camera.
             baseCamera.setProjectionMode(camIsPresp ? Camera::ProjectionMode::Perspective :
                 Camera::ProjectionMode::Ortographic);

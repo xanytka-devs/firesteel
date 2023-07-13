@@ -5,6 +5,8 @@
 
 namespace XEngine {
 
+	float Camera::farPlane = 100.f;
+
 	Camera::Camera(const glm::vec3& pos,
 		const glm::vec3& rot,
 		const ProjectionMode mode)
@@ -86,7 +88,7 @@ namespace XEngine {
 		if (projMode == ProjectionMode::Perspective) {
 			float r = 0.1f;
 			float t = 0.1f;
-			float f = 10;
+			float f = farPlane;
 			float n = 0.1f;
 			projectionMatrix = glm::mat4(n / r, 0, 0, 0,
 				0, n / t, 0, 0,

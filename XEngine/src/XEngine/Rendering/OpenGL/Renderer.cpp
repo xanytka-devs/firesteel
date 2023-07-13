@@ -39,7 +39,7 @@ namespace XEngine::OpenGL {
 		glClearColor(r, g, b, a);
 	}
 	void Renderer::clear() {
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	/// <summary>
 	/// Sets OpenGL's viewport. The range of pixels to render in.
@@ -51,6 +51,13 @@ namespace XEngine::OpenGL {
 	void Renderer::setViewport(const unsigned int width, const unsigned int height,
 		const unsigned int lOffset, const unsigned int bOffser) {
 		glViewport(lOffset, bOffser, width, height);
+	}
+
+	void Renderer::enableDepthTesting() {
+		glEnable(GL_DEPTH_TEST);
+	}
+	void Renderer::disableDepthTesting() {
+		glDisable(GL_DEPTH_TEST);
 	}
 
 	const char* Renderer::getVendorStr() {

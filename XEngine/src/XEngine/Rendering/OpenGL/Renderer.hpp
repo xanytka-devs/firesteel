@@ -15,6 +15,8 @@ namespace XEngine::OpenGL {
 		static void clear();
 		static void setViewport(const unsigned int width, const unsigned int height,
 			const unsigned int lOffset = 0, const unsigned int bOffser = 0);
+		static void enableDepthTesting();
+		static void disableDepthTesting();
 
 		static const char* getVendorStr();
 		static const char* getRendererStr();

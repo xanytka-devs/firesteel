@@ -29,6 +29,8 @@ namespace XEngine {
 		const glm::mat4& getProjectionMatrix() const { return projectionMatrix; }
 		const glm::vec3& getPosition() const { return position; }
 		const glm::vec3& getRotation() const { return rotation; }
+
+		static float farPlane;
 	private:
 		void updateViewMatrix();
 		void updateProjectionMatrix();

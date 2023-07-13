@@ -37,6 +37,7 @@ class EditorApp : public XEngine::App {
         if (ImGui::SliderFloat3("Camera rot", camRotation, 0, 360.f))
             baseCamera.setRotation(glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
         ImGui::Checkbox("Prespective", &camIsPresp);
+        ImGui::DragFloat("Far plane", &baseCamera.farPlane, 0.1f, 10000.f);
         ImGui::End();
 
     }
