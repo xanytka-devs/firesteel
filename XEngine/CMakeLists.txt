@@ -11,7 +11,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Input.hpp
 	includes/XEngine/Cursor.hpp
 	includes/XEngine/ResLoader.hpp
-	includes/stb/stb_image.h
+	includes/stb/stb_image.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Window.hpp

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "stb/stb_image.h"
+#include "stb/stb_image.hpp"
 
 #define IMAGE_LOAD(...) stbi_load(__VA_ARGS__)
 
