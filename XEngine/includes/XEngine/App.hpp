@@ -29,18 +29,18 @@ namespace XEngine {
 		float camPosition[3] = { 0.f, 0.f, 0.f };
 		float camRotation[3] = { 0.f, 0.f, 0.f };
 		bool camIsPresp = true;
-		Camera baseCamera{glm::vec3(-5.f, 0.f, 0.f)};
+		Camera baseCamera{glm::vec3(-2.f, 6.5f, 0.f)};
 
 		float bgColor[3] = { 0.15f, 0.15f, 0.15f };
 		float position[3] = { 5.f, 5.f, 5.f };
 		float rotation[3] = { 0.f, 0.f, 0.f };
 		float scale[3] = { 1.f, 1.f, 1.f };
 
-		float lightSourcePos[3] = { 0.f, 0.f, 1.f };
+		float lightSourcePos[3] = { 4.f, 0.f, 1.f };
 		float lightSourceColor[3] = { 1.f, 1.f, 1.f };
 		float ambientFactor = 0.1f;
-		float diffuseFactor = 1.f;
-		float specularFactor = 0.5f;
+		float diffuseFactor = 0.5f;
+		float specularFactor = 1.f;
 		float shininess = 32.f;
 	private:
 		void draw();

@@ -73,7 +73,8 @@ namespace XEngine {
     std::unique_ptr<ShaderProgram> lsShaderProgram;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
-    std::unique_ptr<Texture2D> quadsTexture;
+    std::unique_ptr<Texture2D> DiffuseTexture;
+    std::unique_ptr<Texture2D> specularTexture;
     std::unique_ptr<VertexArray> vao;
     std::array<glm::vec3, 5> positions = {
             glm::vec3(-2.f, -2.f, -4.f),
@@ -97,7 +98,7 @@ namespace XEngine {
 		LOG_INFO("Shutting down XEngine App.");
 	}
 
-	/// <summary>
+    /// <summary>
 	/// Creates new instance of window for application.
 	/// </summary>
 	/// <param name="win_width">Width of the window.</param>
@@ -105,13 +106,12 @@ namespace XEngine {
 	/// <param name="title">Name of the window.</param>
 	/// <returns>Exit code. Only 0 is success.</returns>
 	int App::start(unsigned int win_width, unsigned int win_height, const char* title) {
-
 		//Create window pointer.
 		mainWindow = std::make_unique<Window>(title, win_width, win_height);
         baseCamera.setViewportSize(static_cast<float>(win_width),static_cast<float>(win_height));
 		//Add event listeners.
         eventDispatcher.addEventListener<EventWindowResize>([&](EventWindowResize& event) {
-            baseCamera.setViewportSize(event.width, event.height);
+            baseCamera.setViewportSize(static_cast<float>(event.width), static_cast<float>(event.height));
             App::draw();
         });
         eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
@@ -134,22 +134,25 @@ namespace XEngine {
 		mainWindow->setEventCallback([&](BaseEvent& e) {
 			eventDispatcher.dispatch(e);
 		});
-
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Create texture.
         int width = 100;
         int height = 100;
         int channels = 3;
-        unsigned char* uvDataJPG = new unsigned char[width * height * channels];
-
+        unsigned char* uvData = new unsigned char[width * height * channels];
         ResLoader::flipImagesVertical(true);
-        uvDataJPG = IMAGE_LOAD("../../res/quads.jpg", &width, &height, &channels, 3);
-        if(!uvDataJPG) LOG_ERRR("Failed to load texture 'test_texture.jpg'");
-        const GLsizei mipLevels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
-        quadsTexture = std::make_unique<Texture2D>(uvDataJPG, width, height);
-        quadsTexture->bind(0);
-        delete[] uvDataJPG;
+        //Load quads albedo.
+        uvData = IMAGE_LOAD("../../res/quads_albedo.png", &width, &height, &channels, 3);
+        if(!uvData) LOG_ERRR("Failed to load texture 'quads_albedo.png'");
+        DiffuseTexture = std::make_unique<Texture2D>(uvData, width, height);
+        DiffuseTexture->bind(0);
+        //Load quads specular.
+        uvData = IMAGE_LOAD("../../res/quads_specular.png", &width, &height, &channels, 3);
+        if (!uvData) LOG_ERRR("Failed to load texture 'quads_specular.png'");
+        specularTexture = std::make_unique<Texture2D>(uvData, width, height);
+        specularTexture->bind(1);
+        delete[] uvData;
         //Create shader program.
         std::string vScode = ResLoader::loadText("../../res/geometry.vert");
         std::string fScode = ResLoader::loadText("../../res/geometry.frag");
@@ -183,19 +186,15 @@ namespace XEngine {
         vao->setIndexBuffer(*cubeIndexBuffer);
         //Enable depth.
         Renderer::enableDepthTesting();
+        baseCamera.setRotation(glm::vec3(0.f, 3.f, -60.f));
         onInitialized();
         //Update cycle.
 		while (!closeWindow) {
             draw();
-			mainWindow->update();
-			update();
 		}
 		mainWindow = nullptr;
-
         return 0;
-
 	}
-
 
     void App::draw() {
         //Clear color buffer.
@@ -253,6 +252,8 @@ namespace XEngine {
         onUIDraw();
         //Render ImGui.
         TUI::draw();
+        mainWindow->update();
+        update();
     }
 
     glm::vec2 App::getCursorPosition() const {
