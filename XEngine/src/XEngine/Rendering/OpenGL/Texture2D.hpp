@@ -2,9 +2,27 @@
 
 namespace XEngine::OpenGL {
 
+    enum TextureFormat {
+        Red8,
+        RGB8,
+        RGBA8,
+        SRGB8,
+        SRGBA8,
+        BGR,
+        BGRA,
+        Red16,
+        RGB16,
+        RGBA16,
+        RGB,
+        RGBA,
+        SRGB,
+        SRGBA,
+    };
+
     class Texture2D {
     public:
-        Texture2D(const unsigned char* data, const unsigned int width, const unsigned int height);
+        Texture2D(const unsigned char* data, const unsigned int width, const unsigned int height,
+            const TextureFormat internalFormat = TextureFormat::RGB8, const TextureFormat baseFormat = TextureFormat::RGB);
         ~Texture2D();
 
         Texture2D(const Texture2D&) = delete;

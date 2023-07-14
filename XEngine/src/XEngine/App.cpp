@@ -11,6 +11,7 @@
 #include "XEngine/Window.hpp"
 #include "XEngine/Log.hpp"
 #include "XEngine/UI/TUI.hpp"
+#include "XEngine/ResLoader.hpp"
 #include "XEngine/Rendering/OpenGL/ShaderProgram.hpp"
 #include "XEngine/Rendering/OpenGL/VertexBuffer.hpp"
 #include "XEngine/Rendering/OpenGL/IndexBuffer.hpp"
@@ -68,146 +69,10 @@ namespace XEngine {
         20, 21, 22, 22, 23, 20  //BOTTOM
     };
 
-    void generateCircle(unsigned char* data,
-        const unsigned int width,
-        const unsigned int height,
-        const unsigned int center_x,
-        const unsigned int center_y,
-        const unsigned int radius,
-        const unsigned char color_r,
-        const unsigned char color_g,
-        const unsigned char color_b) {
-        for (unsigned int x = 0; x < width; ++x) {
-            for (unsigned int y = 0; y < height; ++y) {
-                if ((x - center_x) * (x - center_x) + (y - center_y) * (y - center_y) < radius * radius) {
-                    data[3 * (x + width * y) + 0] = color_r;
-                    data[3 * (x + width * y) + 1] = color_g;
-                    data[3 * (x + width * y) + 2] = color_b;
-                }
-            }
-        }
-    }
-
-    void generateCentredCircleTexture(unsigned char* data,
-        const unsigned int width,
-        const unsigned int height) {
-        for (unsigned int x = 0; x < width; ++x) {
-            for (unsigned int y = 0; y < height; ++y) {
-                data[3 * (x + width * y) + 0] = 200;
-                data[3 * (x + width * y) + 1] = 191;
-                data[3 * (x + width * y) + 2] = 231;
-            }
-        }
-        generateCircle(data, width, height, width * 0.5, height * 0.5, width * 0.4, 25, 255, 25);
-    }
-
-    void generateQuadsTexture(unsigned char* data,
-        const unsigned int width,
-        const unsigned int height) {
-        for (unsigned int x = 0; x < width; ++x) {
-            for (unsigned int y = 0; y < height; ++y) {
-                if ((x < width / 2 && y < height / 2) || x >= width / 2 && y >= height / 2) {
-                    data[3 * (x + width * y) + 0] = 0;
-                    data[3 * (x + width * y) + 1] = 0;
-                    data[3 * (x + width * y) + 2] = 0;
-                } else {
-                    data[3 * (x + width * y) + 0] = 255;
-                    data[3 * (x + width * y) + 1] = 255;
-                    data[3 * (x + width * y) + 2] = 255;
-                }
-            }
-        }
-    }
-
-    const char* vertexShader =
-        R"(#version 460
-           layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec3 vertex_normal;
-           layout(location = 2) in vec2 texture_coord;
-
-           uniform mat4 model_view_matrix;
-           uniform mat4 mvp_matrix;
-           uniform mat3 normal_matrix;
-           uniform int anim_frame;
-
-           out vec2 tex_coord_circle;
-           out vec2 tex_coord_quads;
-           out vec3 frag_position;
-           out vec3 frag_normal;
-
-           void main() {
-              tex_coord_circle = texture_coord;
-              tex_coord_quads = texture_coord + vec2(anim_frame / 500.f, anim_frame / 500.f);
-              frag_normal = normal_matrix * vertex_normal;
-              frag_position = vec3(model_view_matrix * vec4(vertex_position, 1.0));
-              gl_Position = mvp_matrix * vec4(vertex_position, 1.0);
-           })";
-
-    const char* fragmentShader =
-        R"(#version 460
-           in vec2 tex_coord_circle;
-           in vec2 tex_coord_quads;
-           in vec3 frag_position;
-           in vec3 frag_normal;
-
-           layout(binding = 0) uniform sampler2D InTexture_Circle;
-           layout(binding = 1) uniform sampler2D InTexture_Quads;
-
-           uniform vec3 light_position;
-           uniform vec3 light_color;
-           uniform float ambient_factor;
-           uniform float diffuse_factor;
-           uniform float specular_factor;
-           uniform float shininess;
-
-           out vec4 frag_color;
-
-           void main() {
-              //Ambient
-              vec3 ambient = ambient_factor * light_color;
-              //Diffuse
-              vec3 normal = normalize(frag_normal);
-              vec3 light_dir = normalize(light_position - frag_position);
-              vec3 diffuse = diffuse_factor * light_color * max(dot(normal, light_dir), 0.0);
-              //Specular
-              vec3 camera_dir = normalize(-frag_position);
-              vec3 reflect_dir = reflect(-light_dir, normal);
-              float specular_value = pow(max(dot(camera_dir, reflect_dir), 0.0), shininess);
-              vec3 specular = specular_factor * specular_value * light_color;
-              //Final
-              frag_color = texture(InTexture_Circle, tex_coord_circle)
-                * texture(InTexture_Quads, tex_coord_quads)
-                * vec4(ambient + diffuse + specular, 1.f);
-           })";
-
-    const char* lsVertexShader =
-        R"(#version 460
-           layout(location = 0) in vec3 vertex_position;
-           layout(location = 1) in vec3 vertex_normal;
-           layout(location = 2) in vec2 texture_coord;
-
-           uniform mat4 mvp_matrix;
-
-           void main() {
-              gl_Position = mvp_matrix * vec4(vertex_position * 0.1f, 1.0);
-           }
-        )";
-
-    const char* lsFragmentShader =
-        R"(#version 460
-           out vec4 frag_color;
-           uniform vec3 light_color;
-
-           void main() {
-              frag_color = vec4(light_color, 1.f);
-           }
-        )";
-
     std::unique_ptr<ShaderProgram> shaderProgram;
     std::unique_ptr<ShaderProgram> lsShaderProgram;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
-    std::unique_ptr<Texture2D> circleTexture;
     std::unique_ptr<Texture2D> quadsTexture;
     std::unique_ptr<VertexArray> vao;
     std::array<glm::vec3, 5> positions = {
@@ -229,7 +94,7 @@ namespace XEngine {
 	/// Occures on app shutdown (destruction).
 	/// </summary>
 	App::~App() {
-		LOG_INFO("Shuting down XEngine App.");
+		LOG_INFO("Shutting down XEngine App.");
 	}
 
 	/// <summary>
@@ -273,26 +138,33 @@ namespace XEngine {
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Create texture.
-        const unsigned int width = 1000;
-        const unsigned int height = 1000;
-        const unsigned int channels = 3;
-        auto* uvData = new unsigned char[width * height * channels];
+        int width = 100;
+        int height = 100;
+        int channels = 3;
+        unsigned char* uvDataJPG = new unsigned char[width * height * channels];
 
-        generateCentredCircleTexture(uvData, width, height);
+        ResLoader::flipImagesVertical(true);
+        uvDataJPG = IMAGE_LOAD("../../res/quads.jpg", &width, &height, &channels, 3);
+        if(!uvDataJPG) LOG_ERRR("Failed to load texture 'test_texture.jpg'");
         const GLsizei mipLevels = static_cast<GLsizei>(log2(std::max(width, height))) + 1;
-        circleTexture = std::make_unique<Texture2D>(uvData, width, height);
-        circleTexture->bind(0);
-        generateQuadsTexture(uvData, width, height);
-        quadsTexture = std::make_unique<Texture2D>(uvData, width, height);
-        quadsTexture->bind(1);
-        delete[] uvData;
+        quadsTexture = std::make_unique<Texture2D>(uvDataJPG, width, height);
+        quadsTexture->bind(0);
+        delete[] uvDataJPG;
         //Create shader program.
+        std::string vScode = ResLoader::loadText("../../res/geometry.vert");
+        std::string fScode = ResLoader::loadText("../../res/geometry.frag");
+        const char* vertexShader = vScode.c_str();
+        const char* fragmentShader = fScode.c_str();
         shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
         if (!shaderProgram->isCompilied()) {
             LOG_CRIT("Error while compiling main shader.");
             return -110;
         }
-        lsShaderProgram = std::make_unique<ShaderProgram>(lsVertexShader, lsFragmentShader);
+        vScode = ResLoader::loadText("../../res/light_source.vert");
+        fScode = ResLoader::loadText("../../res/light_source.frag");
+        vertexShader = vScode.c_str();
+        fragmentShader = fScode.c_str();
+        lsShaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
         if (!lsShaderProgram->isCompilied()) {
             LOG_CRIT("Error while compiling light shader.");
             return -110;
@@ -324,8 +196,8 @@ namespace XEngine {
 
 	}
 
+
     void App::draw() {
-        static int frame = 0;
         //Clear color buffer.
         Renderer::setClearColorRGB(bgColor[0], bgColor[1], bgColor[2]);
         Renderer::clear();
@@ -349,9 +221,8 @@ namespace XEngine {
             position[0], position[1], position[2], 1);
         //Model matrix.
         glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
-        if(!disableAnimations)
-            shaderProgram->setInt("anim_frame", frame++);
-        shaderProgram->setVector3("light_position", glm::vec3(baseCamera.getViewMatrix() * glm::vec4(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1.f)));
+        shaderProgram->setVector3("light_position", glm::vec3(baseCamera.getViewMatrix()
+            * glm::vec4(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1.f)));
         shaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
         shaderProgram->setFloat("ambient_factor", ambientFactor);
         shaderProgram->setFloat("diffuse_factor", diffuseFactor);
@@ -389,6 +260,7 @@ namespace XEngine {
     }
 
     void App::exit() {
+        App::onExit();
         closeWindow = true;
     }
 

@@ -5,13 +5,49 @@
 #include "Texture2D.hpp"
 
 namespace XEngine::OpenGL {
-    Texture2D::Texture2D(const unsigned char* data, const unsigned int width, const unsigned int height)
-        : width(width)
-        , height(height) {
+
+    GLenum TextureFormat_to_GLFormat(TextureFormat format) {
+        switch (format) {
+            case XEngine::OpenGL::Red8:
+                return GL_R8;
+            case XEngine::OpenGL::RGB8:
+                return GL_RGB8;
+            case XEngine::OpenGL::RGBA8:
+                return GL_RGBA8;
+            case XEngine::OpenGL::SRGB8:
+                return GL_SRGB8;
+            case XEngine::OpenGL::SRGBA8:
+                return GL_SRGB8_ALPHA8;
+            case XEngine::OpenGL::BGR:
+                return GL_BGR;
+            case XEngine::OpenGL::BGRA:
+                return GL_BGRA;
+            case XEngine::OpenGL::Red16:
+                return GL_R16;
+            case XEngine::OpenGL::RGB16:
+                return GL_RGB16;
+            case XEngine::OpenGL::RGBA16:
+                return GL_RGBA16;
+            case XEngine::OpenGL::RGB:
+                return GL_RGB;
+            case XEngine::OpenGL::RGBA:
+                return GL_RGBA;
+            case XEngine::OpenGL::SRGB:
+                return GL_SRGB;
+            case XEngine::OpenGL::SRGBA:
+                return GL_SRGB_ALPHA;
+            default:
+                return GL_RGB;
+        }
+    }
+
+    Texture2D::Texture2D(const unsigned char* data, const unsigned int width, const unsigned int height,
+        const TextureFormat internalFormat, const TextureFormat baseFormat)
+        : width(width), height(height) {
         glCreateTextures(GL_TEXTURE_2D, 1, &curID);
         const GLsizei mip_levels = static_cast<GLsizei>(std::log2(std::max(width, height))) + 1;
-        glTextureStorage2D(curID, mip_levels, GL_RGB8, width, height);
-        glTextureSubImage2D(curID, 0, 0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTextureStorage2D(curID, mip_levels, TextureFormat_to_GLFormat(internalFormat), width, height);
+        glTextureSubImage2D(curID, 0, 0, 0, width, height, TextureFormat_to_GLFormat(baseFormat), GL_UNSIGNED_BYTE, data);
         glTextureParameteri(curID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(curID, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTextureParameteri(curID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

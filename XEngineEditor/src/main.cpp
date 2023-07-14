@@ -37,7 +37,6 @@ class EditorApp : public XEngine::App {
         ImGui::DragFloat3("Position", position, -1.f, 1.f);
         ImGui::DragFloat3("Rotation", rotation, 0.f, 360.f);
         ImGui::DragFloat3("Scale", scale, 0.f, 2.f);
-        ImGui::Checkbox("Disable animations", &disableAnimations);
         ImGui::End();
         //Editor camera
         ImGui::Begin("Camera");

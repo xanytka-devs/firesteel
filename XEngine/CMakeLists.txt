@@ -10,6 +10,8 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Keys.hpp
 	includes/XEngine/Input.hpp
 	includes/XEngine/Cursor.hpp
+	includes/XEngine/ResLoader.hpp
+	includes/stb/stb_image.h
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Window.hpp
@@ -28,6 +30,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Cursor.cpp
 	src/XEngine/Camera.cpp
 	src/XEngine/UI/TUI.cpp
+	src/XEngine/ResLoader.cpp
 	src/XEngine/Rendering/OpenGL/ShaderProgram.cpp
 	src/XEngine/Rendering/OpenGL/VertexBuffer.cpp
 	src/XEngine/Rendering/OpenGL/VertexArray.cpp
@@ -50,6 +53,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
 )
 
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC includes)
+target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC stb)
 target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
 target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 

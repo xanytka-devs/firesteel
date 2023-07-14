@@ -22,6 +22,7 @@ namespace XEngine {
 		virtual void update() { }
 		virtual void onUIDraw() { }
 		virtual void onInitialized() { }
+		virtual void onExit() { }
 
 		glm::vec2 getCursorPosition() const;
 
@@ -30,11 +31,10 @@ namespace XEngine {
 		bool camIsPresp = true;
 		Camera baseCamera{glm::vec3(-5.f, 0.f, 0.f)};
 
-		float bgColor[3] = { 0.5f, 0.5f, 0.5f };
+		float bgColor[3] = { 0.15f, 0.15f, 0.15f };
 		float position[3] = { 5.f, 5.f, 5.f };
 		float rotation[3] = { 0.f, 0.f, 0.f };
 		float scale[3] = { 1.f, 1.f, 1.f };
-		bool disableAnimations = true;
 
 		float lightSourcePos[3] = { 0.f, 0.f, 1.f };
 		float lightSourceColor[3] = { 1.f, 1.f, 1.f };
