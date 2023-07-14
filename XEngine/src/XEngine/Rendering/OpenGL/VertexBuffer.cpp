@@ -124,13 +124,17 @@ namespace XEngine::OpenGL {
 	/// Applies current vertex buffer to OpenGL.
 	/// </summary>
 	void VertexBuffer::bind() const {
+#if GL_MAJOR_VERSION < 3 && GL_MINOR_VERSION < 4
 		glBindBuffer(GL_ARRAY_BUFFER, curID);
+#endif
 	}
 	/// <summary>
 	/// Removes current vertex buffer from OpenGL.
 	/// </summary>
 	void VertexBuffer::unbind() {
+#if GL_MAJOR_VERSION < 3 && GL_MINOR_VERSION < 4
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 	}
 
 }

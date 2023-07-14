@@ -38,6 +38,8 @@ namespace XEngine {
             return -100;
         }
 
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+
         //Create a windowed mode window and its OpenGL context.
         window = glfwCreateWindow(w_data.width, w_data.height, w_data.title.c_str(), nullptr, nullptr);
         if (!window) {

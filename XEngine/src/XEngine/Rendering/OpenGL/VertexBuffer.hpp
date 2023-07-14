@@ -61,6 +61,7 @@ namespace XEngine::OpenGL {
 
 		void bind() const;
 		static void unbind();
+		unsigned int getHandle() const { return curID; }
 		const BufferLayout& getLayout() const { return layout; }
 	private:
 		unsigned int curID = 0;

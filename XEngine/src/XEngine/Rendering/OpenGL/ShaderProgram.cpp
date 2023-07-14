@@ -61,7 +61,7 @@ namespace XEngine::OpenGL {
 		glLinkProgram(curID);
 		//Check compilation status.
 		GLint success;
-		glGetShaderiv(curID, GL_COMPILE_STATUS, &success);
+		glGetProgramiv(curID, GL_LINK_STATUS, &success);
 		if (success == GL_FALSE) {
 			//Get what went wrong.
 			char infoLog[1024];

@@ -44,6 +44,20 @@ namespace XEngine::OpenGL {
 	void VertexArray::addVertexBuffer(const VertexBuffer& vertexBuffer) {
 		//Apply vertex array and buffer to OpenGL.
 		bind();
+#if GL_MAJOR_VERSION >= 3 && GL_MINOR_VERSION >= 4
+		//Add buffer to array and count.
+		for (const BufferElement& curElement : vertexBuffer.getLayout().getElements()) {
+			//Do some wizardry!
+			glEnableVertexAttribArray(elementsCount);
+			glBindVertexBuffer(elementsCount, vertexBuffer.getHandle(),
+				curElement.offset, static_cast<GLsizei>(vertexBuffer.getLayout().getStride()));
+			glVertexAttribFormat(elementsCount, static_cast<GLuint>(curElement.componentsCount),
+				curElement.componentType, GL_FALSE, 0);
+			glVertexAttribBinding(elementsCount, elementsCount);
+			//Add 1 to elements count.
+			elementsCount++;
+		}
+#else
 		vertexBuffer.bind();
 		//Add buffer to array and count.
 		for (const BufferElement& curElement : vertexBuffer.getLayout().getElements()) {
@@ -58,6 +72,7 @@ namespace XEngine::OpenGL {
 			//Add 1 to elements count.
 			elementsCount++;
 		}
+#endif
 	}
 
 	/// <summary>
