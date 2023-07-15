@@ -19,7 +19,8 @@
 #include "XEngine/Rendering/OpenGL/Renderer.hpp"
 #include "XEngine/Rendering/OpenGL/Texture2D.hpp"
 #include "XEngine/Camera.hpp"
-#include "XEngine/Input.hpp"
+#include "XEngine/Input/Input.hpp"
+#include "Rendering/OpenGL/Material.hpp"
 
 namespace XEngine {
 	
@@ -69,13 +70,10 @@ namespace XEngine {
         20, 21, 22, 22, 23, 20  //BOTTOM
     };
 
-    std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<ShaderProgram> lsShaderProgram;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
-    std::unique_ptr<Texture2D> diffuseTexture;
-    std::unique_ptr<Texture2D> specularTexture;
-    std::unique_ptr<Texture2D> emissionTexture;
+    std::unique_ptr<Material> cubeMaterial;
+    std::unique_ptr<Material> lightSourceMaterial;
     std::unique_ptr<VertexArray> vao;
     std::array<glm::vec3, 5> positions = {
             glm::vec3(-2.f, -2.f, -4.f),
@@ -143,41 +141,27 @@ namespace XEngine {
         int channels = 3;
         unsigned char* uvData = new unsigned char[width * height * channels];
         ResLoader::flipImagesVertical(true);
-        //Load quads diffusion map.
-        uvData = IMAGE_LOAD("../../res/quads_diffusion.png", &width, &height, &channels, 3);
-        if(!uvData) LOG_ERRR("Failed to load texture 'quads_diffusion.png'");
-        diffuseTexture = std::make_unique<Texture2D>(uvData, width, height);
-        diffuseTexture->bind(0);
-        //Load quads specular map.
-        uvData = IMAGE_LOAD("../../res/quads_specular.png", &width, &height, &channels, 3);
-        if (!uvData) LOG_ERRR("Failed to load texture 'quads_specular.png'");
-        specularTexture = std::make_unique<Texture2D>(uvData, width, height);
-        specularTexture->bind(1);
-        //Load quads emission map.
-        uvData = IMAGE_LOAD("../../res/quads_emission.png", &width, &height, &channels, 3);
-        if (!uvData) LOG_ERRR("Failed to load texture 'quads_emission.png'");
-        emissionTexture = std::make_unique<Texture2D>(uvData, width, height);
-        emissionTexture->bind(2);
-        delete[] uvData;
-        //Create shader program.
         std::string vScode = ResLoader::loadText("../../res/geometry.vert");
         std::string fScode = ResLoader::loadText("../../res/geometry.frag");
         const char* vertexShader = vScode.c_str();
         const char* fragmentShader = fScode.c_str();
-        shaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
-        if (!shaderProgram->isCompilied()) {
-            LOG_CRIT("Error while compiling main shader.");
-            return -110;
-        }
+        cubeMaterial = std::make_unique<Material>("Geometry", vScode.c_str(), fScode.c_str());
         vScode = ResLoader::loadText("../../res/light_source.vert");
         fScode = ResLoader::loadText("../../res/light_source.frag");
         vertexShader = vScode.c_str();
         fragmentShader = fScode.c_str();
-        lsShaderProgram = std::make_unique<ShaderProgram>(vertexShader, fragmentShader);
-        if (!lsShaderProgram->isCompilied()) {
-            LOG_CRIT("Error while compiling light shader.");
-            return -110;
-        }
+        lightSourceMaterial = std::make_unique<Material>("Light", vScode.c_str(), fScode.c_str());
+        //Load quads diffusion map.
+        uvData = ResLoader::loadImage("../../res/quads_diffusion.png", &width, &height, &channels, 3);
+        cubeMaterial->addTexture(new Texture2D(uvData, width, height));
+        //Load quads specular map.
+        uvData = ResLoader::loadImage("../../res/quads_specular.png", &width, &height, &channels, 3);
+        cubeMaterial->addTexture(new Texture2D(uvData, width, height));
+        //Load quads emission map.
+        uvData = ResLoader::loadImage("../../res/quads_emission.png", &width, &height, &channels, 3);
+        cubeMaterial->addTexture(new Texture2D(uvData, width, height));
+        delete[] uvData;
+        //Create shader program.
         //Vertex buffers and array.
         BufferLayout bufLayout{
             ShaderDataType::Float3,
@@ -208,7 +192,7 @@ namespace XEngine {
         Renderer::clear();
         // TODO: Move to other class.
         //Render triangle.
-        shaderProgram->bind();
+        cubeMaterial->bind();
         //Scale matrix.
         glm::mat4 scaleMatrix(scale[0], 0, 0, 0, 0, scale[1], 0, 0, 0, 0, scale[2], 0, 0, 0, 0, 1);
         //Rotate matrix.
@@ -226,32 +210,32 @@ namespace XEngine {
             position[0], position[1], position[2], 1);
         //Model matrix.
         glm::mat4 model_matrix = scaleMatrix * (rotationXMatrix * rotationYMatrix * rotationZMatrix) * positionMatrix;
-        shaderProgram->setVector3("light_position", glm::vec3(baseCamera.getViewMatrix()
+        cubeMaterial->setVector3("light_position", glm::vec3(baseCamera.getViewMatrix()
             * glm::vec4(lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1.f)));
-        shaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
-        shaderProgram->setFloat("ambient_factor", ambientFactor);
-        shaderProgram->setFloat("diffuse_factor", diffuseFactor);
-        shaderProgram->setFloat("specular_factor", specularFactor);
-        shaderProgram->setFloat("shininess", shininess);
-        shaderProgram->setFloat("emission_factor", emission);
-        shaderProgram->setVector3("emission_color", glm::vec3(emissionColor[0], emissionColor[1], emissionColor[2]));
+        cubeMaterial->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
+        cubeMaterial->setFloat("ambient_factor", ambientFactor);
+        cubeMaterial->setFloat("diffuse_factor", diffuseFactor);
+        cubeMaterial->setFloat("specular_factor", specularFactor);
+        cubeMaterial->setFloat("shininess", shininess);
+        cubeMaterial->setFloat("emission_factor", emission);
+        cubeMaterial->setVector3("emission_color", glm::vec3(emissionColor[0], emissionColor[1], emissionColor[2]));
         //Render.
         Renderer::draw(*vao);
         for (const glm::vec3& curPos : positions) {
             glm::mat4 translateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
                 0, 0, 1, 0, curPos[0], curPos[1], curPos[2], 1);
             const glm::mat4 modelViewMatrix = baseCamera.getViewMatrix() * translateMatrix;
-            shaderProgram->setMatrix4("model_view_matrix", modelViewMatrix);
-            shaderProgram->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * modelViewMatrix);
-            shaderProgram->setMatrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(modelViewMatrix))));
+            cubeMaterial->setMatrix4("model_view_matrix", modelViewMatrix);
+            cubeMaterial->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * modelViewMatrix);
+            cubeMaterial->setMatrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(modelViewMatrix))));
             Renderer::draw(*vao);
         }
         //Light source.        
-        lsShaderProgram->bind();
+        lightSourceMaterial->bind();
         glm::mat4 lsTranslateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
             0, 0, 1, 0, lightSourcePos[0], lightSourcePos[1], lightSourcePos[2], 1);
-        lsShaderProgram->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix() * lsTranslateMatrix);
-        lsShaderProgram->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
+        lightSourceMaterial->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * baseCamera.getViewMatrix() * lsTranslateMatrix);
+        lightSourceMaterial->setVector3("light_color", glm::vec3(lightSourceColor[0], lightSourceColor[1], lightSourceColor[2]));
         Renderer::draw(*vao);
         //Create new frame for ImGui.
         TUI::update();

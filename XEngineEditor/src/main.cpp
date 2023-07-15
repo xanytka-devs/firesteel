@@ -4,7 +4,7 @@
 #include <imgui_internal.h>
 
 #include <XEngine/App.hpp>
-#include <XEngine/Input.hpp>
+#include <XEngine/Input/Input.hpp>
 #include "UI.hpp"
 
 class EditorApp : public XEngine::App {

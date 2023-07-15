@@ -2,7 +2,7 @@
 
 #include <glm/ext/vector_float2.hpp>
 
-#include "XEngine/Keys.hpp"
+#include "XEngine/Input/Keys.hpp"
 
 namespace XEngine {
 

@@ -6,10 +6,12 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/App.hpp
 	includes/XEngine/Log.hpp
 	includes/XEngine/Event.hpp
+	includes/XEngine/Components/Transform.hpp
+	includes/XEngine/Entity.hpp
 	includes/XEngine/Camera.hpp
-	includes/XEngine/Keys.hpp
-	includes/XEngine/Input.hpp
-	includes/XEngine/Cursor.hpp
+	includes/XEngine/Input/Keys.hpp
+	includes/XEngine/Input/Input.hpp
+	includes/XEngine/Input/Cursor.hpp
 	includes/XEngine/ResLoader.hpp
 	includes/stb/stb_image.hpp
 )
@@ -22,12 +24,15 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Rendering/OpenGL/IndexBuffer.hpp
 	src/XEngine/Rendering/OpenGL/Renderer.hpp
 	src/XEngine/Rendering/OpenGL/Texture2D.hpp
+	src/XEngine/Rendering/OpenGL/Material.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
 	src/XEngine/Window.cpp
-	src/XEngine/Input.cpp
-	src/XEngine/Cursor.cpp
+	src/XEngine/Input/Input.cpp
+	src/XEngine/Input/Cursor.cpp
+	src/XEngine/Components/Transform.cpp
+	src/XEngine/Entity.cpp
 	src/XEngine/Camera.cpp
 	src/XEngine/UI/TUI.cpp
 	src/XEngine/ResLoader.cpp
@@ -37,6 +42,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/OpenGL/IndexBuffer.cpp
 	src/XEngine/Rendering/OpenGL/Renderer.cpp
 	src/XEngine/Rendering/OpenGL/Texture2D.cpp
+	src/XEngine/Rendering/OpenGL/Material.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}

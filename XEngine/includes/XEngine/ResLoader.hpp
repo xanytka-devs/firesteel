@@ -3,10 +3,10 @@
 #include <string>
 #include "stb/stb_image.hpp"
 
-#define IMAGE_LOAD(...) stbi_load(__VA_ARGS__)
-
 class ResLoader {
 public:
 	static void flipImagesVertical(bool flip);
+	static stbi_uc* loadImage(char const* file, int* width, int* height, int* comp, int req_comp);
+
 	static std::string loadText(const char* path);
 };

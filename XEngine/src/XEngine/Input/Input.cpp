@@ -1,5 +1,5 @@
-#include "XEngine/Input.hpp"
-#include "XEngine/Cursor.hpp"
+#include "XEngine/Input/Input.hpp"
+#include "XEngine/Input/Cursor.hpp"
 
 namespace XEngine {
 
