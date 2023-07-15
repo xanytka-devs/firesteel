@@ -32,7 +32,7 @@ class EditorApp : public XEngine::App {
         //Editor main
         ImGui::Begin("Editor");
         ImGui::Text("General Testing");
-        ImGui::ColorEdit3("Bg Color", App::bgColor);
+        ImGui::ColorEdit3("Bg Color", bgColor);
         ImGui::Text("Matrix Operations");
         ImGui::DragFloat3("Position", position, -1.f, 1.f);
         ImGui::DragFloat3("Rotation", rotation, 0.f, 360.f);
@@ -55,12 +55,14 @@ class EditorApp : public XEngine::App {
         //Editor light
         ImGui::Begin("Light");
         ImGui::Text("Light Source");
-        ImGui::DragFloat3("LS Position", App::lightSourcePos, -1.f, 1.f);
-        ImGui::ColorEdit3("LS Color", App::lightSourceColor);
+        ImGui::DragFloat3("LS position", lightSourcePos, -1.f, 1.f);
+        ImGui::ColorEdit3("LS color", lightSourceColor);
         ImGui::SliderFloat("Ambient factor", &ambientFactor, 0.f, 1.f);
         ImGui::SliderFloat("Diffuse factor", &diffuseFactor, 0.f, 1.f);
         ImGui::SliderFloat("Specular factor", &specularFactor, 0.f, 1.f);
         ImGui::SliderFloat("Shininess", &shininess, 1.f, 128.f);
+        ImGui::SliderFloat("Emission factor", &emission, 0.f, 2.f);
+        ImGui::ColorEdit3("Emission color", emissionColor);
         ImGui::End();
     }
 

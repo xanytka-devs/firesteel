@@ -42,6 +42,8 @@ namespace XEngine {
 		float diffuseFactor = 0.5f;
 		float specularFactor = 1.f;
 		float shininess = 32.f;
+		float emission = 0.f;
+		float emissionColor[3] = { 1.f, 1.f, 1.f };
 	private:
 		void draw();
 		std::unique_ptr<class Window> mainWindow;

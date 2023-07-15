@@ -73,8 +73,9 @@ namespace XEngine {
     std::unique_ptr<ShaderProgram> lsShaderProgram;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
-    std::unique_ptr<Texture2D> DiffuseTexture;
+    std::unique_ptr<Texture2D> diffuseTexture;
     std::unique_ptr<Texture2D> specularTexture;
+    std::unique_ptr<Texture2D> emissionTexture;
     std::unique_ptr<VertexArray> vao;
     std::array<glm::vec3, 5> positions = {
             glm::vec3(-2.f, -2.f, -4.f),
@@ -142,16 +143,21 @@ namespace XEngine {
         int channels = 3;
         unsigned char* uvData = new unsigned char[width * height * channels];
         ResLoader::flipImagesVertical(true);
-        //Load quads albedo.
-        uvData = IMAGE_LOAD("../../res/quads_albedo.png", &width, &height, &channels, 3);
-        if(!uvData) LOG_ERRR("Failed to load texture 'quads_albedo.png'");
-        DiffuseTexture = std::make_unique<Texture2D>(uvData, width, height);
-        DiffuseTexture->bind(0);
-        //Load quads specular.
+        //Load quads diffusion map.
+        uvData = IMAGE_LOAD("../../res/quads_diffusion.png", &width, &height, &channels, 3);
+        if(!uvData) LOG_ERRR("Failed to load texture 'quads_diffusion.png'");
+        diffuseTexture = std::make_unique<Texture2D>(uvData, width, height);
+        diffuseTexture->bind(0);
+        //Load quads specular map.
         uvData = IMAGE_LOAD("../../res/quads_specular.png", &width, &height, &channels, 3);
         if (!uvData) LOG_ERRR("Failed to load texture 'quads_specular.png'");
         specularTexture = std::make_unique<Texture2D>(uvData, width, height);
         specularTexture->bind(1);
+        //Load quads emission map.
+        uvData = IMAGE_LOAD("../../res/quads_emission.png", &width, &height, &channels, 3);
+        if (!uvData) LOG_ERRR("Failed to load texture 'quads_emission.png'");
+        emissionTexture = std::make_unique<Texture2D>(uvData, width, height);
+        emissionTexture->bind(2);
         delete[] uvData;
         //Create shader program.
         std::string vScode = ResLoader::loadText("../../res/geometry.vert");
@@ -227,6 +233,8 @@ namespace XEngine {
         shaderProgram->setFloat("diffuse_factor", diffuseFactor);
         shaderProgram->setFloat("specular_factor", specularFactor);
         shaderProgram->setFloat("shininess", shininess);
+        shaderProgram->setFloat("emission_factor", emission);
+        shaderProgram->setVector3("emission_color", glm::vec3(emissionColor[0], emissionColor[1], emissionColor[2]));
         //Render.
         Renderer::draw(*vao);
         for (const glm::vec3& curPos : positions) {

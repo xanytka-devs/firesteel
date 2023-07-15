@@ -1,1 +1,5 @@
-Картинки "box_albedo.png" и "box_specular.png" происходят с источника: https://learnopengl.com/Lighting/Lighting-maps
+Картинки
+	"box_diffusion.png",
+	"box_specular.png",
+	"box_emission.png"
+		происходят с источника: https://learnopengl.com/Lighting/Lighting-maps
