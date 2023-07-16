@@ -7,12 +7,14 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Log.hpp
 	includes/XEngine/Event.hpp
 	includes/XEngine/Components/Transform.hpp
+	includes/XEngine/Components/Component.hpp
 	includes/XEngine/Entity.hpp
 	includes/XEngine/Camera.hpp
 	includes/XEngine/Input/Keys.hpp
 	includes/XEngine/Input/Input.hpp
 	includes/XEngine/Input/Cursor.hpp
 	includes/XEngine/ResLoader.hpp
+	includes/XEngine/SceneManager.hpp
 	includes/stb/stb_image.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
@@ -25,6 +27,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Rendering/OpenGL/Renderer.hpp
 	src/XEngine/Rendering/OpenGL/Texture2D.hpp
 	src/XEngine/Rendering/OpenGL/Material.hpp
+	src/XEngine/Scene.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
@@ -32,6 +35,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Input/Input.cpp
 	src/XEngine/Input/Cursor.cpp
 	src/XEngine/Components/Transform.cpp
+	src/XEngine/Components/Component.cpp
 	src/XEngine/Entity.cpp
 	src/XEngine/Camera.cpp
 	src/XEngine/UI/TUI.cpp
@@ -43,6 +47,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/OpenGL/Renderer.cpp
 	src/XEngine/Rendering/OpenGL/Texture2D.cpp
 	src/XEngine/Rendering/OpenGL/Material.cpp
+	src/XEngine/Scene.cpp
+	src/XEngine/SceneManager.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}

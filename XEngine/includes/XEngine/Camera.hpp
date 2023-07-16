@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Entity.hpp"
 #include <glm/vec3.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 
 namespace XEngine {
 
-	class Camera {
+	class Camera : Entity, Transform {
 	public:
 		enum class ProjectionMode {
 			Perspective,
@@ -46,7 +47,7 @@ namespace XEngine {
 		void updateProjectionMatrix();
 
 		glm::vec3 position;
-		glm::vec3 rotation; // X=Roll,Y=Pitch,Z=Yaw
+		glm::vec3 rotation; // X=Roll,Y=Yaw,Z=Pitch
 		ProjectionMode projMode;
 
 		glm::vec3 forward;
