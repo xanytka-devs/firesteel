@@ -5,8 +5,8 @@ namespace XEngine {
 	size_t SceneManager::scenesAmount = 0;
 
 	void SceneManager::addScene(const Scene scene) {
-		scenes[scenesAmount] = scene;
-		scenesAmount++;
+		/*scenes[scenesAmount] = scene;
+		scenesAmount++;*/
 	}
 	void SceneManager::removeScene(const int id) {
 		/*const int amount = scenesAmount - 1;

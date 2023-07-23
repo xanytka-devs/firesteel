@@ -1,6 +1,7 @@
-#include "XEngine/Components/Component.hpp"
+#include "XEngine/CES.hpp"
 
 namespace XEngine {
 	Component::~Component() {
+
 	}
 }

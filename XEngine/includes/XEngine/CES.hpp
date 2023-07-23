@@ -7,22 +7,47 @@
 #include <bitset>
 #include <array>
 
-#include "Components/Component.hpp"
-
 namespace XEngine {
+
+	class Component;
+	class Entity;
+
+	using ComponentID = size_t;
+
+	inline ComponentID getComponentID() {
+		static ComponentID lastID = 0;
+		return lastID++;
+	}
+
+	template <typename T> inline ComponentID getComponentID() noexcept {
+		static ComponentID typeID = getComponentID();
+		return typeID;
+	}
+
+	constexpr size_t maxComponents = 32;
+	using ComponentBitSet = std::bitset<maxComponents>();
+	using ComponentArray = std::array<Component*, maxComponents>();
+
+	class Component {
+	public:
+		~Component();
+
+		Entity* entity;
+
+		virtual void initialized() { }
+		virtual void start() { }
+		virtual void update() { }
+		virtual void onDestroy() { }
+	};
 
 	class Entity {
 	public:
-		//Entity();
-		//~Entity();
-
-		std::vector<std::unique_ptr<Component>> components;
-
 		//Transform* transform;
+
 		void setActive(bool status) { enabled = status; }
 		void update() {
-			if(!enabled) return;
-			for(auto& c : components) c->update();
+			if (!enabled) return;
+			for (auto& c : components) c->update();
 		}
 		void destroy() {
 			for (auto& c : components) c->onDestroy();
@@ -51,14 +76,14 @@ namespace XEngine {
 			return *static_cast<T*>(ptr);
 		}
 	private:
-		unsigned int curId = 0;
 		bool enabled = true;
+		std::vector<std::unique_ptr<Component>> components;
 		size_t componentsAmount = 0;
 		ComponentArray componentArray;
 		ComponentBitSet componentBitSet;
 	};
 
-	class EntityManager {
+	class Scene {
 	public:
 		void update() {
 			for (auto& e : entities) e->update();
@@ -78,6 +103,5 @@ namespace XEngine {
 	private:
 		std::vector<std::unique_ptr<Entity>> entities;
 	};
-
 
 }

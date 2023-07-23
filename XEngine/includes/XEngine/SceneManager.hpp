@@ -1,6 +1,6 @@
 #pragma once
 
-#include "XEngine/Scene.hpp"
+#include "CES.hpp"
 
 namespace XEngine {
 
