@@ -28,15 +28,15 @@ namespace XEngine {
 		return viewMatrix;
 	}
 
-	void Camera::transform {
-		doUpdateViewMatrix = true;
+	/*void Camera::Transform::onPositionChanged() {
+		Camera::doUpdateViewMatrix = true;
 	}
 	void Camera::Transform::onRotationChanged() {
-		doUpdateViewMatrix = true;
+		Camera::doUpdateViewMatrix = true;
 	}
 	void Camera::Transform::onScaleChanged() {
 		return;
-	}
+	}*/
 
 	void Camera::setPosition(const glm::vec3& pos) {
 		position = pos;

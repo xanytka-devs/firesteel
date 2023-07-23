@@ -5,6 +5,16 @@
 
 namespace XEngine {
 
+	class TransformID {
+	public:
+		const size_t getComponentID() {
+			lastID++;
+			return lastID;
+		}
+	private:
+		size_t lastID = 0;
+	};
+
 	class Transform {
 	public:
 		Transform(const glm::vec3 pos = glm::vec3(0.f, 0.f, 0.f),
@@ -30,9 +40,9 @@ namespace XEngine {
 		static constexpr glm::vec3 worldRight{ 0.f, 0.f, -1.f };
 		static constexpr glm::vec3 worldForward{ 1.f, 0.f, 0.f };
 
-		const void onPositionChanged() { modelMatrix = CalculateMatrix(); }
-		const void onRotationChanged() { modelMatrix = CalculateMatrix(); }
-		const void onScaleChanged() { modelMatrix = CalculateMatrix(); }
+		virtual void onPositionChanged() { modelMatrix = CalculateMatrix(); }
+		virtual void onRotationChanged() { modelMatrix = CalculateMatrix(); }
+		virtual void onScaleChanged() { modelMatrix = CalculateMatrix(); }
 
 		void setPosition(const glm::vec3& pos);
 		void setRotation(const glm::vec3& rot);

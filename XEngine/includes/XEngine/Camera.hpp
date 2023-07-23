@@ -6,7 +6,7 @@
 
 namespace XEngine {
 
-	class Camera : Entity, Transform {
+	class Camera : Component {
 	public:
 		enum class ProjectionMode {
 			Perspective,

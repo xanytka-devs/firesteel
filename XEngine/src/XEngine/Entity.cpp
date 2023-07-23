@@ -2,16 +2,12 @@
 
 namespace XEngine {
 
-	Entity::Entity() {
-		transform = std::make_unique<Transform>();
+	/*Entity::Entity() {
+		//transform = new Transform();
 	}
 
 	Entity::~Entity() {
 		curId = 0;
-	}
-
-	/*void Entity::AddComponent(const Component* component) {
-		
 	}*/
 
 }
