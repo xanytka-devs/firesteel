@@ -86,7 +86,7 @@ namespace XEngine {
 	class Scene {
 	public:
 		void update() {
-			for (auto& e : entities) e->update();
+			for(auto& e : entities) e->update();
 		}
 		void refresh() {
 			entities.erase(std::remove_if(std::begin(entities), std::end(entities),

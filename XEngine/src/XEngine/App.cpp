@@ -21,6 +21,7 @@
 #include "XEngine/Camera.hpp"
 #include "XEngine/Input/Input.hpp"
 #include "Rendering/OpenGL/Material.hpp"
+#include "XEngine/SceneManager.hpp"
 
 namespace XEngine {
 	
@@ -75,6 +76,7 @@ namespace XEngine {
     std::unique_ptr<Material> cubeMaterial;
     std::unique_ptr<Material> lightSourceMaterial;
     std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<SceneManager> manager;
     std::array<glm::vec3, 5> positions = {
             glm::vec3(-2.f, -2.f, -4.f),
             glm::vec3(-5.f,  0.f,  3.f),
@@ -135,6 +137,9 @@ namespace XEngine {
 		});
         //Instance all data to draw triangle.
         // TODO: Move to other class.
+        //Instantiate scene.
+        Scene main = SceneManager::Instance->addScene();
+        //manager = std::make_unique<SceneManager>();
         //Create texture.
         int width = 100;
         int height = 100;
@@ -187,6 +192,8 @@ namespace XEngine {
 	}
 
     void App::draw() {
+        //Update scenes.
+        //manager->update();
         //Clear color buffer.
         Renderer::setClearColorRGB(bgColor[0], bgColor[1], bgColor[2]);
         Renderer::clear();

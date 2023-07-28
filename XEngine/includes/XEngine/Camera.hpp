@@ -1,8 +1,9 @@
 #pragma once
 
-#include "CES.hpp"
 #include <glm/vec3.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
+
+#include "CES.hpp"
 
 namespace XEngine {
 
