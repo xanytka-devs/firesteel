@@ -17,6 +17,7 @@ namespace XEngine {
 		MouseButtonDown,
 		MouseButtonUp,
 		MouseMove,
+		MouseScroll,
 
 		EventsCount
 	};
@@ -30,8 +31,7 @@ namespace XEngine {
 		virtual EventType getType() const = 0;
 	};
 
-    class EventDispatcher
-    {
+    class EventDispatcher {
     public:
         template<typename EventType>
         void addEventListener(std::function<void(EventType&)> callback) {
@@ -65,6 +65,24 @@ namespace XEngine {
 
 		double x, y;
 		static const EventType type = EventType::MouseMove;
+
+	};
+
+	struct EventMouseScroll : public BaseEvent {
+
+		/// <summary>
+		/// Main function of event MouseMove.
+		/// </summary>
+		/// <param name="newX">New mouse X.</param>
+		/// <param name="newY">New mouse Y.</param>
+		EventMouseScroll(const double newX, const double newY)
+			: x(newX), y(newY) { }
+		virtual EventType getType() const override {
+			return type;
+		}
+
+		double x, y;
+		static const EventType type = EventType::MouseScroll;
 
 	};
 

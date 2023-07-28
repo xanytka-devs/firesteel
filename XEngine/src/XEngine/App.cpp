@@ -138,7 +138,7 @@ namespace XEngine {
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Instantiate scene.
-        Scene main = SceneManager::Instance->addScene();
+        //Scene main = SceneManager::Instance->addScene();
         //manager = std::make_unique<SceneManager>();
         //Create texture.
         int width = 100;

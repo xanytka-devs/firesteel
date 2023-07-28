@@ -38,6 +38,7 @@ namespace XEngine {
 		void unloadScene(const int id);
 	private:
 		bool instantiated = false;
+		size_t maxScenes = 128;
 		size_t scenesAmount = 0;
 		//static bool loadedScenes[];
 		std::vector<std::unique_ptr<Scene>> scenes;

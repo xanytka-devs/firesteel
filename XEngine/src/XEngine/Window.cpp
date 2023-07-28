@@ -93,6 +93,9 @@ namespace XEngine {
                 }
             }
         });
+        glfwSetScrollCallback(window, [](GLFWwindow* pWindow, double x, double y) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+        });
         glfwSetWindowSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
             data.width = width;
