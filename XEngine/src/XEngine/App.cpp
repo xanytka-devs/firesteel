@@ -4,6 +4,7 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 #include <glm/mat3x3.hpp>
+#include <glm/vec2.hpp>
 #include <glm/trigonometric.hpp>
 
 #include "XEngine/App.hpp"
@@ -118,7 +119,12 @@ namespace XEngine {
         eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
             App::exit();
 		});
-        eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {});
+        eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {
+            Input::setMousePosition(glm::vec2(event.x, event.y));
+        });
+        eventDispatcher.addEventListener<EventMouseScroll>([&](EventMouseScroll& event) {
+            Input::setMouseScroll(glm::vec2(event.x, event.y));
+        });
         eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) {
             Input::pressKey(event.keyCode);
         });
