@@ -111,6 +111,7 @@ namespace XEngine {
 		//Create window pointer.
 		mainWindow = std::make_unique<Window>(title, win_width, win_height);
         baseCamera.setViewportSize(static_cast<float>(win_width),static_cast<float>(win_height));
+        Input();
 		//Add event listeners.
         eventDispatcher.addEventListener<EventWindowResize>([&](EventWindowResize& event) {
             baseCamera.setViewportSize(static_cast<float>(event.width), static_cast<float>(event.height));
@@ -120,10 +121,11 @@ namespace XEngine {
             App::exit();
 		});
         eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {
-            Input::setMousePosition(glm::vec2(event.x, event.y));
+            Input::setMousePosition(event.x, event.y);
         });
         eventDispatcher.addEventListener<EventMouseScroll>([&](EventMouseScroll& event) {
-            Input::setMouseScroll(glm::vec2(event.x, event.y));
+            LOG_INFO("Mouse scroll: {0} {1}", event.x, event.y);
+            Input::setMouseScroll(event.x, event.y);
         });
         eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) {
             Input::pressKey(event.keyCode);

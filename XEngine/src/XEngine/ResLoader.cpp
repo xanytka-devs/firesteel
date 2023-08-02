@@ -16,7 +16,7 @@ stbi_uc* ResLoader::loadImage(char const* file, int* width, int* height, int* co
         return stbi_load(file, width, height, comp, req_comp);
     }
     catch (const std::exception& e) {
-        LOG_ERRR("Failed to load texture '{0}'", file);
+        LOG_ERRR("Failed to load texture '{0}'. {1}", file, e.what());
         return nullptr;
     }
 }
@@ -38,5 +38,6 @@ std::string ResLoader::loadText(const char* path) {
     }
     catch (std::ifstream::failure e) {
         LOG_ERRR("File at path '{0}' couldn't be loaded.", path);
+        return "";
     }
 }

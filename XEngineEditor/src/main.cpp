@@ -132,6 +132,7 @@ class EditorApp : public XEngine::App {
             movDelta.y += 0.05f;
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT_CONTROL))
             movDelta *= 1.5f;
+        movDelta.x += XEngine::Input::getMouseScroll().y * 10.f;
         //Check for rotation keys.
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_UP))
             rotDelta.y -= 0.5f;
