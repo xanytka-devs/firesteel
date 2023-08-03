@@ -3,7 +3,6 @@
 
 namespace XEngine {
 
-	bool Input::initialized = false;
 	bool Input::keysPressed[static_cast<size_t>(KeyCode::KEY_LAST) + 1] = {};
 	bool Input::mouseBtnsPressed[static_cast<size_t>(MouseButton::MOUSE_BUTTON_LAST) + 1] = {};
 

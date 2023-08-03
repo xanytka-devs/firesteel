@@ -138,6 +138,8 @@ namespace XEngine {
 	}
 	void Camera::setFieldOfView(const float value) {
 		fieldOfView = value;
+		if(fieldOfView <= 0) fieldOfView = 179.0f;
+		if(fieldOfView >= 180) fieldOfView = 1.0f;
 		updateProjectionMatrix();
 	}
 

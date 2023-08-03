@@ -55,6 +55,27 @@ namespace XEngine {
 
         //Handle events.
         glfwSetWindowUserPointer(window, &w_data);
+        glfwSetWindowSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            data.width = width;
+            data.height = height;
+            EventWindowResize event(width, height);
+            data.eventCallbackFn(event);
+        });
+        glfwSetWindowCloseCallback(window, [](GLFWwindow* pWindow) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            EventWindowClose event;
+            data.eventCallbackFn(event);
+            LOG_INFO("Window '{0}' closed.", data.title);
+        });
+        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
+            Renderer::setViewport(width, height);
+        });
+        glfwSetCursorPosCallback(window, [](GLFWwindow* pWindow, double x, double y) {
+            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
+            EventMouseMove event(x, y);
+            data.eventCallbackFn(event);
+        });
         glfwSetKeyCallback(window, [](GLFWwindow* pWindow, int key, int scanCode, int action, int mods) {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
             switch (action) {
@@ -97,27 +118,6 @@ namespace XEngine {
             WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
             EventMouseScroll event(x, y);
             data.eventCallbackFn(event);
-        });
-        glfwSetWindowSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
-            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
-            data.width = width;
-            data.height = height;
-            EventWindowResize event(width, height);
-            data.eventCallbackFn(event);
-        });
-        glfwSetCursorPosCallback(window, [](GLFWwindow* pWindow, double x, double y) {
-            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
-            EventMouseMove event(x, y);
-            data.eventCallbackFn(event);
-        });
-        glfwSetWindowCloseCallback(window, [](GLFWwindow* pWindow) {
-            WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(pWindow));
-            EventWindowClose event;
-            data.eventCallbackFn(event);
-            LOG_INFO("Window '{0}' closed.", data.title);
-        });
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* pWindow, int width, int height) {
-            Renderer::setViewport(width, height);
         });
         //Initialize ImGui.
         TUI::init(window);
