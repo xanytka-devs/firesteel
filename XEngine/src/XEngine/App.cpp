@@ -33,33 +33,33 @@ namespace XEngine {
         //   Position              Normal               UV        Index
         //    FRONT
         -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 0.f,    /*0*/
-        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*1*/
+        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*1*/
         -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 1.f,    /*2*/
-        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*3*/
+        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*3*/
         //     BACK                                  
-         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*4*/
+         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*4*/
          1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 0.f,    /*5*/
-         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*6*/
+         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*6*/
          1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 1.f,    /*7*/
          //    RIGHT
          -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,    /*8*/
-          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     1.f, 0.f,    /*9*/
+          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*9*/
           1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 1.f,    /*10*/
-         -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*11*/
+         -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 0.f,    /*11*/
          //    LEFT
-         -1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     1.f, 0.f,    /*12*/
+         -1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 1.f,    /*12*/
           1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 0.f,    /*13*/
-          1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     0.f, 1.f,    /*14*/
+          1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 0.f,    /*14*/
          -1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 1.f,    /*15*/
          //    TOP
          -1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 0.f,    /*16*/
-         -1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 0.f,    /*17*/
+         -1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 1.f,    /*17*/
           1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 1.f,    /*18*/
-          1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 1.f,    /*19*/
+          1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 0.f,    /*19*/
           //  BOTTOM
-          -1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 1.f,    /*20*/
+          -1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 0.f,    /*20*/
           -1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 1.f,    /*21*/
-           1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 0.f,    /*22*/
+           1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 1.f,    /*22*/
            1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 0.f,    /*23*/
     };
 
@@ -79,11 +79,11 @@ namespace XEngine {
     std::unique_ptr<VertexArray> vao;
     std::unique_ptr<SceneManager> manager;
     std::array<glm::vec3, 5> positions = {
-            glm::vec3(-2.f, -2.f, -4.f),
-            glm::vec3(-5.f,  0.f,  3.f),
-            glm::vec3(2.f,  1.f, -2.f),
-            glm::vec3(4.f, -3.f,  3.f),
-            glm::vec3(1.f, -7.f,  1.f)
+            glm::vec3(-2.f, -4.f, -2.f),
+            glm::vec3(-5.f,  3.f,  0.f),
+            glm::vec3(2.f,  -2.f, 1.f),
+            glm::vec3(4.f, 3.f,  -3.f),
+            glm::vec3(1.f, 1.f,  -7.f)
     };
 
 	/// <summary>
@@ -151,7 +151,6 @@ namespace XEngine {
         int height = 100;
         int channels = 3;
         unsigned char* uvData = new unsigned char[width * height * channels];
-        ResLoader::flipImagesVertical(true);
         std::string vScode = ResLoader::loadText("../../res/geometry.vert");
         std::string fScode = ResLoader::loadText("../../res/geometry.frag");
         const char* vertexShader = vScode.c_str();
@@ -187,7 +186,7 @@ namespace XEngine {
         vao->setIndexBuffer(*cubeIndexBuffer);
         //Enable depth.
         Renderer::enableDepthTesting();
-        baseCamera.setRotation(glm::vec3(0.f, 3.f, -60.f));
+        baseCamera.setRotation(glm::vec3(0.f, 4.f, 248.f));
         onInitialized();
         //Update cycle.
 		while (!closeWindow) {

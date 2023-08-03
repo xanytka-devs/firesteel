@@ -80,15 +80,15 @@ namespace XEngine {
 	void Camera::updateViewMatrix() {
 		//Calculate radians of rotations.
 		const float rollRads = glm::radians(rotation.x);
-		const float pitchRads = glm::radians(rotation.y);
-		const float yawRads = glm::radians(rotation.z);
+		const float yawRads = glm::radians(rotation.y);
+		const float pitchRads = glm::radians(rotation.z);
 		//Rotate matrix.
 		const glm::mat3 rotate_matrix_x(1, 0, 0,
 			0, cos(rollRads), sin(rollRads), 0, -sin(rollRads), cos(rollRads));
-		const glm::mat3 rotate_matrix_y(cos(pitchRads), 0, -sin(pitchRads),
+		const glm::mat3 rotate_matrix_y(-cos(yawRads), -sin(yawRads), 0,
+			sin(yawRads), -cos(yawRads), 0, 0, 0, 1);
+		const glm::mat3 rotate_matrix_z(cos(pitchRads), 0, -sin(pitchRads),
 			0, 1, 0, sin(pitchRads), 0, cos(pitchRads));
-		const glm::mat3 rotate_matrix_z(cos(yawRads), sin(yawRads), 0,
-			-sin(yawRads), cos(yawRads), 0, 0, 0, 1);
 		//Calculate euler.
 		const glm::mat3 euler_rotate_matrix = rotate_matrix_z * rotate_matrix_y * rotate_matrix_x;
 		forward = glm::normalize(euler_rotate_matrix * worldForward);

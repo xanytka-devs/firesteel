@@ -55,8 +55,8 @@ namespace XEngine {
 		glm::vec3 right;
 		glm::vec3 up;
 
-		static constexpr glm::vec3 worldUp{ 0.f, 0.f, 1.f };
-		static constexpr glm::vec3 worldRight{ 0.f, -1.f, 0.f };
+		static constexpr glm::vec3 worldUp{ 0.f, 1.f, 0.f };
+		static constexpr glm::vec3 worldRight{ 0.f, 0.f, -1.f };
 		static constexpr glm::vec3 worldForward{ 1.f, 0.f, 0.f };
 
 		glm::mat4 viewMatrix;

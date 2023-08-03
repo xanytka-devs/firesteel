@@ -43,7 +43,7 @@ class EditorApp : public XEngine::App {
         ImGui::Text("Camera");
         if(ImGui::DragFloat3("Camera pos", camPosition, -10.f, 10.f))
             baseCamera.setPosition(glm::vec3(camPosition[0], camPosition[1], camPosition[2]));
-        if(ImGui::DragFloat3("Camera rot", camRotation, 0, 360.f))
+        if(ImGui::SliderFloat3("Camera rot", camRotation, 0, 360.f))
             baseCamera.setRotation(glm::vec3(camRotation[0], camRotation[1], camRotation[2]));
         if(ImGui::Checkbox("Prespective", &camIsPresp))
             baseCamera.setProjectionMode(camIsPresp ?
@@ -130,21 +130,20 @@ class EditorApp : public XEngine::App {
             movDelta.y -= 0.05f;
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_D))
             movDelta.y += 0.05f;
-        if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT_CONTROL))
+        if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT_SHIFT))
             movDelta *= 1.5f;
         if(!XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT_CONTROL))
             movDelta.x += XEngine::Input::getMouseScroll().y;
-        else
-            baseCamera.setFieldOfView(baseCamera.fieldOfView + XEngine::Input::getMouseScroll().y * 2);
+        else baseCamera.setFieldOfView(baseCamera.fieldOfView + XEngine::Input::getMouseScroll().y * 2);
         //Check for rotation keys.
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_UP))
             rotDelta.y -= 0.5f;
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_DOWN))
             rotDelta.y += 0.5f;
         if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_RIGHT))
-            rotDelta.z -= 0.5f;
-        if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT))
             rotDelta.z += 0.5f;
+        if (XEngine::Input::isKeyDown(XEngine::KeyCode::KEY_LEFT))
+            rotDelta.z -= 0.5f;
         //Check for mouse changed.
         if (XEngine::Input::isMouseDown(XEngine::MouseButton::MOUSE_BUTTON_RIGHT)) {
             glm::vec2 newMousePos = glm::vec2(0, 0);
