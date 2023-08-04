@@ -3,7 +3,7 @@
 #include "VertexBuffer.hpp"
 #include "XEngine/Log.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	/// <summary>
 	/// Converts ShaderDataType to amount of components.

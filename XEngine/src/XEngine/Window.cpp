@@ -14,7 +14,7 @@
 
 namespace XEngine {
 
-    using namespace XEngine::OpenGL;
+    using namespace XEngine::Rendering;
     using namespace XEngine::UI;
 
 	Window::Window(std::string title, const unsigned int width, const unsigned int height)

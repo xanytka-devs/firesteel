@@ -1,7 +1,7 @@
 #include "Material.hpp"
 #include "XEngine/Log.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	Material::Material(const char* name,
 		const char* vertShader, const char* fragShader) {

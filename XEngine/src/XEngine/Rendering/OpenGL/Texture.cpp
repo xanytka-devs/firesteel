@@ -2,39 +2,39 @@
 #include <cmath>
 #include <glad/glad.h>
 
-#include "Texture2D.hpp"
+#include "Texture.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
-    GLenum TextureFormat_to_GLFormat(TextureFormat format) {
+    GLenum TextureFormat_to_Format(TextureFormat format) {
         switch (format) {
-            case XEngine::OpenGL::Red8:
+            case XEngine::Rendering::Red8:
                 return GL_R8;
-            case XEngine::OpenGL::RGB8:
+            case XEngine::Rendering::RGB8:
                 return GL_RGB8;
-            case XEngine::OpenGL::RGBA8:
+            case XEngine::Rendering::RGBA8:
                 return GL_RGBA8;
-            case XEngine::OpenGL::SRGB8:
+            case XEngine::Rendering::SRGB8:
                 return GL_SRGB8;
-            case XEngine::OpenGL::SRGBA8:
+            case XEngine::Rendering::SRGBA8:
                 return GL_SRGB8_ALPHA8;
-            case XEngine::OpenGL::BGR:
+            case XEngine::Rendering::BGR:
                 return GL_BGR;
-            case XEngine::OpenGL::BGRA:
+            case XEngine::Rendering::BGRA:
                 return GL_BGRA;
-            case XEngine::OpenGL::Red16:
+            case XEngine::Rendering::Red16:
                 return GL_R16;
-            case XEngine::OpenGL::RGB16:
+            case XEngine::Rendering::RGB16:
                 return GL_RGB16;
-            case XEngine::OpenGL::RGBA16:
+            case XEngine::Rendering::RGBA16:
                 return GL_RGBA16;
-            case XEngine::OpenGL::RGB:
+            case XEngine::Rendering::RGB:
                 return GL_RGB;
-            case XEngine::OpenGL::RGBA:
+            case XEngine::Rendering::RGBA:
                 return GL_RGBA;
-            case XEngine::OpenGL::SRGB:
+            case XEngine::Rendering::SRGB:
                 return GL_SRGB;
-            case XEngine::OpenGL::SRGBA:
+            case XEngine::Rendering::SRGBA:
                 return GL_SRGB_ALPHA;
             default:
                 return GL_RGB;
@@ -46,8 +46,8 @@ namespace XEngine::OpenGL {
         : width(width), height(height) {
         glCreateTextures(GL_TEXTURE_2D, 1, &curID);
         const GLsizei mip_levels = static_cast<GLsizei>(std::log2(std::max(width, height))) + 1;
-        glTextureStorage2D(curID, mip_levels, TextureFormat_to_GLFormat(internalFormat), width, height);
-        glTextureSubImage2D(curID, 0, 0, 0, width, height, TextureFormat_to_GLFormat(baseFormat), GL_UNSIGNED_BYTE, data);
+        glTextureStorage2D(curID, mip_levels, TextureFormat_to_Format(internalFormat), width, height);
+        glTextureSubImage2D(curID, 0, 0, 0, width, height, TextureFormat_to_Format(baseFormat), GL_UNSIGNED_BYTE, data);
         glTextureParameteri(curID, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTextureParameteri(curID, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTextureParameteri(curID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

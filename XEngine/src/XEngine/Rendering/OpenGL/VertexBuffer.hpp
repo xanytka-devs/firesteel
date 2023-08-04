@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
+#include "glm/vec3.hpp"
+#include "glm/vec2.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	enum class ShaderDataType {
 		Float,
@@ -13,6 +15,12 @@ namespace XEngine::OpenGL {
 		Int2,
 		Int3,
 		Int4
+	};
+
+	struct Vertex {
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec2 TexCoords;
 	};
 
 	struct BufferElement {

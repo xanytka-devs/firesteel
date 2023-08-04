@@ -3,7 +3,7 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	class VertexArray {
 	public:

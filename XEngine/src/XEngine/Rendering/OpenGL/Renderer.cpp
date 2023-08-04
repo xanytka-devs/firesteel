@@ -5,7 +5,7 @@
 #include "VertexArray.hpp"
 #include "XEngine/Log.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	const char* glSource_to_String(const GLenum source){
 		switch (source) {

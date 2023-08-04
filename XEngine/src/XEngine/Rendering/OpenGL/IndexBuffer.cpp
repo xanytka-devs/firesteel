@@ -3,7 +3,7 @@
 #include "IndexBuffer.hpp"
 #include "XEngine/Log.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	/// <summary>
 	/// Converts VertexBuffer::VBUsage to OpenGL's usage type.

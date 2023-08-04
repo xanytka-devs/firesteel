@@ -24,8 +24,9 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Rendering/OpenGL/VertexArray.hpp
 	src/XEngine/Rendering/OpenGL/IndexBuffer.hpp
 	src/XEngine/Rendering/OpenGL/Renderer.hpp
-	src/XEngine/Rendering/OpenGL/Texture2D.hpp
+	src/XEngine/Rendering/OpenGL/Texture.hpp
 	src/XEngine/Rendering/OpenGL/Material.hpp
+	src/XEngine/Rendering/OpenGL/Mesh.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
@@ -42,8 +43,9 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/OpenGL/VertexArray.cpp
 	src/XEngine/Rendering/OpenGL/IndexBuffer.cpp
 	src/XEngine/Rendering/OpenGL/Renderer.cpp
-	src/XEngine/Rendering/OpenGL/Texture2D.cpp
+	src/XEngine/Rendering/OpenGL/Texture.cpp
 	src/XEngine/Rendering/OpenGL/Material.cpp
+	src/XEngine/Rendering/OpenGL/Mesh.cpp
 	src/XEngine/SceneManager.cpp
 )
 set(ENGINE_ALL

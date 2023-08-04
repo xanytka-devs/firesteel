@@ -2,16 +2,16 @@
 
 #include <iostream>
 
-#include "Texture2D.hpp"
+#include "Texture.hpp"
 #include "ShaderProgram.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	enum ShaderType {
-		Vertex,
-		Geometry,
-		Fragment,
-		Compute,
+		SH_Vertex,
+		SH_Geometry,
+		SH_Fragment,
+		SH_Compute,
 	};
 
 	class Material {

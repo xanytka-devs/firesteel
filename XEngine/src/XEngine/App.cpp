@@ -18,7 +18,7 @@
 #include "XEngine/Rendering/OpenGL/IndexBuffer.hpp"
 #include "XEngine/Rendering/OpenGL/VertexArray.hpp"
 #include "XEngine/Rendering/OpenGL/Renderer.hpp"
-#include "XEngine/Rendering/OpenGL/Texture2D.hpp"
+#include "XEngine/Rendering/OpenGL/Texture.hpp"
 #include "XEngine/Camera.hpp"
 #include "XEngine/Input/Input.hpp"
 #include "Rendering/OpenGL/Material.hpp"
@@ -26,7 +26,7 @@
 
 namespace XEngine {
 	
-    using namespace XEngine::OpenGL;
+    using namespace XEngine::Rendering;
     using namespace XEngine::UI;
 
     GLfloat cubeDataArray[] = {

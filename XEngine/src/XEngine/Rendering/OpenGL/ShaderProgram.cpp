@@ -5,7 +5,7 @@
 #include <XEngine/Rendering/OpenGL/ShaderProgram.hpp>
 #include <XEngine/Log.hpp>
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	/// <summary>
 	/// Tries compiling given shader.

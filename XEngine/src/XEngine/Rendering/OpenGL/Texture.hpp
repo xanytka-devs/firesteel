@@ -1,6 +1,8 @@
 #pragma once
 
-namespace XEngine::OpenGL {
+#include <string>
+
+namespace XEngine::Rendering {
 
     enum TextureFormat {
         Red8,
@@ -19,7 +21,12 @@ namespace XEngine::OpenGL {
         SRGBA,
     };
 
-    class Texture2D {
+    struct Texture {
+        unsigned int curID = 0;
+        std::string type;
+    };
+
+    class Texture2D : public Texture {
     public:
         Texture2D(const unsigned char* data, const unsigned int width, const unsigned int height,
             const TextureFormat internalFormat = TextureFormat::RGB8, const TextureFormat baseFormat = TextureFormat::RGB);
@@ -31,9 +38,7 @@ namespace XEngine::OpenGL {
         Texture2D(Texture2D&& texture) noexcept;
 
         void bind(const unsigned int unit) const;
-
     private:
-        unsigned int curID = 0;
         unsigned int width = 0;
         unsigned int height = 0;
     };

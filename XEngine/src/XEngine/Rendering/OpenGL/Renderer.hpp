@@ -2,7 +2,7 @@
 
 struct GLFWwindow;
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 	class VertexArray;
 
 	class Renderer {

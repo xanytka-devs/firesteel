@@ -2,7 +2,7 @@
 
 #include "VertexArray.hpp"
 
-namespace XEngine::OpenGL {
+namespace XEngine::Rendering {
 
 	VertexArray::VertexArray() {
 		glGenVertexArrays(1, &curID);

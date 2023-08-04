@@ -5,6 +5,7 @@
 
 #include <XEngine/App.hpp>
 #include <XEngine/Input/Input.hpp>
+#include <XEngine/ResLoader.hpp>
 #include "UI.hpp"
 
 class EditorApp : public XEngine::App {
