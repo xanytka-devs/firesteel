@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "Material.hpp"
 #include "VertexBuffer.hpp"
+#include "VertexArray.hpp"
+#include "IndexBuffer.hpp"
+#include "Material.hpp"
 
 namespace XEngine::Rendering {
 
@@ -20,13 +22,13 @@ namespace XEngine::Rendering {
         std::vector<unsigned int> indices;
         std::vector<Material> materials;
 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Material> materials);
+        Mesh(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, std::vector<Material>* materials);
         void Draw();
     private:
         //Render data.
         std::unique_ptr<VertexArray> vao;
-        std::unique_ptr<VertexBuffer> vbo;
-        std::unique_ptr<IndexBuffer> ibo;
+        /*std::unique_ptr<VertexBuffer> vbo;
+        std::unique_ptr<IndexBuffer> ibo;*/
 
         void setupMesh();
     };
