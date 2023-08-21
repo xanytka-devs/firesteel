@@ -17,12 +17,12 @@ namespace XEngine {
 		App& operator = (const App&) = delete;
 		App& operator = (App&&) = delete;
 
-		virtual int start(unsigned int win_width, unsigned int win_height, const char* title);
+		int start(unsigned int win_width, unsigned int win_height, const char* title);
 		void exit();
-		virtual void update() { }
-		virtual void onUIDraw() { }
 		virtual void onInitialized() { }
 		virtual void onExit() { }
+		virtual void update() { }
+		virtual void onUIDraw() { }
 
 		glm::vec2 getCursorPosition() const;
 

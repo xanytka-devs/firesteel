@@ -75,7 +75,7 @@ void UI::setTheme() {
     style.Colors[ImGuiCol_ModalWindowDimBg] = _grey;
 }
 
-void UI::Draw(XEditor::EditorApp* app) {
+void UI::draw(XEngine::App* app) {
     //Setup.
     setupDock(app);
     (*app).camPosition[0] = (*app).baseCamera.getPosition().x;
@@ -122,7 +122,7 @@ void UI::Draw(XEditor::EditorApp* app) {
     ImGui::End();
 }
 
-void setupDock(XEditor::EditorApp* app) {
+void UI::setupDock(XEngine::App* app) {
     //Variables.
     bool open = true;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;

@@ -6,7 +6,7 @@
 
 namespace XEngine::Rendering {
 
-    Mesh::Mesh(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, std::vector<Material>* materials) {
+    /*Mesh::Mesh(std::vector<Vertex>* vertices, std::vector<unsigned int>* indices, std::vector<Material>* materials) {
         //Assign values.
         this->vertices = *vertices;
         this->indices = *indices;
@@ -29,11 +29,11 @@ namespace XEngine::Rendering {
         //Add buffers to array.
         vao->addVertexBuffer(*vbo.get());
         vao->setIndexBuffer(*ibo.get());*/
-    }
+    //}
 
-    void Mesh::Draw() {
+    /*void Mesh::Draw() {
         //TODO: Mesh loading through assimp.
         LOG_INFO("Drawn mesh.");
-    }
+    }*/
 
 }
