@@ -4,6 +4,7 @@
 #include <XEngine/App.hpp>
 #include <XEngine/Input/Input.hpp>
 #include <XEngine/ResLoader.hpp>
+#include "XEngine/SceneManager.hpp"
 #include "UI.hpp"
 
 class EditorApp : public XEngine::App {
@@ -13,6 +14,7 @@ class EditorApp : public XEngine::App {
 
     virtual void onInitialized() override {
         UI::setTheme();
+        baseCamera.setPositionRotation(glm::vec3(-3.f, 0.f, 6.f), glm::vec3(0.f, 4.f, 248.f));
     }
 
     virtual void update() override {

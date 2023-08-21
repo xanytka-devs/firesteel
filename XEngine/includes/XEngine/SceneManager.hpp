@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "CES.hpp"
-#include "XEngine/Log.hpp"
 
 namespace XEngine {
 
@@ -22,7 +21,6 @@ namespace XEngine {
 				instantiated = true;
 			}
 			for(auto& s : scenes) s->instantiate();
-			LOG_INFO("Scene manager instantiated.");
 		}
 		void update() { for(auto& s : scenes) s->update(); }
 

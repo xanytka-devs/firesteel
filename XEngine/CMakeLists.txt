@@ -17,7 +17,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/stb/stb_image.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
-	src/XEngine/Window.hpp
+	src/XEngine/Rendering/OpenGL/Window.hpp
 	src/XEngine/UI/TUI.hpp
 	src/XEngine/Rendering/OpenGL/ShaderProgram.hpp
 	src/XEngine/Rendering/OpenGL/VertexBuffer.hpp
@@ -30,7 +30,7 @@ set(ENGINE_PRIVATE_INCLUDES
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
-	src/XEngine/Window.cpp
+	src/XEngine/Rendering/OpenGL/Window.cpp
 	src/XEngine/Input/Input.cpp
 	src/XEngine/Input/Cursor.cpp
 	src/XEngine/CES.cpp

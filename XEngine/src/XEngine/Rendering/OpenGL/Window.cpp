@@ -6,7 +6,7 @@
 #include <glm/trigonometric.hpp>
 
 #include "XEngine/Event.hpp"
-#include "XEngine/Window.hpp"
+#include "Window.hpp"
 #include "XEngine/Log.hpp"
 #include "XEngine/UI/TUI.hpp"
 #include "XEngine/Rendering/OpenGL/Renderer.hpp"
@@ -30,15 +30,14 @@ namespace XEngine {
 
         LOG_INFO("Creating instance of window '{0}', with size of {1}x{2}.", w_data.title, w_data.width, w_data.height);
 
-        glfwSetErrorCallback([](int errorCode, const char* description) { LOG_CRIT("GLFW Error: {}", description); });
+        Renderer::setErrorCallback([](int errorCode, const char* description) { LOG_CRIT("Renderer Error: {}", description); });
 
         //Initialize the library.
-        if (!glfwInit()) {
-            LOG_CRIT("Error while trying to initialize GLFW (OpenGL).");
+        if (!Renderer::initLibrary()) {
+            LOG_CRIT("Error while trying to initialize renderer library ({0}}).", Renderer::getRendererStr());
             return -100;
         }
-
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+        Renderer::setDebugContext(true);
 
         //Create a windowed mode window and its OpenGL context.
         window = glfwCreateWindow(w_data.width, w_data.height, w_data.title.c_str(), nullptr, nullptr);

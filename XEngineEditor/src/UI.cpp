@@ -1,7 +1,7 @@
 #include <imgui.h>
+#include <imgui_internal.h>
 
 #include "UI.hpp"
-#include <imgui_internal.h>
 
 void UI::setTheme() {
     ImGuiStyle& style = ImGui::GetStyle();

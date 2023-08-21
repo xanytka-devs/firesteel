@@ -9,7 +9,7 @@
 
 #include "XEngine/App.hpp"
 #include "XEngine/Event.hpp"
-#include "XEngine/Window.hpp"
+#include "XEngine/Rendering/OpenGL/Window.hpp"
 #include "XEngine/Log.hpp"
 #include "XEngine/UI/TUI.hpp"
 #include "XEngine/ResLoader.hpp"
@@ -116,31 +116,14 @@ namespace XEngine {
             baseCamera.setViewportSize(static_cast<float>(event.width), static_cast<float>(event.height));
             App::draw();
         });
-        eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) {
-            App::exit();
-		});
-        eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) {
-            Input::setMousePosition(event.x, event.y);
-        });
-        eventDispatcher.addEventListener<EventMouseScroll>([&](EventMouseScroll& event) {
-            Input::setMouseScroll(event.x, event.y);
-        });
-        eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) {
-            Input::pressKey(event.keyCode);
-        });
-        eventDispatcher.addEventListener<EventKeyUp>([&](EventKeyUp& event) {
-            Input::releaseKey(event.keyCode);
-        });
-        eventDispatcher.addEventListener<EventMouseButtonDown>([&](EventMouseButtonDown& event) {
-            Input::pressMouseKey(event.mouseButton);
-        });
-        eventDispatcher.addEventListener<EventMouseButtonUp>([&](EventMouseButtonUp& event) {
-            Input::releaseMouseKey(event.mouseButton);
-        });
-		//Apply them.
-		mainWindow->setEventCallback([&](BaseEvent& e) {
-			eventDispatcher.dispatch(e);
-		});
+        eventDispatcher.addEventListener<EventWindowClose>([&](EventWindowClose& event) { App::exit(); });
+        eventDispatcher.addEventListener<EventMouseMove>([&](EventMouseMove& event) { Input::setMousePosition(event.x, event.y); });
+        eventDispatcher.addEventListener<EventMouseScroll>([&](EventMouseScroll& event) { Input::setMouseScroll(event.x, event.y); });
+        eventDispatcher.addEventListener<EventKeyDown>([&](EventKeyDown& event) { Input::pressKey(event.keyCode); });
+        eventDispatcher.addEventListener<EventKeyUp>([&](EventKeyUp& event) { Input::releaseKey(event.keyCode); });
+        eventDispatcher.addEventListener<EventMouseButtonDown>([&](EventMouseButtonDown& event) { Input::pressMouseKey(event.mouseButton); });
+        eventDispatcher.addEventListener<EventMouseButtonUp>([&](EventMouseButtonUp& event) { Input::releaseMouseKey(event.mouseButton); });
+		mainWindow->setEventCallback([&](BaseEvent& e) { eventDispatcher.dispatch(e); });
         //Instance all data to draw triangle.
         // TODO: Move to other class.
         //Instantiate scene.
@@ -186,7 +169,6 @@ namespace XEngine {
         vao->setIndexBuffer(*cubeIndexBuffer);
         //Enable depth.
         Renderer::enableDepthTesting();
-        baseCamera.setRotation(glm::vec3(0.f, 4.f, 248.f));
         onInitialized();
         //Update cycle.
 		while (!closeWindow) {

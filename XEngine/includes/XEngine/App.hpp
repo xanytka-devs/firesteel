@@ -29,7 +29,7 @@ namespace XEngine {
 		float camPosition[3] = { 0.f, 0.f, 0.f };
 		float camRotation[3] = { 0.f, 0.f, 0.f };
 		bool camIsPresp = true;
-		Camera baseCamera{glm::vec3(-3.f, 0.f, 6.f)};
+		Camera baseCamera{};
 
 		float bgColor[3] = { 0.15f, 0.15f, 0.15f };
 		float position[3] = { 5.f, 5.f, 5.f };

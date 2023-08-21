@@ -117,6 +117,16 @@ namespace XEngine::Rendering {
 		return true;
 	}
 
+	void Renderer::setErrorCallback(const ErrorFunction& callback) {
+		glfwSetErrorCallback(callback);
+	}
+	bool Renderer::initLibrary() {
+		return glfwInit();
+	}
+	void Renderer::setDebugContext(const bool v) {
+		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, v ? GL_TRUE : GL_FALSE);
+	}
+
 	void Renderer::draw(const VertexArray& vertexArray) {
 		vertexArray.bind();
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertexArray.getIndicesCount()), GL_UNSIGNED_INT, nullptr);
