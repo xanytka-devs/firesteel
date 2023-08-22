@@ -2,7 +2,7 @@
 #include <string>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <XEngine/Rendering/OpenGL/ShaderProgram.hpp>
+#include <XEngine/Rendering/ShaderProgram.hpp>
 #include <XEngine/Log.hpp>
 
 namespace XEngine::Rendering {

@@ -13,15 +13,15 @@
 #include "XEngine/Log.hpp"
 #include "XEngine/UI/TUI.hpp"
 #include "XEngine/ResLoader.hpp"
-#include "XEngine/Rendering/OpenGL/ShaderProgram.hpp"
-#include "XEngine/Rendering/OpenGL/VertexBuffer.hpp"
-#include "XEngine/Rendering/OpenGL/IndexBuffer.hpp"
-#include "XEngine/Rendering/OpenGL/VertexArray.hpp"
-#include "XEngine/Rendering/OpenGL/Renderer.hpp"
-#include "XEngine/Rendering/OpenGL/Texture.hpp"
+#include "XEngine/Rendering/ShaderProgram.hpp"
+#include "XEngine/Rendering/VertexBuffer.hpp"
+#include "XEngine/Rendering/IndexBuffer.hpp"
+#include "XEngine/Rendering/VertexArray.hpp"
+#include "XEngine/Rendering/Renderer.hpp"
+#include "XEngine/Rendering/Texture.hpp"
 #include "XEngine/Camera.hpp"
 #include "XEngine/Input/Input.hpp"
-#include "Rendering/OpenGL/Material.hpp"
+#include "XEngine/Rendering/Material.hpp"
 #include "XEngine/SceneManager.hpp"
 
 namespace XEngine {
@@ -32,18 +32,18 @@ namespace XEngine {
     GLfloat cubeDataArray[] = {
         //   Position              Normal               UV        Index
         //    FRONT
-        -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 0.f,    /*0*/
-        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*1*/
-        -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 1.f,    /*2*/
-        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*3*/
+        -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 0.f,    /*00*/
+        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*01*/
+        -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 1.f,    /*02*/
+        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*03*/
         //     BACK                                  
-         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*4*/
-         1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 0.f,    /*5*/
-         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*6*/
-         1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 1.f,    /*7*/
+         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*04*/
+         1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 0.f,    /*05*/
+         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*06*/
+         1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 1.f,    /*07*/
          //    RIGHT
-         -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,    /*8*/
-          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*9*/
+         -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,    /*08*/
+          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*09*/
           1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 1.f,    /*10*/
          -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 0.f,    /*11*/
          //    LEFT

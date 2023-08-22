@@ -9,7 +9,7 @@
 #include "Window.hpp"
 #include "XEngine/Log.hpp"
 #include "XEngine/UI/TUI.hpp"
-#include "XEngine/Rendering/OpenGL/Renderer.hpp"
+#include "XEngine/Rendering/Renderer.hpp"
 #include "XEngine/Camera.hpp"
 
 namespace XEngine {

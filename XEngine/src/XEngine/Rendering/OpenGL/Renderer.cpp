@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "Renderer.hpp"
-#include "VertexArray.hpp"
+#include "XEngine/Rendering/Renderer.hpp"
+#include "XEngine/Rendering/VertexArray.hpp"
 #include "XEngine/Log.hpp"
 
 namespace XEngine::Rendering {

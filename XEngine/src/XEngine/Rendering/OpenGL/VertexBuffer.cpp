@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 
-#include "VertexBuffer.hpp"
+#include "XEngine/Rendering/VertexBuffer.hpp"
 #include "XEngine/Log.hpp"
 
 namespace XEngine::Rendering {

@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 
-#include "Mesh.hpp"
+#include "XEngine/Rendering/Mesh.hpp"
 #include <XEngine/Log.hpp>
-#include "VertexArray.hpp"
+#include "XEngine/Rendering/VertexArray.hpp"
 
 namespace XEngine::Rendering {
 

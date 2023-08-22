@@ -1,4 +1,4 @@
-#include "Material.hpp"
+#include "XEngine/Rendering/Material.hpp"
 #include "XEngine/Log.hpp"
 
 namespace XEngine::Rendering {

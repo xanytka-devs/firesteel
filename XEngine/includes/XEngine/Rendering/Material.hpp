@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "Texture.hpp"
-#include "ShaderProgram.hpp"
+#include "XEngine/Rendering/ShaderProgram.hpp"
 
 namespace XEngine::Rendering {
 

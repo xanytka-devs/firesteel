@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 
-#include "IndexBuffer.hpp"
+#include "XEngine/Rendering/IndexBuffer.hpp"
 #include "XEngine/Log.hpp"
 
 namespace XEngine::Rendering {

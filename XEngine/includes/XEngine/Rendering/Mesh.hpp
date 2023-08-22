@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 
-#include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
-#include "IndexBuffer.hpp"
+#include "XEngine/Rendering/VertexBuffer.hpp"
+#include "XEngine/Rendering/VertexArray.hpp"
+#include "XEngine/Rendering/IndexBuffer.hpp"
 #include "Material.hpp"
 
 namespace XEngine::Rendering {

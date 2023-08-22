@@ -1,6 +1,6 @@
 #include <glad/glad.h>
 
-#include "VertexArray.hpp"
+#include "XEngine/Rendering/VertexArray.hpp"
 
 namespace XEngine::Rendering {
 

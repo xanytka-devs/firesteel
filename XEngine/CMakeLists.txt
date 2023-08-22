@@ -13,20 +13,20 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Input/Input.hpp
 	includes/XEngine/Input/Cursor.hpp
 	includes/XEngine/ResLoader.hpp
+	includes/XEngine/Rendering/Renderer.hpp
+	includes/XEngine/Rendering/Texture.hpp
+	includes/XEngine/Rendering/Material.hpp
+	includes/XEngine/Rendering/Mesh.hpp
 	includes/XEngine/SceneManager.hpp
 	includes/stb/stb_image.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	src/XEngine/Rendering/OpenGL/Window.hpp
 	src/XEngine/UI/TUI.hpp
-	src/XEngine/Rendering/OpenGL/ShaderProgram.hpp
-	src/XEngine/Rendering/OpenGL/VertexBuffer.hpp
-	src/XEngine/Rendering/OpenGL/VertexArray.hpp
-	src/XEngine/Rendering/OpenGL/IndexBuffer.hpp
-	src/XEngine/Rendering/OpenGL/Renderer.hpp
-	src/XEngine/Rendering/OpenGL/Texture.hpp
-	src/XEngine/Rendering/OpenGL/Material.hpp
-	src/XEngine/Rendering/OpenGL/Mesh.hpp
+	src/XEngine/Rendering/ShaderProgram.hpp
+	src/XEngine/Rendering/VertexBuffer.hpp
+	src/XEngine/Rendering/VertexArray.hpp
+	src/XEngine/Rendering/IndexBuffer.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp

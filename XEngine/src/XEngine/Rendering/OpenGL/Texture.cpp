@@ -2,7 +2,7 @@
 #include <cmath>
 #include <glad/glad.h>
 
-#include "Texture.hpp"
+#include "XEngine/Rendering/Texture.hpp"
 
 namespace XEngine::Rendering {
 
