@@ -31,55 +31,100 @@ namespace XEngine {
     using namespace XEngine::Rendering;
     using namespace XEngine::UI;
 
-    std::vector<Vertex> cubeDataArray = {
-        //                  Position                       Normal                     UV            ID
-        //                    FRONT
-        Vertex{glm::vec3(-1.0f, -1.f, -1.f), glm::vec3(-1.f, 0.f, 0.f),   glm::vec2(0.f, 0.f)},    /*00*/
-        Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 0.f, 1.f)},   /*01*/
-        Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 1.f, 1.f)},   /*02*/
-        Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 1.f, 0.f)},   /*03*/
-        //                     BACK
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 0.f, 1.f)},   /*04*/
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 0.f, 0.f)},   /*05*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 1.f, 0.f)},   /*06*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 1.f, 1.f)},   /*07*/
-        //                     RIGHT
-        Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3( 0.f,  1.f,  0.f), glm::vec2(0.f, 0.f)},    /*08*/
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 0.f,  1.f,  0.f), glm::vec2(0.f, 1.f)},    /*09*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  1.f,  0.f), glm::vec2(1.f, 1.f)},    /*10*/
-        Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3( 0.f,  1.f,  0.f), glm::vec2(1.f, 0.f)},    /*11*/
-        //                     LEFT
-        Vertex{glm::vec3(-1.0f,-1.f, -1.f),  glm::vec3( 0.f, -1.f,  0.f), glm::vec2(0.f, 1.f)},    /*12*/
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 0.f, -1.f,  0.f), glm::vec2(0.f, 0.f)},    /*13*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f, -1.f,  0.f), glm::vec2(1.f, 0.f)},    /*14*/
-        Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3( 0.f, -1.f,  0.f), glm::vec2(1.f, 1.f)},    /*15*/
-        //                      TOP
-        Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3( 0.f,  0.f,  1.f), glm::vec2(0.f, 0.f)},    /*16*/
-        Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3( 0.f,  0.f,  1.f), glm::vec2(0.f, 1.f)},    /*17*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  0.f,  1.f), glm::vec2(1.f, 1.f)},    /*18*/
-        Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  0.f,  1.f), glm::vec2(1.f, 0.f)},    /*19*/
-        //                    BOTTOM
-        Vertex{glm::vec3(-1.0f,-1.f, -1.f),  glm::vec3(0.f,  0.f, -1.f),  glm::vec2(1.f, 0.f)},    /*20*/
-        Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3(0.f,  0.f, -1.f),  glm::vec2(1.f, 1.f)},    /*21*/
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3(0.f,  0.f, -1.f),  glm::vec2(0.f, 1.f)},    /*22*/
-        Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3(0.f,  0.f, -1.f),  glm::vec2(0.f, 0.f)},    /*23*/
+    //TODO: Rewrite entire system of rendering, because it's... bad.
+    //std::vector<Vertex> cubeDataArray = {
+    //    //                  Position                       Normal                     UV            ID
+    //    //                    FRONT
+    //    Vertex{glm::vec3(-1.0f, -1.f, -1.f), glm::vec3(-1.f, 0.f, 0.f),   glm::vec2(0.f, 0.f)},    /*00*/
+    //    Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 0.f, 1.f)},   /*01*/
+    //    Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 1.f, 1.f)},   /*02*/
+    //    Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3(-1.f, 0.f,  0.f),  glm::vec2( 1.f, 0.f)},   /*03*/
+    //    //                     BACK
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 0.f, 1.f)},   /*04*/
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 0.f, 0.f)},   /*05*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 1.f, 0.f)},   /*06*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 1.f,  0.f,  0.f), glm::vec2( 1.f, 1.f)},   /*07*/
+    //    //                     RIGHT
+    //    Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3( 0.f,  1.f,  0.f), glm::vec2(0.f, 0.f)},    /*08*/
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 0.f,  1.f,  0.f), glm::vec2(0.f, 1.f)},    /*09*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  1.f,  0.f), glm::vec2(1.f, 1.f)},    /*10*/
+    //    Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3( 0.f,  1.f,  0.f), glm::vec2(1.f, 0.f)},    /*11*/
+    //    //                     LEFT
+    //    Vertex{glm::vec3(-1.0f,-1.f, -1.f),  glm::vec3( 0.f, -1.f,  0.f), glm::vec2(0.f, 1.f)},    /*12*/
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3( 0.f, -1.f,  0.f), glm::vec2(0.f, 0.f)},    /*13*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f, -1.f,  0.f), glm::vec2(1.f, 0.f)},    /*14*/
+    //    Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3( 0.f, -1.f,  0.f), glm::vec2(1.f, 1.f)},    /*15*/
+    //    //                      TOP
+    //    Vertex{glm::vec3(-1.0f,-1.f,  1.f),  glm::vec3( 0.f,  0.f,  1.f), glm::vec2(0.f, 0.f)},    /*16*/
+    //    Vertex{glm::vec3(-1.0f, 1.f,  1.f),  glm::vec3( 0.f,  0.f,  1.f), glm::vec2(0.f, 1.f)},    /*17*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  0.f,  1.f), glm::vec2(1.f, 1.f)},    /*18*/
+    //    Vertex{glm::vec3(1.0f, 1.f,  1.f),   glm::vec3( 0.f,  0.f,  1.f), glm::vec2(1.f, 0.f)},    /*19*/
+    //    //                    BOTTOM
+    //    Vertex{glm::vec3(-1.0f,-1.f, -1.f),  glm::vec3(0.f,  0.f, -1.f),  glm::vec2(1.f, 0.f)},    /*20*/
+    //    Vertex{glm::vec3(-1.0f, 1.f, -1.f),  glm::vec3(0.f,  0.f, -1.f),  glm::vec2(1.f, 1.f)},    /*21*/
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3(0.f,  0.f, -1.f),  glm::vec2(0.f, 1.f)},    /*22*/
+    //    Vertex{glm::vec3(1.0f, 1.f, -1.f),   glm::vec3(0.f,  0.f, -1.f),  glm::vec2(0.f, 0.f)},    /*23*/
+    //};
+    //
+    //std::vector<unsigned int> indices = {
+    //    0, 1, 2, 2, 3, 0,       //FRONT
+    //    4, 5, 6, 6, 7, 4,       //BACK
+    //    8, 9, 10, 10, 11, 8,    //RIGHT
+    //    12, 13, 14, 14, 15, 12, //LEFT
+    //    16, 17, 18, 18, 19, 16, //TOP
+    //    20, 21, 22, 22, 23, 20  //BOTTOM
+    //};
+
+    GLfloat cubeDataArray[] = {
+        //   Position              Normal               UV        Index
+        //    FRONT
+        -1.0f, -1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 0.f,    /*0*/
+        -1.0f,  1.f, -1.f,    -1.f,  0.f,  0.f,      0.f, 1.f,    /*1*/
+        -1.0f,  1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 1.f,    /*2*/
+        -1.0f, -1.f,  1.f,    -1.f,  0.f,  0.f,      1.f, 0.f,    /*3*/
+        //     BACK                                  
+         1.0f, -1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 1.f,    /*4*/
+         1.0f,  1.f, -1.f,     1.f,  0.f,  0.f,      0.f, 0.f,    /*5*/
+         1.0f,  1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 0.f,    /*6*/
+         1.0f, -1.f,  1.f,     1.f,  0.f,  0.f,      1.f, 1.f,    /*7*/
+         //    RIGHT
+         -1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 0.f,    /*8*/
+          1.0f,  1.f, -1.f,     0.f,  1.f,  0.f,     0.f, 1.f,    /*9*/
+          1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 1.f,    /*10*/
+         -1.0f,  1.f,  1.f,     0.f,  1.f,  0.f,     1.f, 0.f,    /*11*/
+         //    LEFT
+         -1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 1.f,    /*12*/
+          1.0f, -1.f, -1.f,     0.f, -1.f,  0.f,     0.f, 0.f,    /*13*/
+          1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 0.f,    /*14*/
+         -1.0f, -1.f,  1.f,     0.f, -1.f,  0.f,     1.f, 1.f,    /*15*/
+         //    TOP
+         -1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 0.f,    /*16*/
+         -1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     0.f, 1.f,    /*17*/
+          1.0f,  1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 1.f,    /*18*/
+          1.0f, -1.f,  1.f,     0.f,  0.f,  1.f,     1.f, 0.f,    /*19*/
+          //  BOTTOM
+          -1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 0.f,    /*20*/
+          -1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     1.f, 1.f,    /*21*/
+           1.0f,  1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 1.f,    /*22*/
+           1.0f, -1.f, -1.f,    0.f,  0.f, -1.f,     0.f, 0.f,    /*23*/
     };
 
-    std::vector<unsigned int> indices = {
+    GLuint indices[] = {
         0, 1, 2, 2, 3, 0,       //FRONT
-        4, 5, 6, 6, 7, 4,       //BACK
+        4, 5, 6, 6,  7, 4,      //BACK
         8, 9, 10, 10, 11, 8,    //RIGHT
         12, 13, 14, 14, 15, 12, //LEFT
         16, 17, 18, 18, 19, 16, //TOP
         20, 21, 22, 22, 23, 20  //BOTTOM
     };
 
+    std::unique_ptr<VertexArray> vao;
     std::unique_ptr<VertexBuffer> cubeVBO;
     std::unique_ptr<IndexBuffer> cubeIndexBuffer;
     std::unique_ptr<Material> cubeMaterial;
     std::unique_ptr<Material> lightSourceMaterial;
-    std::unique_ptr<VertexArray> vao;
     std::unique_ptr<SceneManager> manager;
+    std::unique_ptr<Mesh> mesh;
     std::array<glm::vec3, 5> positions = {
             glm::vec3(-2.f, -4.f, -2.f),
             glm::vec3(-5.f, 3.f, 0.f),
@@ -156,6 +201,9 @@ namespace XEngine {
         uvData = ResLoader::loadImage("../../res/quads_emission.png", &width, &height, &channels, 3);
         cubeMaterial->addTexture(new Texture2D(uvData, width, height));
         delete[] uvData;
+        /*//Create Mesh.
+        std::vector<Material*> cubeMats = { cubeMaterial.get() };
+        mesh = std::make_unique<Mesh>(cubeDataArray, indices, cubeMats);*/
         //Create shader program.
         //Vertex buffers and array.
         BufferLayout bufLayout{
@@ -166,11 +214,10 @@ namespace XEngine {
         vao = std::make_unique<VertexArray>();
         cubeVBO = std::make_unique<VertexBuffer>(cubeDataArray, sizeof(cubeDataArray), bufLayout);
         cubeIndexBuffer = std::make_unique<IndexBuffer>(indices, sizeof(indices) / sizeof(GLuint));
-        std::vector<Material*> cubeMats = { cubeMaterial.get() };
-        Mesh mesh(cubeDataArray, indices, cubeMats);
         //Add buffers to array.
         vao->addVertexBuffer(*cubeVBO);
         vao->setIndexBuffer(*cubeIndexBuffer);
+        //Enable depth.
         //Enable depth.
         Renderer::enableDepthTesting();
         onInitialized();
@@ -220,7 +267,6 @@ namespace XEngine {
         cubeMaterial->setFloat("emission_factor", emission);
         cubeMaterial->setVector3("emission_color", glm::vec3(emissionColor[0], emissionColor[1], emissionColor[2]));
         //Render.
-        //Renderer::draw(*vao);
         for (const glm::vec3& curPos : positions) {
             glm::mat4 translateMatrix(1, 0, 0, 0, 0, 1, 0, 0,
                 0, 0, 1, 0, curPos[0], curPos[1], curPos[2], 1);
@@ -228,6 +274,7 @@ namespace XEngine {
             cubeMaterial->setMatrix4("model_view_matrix", modelViewMatrix);
             cubeMaterial->setMatrix4("mvp_matrix", baseCamera.getProjectionMatrix() * modelViewMatrix);
             cubeMaterial->setMatrix3("normal_matrix", glm::transpose(glm::inverse(glm::mat3(modelViewMatrix))));
+            //mesh->Draw();
             Renderer::draw(*vao);
         }
         //Light source.        
