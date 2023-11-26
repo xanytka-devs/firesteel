@@ -9,6 +9,8 @@
 
 class EditorApp : public XEngine::App {
 
+    //Wait for next Doggy Sasha's video. Rewrite soon.
+
     bool cameraPanStarted = false;
     glm::vec2 initialPanPos{ 0, 0 };
 
