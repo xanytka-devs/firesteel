@@ -2,17 +2,15 @@ cmake_minimum_required(VERSION 3.12)
 project(XEngineEditor)
 set(EDITOR_PROJECT_NAME XEngineEditor)
 
-set(EDITOR_INCLUDES
-	includes/UI.hpp
-)
+#set(EDITOR_INCLUDES
+#)
 set(EDITOR_SOURCES
 	src/main.cpp
-	src/UI.cpp
 )
 
 set(EDITOR_ALL
 	${EDITOR_SOURCES}
-	${EDITOR_INCLUDES}
+	#${EDITOR_INCLUDES}
 )
 
 add_executable(${EDITOR_PROJECT_NAME}

@@ -3,54 +3,15 @@ project(XEngine)
 set(ENGINE_PROJECT_NAME XEngine)
 
 set(ENGINE_PUBLIC_INCLUDES
-	includes/XEngine/App.hpp
-	includes/XEngine/Log.hpp
-	includes/XEngine/Event.hpp
-	includes/XEngine/Components/Transform.hpp
-	includes/XEngine/CES.hpp
-	includes/XEngine/Camera.hpp
-	includes/XEngine/Input/Keys.hpp
-	includes/XEngine/Input/Input.hpp
-	includes/XEngine/Input/Cursor.hpp
-	includes/XEngine/ResLoader.hpp
-	includes/XEngine/Rendering/Renderer.hpp
-	includes/XEngine/Rendering/Texture.hpp
-	includes/XEngine/Rendering/Material.hpp
-	includes/XEngine/Rendering/Mesh.hpp
-	includes/XEngine/SceneManager.hpp
 	includes/stb/stb_image.hpp
 )
-set(ENGINE_PRIVATE_INCLUDES
-	src/XEngine/Rendering/OpenGL/Window.hpp
-	src/XEngine/UI/TUI.hpp
-	src/XEngine/Rendering/ShaderProgram.hpp
-	src/XEngine/Rendering/VertexBuffer.hpp
-	src/XEngine/Rendering/VertexArray.hpp
-	src/XEngine/Rendering/IndexBuffer.hpp
-)
-set(ENGINE_PRIVATE_SOURCES
-	src/XEngine/App.cpp
-	src/XEngine/Rendering/OpenGL/Window.cpp
-	src/XEngine/Input/Input.cpp
-	src/XEngine/Input/Cursor.cpp
-	src/XEngine/CES.cpp
-	src/XEngine/Components/Transform.cpp
-	src/XEngine/Camera.cpp
-	src/XEngine/UI/TUI.cpp
-	src/XEngine/ResLoader.cpp
-	src/XEngine/Rendering/OpenGL/ShaderProgram.cpp
-	src/XEngine/Rendering/OpenGL/VertexBuffer.cpp
-	src/XEngine/Rendering/OpenGL/VertexArray.cpp
-	src/XEngine/Rendering/OpenGL/IndexBuffer.cpp
-	src/XEngine/Rendering/OpenGL/Renderer.cpp
-	src/XEngine/Rendering/OpenGL/Texture.cpp
-	src/XEngine/Rendering/OpenGL/Material.cpp
-	src/XEngine/Rendering/OpenGL/Mesh.cpp
-	src/XEngine/SceneManager.cpp
-)
+#set(ENGINE_PRIVATE_INCLUDES
+#)
+#set(ENGINE_PRIVATE_SOURCES
+#)
 set(ENGINE_ALL
-	${ENGINE_PRIVATE_SOURCES}
-	${ENGINE_PRIVATE_INCLUDES}
+	#${ENGINE_PRIVATE_SOURCES}
+	#${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PUBLIC_INCLUDES}
 )
 
