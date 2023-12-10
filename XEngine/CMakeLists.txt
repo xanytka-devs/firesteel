@@ -4,14 +4,22 @@ set(ENGINE_PROJECT_NAME XEngine)
 
 set(ENGINE_PUBLIC_INCLUDES
 	includes/stb/stb_image.hpp
+	includes/XEngine/ResManager.hpp
+	includes/XEngine/App.hpp
 )
-#set(ENGINE_PRIVATE_INCLUDES
-#)
-#set(ENGINE_PRIVATE_SOURCES
-#)
+set(ENGINE_PRIVATE_INCLUDES
+	includes/XEngine/Log.hpp
+	includes/XEngine/Rendering/Shader.hpp
+)
+set(ENGINE_PRIVATE_SOURCES
+	src/XEngine/ResManager.cpp
+	src/XEngine/App.cpp
+	src/XEngine/Log.cpp
+	src/XEngine/Rendering/Shader.cpp
+)
 set(ENGINE_ALL
-	#${ENGINE_PRIVATE_SOURCES}
-	#${ENGINE_PRIVATE_INCLUDES}
+	${ENGINE_PRIVATE_SOURCES}
+	${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PUBLIC_INCLUDES}
 )
 
@@ -30,9 +38,6 @@ target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 
 add_subdirectory(../external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glfw)
-
-add_subdirectory(../external/spdlog ${CMAKE_CURRENT_BINARY_DIR}/spdlog)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE spdlog)
 
 add_subdirectory(../external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glad)
