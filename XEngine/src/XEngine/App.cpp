@@ -71,15 +71,15 @@ namespace XEngine {
         Shader shader("..\\..\\res\\vert_core.glsl", "..\\..\\res\\frag_core.glsl");
         //Vertex array.
         float vertices[] = {
-            //    POSITIONS              COLORS
-             0.5f,  0.5f,  0.0f,    1.0f, 1.0f, 0.5f,
-            -0.5f,  0.5f,  0.0f,    0.5f, 1.0f, 0.75f,
-            -0.5f, -0.5f,  0.0f,    0.6f, 1.0f, 0.2f,
-             0.5f, -0.5f,  0.0f,    1.0f, 0.2f, 1.0f
+            //    POSITIONS              COLORS             UVs
+            -0.5f, -0.5f,  0.0f,    0.f, 0.f, 0.f,      0.0f, 0.0f,
+            -0.5f,  0.5f,  0.0f,    0.f, 0.f, 0.f,      0.0f, 1.0f,
+             0.5f, -0.5f,  0.0f,    0.f, 0.f, 0.f,      1.0f, 0.0f,
+             0.5f,  0.5f,  0.0f,    0.f, 0.f, 0.f,      1.0f, 1.0f,
         };
         unsigned int indices[] = {
             0, 1, 2, //First t.
-            2, 3, 0  //Second t.
+            3, 1, 2  //Second t.
         };
         //VAO & VBO & EBO.
         unsigned int vao, vbo, ebo;
@@ -95,16 +95,40 @@ namespace XEngine {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         //Set attrib pointers.
         //Positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-        //Colors
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+        //Colors.
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
+        //Texture.
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        //Load textures.
+        unsigned int texture1;
+        glGenTextures(1, &texture1);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        //Texture wrap.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        //Texture mipmap.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        //Set texture.
+        int width = 1000;
+        int height = 1000;
+        int channels = 3;
+        unsigned char* texture = ResManager::load_image("..\\..\\res\\quads_diffusion.png", &width, &height, &channels);
+        if (texture) {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        ResManager::free_image(texture);
+
         //Matrixes
-        glm::mat4 trans = glm::mat4(1.0f);
+        /*glm::mat4 trans = glm::mat4(1.0f);
         trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0, 0, 1));
         shader.enable();
-        shader.setMat4("transform", trans);
+        shader.set_mat4("transform", trans);*/
 
         //Update loop//
         while(!glfwWindowShouldClose(window)) {
@@ -114,10 +138,13 @@ namespace XEngine {
             //Set clear color.
             glClearColor(0.15f, 0.15f, 0.15f, 1);
             glClear(GL_COLOR_BUFFER_BIT);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture1);
             //Rotate matrix.
-            trans = glm::rotate(trans, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1));
+            /*trans = glm::rotate(trans, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1));
+            shader.set_mat4("transform", trans);*/
             shader.enable();
-            shader.setMat4("transform", trans);
+            shader.set_int("albedo", 0);
             //Draw shape.
             glBindVertexArray(vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -147,9 +174,6 @@ namespace XEngine {
         //Wireframe mode.
         if(glfwGetKey(t_window, GLFW_KEY_2) == GLFW_PRESS)
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        //Points mode.
-        if(glfwGetKey(t_window, GLFW_KEY_3) == GLFW_PRESS)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
     }
 
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef LOG_H
+#define LOG_H
 
 #include <sstream>
 
@@ -26,3 +27,5 @@ namespace XEngine {
 #endif
 
 }
+
+#endif // LOG_H

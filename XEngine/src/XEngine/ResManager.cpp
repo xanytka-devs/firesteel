@@ -30,4 +30,19 @@ namespace XEngine {
 
 	}
 
+	unsigned char* ResManager::load_image(const char* t_path, const int* t_width,
+		const int* t_height, const int* t_channels, const bool t_flip_y) {
+		stbi_set_flip_vertically_on_load(t_flip_y);
+		unsigned char* output = NULL;
+		output = stbi_load(t_path, const_cast<int*>(t_width), const_cast<int*>(t_height), const_cast<int*>(t_channels), 3);
+		if(!output) {
+			LOG_ERRR("Texture not loaded.");
+		}
+		return output;
+	}
+
+	void ResManager::free_image(unsigned char* t_data) {
+		stbi_image_free(t_data);
+	}
+
 }

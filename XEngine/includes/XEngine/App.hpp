@@ -1,4 +1,5 @@
-#pragma once
+#ifndef APP_H
+#define APP_H
 
 namespace XEngine {
 
@@ -17,3 +18,5 @@ namespace XEngine {
 	};
 
 }
+
+#endif // APP_H

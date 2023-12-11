@@ -52,7 +52,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_mat">Matrix.</param>
-    void Shader::setMat4(const std::string& t_name, glm::mat4 t_mat) {
+    void Shader::set_mat4(const std::string& t_name, glm::mat4 t_mat) {
         glUniformMatrix4fv(glGetUniformLocation(id, t_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_mat));
     }
     /// <summary>
@@ -60,7 +60,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_mat">Matrix.</param>
-    void Shader::setMat3(const std::string& t_name, glm::mat3 t_mat) {
+    void Shader::set_mat3(const std::string& t_name, glm::mat3 t_mat) {
         glUniformMatrix3fv(glGetUniformLocation(id, t_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_mat));
     }
 
@@ -69,7 +69,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::setBool(const std::string& t_name, bool t_val) {
+    void Shader::set_bool(const std::string& t_name, bool t_val) {
         glUniform1i(glGetUniformLocation(id, t_name.c_str()), (int)t_val);
     }
     /// <summary>
@@ -77,7 +77,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::setInt(const std::string& t_name, int t_val) {
+    void Shader::set_int(const std::string& t_name, int t_val) {
         glUniform1i(glGetUniformLocation(id, t_name.c_str()), t_val);
     }
     /// <summary>
@@ -85,7 +85,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::setFloat(const std::string& t_name, float t_val) {
+    void Shader::set_float(const std::string& t_name, float t_val) {
         glUniform1f(glGetUniformLocation(id, t_name.c_str()), t_val);
     }
     /// <summary>
@@ -93,7 +93,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::set3Floats(const std::string& t_name, float t_val1, float t_val2, float t_val3) {
+    void Shader::set_3_floats(const std::string& t_name, float t_val1, float t_val2, float t_val3) {
         glUniform3f(glGetUniformLocation(id, t_name.c_str()), t_val1, t_val2, t_val3);
     }
     /// <summary>
@@ -101,7 +101,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::set3Floats(const std::string& t_name, glm::vec3 t_vec) {
+    void Shader::set_3_floats(const std::string& t_name, glm::vec3 t_vec) {
         glUniform3f(glGetUniformLocation(id, t_name.c_str()), t_vec.x, t_vec.y, t_vec.z);
     }
     /// <summary>
@@ -109,7 +109,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::set4Floats(const std::string& t_name, float t_val1, float t_val2, float t_val3, float t_val4) {
+    void Shader::set_4_floats(const std::string& t_name, float t_val1, float t_val2, float t_val3, float t_val4) {
         glUniform4f(glGetUniformLocation(id, t_name.c_str()), t_val1, t_val2, t_val3, t_val4);
     }
     /// <summary>
@@ -117,7 +117,7 @@ namespace XEngine {
     /// </summary>
     /// <param name="t_name">Name of the variable.</param>
     /// <param name="t_val">Value.</param>
-    void Shader::set4Floats(const std::string& t_name, glm::vec4 t_vec) {
+    void Shader::set_4_floats(const std::string& t_name, glm::vec4 t_vec) {
         glUniform4f(glGetUniformLocation(id, t_name.c_str()), t_vec.x, t_vec.y, t_vec.z, t_vec.w);
     }
 
