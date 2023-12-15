@@ -19,10 +19,10 @@ public:
 	static double get_wheel_dx();
 	static double get_wheel_dy();
 
-	static bool key_status(int t_button);
-	static bool key_changed(int t_button);
-	static bool key_up(int t_button);
-	static bool key_down(int t_button);
+	static bool button_state(int t_button);
+	static bool button_changed(int t_button);
+	static bool button_up(int t_button);
+	static bool button_down(int t_button);
 private:
 	static double m_x;
 	static double m_y;

@@ -25,7 +25,7 @@ void Keyboard::key_callback(GLFWwindow* t_window, int t_key, int t_scan_code, in
 /// </summary>
 /// <param name="t_key">Key index.</param>
 /// <returns>true=pressed;false=not pressed</returns>
-bool Keyboard::key_status(int t_key) {
+bool Keyboard::key_state(int t_key) {
 	return m_keys[t_key];
 }
 

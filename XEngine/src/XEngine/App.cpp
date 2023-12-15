@@ -24,6 +24,10 @@ namespace XEngine {
     void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height);
     void process_input(GLFWwindow* t_window);
 
+    unsigned int SCR_W = 800, SCR_H = 600;
+    float x, y, z;
+    float fov = 45.f;
+
     /// <summary>
     /// Occures at app startup (instantiation).
     /// </summary>
@@ -46,7 +50,9 @@ namespace XEngine {
     /// <param name="t_title">Name of the window.</param>
     /// <returns>Exit code. Only 0 is success.</returns>
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
-
+        //Set window params.
+        SCR_W = t_win_width;
+        SCR_H = t_win_height;
         //Initiate core//
         glfwInit();
         //Set version to 3.3.
@@ -58,7 +64,7 @@ namespace XEngine {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
         //Create window.
-        GLFWwindow* window = glfwCreateWindow(t_win_width, t_win_height, t_title, NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(SCR_W, SCR_H, t_title, NULL, NULL);
         if (window == NULL) {
             LOG_CRIT("Failed to create GLFW window.");
             glfwTerminate();
@@ -71,50 +77,78 @@ namespace XEngine {
             return -1;
         }
         //Set viewport.
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, SCR_W, SCR_H);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         //Callbacks for
         glfwSetKeyCallback(window, Keyboard::key_callback);
         glfwSetCursorPosCallback(window, Mouse::cursor_callback);
         glfwSetMouseButtonCallback(window, Mouse::button_callback);
         glfwSetScrollCallback(window, Mouse::scroll_callback);
+        //Enable depth test.
+        glEnable(GL_DEPTH_TEST);
 
         //Shader.
         Shader shader("..\\..\\res\\vert_core.glsl", "..\\..\\res\\frag_core.glsl");
         //Vertex array.
         float vertices[] = {
-            //    POSITIONS              COLORS             UVs
-            -0.5f, -0.5f,  0.0f,    0.f, 0.f, 0.f,      0.0f, 0.0f,
-            -0.5f,  0.5f,  0.0f,    0.f, 0.f, 0.f,      0.0f, 1.0f,
-             0.5f, -0.5f,  0.0f,    0.f, 0.f, 0.f,      1.0f, 0.0f,
-             0.5f,  0.5f,  0.0f,    0.f, 0.f, 0.f,      1.0f, 1.0f,
-        };
-        unsigned int indices[] = {
-            0, 1, 2, //First t.
-            3, 1, 2  //Second t.
+            //    POSITIONS                UVs
+            -0.5f, -0.5f, -0.5f,       0.0f, 0.0f,
+             0.5f, -0.5f, -0.5f,       1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,       1.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,       1.0f, 1.0f,
+            -0.5f,  0.5f, -0.5f,       0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,       0.0f, 0.0f,
+
+            -0.5f, -0.5f,  0.5f,       0.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,       1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,       1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,       1.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,       0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,       0.0f, 0.0f,
+
+            -0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,       1.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,       0.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+
+             0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+             0.5f,  0.5f, -0.5f,       1.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,       0.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+
+            -0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+             0.5f, -0.5f, -0.5f,       1.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,       1.0f, 0.0f,
+             0.5f, -0.5f,  0.5f,       1.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,       0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,       0.0f, 1.0f,
+
+            -0.5f,  0.5f, -0.5f,       0.0f, 1.0f,
+             0.5f,  0.5f, -0.5f,       1.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f,       1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f,       0.0f, 0.0f,
+            -0.5f,  0.5f, -0.5f,       0.0f, 1.0f
         };
         //VAO & VBO & EBO.
-        unsigned int vao, vbo, ebo;
+        unsigned int vao, vbo;
         glGenVertexArrays(1, &vao);
         glGenBuffers(1, &vbo);
-        glGenBuffers(1, &ebo);
         //Bind arrays.
         glBindVertexArray(vao);
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        //Setup EBO.
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         //Set attrib pointers.
         //Positions.
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
         glEnableVertexAttribArray(0);
-        //Colors.
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
         //Texture.
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
         //Load textures.
         unsigned int texture1;
         glGenTextures(1, &texture1);
@@ -155,17 +189,25 @@ namespace XEngine {
             glfwPollEvents();
             //Set clear color.
             glClearColor(0.15f, 0.15f, 0.15f, 1);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            //Texture.
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture1);
-            //Rotate matrix.
-            /*trans = glm::rotate(trans, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0, 0, 1));
-            shader.set_mat4("transform", trans);*/
-            shader.enable();
-            shader.set_int("albedo", 0);
+            glBindTexture(GL_TEXTURE_2D, texture1);   
             //Draw shape.
             glBindVertexArray(vao);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            //Create transformations.
+            glm::mat4 model = glm::mat4(1.0f);
+            glm::mat4 view = glm::mat4(1.0f);
+            glm::mat4 projection = glm::mat4(1.0f);
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.f), glm::vec3(0.5f));
+            view = glm::translate(view, glm::vec3(-x, -y, -z));
+            projection = glm::perspective(glm::radians(fov), (float)SCR_W / (float)SCR_H, 0.1f, 100.f);
+            glm::mat4 transform = projection * view * model;
+            //Set shader variables.
+            shader.enable();
+            shader.set_mat4("transform", transform);
+            //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
             //Send update to recievers.
             process_input(window);
             update();
@@ -174,17 +216,20 @@ namespace XEngine {
         //Terminate libs and rendering//
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);
-        glDeleteBuffers(1, &ebo);
         glfwTerminate();
     }
 
     void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height) {
-        glViewport(0, 0, t_width, t_height); //Set viewport.
+        //Set viewport.
+        glViewport(0, 0, t_width, t_height);
+        //Update window params.
+        SCR_W = t_width;
+        SCR_H = t_height;
 	}
 
     void process_input(GLFWwindow* t_window) {
         //On 'Esc' close app.
-        if(Keyboard::key_status(GLFW_KEY_ESCAPE))
+        if(Keyboard::key_state(GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(t_window, true);
         //Default mode.
         if(Keyboard::key_down(GLFW_KEY_1) || main_j.button_state(GLFW_JOYSTICK_DPAD_UP))
@@ -192,6 +237,22 @@ namespace XEngine {
         //Wireframe mode.
         if(Keyboard::key_down(GLFW_KEY_2) || main_j.button_state(GLFW_JOYSTICK_DPAD_RIGHT))
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //Keyboard movement.
+        float j_x = main_j.axis_state(GLFW_JOYSTICK_AXES_LEFT_STICK_X);
+        float j_y = main_j.axis_state(GLFW_JOYSTICK_AXES_LEFT_STICK_Y);
+        if (Keyboard::key_state(GLFW_KEY_W) || j_y <= -0.5f)
+            z -= 0.1f;
+        if (Keyboard::key_state(GLFW_KEY_S) || j_y >= 0.5f)
+            z += 0.1f;
+        if(Keyboard::key_state(GLFW_KEY_A) || j_x <= -0.5f)
+            x -= 0.1f;
+        if(Keyboard::key_state(GLFW_KEY_D) || j_x >= 0.5f)
+            x += 0.1f;
+        if(Keyboard::key_state(GLFW_KEY_UP)) fov += 0.5f;
+        if(Keyboard::key_state(GLFW_KEY_DOWN)) fov -= 0.5f;
+        if(Mouse::button_down(1)) {
+            LOG_INFO("Mouse: btn 1.");
+        }
         //Update joystick.
         main_j.update();
     }

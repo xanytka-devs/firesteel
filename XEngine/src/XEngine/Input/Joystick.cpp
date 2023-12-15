@@ -26,7 +26,7 @@ void Joystick::update() {
 /// </summary>
 /// <param name="t_axis">Axis ID.</param>
 /// <returns>State in float.</returns>
-float Joystick::axes_state(int t_axis) {
+float Joystick::axis_state(int t_axis) {
 	if(m_presence) {
 		return m_axes[t_axis];
 	}

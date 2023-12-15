@@ -37,7 +37,7 @@ public:
 	Joystick(int t_id);
 	void update();
 
-	float axes_state(int t_axis);
+	float axis_state(int t_axis);
 	unsigned char button_state(int t_button);
 
 	int get_axes_count();

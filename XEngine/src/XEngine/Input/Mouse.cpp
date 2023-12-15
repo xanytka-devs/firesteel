@@ -112,7 +112,7 @@ double Mouse::get_wheel_dy() {
 /// </summary>
 /// <param name="t_button">Button index.</param>
 /// <returns>true=pressed;false=not pressed</returns>
-bool Mouse::key_status(int t_button) {
+bool Mouse::button_state(int t_button) {
 	return m_buttons[t_button];
 }
 
@@ -121,7 +121,7 @@ bool Mouse::key_status(int t_button) {
 /// </summary>
 /// <param name="t_button">Button index.</param>
 /// <returns>Last status of button.</returns>
-bool Mouse::key_changed(int t_button) {
+bool Mouse::button_changed(int t_button) {
 	bool output = m_buttons[t_button];
 	m_buttons[t_button] = false;
 	return output;
@@ -132,8 +132,8 @@ bool Mouse::key_changed(int t_button) {
 /// </summary>
 /// <param name="t_button">Button index.</param>
 /// <returns>true=button is pressed;false=button isn't pressed</returns>
-bool Mouse::key_up(int t_button) {
-	return !m_buttons[t_button] && key_changed(t_button);
+bool Mouse::button_up(int t_button) {
+	return !m_buttons[t_button] && button_changed(t_button);
 }
 
 /// <summary>
@@ -141,6 +141,6 @@ bool Mouse::key_up(int t_button) {
 /// </summary>
 /// <param name="t_button">Button index.</param>
 /// <returns>true=button is pressed;false=button isn't pressed</returns>
-bool Mouse::key_down(int t_button) {
-	return m_buttons[t_button] && key_changed(t_button);
+bool Mouse::button_down(int t_button) {
+	return m_buttons[t_button] && button_changed(t_button);
 }
