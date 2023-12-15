@@ -54,7 +54,7 @@ void Mouse::button_callback(GLFWwindow* t_window, int t_button, int t_action, in
 /// <param name="t_window">Window handle.</param>
 /// <param name="t_dx">Delta x of scroll.</param>
 /// <param name="t_dy">Delta y of scroll.</param>
-void Mouse::wheel_callback(GLFWwindow* t_window, double t_dx, double t_dy) {
+void Mouse::scroll_callback(GLFWwindow* t_window, double t_dx, double t_dy) {
 	m_wheel_dx = t_dx;
 	m_wheel_dy = t_dy;
 }

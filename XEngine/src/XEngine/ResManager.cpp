@@ -36,7 +36,9 @@ namespace XEngine {
 		unsigned char* output = NULL;
 		output = stbi_load(t_path, const_cast<int*>(t_width), const_cast<int*>(t_height), const_cast<int*>(t_channels), 3);
 		if(!output) {
-			LOG_ERRR("Texture not loaded.");
+			std::stringstream msg;
+			msg << "Texture '" << t_path << "' not loaded.";
+			LOG_ERRR(msg.str().c_str());
 		}
 		return output;
 	}

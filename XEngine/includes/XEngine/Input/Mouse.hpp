@@ -8,7 +8,7 @@ class Mouse {
 public:
 	static void cursor_callback(GLFWwindow* t_window, double t_x, double t_y);
 	static void button_callback(GLFWwindow* t_window, int t_button, int t_action, int t_mods);
-	static void wheel_callback(GLFWwindow* t_window, double t_dx, double t_dy);
+	static void scroll_callback(GLFWwindow* t_window, double t_dx, double t_dy);
 
 	static double get_cursor_x();
 	static double get_cursor_y();

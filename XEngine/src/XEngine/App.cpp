@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,10 +13,16 @@
 #include "XEngine/ResManager.hpp"
 #include "XEngine/Rendering/Shader.hpp"
 
+#include "XEngine/Input/Keyboard.hpp"
+#include "XEngine/Input/Mouse.hpp"
+#include "XEngine/Input/Joystick.hpp"
+
 namespace XEngine {
 
+    Joystick main_j(0);
+
     void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height);
-    void processInput(GLFWwindow* t_window);
+    void process_input(GLFWwindow* t_window);
 
     /// <summary>
     /// Occures at app startup (instantiation).
@@ -66,6 +73,11 @@ namespace XEngine {
         //Set viewport.
         glViewport(0, 0, 800, 600);
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        //Callbacks for
+        glfwSetKeyCallback(window, Keyboard::key_callback);
+        glfwSetCursorPosCallback(window, Mouse::cursor_callback);
+        glfwSetMouseButtonCallback(window, Mouse::button_callback);
+        glfwSetScrollCallback(window, Mouse::scroll_callback);
 
         //Shader.
         Shader shader("..\\..\\res\\vert_core.glsl", "..\\..\\res\\frag_core.glsl");
@@ -124,11 +136,17 @@ namespace XEngine {
         }
         ResManager::free_image(texture);
 
-        //Matrixes
-        /*glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0, 0, 1));
-        shader.enable();
-        shader.set_mat4("transform", trans);*/
+        //Joystick checks.
+        main_j.update();
+        if (main_j.is_present()) {
+            //If present - send joystick's name.
+            std::stringstream msg;
+            msg << "Controller: '" << main_j.get_name() << "'.";
+            LOG_INFO(msg.str().c_str());
+        } else {
+            //If not - just send 'None'.
+            LOG_INFO("Controller: None.");
+        }
 
         //Update loop//
         while(!glfwWindowShouldClose(window)) {
@@ -149,7 +167,7 @@ namespace XEngine {
             glBindVertexArray(vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             //Send update to recievers.
-            processInput(window);
+            process_input(window);
             update();
         }
 
@@ -164,16 +182,18 @@ namespace XEngine {
         glViewport(0, 0, t_width, t_height); //Set viewport.
 	}
 
-    void processInput(GLFWwindow* t_window) {
+    void process_input(GLFWwindow* t_window) {
         //On 'Esc' close app.
-        if(glfwGetKey(t_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if(Keyboard::key_status(GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(t_window, true);
         //Default mode.
-        if(glfwGetKey(t_window, GLFW_KEY_1) == GLFW_PRESS)
+        if(Keyboard::key_down(GLFW_KEY_1) || main_j.button_state(GLFW_JOYSTICK_DPAD_UP))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //Wireframe mode.
-        if(glfwGetKey(t_window, GLFW_KEY_2) == GLFW_PRESS)
+        if(Keyboard::key_down(GLFW_KEY_2) || main_j.button_state(GLFW_JOYSTICK_DPAD_RIGHT))
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        //Update joystick.
+        main_j.update();
     }
 
 }
