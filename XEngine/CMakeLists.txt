@@ -6,6 +6,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/stb/stb_image.hpp
 	includes/XEngine/ResManager.hpp
 	includes/XEngine/App.hpp
+	includes/XEngine/Rendering/Camera.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp
@@ -19,6 +20,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/App.cpp
 	src/XEngine/Log.cpp
 	src/XEngine/Rendering/Shader.cpp
+	src/XEngine/Rendering/Camera.cpp
 	src/XEngine/Input/Keyboard.cpp
 	src/XEngine/Input/Mouse.cpp
 	src/XEngine/Input/Joystick.cpp

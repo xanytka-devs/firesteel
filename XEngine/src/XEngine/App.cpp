@@ -12,6 +12,7 @@
 #include "XEngine/Log.hpp"
 #include "XEngine/ResManager.hpp"
 #include "XEngine/Rendering/Shader.hpp"
+#include "XEngine/Rendering/Camera.hpp"
 
 #include "XEngine/Input/Keyboard.hpp"
 #include "XEngine/Input/Mouse.hpp"
@@ -22,11 +23,12 @@ namespace XEngine {
     Joystick main_j(0);
 
     void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height);
-    void process_input(GLFWwindow* t_window);
-
+    void process_input(double t_delta_time);
+    bool App::m_quit = false;
+    Camera camera(glm::vec3(0.f, 0.f, 3.f));
+    float delta_time = 0.f;
+    float last_frame = 0.f;
     unsigned int SCR_W = 800, SCR_H = 600;
-    float x, y, z;
-    float fov = 45.f;
 
     /// <summary>
     /// Occures at app startup (instantiation).
@@ -40,6 +42,13 @@ namespace XEngine {
     /// </summary>
     App::~App() {
         LOG_INFO("Shuting down XEngine App.");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    void App::shutdown() {
+        m_quit = true;
     }
 
     /// <summary>
@@ -64,13 +73,13 @@ namespace XEngine {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
         //Create window.
-        GLFWwindow* window = glfwCreateWindow(SCR_W, SCR_H, t_title, NULL, NULL);
-        if (window == NULL) {
+        m_window = glfwCreateWindow(SCR_W, SCR_H, t_title, NULL, NULL);
+        if (m_window == NULL) {
             LOG_CRIT("Failed to create GLFW window.");
             glfwTerminate();
             return -1;
         }
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(m_window);
         //Load GLAD.
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             LOG_CRIT("Failed to initialize GLAD.");
@@ -78,12 +87,14 @@ namespace XEngine {
         }
         //Set viewport.
         glViewport(0, 0, SCR_W, SCR_H);
-        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-        //Callbacks for
-        glfwSetKeyCallback(window, Keyboard::key_callback);
-        glfwSetCursorPosCallback(window, Mouse::cursor_callback);
-        glfwSetMouseButtonCallback(window, Mouse::button_callback);
-        glfwSetScrollCallback(window, Mouse::scroll_callback);
+        glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+        //Callbacks for input.
+        glfwSetKeyCallback(m_window, Keyboard::key_callback);
+        glfwSetCursorPosCallback(m_window, Mouse::cursor_callback);
+        glfwSetMouseButtonCallback(m_window, Mouse::button_callback);
+        glfwSetScrollCallback(m_window, Mouse::scroll_callback);
+        //Disable cursor.
+        //glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         //Enable depth test.
         glEnable(GL_DEPTH_TEST);
 
@@ -183,9 +194,13 @@ namespace XEngine {
         }
 
         //Update loop//
-        while(!glfwWindowShouldClose(window)) {
+        while(!glfwWindowShouldClose(m_window) && !m_quit) {
+            //Update delta time.
+            double cur_time = glfwGetTime();
+            delta_time = cur_time - last_frame;
+            last_frame = cur_time;
             //Window processes.
-            glfwSwapBuffers(window);
+            glfwSwapBuffers(m_window);
             glfwPollEvents();
             //Set clear color.
             glClearColor(0.15f, 0.15f, 0.15f, 1);
@@ -200,8 +215,8 @@ namespace XEngine {
             glm::mat4 view = glm::mat4(1.0f);
             glm::mat4 projection = glm::mat4(1.0f);
             model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.f), glm::vec3(0.5f));
-            view = glm::translate(view, glm::vec3(-x, -y, -z));
-            projection = glm::perspective(glm::radians(fov), (float)SCR_W / (float)SCR_H, 0.1f, 100.f);
+            view = camera.get_view_matrix();
+            projection = glm::perspective(glm::radians(camera.zoom), (float)SCR_W / (float)SCR_H, 0.1f, 100.f);
             glm::mat4 transform = projection * view * model;
             //Set shader variables.
             shader.enable();
@@ -209,7 +224,7 @@ namespace XEngine {
             //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glDrawArrays(GL_TRIANGLES, 0, 36);
             //Send update to recievers.
-            process_input(window);
+            process_input(delta_time);
             update();
         }
 
@@ -217,6 +232,7 @@ namespace XEngine {
         glDeleteVertexArrays(1, &vao);
         glDeleteBuffers(1, &vbo);
         glfwTerminate();
+        return 0;
     }
 
     void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height) {
@@ -227,29 +243,43 @@ namespace XEngine {
         SCR_H = t_height;
 	}
 
-    void process_input(GLFWwindow* t_window) {
+    void process_input(double t_delta_time) {
         //On 'Esc' close app.
-        if(Keyboard::key_state(GLFW_KEY_ESCAPE))
-            glfwSetWindowShouldClose(t_window, true);
+        if(Keyboard::key_state(KeyCode::ESCAPE))
+            App::shutdown();
         //Default mode.
-        if(Keyboard::key_down(GLFW_KEY_1) || main_j.button_state(GLFW_JOYSTICK_DPAD_UP))
+        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT))
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         //Wireframe mode.
-        if(Keyboard::key_down(GLFW_KEY_2) || main_j.button_state(GLFW_JOYSTICK_DPAD_RIGHT))
+        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT))
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         //Keyboard movement.
-        float j_x = main_j.axis_state(GLFW_JOYSTICK_AXES_LEFT_STICK_X);
-        float j_y = main_j.axis_state(GLFW_JOYSTICK_AXES_LEFT_STICK_Y);
-        if (Keyboard::key_state(GLFW_KEY_W) || j_y <= -0.5f)
-            z -= 0.1f;
-        if (Keyboard::key_state(GLFW_KEY_S) || j_y >= 0.5f)
-            z += 0.1f;
-        if(Keyboard::key_state(GLFW_KEY_A) || j_x <= -0.5f)
-            x -= 0.1f;
-        if(Keyboard::key_state(GLFW_KEY_D) || j_x >= 0.5f)
-            x += 0.1f;
-        if(Keyboard::key_state(GLFW_KEY_UP)) fov += 0.5f;
-        if(Keyboard::key_state(GLFW_KEY_DOWN)) fov -= 0.5f;
+        float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
+        float j_y = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_Y);
+        //Position changes.
+        if(Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
+            camera.update_position(Direction::FORWARD, t_delta_time);
+        if(Keyboard::key_state(KeyCode::S) || j_y >= 0.5f)
+            camera.update_position(Direction::BACK, t_delta_time);
+        if(Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
+            camera.update_position(Direction::LEFT, t_delta_time);
+        if(Keyboard::key_state(KeyCode::D) || j_x >= 0.5f)
+            camera.update_position(Direction::RIGHT, t_delta_time);
+        if (Keyboard::key_state(KeyCode::SPACE) || main_j.button_state(JoystickControls::DPAD_UP))
+            camera.update_position(Direction::UP, t_delta_time);
+        if (Keyboard::key_state(KeyCode::LEFT_SHIFT) || main_j.button_state(JoystickControls::DPAD_DOWN))
+            camera.update_position(Direction::DOWN, t_delta_time);
+        //Camera rotation.
+        double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
+        if(dx != 0 || dy != 0) camera.update_direction(dx * 0.45, dy * 0.45);
+        else {
+            dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
+            dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);
+            if (dx != 0 || dy != 0) camera.update_direction(dx, dy);
+        }
+        //Camera zoom.
+        double mouse_zoom = Mouse::get_wheel_dy();
+        if(mouse_zoom != 0) camera.update_zoom(mouse_zoom);
         if(Mouse::button_down(1)) {
             LOG_INFO("Mouse: btn 1.");
         }

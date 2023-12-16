@@ -80,7 +80,9 @@ double Mouse::get_cursor_y() {
 /// </summary>
 /// <returns>Delta x of cursor.</returns>
 double Mouse::get_cursor_dx() {
-	return m_dx;
+	double _dx = m_dx;
+	m_dx = 0;
+	return _dx;
 }
 
 /// <summary>
@@ -88,7 +90,9 @@ double Mouse::get_cursor_dx() {
 /// </summary>
 /// <returns>Delta y of cursor.</returns>
 double Mouse::get_cursor_dy() {
-	return m_dy;
+	double _dy = m_dy;
+	m_dy = 0;
+	return _dy;
 }
 
 /// <summary>
@@ -96,7 +100,9 @@ double Mouse::get_cursor_dy() {
 /// </summary>
 /// <returns>Delta x of mouse wheel.</returns>
 double Mouse::get_wheel_dx() {
-	return m_wheel_dx;
+	double w_dx = m_wheel_dx;
+	m_wheel_dx = 0;
+	return w_dx;
 }
 
 /// <summary>
@@ -104,7 +110,9 @@ double Mouse::get_wheel_dx() {
 /// </summary>
 /// <returns>Delta y of mouse wheel.</returns>
 double Mouse::get_wheel_dy() {
-	return m_wheel_dy;
+	double w_dy = m_wheel_dy;
+	m_wheel_dy = 0;
+	return w_dy;
 }
 
 /// <summary>

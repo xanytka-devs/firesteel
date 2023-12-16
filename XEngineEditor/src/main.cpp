@@ -5,6 +5,8 @@
 
 class EditorApp : public XEngine::App {
 
+    virtual void initiate() override { }
+
 	virtual void update() override { }
 
 };
