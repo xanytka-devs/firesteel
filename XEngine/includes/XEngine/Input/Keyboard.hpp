@@ -1,9 +1,6 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 enum KeyCode {
 	SPACE				=32,
 	APOSTROPHE			=39,  /* ' */
@@ -128,6 +125,8 @@ enum KeyCode {
 
 	KEY_LAST            =MENU
 };
+
+struct GLFWwindow;
 
 class Keyboard {
 public:

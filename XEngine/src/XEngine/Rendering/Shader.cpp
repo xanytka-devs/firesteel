@@ -1,13 +1,25 @@
+#include <glad/glad.h>
+
 #include "XEngine/Rendering/Shader.hpp"
 
 namespace XEngine {
 
     Shader::Shader() { id = -1; }
 
+    /// <summary>
+    /// Creates new program.
+    /// </summary>
+    /// <param name="t_vertShaderPath">Vertex shader path.</param>
+    /// <param name="t_fragShaderPath">Fragment shader path.</param>
     Shader::Shader(const char* t_vertShaderPath, const char* t_fragShaderPath) {
         generate(t_vertShaderPath, t_fragShaderPath);
     }
 
+    /// <summary>
+    /// Generates and links vertex and fragment sahders.
+    /// </summary>
+    /// <param name="t_vertShaderPath">Vertex shader path.</param>
+    /// <param name="t_fragShaderPath">Fragment shader path.</param>
     void Shader::generate(const char* t_vertShaderPath, const char* t_fragShaderPath) {
         int success = 0;
         char infoLog[512];
@@ -30,10 +42,26 @@ namespace XEngine {
         glDeleteShader(fragShader);
     }
 
+    /// <summary>
+    /// Set program as current.
+    /// </summary>
     void Shader::enable() {
-        glUseProgram(id); //Uses program.
+        glUseProgram(id);
     }
 
+    /// <summary>
+    /// Deletes program (cleanup).
+    /// </summary>
+    void Shader::remove() {
+        glDeleteProgram(id);
+    }
+
+    /// <summary>
+    /// Compilies shader.
+    /// </summary>
+    /// <param name="t_path">Path to shader.</param>
+    /// <param name="t_type">Shader type.</param>
+    /// <returns>Compilied shader.</returns>
     GLuint Shader::compile(const char* t_path, GLenum t_type) {
         int success = 0;
         char infoLog[512];
@@ -61,6 +89,7 @@ namespace XEngine {
     void Shader::set_mat4(const std::string& t_name, glm::mat4 t_mat) {
         glUniformMatrix4fv(glGetUniformLocation(id, t_name.c_str()), 1, GL_FALSE, glm::value_ptr(t_mat));
     }
+
     /// <summary>
     /// Set shader's 'Matrix 3' variable.
     /// </summary>

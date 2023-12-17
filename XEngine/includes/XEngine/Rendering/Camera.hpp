@@ -17,6 +17,7 @@ namespace XEngine {
 
 	class Camera {
 	public:
+		Camera();
 		Camera(glm::vec3 t_pos);
 		void update_direction(double t_dx, double t_dy);
 		void update_position(Direction t_dir, double t_dt);

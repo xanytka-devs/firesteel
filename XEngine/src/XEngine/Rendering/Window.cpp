@@ -1,5 +1,7 @@
-#include "XEngine/Rendering/Window.hpp"
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
+#include "XEngine/Rendering/Window.hpp"
 #include "XEngine/Input/Keyboard.hpp"
 #include "XEngine/Input/Mouse.hpp"
 
@@ -9,6 +11,8 @@ namespace XEngine {
     unsigned int Window::height = 600;
 
     Window::Window() : m_window(nullptr) {}
+
+    void Window::disable_cap_60() { cap_60 = false; }
 
     /// <summary>
     /// Callback for window movement.
@@ -34,6 +38,9 @@ namespace XEngine {
         if (!m_window) { return false; }
         //Set context.
         glfwMakeContextCurrent(m_window);
+#ifndef RENDER_CAP_60_SWAP
+        glfwSwapInterval(0);
+#endif
         return true;
     }
 
@@ -42,7 +49,11 @@ namespace XEngine {
     /// </summary>
     void Window::update() {
         //Window processes.
+#ifndef RENDER_CAP_60_NDB
+        glFlush();
+#else
         glfwSwapBuffers(m_window);
+#endif
         glfwPollEvents();
         //Set clear color.
         glClearColor(0.15f, 0.15f, 0.15f, 1);

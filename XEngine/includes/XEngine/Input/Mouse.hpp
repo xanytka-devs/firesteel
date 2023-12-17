@@ -1,8 +1,7 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 class Mouse {
 public:

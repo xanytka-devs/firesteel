@@ -2,4 +2,6 @@
 
 namespace XEngine {
 
+	Transform::Transform() { }
+
 }

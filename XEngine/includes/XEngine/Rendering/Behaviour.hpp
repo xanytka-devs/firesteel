@@ -1,12 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <vector>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "XEngine/Rendering/Mesh.hpp"
 
 namespace XEngine {

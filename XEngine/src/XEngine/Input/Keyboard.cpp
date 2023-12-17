@@ -1,3 +1,6 @@
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "XEngine/Input/Keyboard.hpp"
 
 bool Keyboard::m_keys[GLFW_KEY_LAST] = { 0 };

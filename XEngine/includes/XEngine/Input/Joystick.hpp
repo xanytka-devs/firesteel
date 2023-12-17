@@ -1,9 +1,6 @@
 #ifndef JOYSTICK_H
 #define JOYSTICK_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 enum JoystickControls {
 	//From: https://pastebin.com/6rusNyxR
 	//Analog input button values.   //      PS      |       XBOX

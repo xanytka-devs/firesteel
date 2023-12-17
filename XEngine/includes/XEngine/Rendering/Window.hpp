@@ -1,8 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace XEngine {
 	enum CursorState {
@@ -11,6 +10,11 @@ namespace XEngine {
 		DISABLED,
 		HIDDEN
 	};
+
+	//Delete to remove 60 fps cap. Disables double buffer.
+#define RENDER_CAP_60_NDB
+	//Delete to remove 60 fps cap. Changes swap delay to 0.
+#define RENDER_CAP_60_SWAP
 
 	class Window {
 	public:
@@ -28,8 +32,11 @@ namespace XEngine {
 
 		static unsigned int width;
 		static unsigned int height;
+
+		void disable_cap_60();
 	private:
 		GLFWwindow* m_window;
+		bool cap_60 = true;
 	};
 }
 

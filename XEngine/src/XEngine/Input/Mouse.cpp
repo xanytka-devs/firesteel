@@ -1,3 +1,6 @@
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "XEngine/Input/Mouse.hpp"
 
 double Mouse::m_x = 0;

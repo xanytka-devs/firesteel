@@ -8,6 +8,7 @@ set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
 set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/App.hpp
 	includes/XEngine/ResManager.hpp
+	includes/XEngine/Rendering/Renderer.hpp
 	includes/XEngine/Rendering/Window.hpp
 	includes/XEngine/Rendering/Camera.hpp
 	includes/XEngine/Rendering/Texture.hpp
@@ -26,6 +27,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Log.cpp
 	src/XEngine/App.cpp
 	src/XEngine/ResManager.cpp
+	src/XEngine/Rendering/Renderer.cpp
 	src/XEngine/Rendering/Window.cpp
 	src/XEngine/Rendering/Shader.cpp
 	src/XEngine/Rendering/Camera.cpp

@@ -2,6 +2,8 @@
 
 namespace XEngine {
 
+	Camera::Camera() { }
+
 	/// <summary>
 	/// Sets up camera.
 	/// </summary>

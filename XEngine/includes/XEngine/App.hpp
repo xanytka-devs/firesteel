@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-struct GLFWwindow;
+#include "XEngine/Rendering/Window.hpp"
 
 namespace XEngine {
 
@@ -9,7 +9,7 @@ namespace XEngine {
 	public:
 		App();
 		virtual ~App();
-		static void shutdown();
+		void shutdown();
 
 		App(const App&) = delete;
 		App(App&&) = delete;
@@ -17,8 +17,12 @@ namespace XEngine {
 		App& operator = (App&&) = delete;
 
 		virtual int start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title);
-		virtual void initiate() { }
+		virtual void initiazile() { }
 		virtual void update() { }
+		virtual void on_shutdown() { }
+
+		Window window;
+		float delta_time = 0.f;
 	};
 
 }

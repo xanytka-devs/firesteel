@@ -1,17 +1,15 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <string>
-#include <fstream>
 #include <sstream>
-#include <iostream>
-
-#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "XEngine/ResManager.hpp"
 #include "XEngine/Log.hpp"
+
+unsigned int typedef GLuint;
+unsigned int typedef GLenum;
 
 namespace XEngine {
 	class Shader {
@@ -23,6 +21,7 @@ namespace XEngine {
 		void enable();
 		void generate(const char* t_vertShaderPath, const char* t_fragShaderPath);
 		GLuint compile(const char* t_path, GLenum t_type);
+		void remove();
 
 		void set_bool(const std::string& t_name, bool t_val);
 		void set_int(const std::string& t_name, int t_val);

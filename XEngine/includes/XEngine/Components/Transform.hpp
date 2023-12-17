@@ -1,11 +1,13 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
+#include "XEngine/Rendering/Renderer.hpp"
 #include "XEngine/Rendering/Behaviour.hpp"
 
 namespace XEngine {
 	class Transform : public Behaviour {
 	public:
+		Transform();
 		Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size)
 			: position(t_pos), rotation(t_rot), size(t_size) {}
 
@@ -14,7 +16,7 @@ namespace XEngine {
 		glm::vec3 size;
 
 		void initialize() {
-            int vert_num = 36;
+			unsigned int vert_num = 36;
             float vertices[] = {
                 //    POSITIONS				UVs
 				-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,
@@ -70,7 +72,7 @@ namespace XEngine {
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, position);
             model = glm::scale(model, size);
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.f), glm::vec3(0.5f));
+            model = glm::rotate(model, (float)Renderer::get_time() * glm::radians(-55.f), glm::vec3(0.5f));
             t_shader.set_mat4("model", model);
 
             Behaviour::render(t_shader);
