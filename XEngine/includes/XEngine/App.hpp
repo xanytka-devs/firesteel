@@ -11,8 +11,6 @@ namespace XEngine {
 		virtual ~App();
 		static void shutdown();
 
-		static void switch_wireframe(int t_mode);
-
 		App(const App&) = delete;
 		App(App&&) = delete;
 		App& operator = (const App&) = delete;
@@ -21,9 +19,6 @@ namespace XEngine {
 		virtual int start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title);
 		virtual void initiate() { }
 		virtual void update() { }
-	private:
-		GLFWwindow* m_window;
-		static bool m_quit;
 	};
 
 }

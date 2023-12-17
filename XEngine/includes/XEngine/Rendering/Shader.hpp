@@ -18,8 +18,10 @@ namespace XEngine {
 	public:
 		unsigned int id;
 
+		Shader();
 		Shader(const char* t_vertShaderPath, const char* t_fragShaderPath);
 		void enable();
+		void generate(const char* t_vertShaderPath, const char* t_fragShaderPath);
 		GLuint compile(const char* t_path, GLenum t_type);
 
 		void set_bool(const std::string& t_name, bool t_val);

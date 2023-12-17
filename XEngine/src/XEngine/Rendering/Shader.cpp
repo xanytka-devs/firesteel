@@ -2,7 +2,13 @@
 
 namespace XEngine {
 
+    Shader::Shader() { id = -1; }
+
     Shader::Shader(const char* t_vertShaderPath, const char* t_fragShaderPath) {
+        generate(t_vertShaderPath, t_fragShaderPath);
+    }
+
+    void Shader::generate(const char* t_vertShaderPath, const char* t_fragShaderPath) {
         int success = 0;
         char infoLog[512];
         //Compile vertex shader.

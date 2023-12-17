@@ -2,33 +2,46 @@ cmake_minimum_required(VERSION 3.12)
 project(XEngine)
 set(ENGINE_PROJECT_NAME XEngine)
 
-set(ENGINE_PUBLIC_INCLUDES
+set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
 	includes/stb/stb_image.hpp
-	includes/XEngine/ResManager.hpp
+)
+set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/App.hpp
+	includes/XEngine/ResManager.hpp
+	includes/XEngine/Rendering/Window.hpp
 	includes/XEngine/Rendering/Camera.hpp
+	includes/XEngine/Rendering/Texture.hpp
+	includes/XEngine/Rendering/Mesh.hpp
+	includes/XEngine/Rendering/Behaviour.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp
+	includes/XEngine/Components/Transform.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	includes/XEngine/Log.hpp
 	includes/XEngine/Rendering/Shader.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
-	src/XEngine/ResManager.cpp
-	src/XEngine/App.cpp
 	src/XEngine/Log.cpp
+	src/XEngine/App.cpp
+	src/XEngine/ResManager.cpp
+	src/XEngine/Rendering/Window.cpp
 	src/XEngine/Rendering/Shader.cpp
 	src/XEngine/Rendering/Camera.cpp
+	src/XEngine/Rendering/Texture.cpp
+	src/XEngine/Rendering/Mesh.cpp
+	src/XEngine/Rendering/Behaviour.cpp
 	src/XEngine/Input/Keyboard.cpp
 	src/XEngine/Input/Mouse.cpp
 	src/XEngine/Input/Joystick.cpp
+	src/XEngine/Components/Transform.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
 	${ENGINE_PRIVATE_INCLUDES}
 	${ENGINE_PUBLIC_INCLUDES}
+	${ENGINE_PUBLIC_EXTERNAL_INCLUDES}
 )
 
 add_library(${ENGINE_PROJECT_NAME} STATIC
