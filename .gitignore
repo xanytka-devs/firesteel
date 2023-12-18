@@ -18,7 +18,7 @@ ZERO_CHECK.log
 # Other folders
 bin
 out
-build
+build/*
 !build/CMakeCache.txt
 
 # Prerequisites
