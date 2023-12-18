@@ -10,7 +10,7 @@ namespace XEngine {
 	/// <param name="t_pos">Position of new camera.</param>
 	Camera::Camera(glm::vec3 t_pos)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
-		yaw(-90.f), pitch(0.f), move_speed(2.5f), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)) {
+		yaw(-90.f), pitch(0.f), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)) {
 		update_vectors();
 	}
 
@@ -43,39 +43,6 @@ namespace XEngine {
 		else if (pitch < -89.f) pitch = -89.f;
 		//Update vectors.
 		update_vectors();
-	}
-
-	/// <summary>
-	/// Temp. | For camera movement.
-	/// </summary>
-	/// <param name="t_dir">Direction to move in.</param>
-	/// <param name="t_dt">Delta time.</param>
-	void Camera::update_position(Direction t_dir, double t_dt) {
-		//Get velocity.
-		float velocity = (float)t_dt * move_speed;
-		//Change position.
-		switch (t_dir) {
-		case Direction::FORWARD:
-			position += forward * velocity;
-			break;
-		case Direction::BACK:
-			position -= forward * velocity;
-			break;
-		case Direction::LEFT:
-			position -= right * velocity;
-			break;
-		case Direction::RIGHT:
-			position += right * velocity;
-			break;
-		case Direction::UP:
-			position += up * velocity;
-			break;
-		case Direction::DOWN:
-			position -= up * velocity;
-			break;
-		default:
-			break;
-		}
 	}
 
 	/// <summary>

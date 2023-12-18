@@ -5,6 +5,9 @@
 
 namespace XEngine {
 
+#ifdef NDEBUG
+
+#else
 	/// <summary>
 	/// Logs message to console with specified color and prompt.
 	/// </summary>
@@ -20,5 +23,6 @@ namespace XEngine {
 		SetConsoleTextAttribute(hConsole, 15);
 		std::cout << t_msg << std::endl;
 	}
+#endif
 
 }

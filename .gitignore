@@ -19,6 +19,7 @@ ZERO_CHECK.log
 bin
 out
 build
+!build/CMakeCache.txt
 
 # Prerequisites
 *.d

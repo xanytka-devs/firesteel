@@ -46,33 +46,36 @@ class EditorApp : public XEngine::App {
 
     void input() {
         //On 'Esc' close app.
-        if (Keyboard::key_state(KeyCode::ESCAPE))
+        if(Keyboard::key_state(KeyCode::ESCAPE))
             App::shutdown();
         //Default mode.
-        if (Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT))
+        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT))
             XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
         //Wireframe mode.
-        if (Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT))
+        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT))
             XEngine::Renderer::switch_mode(XEngine::RenderMode::WIREFRAME);
         //Keyboard movement.
         float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
         float j_y = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_Y);
         //Position changes.
+        // F/B movement.
         if (Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
-            camera.update_position(XEngine::Direction::FORWARD, App::delta_time);
+            camera.position += camera.forward * (App::delta_time * 2.5f);
         if (Keyboard::key_state(KeyCode::S) || j_y >= 0.5f)
-            camera.update_position(XEngine::Direction::BACK, App::delta_time);
-        if (Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
-            camera.update_position(XEngine::Direction::LEFT, App::delta_time);
+            camera.position -= camera.forward * (App::delta_time * 2.5f);
+        // R/L movement.
         if (Keyboard::key_state(KeyCode::D) || j_x >= 0.5f)
-            camera.update_position(XEngine::Direction::RIGHT, App::delta_time);
+            camera.position += camera.right * (App::delta_time * 2.5f);
+        if (Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
+            camera.position -= camera.right * (App::delta_time * 2.5f);
+        // U/D movement.
         if (Keyboard::key_state(KeyCode::SPACE) || main_j.button_state(JoystickControls::DPAD_UP))
-            camera.update_position(XEngine::Direction::UP, App::delta_time);
+            camera.position += camera.up * (App::delta_time * 2.5f);
         if (Keyboard::key_state(KeyCode::LEFT_SHIFT) || main_j.button_state(JoystickControls::DPAD_DOWN))
-            camera.update_position(XEngine::Direction::DOWN, App::delta_time);
+            camera.position -= camera.up * (App::delta_time * 2.5f);
         //Camera rotation.
         double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
-        if (dx != 0 || dy != 0) camera.update_direction(dx * 0.45, dy * 0.45);
+        if(dx != 0 || dy != 0) camera.update_direction(dx * 0.45, dy * 0.45);
         else {
             dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
             dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);
@@ -80,8 +83,8 @@ class EditorApp : public XEngine::App {
         }
         //Camera zoom.
         double mouse_zoom = Mouse::get_wheel_dy();
-        if (camera.fov >= 1.f && camera.fov <= 45.f) camera.fov -= mouse_zoom;
-        else if (camera.fov < 1.f) camera.fov = 1.f;
+        if(camera.fov >= 1.f && camera.fov <= 45.f) camera.fov -= mouse_zoom;
+        else if(camera.fov < 1.f) camera.fov = 1.f;
         else camera.fov = 45.f;
         //Update joystick.
         main_j.update();
