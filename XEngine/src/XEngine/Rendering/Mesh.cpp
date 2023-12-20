@@ -23,10 +23,16 @@ namespace XEngine {
 				t_vertices[i * stride + 1],
 				t_vertices[i * stride + 2]
 			);
+			//Parse normal.
+			output[i].normal = glm::vec3(
+				t_vertices[i * stride + 3],
+				t_vertices[i * stride + 4],
+				t_vertices[i * stride + 5]
+			);
 			//Parse UVs.
 			output[i].uv = glm::vec2(
-				t_vertices[i * stride + 3],
-				t_vertices[i * stride + 4]
+				t_vertices[i * stride + 6],
+				t_vertices[i * stride + 7]
 			);
 		}
 		return output;
@@ -65,10 +71,13 @@ namespace XEngine {
 		//Attribute pointers.
 		// POSITIONS //
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-		// UVs //
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+		// Normals //
 		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+		// UVs //
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 		//Unbind vertex array.
 		glBindVertexArray(0);
 	}

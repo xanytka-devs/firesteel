@@ -12,6 +12,7 @@ namespace XEngine {
 		static std::vector<struct Vertex> generate_list(float* t_vertices, int t_vert_num);
 
 		glm::vec3 pos;
+		glm::vec3 normal;
 		glm::vec2 uv;
 	};
 	typedef struct Vertex Vertex;

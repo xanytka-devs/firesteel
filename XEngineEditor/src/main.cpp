@@ -75,7 +75,7 @@ class EditorApp : public XEngine::App {
             camera.position -= camera.up * (App::delta_time * 2.5f);
         //Camera rotation.
         double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
-        if(dx != 0 || dy != 0) camera.update_direction(dx * 0.45, dy * 0.45);
+        if(dx != 0 || dy != 0) camera.update_direction(dx, dy);
         else {
             dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
             dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);

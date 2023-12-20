@@ -11,6 +11,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Rendering/Renderer.hpp
 	includes/XEngine/Rendering/Window.hpp
 	includes/XEngine/Rendering/Camera.hpp
+	includes/XEngine/Rendering/Material.hpp
 	includes/XEngine/Rendering/Texture.hpp
 	includes/XEngine/Rendering/Mesh.hpp
 	includes/XEngine/Rendering/Behaviour.hpp
@@ -31,6 +32,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/Window.cpp
 	src/XEngine/Rendering/Shader.cpp
 	src/XEngine/Rendering/Camera.cpp
+	src/XEngine/Rendering/Material.cpp
 	src/XEngine/Rendering/Texture.cpp
 	src/XEngine/Rendering/Mesh.cpp
 	src/XEngine/Rendering/Behaviour.cpp
