@@ -15,11 +15,12 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Rendering/Texture.hpp
 	includes/XEngine/Rendering/Mesh.hpp
 	includes/XEngine/Rendering/Behaviour.hpp
+	includes/XEngine/Rendering/Light.hpp
+	includes/XEngine/Components/Transform.hpp
+	includes/XEngine/Components/LightSource.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp
-	includes/XEngine/Components/Transform.hpp
-	includes/XEngine/Components/LightSource.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	includes/XEngine/Log.hpp
@@ -37,6 +38,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/Texture.cpp
 	src/XEngine/Rendering/Mesh.cpp
 	src/XEngine/Rendering/Behaviour.cpp
+	src/XEngine/Rendering/Light.cpp
 	src/XEngine/Input/Keyboard.cpp
 	src/XEngine/Input/Mouse.cpp
 	src/XEngine/Input/Joystick.cpp

@@ -20,16 +20,14 @@ namespace XEngine {
 	/// </summary>
 	/// <param name="t_shader">Shader for meshes.</param>
 	void Behaviour::render(Shader t_shader) {
-		for (Mesh mesh : meshes)
-			mesh.render(t_shader);
+		mesh.render(t_shader);
 	}
 
 	/// <summary>
 	/// Deletes model (cleanup).
 	/// </summary>
 	void Behaviour::remove() {
-		for (Mesh mesh : meshes)
-			mesh.remove();
+		mesh.remove();
 	}
 
 }

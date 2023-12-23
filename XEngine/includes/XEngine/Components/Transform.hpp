@@ -8,6 +8,7 @@
 namespace XEngine {
 	class Transform : public Behaviour {
 	public:
+        Transform() { }
 		Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size, Material t_mat)
 			: position(t_pos), rotation(t_rot), size(t_size), material(t_mat) {}
 
@@ -67,8 +68,10 @@ namespace XEngine {
             std::vector<unsigned int> indicies(vert_num);
             for (unsigned int i = 0; i < vert_num; i++)
                 indicies[i] = i;
-            Texture texture("..\\..\\res\\quads_diffusion.png", "quads");
-            meshes.push_back(Mesh(Vertex::generate_list(vertices, vert_num), indicies, { texture }));
+            Texture texture_albedo("..\\..\\res\\quads_diffusion.png", "material.diffuse");
+            Texture texture_specular("..\\..\\res\\quads_specular.png", "material.specular");
+            Texture texture_emission("..\\..\\res\\quads_emission.png", "material.emission");
+            mesh = Mesh(Vertex::generate_list(vertices, vert_num), indicies, { texture_albedo, texture_specular, texture_emission });
 		}
 
         void render(Shader t_shader) {
@@ -83,11 +86,12 @@ namespace XEngine {
                 model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
             }
             t_shader.set_mat4("model", model);
-
+            for (size_t i = 0; i < mesh.textures.size(); i++)
+                mesh.textures[i].enable();
             t_shader.set_3_floats("material.ambient", material.ambient);
-            t_shader.set_3_floats("material.diffuse", material.diffuse);
-            t_shader.set_3_floats("material.specular", material.specular);
             t_shader.set_float("material.shininess", material.shininess);
+            t_shader.set_float("material.emission_factor", material.emission_factor);
+            t_shader.set_3_floats("material.emission_color", material.emission);
 
             Behaviour::render(t_shader);
         }

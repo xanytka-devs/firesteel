@@ -2,6 +2,8 @@
 #define LIGHT_SOURCE_H
 
 #include "XEngine/Components/Transform.hpp"
+#include "XEngine/Rendering/Light.hpp"
+
 namespace XEngine {
 	class LightSource : public Transform {
 	public:
@@ -9,23 +11,21 @@ namespace XEngine {
 			glm::vec3 t_ambient = glm::vec3(1.0f),
 			glm::vec3 t_diffuse = glm::vec3(1.0f),
 			glm::vec3 t_specular = glm::vec3(1.0f),
+			float t_k0 = 1.0f, float t_k1 = 0.07f, float t_k2 = 0.032f,
 			glm::vec3 t_pos = glm::vec3(1.0f),
 			glm::vec4 t_rotation = glm::vec4(1.0f),
 			glm::vec3 t_size = glm::vec3(1.0f))
-			: color(t_color), ambient(t_ambient), diffuse(t_diffuse), specular(t_specular),
-			Transform(t_pos, t_rotation, t_size, Material::white_plastic) {
+			: color(t_color), light({ t_pos, t_k0, t_k1, t_k2, t_ambient, t_diffuse,t_specular }),
+			Transform(t_pos, t_rotation, t_size, Material::white) {
 			shoud_rotate = false;
 		}
-
-		glm::vec3 color;
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
-
 		void render(Shader t_shader) {
 			t_shader.set_3_floats("light_color", color);
 			Transform::render(t_shader);
 		}
+
+		glm::vec3 color;
+		PointLight light;
 	};
 }
 

@@ -6,6 +6,8 @@
 
 namespace XEngine {
 
+	glm::vec4 Renderer::m_color(0.15f, 0.15f, 0.15f, 1);
+
 	void Renderer::initialize() {
 		glfwInit();
 		//Set version to 3.3.
@@ -40,6 +42,16 @@ namespace XEngine {
 
 	double Renderer::get_time() {
 		return glfwGetTime();
+	}
+
+	void Renderer::set_clear_color(glm::vec3 t_rgb) {
+		m_color = glm::vec4(t_rgb, 1);
+	}
+	void Renderer::set_clear_color(glm::vec4 t_argb) {
+		m_color = t_argb;
+	}
+	glm::vec4 Renderer::get_clear_color() {
+		return m_color;
 	}
 
 }

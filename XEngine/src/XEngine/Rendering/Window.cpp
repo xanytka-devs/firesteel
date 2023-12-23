@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "XEngine/Rendering/Renderer.hpp"
 #include "XEngine/Rendering/Window.hpp"
 #include "XEngine/Input/Keyboard.hpp"
 #include "XEngine/Input/Mouse.hpp"
@@ -56,7 +57,8 @@ namespace XEngine {
 #endif
         glfwPollEvents();
         //Set clear color.
-        glClearColor(0.15f, 0.15f, 0.15f, 1);
+        glm::vec4 color = Renderer::get_clear_color();
+        glClearColor(color.x, color.y, color.z, color.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

@@ -11,7 +11,7 @@ namespace XEngine {
 		void render(Shader t_shader);
 		void remove();
 
-		std::vector<Mesh> meshes;
+		Mesh mesh;
 	};
 }
 
