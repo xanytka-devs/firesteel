@@ -12,11 +12,15 @@
 #include "XEngine/Rendering/Window.hpp"
 #include "XEngine/Rendering/Texture.hpp"
 #include "XEngine/Components/Transform.hpp"
+#include "XEngine/Components/LightSource.hpp"
 
 Joystick main_j(0);
-XEngine::Shader shader;
-XEngine::Transform box;
-XEngine::Camera camera;
+XEngine::Shader box_shader;
+XEngine::Shader light_shader;
+XEngine::Transform box(glm::vec3(0, 0, 0), glm::vec4(0, 0, 0, 1), glm::vec3(0.75f), Material::bronze);
+XEngine::LightSource light(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f),
+    glm::vec3(-1.0f, -.5f, .5f), glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
+XEngine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
 
 class EditorApp : public XEngine::App {
 
@@ -26,34 +30,59 @@ class EditorApp : public XEngine::App {
         //Cursor state.
         window.set_cursor_state(XEngine::CursorState::DISABLED);
         //Model.
-        camera = XEngine::Camera(glm::vec3(0.f, 0.f, 3.f));
-        shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
-        box = XEngine::Transform(glm::vec3(0, 0, 0), glm::vec4(0, 0, 0, 1), glm::vec3(0.75f));
+        box_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         box.initialize();
+        //Light source.
+        light_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
+        light.initialize();
     }
 
+    int mode = 0;
 	virtual void update() override {
         //Create transformations.
-        shader.enable();
         glm::mat4 view = camera.get_view_matrix();
         glm::mat4 projection = glm::perspective(glm::radians(camera.fov), (float)window.width / (float)window.height, 0.1f, 100.f);
-        shader.set_mat4("transform", projection * view);
         //Render model.
-        box.render(shader);
+        box_shader.enable();
+        box_shader.set_3_floats("view_pos", camera.position);
+        box_shader.set_3_floats("light.position", light.position);
+        box_shader.set_3_floats("light.ambient", light.ambient);
+        box_shader.set_3_floats("light.diffuse", light.diffuse);
+        box_shader.set_3_floats("light.specular", light.specular);
+        box_shader.set_mat4("projection", projection);
+        box_shader.set_mat4("view", view);
+        box_shader.set_int("render_mode", mode);
+        box.render(box_shader);
+        //Render light.
+        light_shader.enable();
+        light_shader.set_mat4("projection", projection );
+        light_shader.set_mat4("view", view);
+        light_shader.set_int("render_mode", mode);
+        light.render(light_shader);
         //Take care of input.
         input();
     }
 
     void input() {
         //On 'Esc' close app.
-        if(Keyboard::key_state(KeyCode::ESCAPE))
+        if(Keyboard::key_state(KeyCode::ESCAPE) || main_j.button_state(JoystickControls::J_HOME))
             App::shutdown();
         //Default mode.
-        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT))
+        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT)) { mode = 0;
             XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+        }
         //Wireframe mode.
-        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT))
+        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT)) { mode = 0;
             XEngine::Renderer::switch_mode(XEngine::RenderMode::WIREFRAME);
+        }
+        //UV mode.
+        if(Keyboard::key_down(KeyCode::KEY_3)) { mode = 1;
+            XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+        }
+        //Normal mode.
+        if(Keyboard::key_down(KeyCode::KEY_4)) { mode = 2;
+            XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+        }
         //Keyboard movement.
         float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
         float j_y = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_Y);
@@ -76,10 +105,10 @@ class EditorApp : public XEngine::App {
         //Camera rotation.
         double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
         if(dx != 0 || dy != 0) camera.update_direction(dx, dy);
-        else {
+        else if(main_j.is_present()) {
             dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
             dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);
-            if (dx != 0 || dy != 0) camera.update_direction(dx, dy);
+            if (dx >= 0.5 || dy >= 0.5 || dx <= -0.5 || dy <= -0.5) camera.update_direction(dx, dy);
         }
         //Camera zoom.
         double mouse_zoom = Mouse::get_wheel_dy();
@@ -92,7 +121,9 @@ class EditorApp : public XEngine::App {
 
     virtual void on_shutdown() override {
         box.remove();
-        shader.remove();
+        box_shader.remove();
+        light.remove();
+        light_shader.remove();
     }
 
 };

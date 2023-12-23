@@ -19,6 +19,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp
 	includes/XEngine/Components/Transform.hpp
+	includes/XEngine/Components/LightSource.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	includes/XEngine/Log.hpp
@@ -39,7 +40,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Input/Keyboard.cpp
 	src/XEngine/Input/Mouse.cpp
 	src/XEngine/Input/Joystick.cpp
-	src/XEngine/Components/Transform.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
