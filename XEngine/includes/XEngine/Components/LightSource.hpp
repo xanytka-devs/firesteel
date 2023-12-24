@@ -1,11 +1,11 @@
 #ifndef LIGHT_SOURCE_H
 #define LIGHT_SOURCE_H
 
-#include "XEngine/Components/Transform.hpp"
+#include "XEngine/Components/Cube.hpp"
 #include "XEngine/Rendering/Light.hpp"
 
 namespace XEngine {
-	class LightSource : public Transform {
+	class LightSource : public Cube {
 	public:
 		LightSource(glm::vec3 t_color = glm::vec3(1.0f),
 			glm::vec3 t_ambient = glm::vec3(1.0f),
@@ -16,12 +16,12 @@ namespace XEngine {
 			glm::vec4 t_rotation = glm::vec4(1.0f),
 			glm::vec3 t_size = glm::vec3(1.0f))
 			: color(t_color), light({ t_pos, t_k0, t_k1, t_k2, t_ambient, t_diffuse,t_specular }),
-			Transform(t_pos, t_rotation, t_size, Material::white) {
+			Cube(t_pos, t_rotation, t_size) {
 			shoud_rotate = false;
 		}
 		void render(Shader t_shader) {
 			t_shader.set_3_floats("light_color", color);
-			Transform::render(t_shader);
+			Cube::render(t_shader);
 		}
 
 		glm::vec3 color;

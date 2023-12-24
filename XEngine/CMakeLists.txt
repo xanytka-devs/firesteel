@@ -14,9 +14,9 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Rendering/Material.hpp
 	includes/XEngine/Rendering/Texture.hpp
 	includes/XEngine/Rendering/Mesh.hpp
-	includes/XEngine/Rendering/Behaviour.hpp
+	includes/XEngine/Rendering/Transform.hpp
 	includes/XEngine/Rendering/Light.hpp
-	includes/XEngine/Components/Transform.hpp
+	includes/XEngine/Components/Cube.hpp
 	includes/XEngine/Components/LightSource.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
@@ -37,7 +37,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/Material.cpp
 	src/XEngine/Rendering/Texture.cpp
 	src/XEngine/Rendering/Mesh.cpp
-	src/XEngine/Rendering/Behaviour.cpp
+	src/XEngine/Rendering/Transform.cpp
 	src/XEngine/Rendering/Light.cpp
 	src/XEngine/Input/Keyboard.cpp
 	src/XEngine/Input/Mouse.cpp
@@ -71,6 +71,9 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glad)
 
 add_subdirectory(../external/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glm)
+
+add_subdirectory(../external/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE assimp)
 
 set(IMGUI_INCLUDES
 	../external/imgui/imgui.h

@@ -6,6 +6,7 @@
 
 #include "XEngine/Rendering/Shader.hpp"
 #include "XEngine/Rendering/Texture.hpp"
+#include <assimp/postprocess.h>
 
 namespace XEngine {
 	struct Vertex {
@@ -19,16 +20,18 @@ namespace XEngine {
 
 	class Mesh {
 	public:
-		Mesh();
-		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indicies, std::vector<Texture> t_textures);
+		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, std::vector<Texture> t_textures = {});
+		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, aiColor4D t_diffuse, aiColor4D t_spec);
 
-		void render(Shader shader);
+		void render(Shader t_shader);
 		void remove();
 
 		std::vector<Vertex> vertices;
-		std::vector<unsigned int> indicies;
+		std::vector<unsigned int> indices;
 		unsigned int vao;
 		std::vector<Texture> textures;
+		aiColor4D diffuse;
+		aiColor4D specular;
 	private:
 		unsigned int vbo, ebo;
 

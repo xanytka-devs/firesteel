@@ -1,29 +1,23 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
+enum aiTextureType;
+
 namespace XEngine {
 	class Texture {
 	public:
 		Texture();
-		Texture(const char* t_path, const char* t_name, bool t_load_now = true, bool t_use_defalt_params = true);
+		Texture(std::string t_path, std::string t_file, aiTextureType t_type);
 
 		void generate();
 		void load(bool t_flip = false);
 		void enable();
 		void remove();
 
-		void set_filters(GLenum t_all);
-		void set_filters(GLenum t_mag, GLenum t_min);
-		void set_wrap(GLenum t_all);
-		void set_wrap(GLenum t_s, GLenum t_t);
-
 		unsigned int id;
-		const char* name;
-	private:
-		const char* m_path;
-		int m_width;
-		int m_height;
-		int m_channels;
+		aiTextureType type;
+		std::string path;
+		std::string file;
 	};
 }
 

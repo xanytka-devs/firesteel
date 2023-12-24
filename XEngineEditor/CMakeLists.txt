@@ -17,7 +17,7 @@ add_executable(${EDITOR_PROJECT_NAME}
 	${EDITOR_ALL}
 )
 
-target_link_libraries(${EDITOR_PROJECT_NAME} XEngine ImGui glm)
+target_link_libraries(${EDITOR_PROJECT_NAME} XEngine ImGui glm assimp)
 target_compile_features(${EDITOR_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${EDITOR_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${EDITOR_PROJECT_NAME} PRIVATE src)

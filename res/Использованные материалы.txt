@@ -3,3 +3,5 @@
 	"box_specular.png",
 	"box_emission.png"
 		происходят с источника: https://learnopengl.com/Lighting/Lighting-maps
+
+"Toon Characters 3d / Style LowPolyFlat / Seal" (https://skfb.ly/6RzPp) by DanWicht is licensed under CC Attribution-NonCommercial-NoDerivs (http://creativecommons.org/licenses/by-nc-nd/4.0/).

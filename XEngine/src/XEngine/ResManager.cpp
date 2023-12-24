@@ -10,7 +10,7 @@
 
 namespace XEngine {
 
-	std::string ResManager::read_from_file(const char* t_path) {
+	std::string ResManager::read_from_file(std::string t_path) {
 		//Create variables.
 		std::ifstream file;
 		std::stringstream buffer;
@@ -20,26 +20,18 @@ namespace XEngine {
 		if (file.is_open()) {
 			buffer << file.rdbuf();
 			output = buffer.str();
-		} else {
-			std::stringstream msg;
-			msg << "Couldn't open file '" << t_path << "'.";
-			LOG_ERRR(msg.str().c_str());
-		}
+		} else LOG_ERRR(("Couldn't load file at: '" + t_path + "'.").c_str());
 		file.close();
 		return output;
 
 	}
 
-	unsigned char* ResManager::load_image(const char* t_path, const int* t_width,
+	unsigned char* ResManager::load_image(std::string t_path, const int* t_width,
 		const int* t_height, const int* t_channels, const bool t_flip_y) {
 		stbi_set_flip_vertically_on_load(t_flip_y);
 		unsigned char* output = NULL;
-		output = stbi_load(t_path, const_cast<int*>(t_width), const_cast<int*>(t_height), const_cast<int*>(t_channels), 3);
-		if(!output) {
-			std::stringstream msg;
-			msg << "Texture '" << t_path << "' not loaded.";
-			LOG_ERRR(msg.str().c_str());
-		}
+		output = stbi_load(t_path.c_str(), const_cast<int*>(t_width), const_cast<int*>(t_height), const_cast<int*>(t_channels), 3);
+		if(!output) LOG_ERRR(("Texture '" + t_path + "' not loaded.").c_str());
 		return output;
 	}
 

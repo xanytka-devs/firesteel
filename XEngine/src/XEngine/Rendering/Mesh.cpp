@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include "XEngine/Rendering/Mesh.hpp"
 
@@ -38,16 +41,13 @@ namespace XEngine {
 		return output;
 	}
 
-	Mesh::Mesh() { }
+	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, std::vector<Texture> t_textures)
+		: vertices(t_vertices), indices(t_indices), textures(t_textures) {
+		setup();
+	}
 
-	/// <summary>
-	/// Creates instance of model.
-	/// </summary>
-	/// <param name="t_vertices">Vertices list.</param>
-	/// <param name="t_indicies">Indicies list.</param>
-	/// <param name="t_textures">Textures list.</param>
-	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indicies, std::vector<Texture> t_textures)
-		: vertices(t_vertices), indicies(t_indicies), textures(t_textures) {
+	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, aiColor4D t_diffuse, aiColor4D t_specular)
+		: vertices(t_vertices), indices(t_indices), diffuse(t_diffuse), specular(t_specular) {
 		setup();
 	}
 
@@ -67,7 +67,7 @@ namespace XEngine {
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 		// EBO //
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicies.size() * sizeof(unsigned int), &indicies[0], GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 		//Attribute pointers.
 		// POSITIONS //
 		glEnableVertexAttribArray(0);
@@ -85,16 +85,32 @@ namespace XEngine {
 	/// <summary>
 	/// Render mesh.
 	/// </summary>
-	/// <param name="shader">Shader for model.</param>
-	void Mesh::render(Shader shader) {
-		//Go throught textures and set them in shader.
-		for (unsigned int i = 0; i < textures.size(); i++) {
-			shader.set_int(textures[i].name, textures[i].id);
+	/// <param name="t_shader">Shader for model.</param>
+	void Mesh::render(Shader t_shader) {
+		//Load textures.
+		unsigned int diffuse_idx = 0;
+		unsigned int specular_idx = 0;
+		for(unsigned int i = 0; i < textures.size(); i++) {
+			//Activate texture.
+			glActiveTexture(GL_TEXTURE0 + i);
+			//Retrieve texture info.
+			std::string name;
+			switch (textures[i].type) {
+			case aiTextureType_DIFFUSE:
+				name = "diffuse" + std::to_string(diffuse_idx++);
+				break;
+			case aiTextureType_SPECULAR:
+				name = "specular" + std::to_string(specular_idx++);
+				break;
+			}
+			//Set shader value and bind texture.
+			t_shader.set_int(name, i);
 			textures[i].enable();
 		}
+
 		//Enable buffers.
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, indicies.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		//Unbind active texture.
 		glActiveTexture(GL_TEXTURE0);

@@ -3,13 +3,17 @@ out vec4 fragColor;
 
 struct Material {
 	vec3 ambient;
-	sampler2D diffuse;
-	sampler2D specular;
-	sampler2D emission;
+	vec3 diffuse;
+	vec3 specular;
+	vec3 emission;
 	float emission_factor;
 	vec3 emission_color;
 	float shininess;
 };
+
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
+uniform sampler2D emission0;
 
 struct DirectionalLight {
 	//Location.
@@ -72,9 +76,9 @@ vec3 calc_spot_light(int idx, vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec
 void main() {
 	vec3 norm = normalize(frag_NORMAL);
 	vec3 view_dir = normalize(view_pos - frag_POS);
-	vec3 diff_map = vec3(texture(material.diffuse, frag_UV));
-	vec3 spec_map = vec3(texture(material.specular, frag_UV));
-	vec3 emis_map = vec3(texture(material.emission, frag_UV));
+	vec3 diff_map = vec3(texture(diffuse0, frag_UV));
+	vec3 spec_map = vec3(texture(specular0, frag_UV));
+	vec3 emis_map = vec3(texture(emission0, frag_UV));
 	vec3 result;
 	//Directional light.
 	result = calc_dir_light(norm, view_dir, diff_map, spec_map, emis_map);

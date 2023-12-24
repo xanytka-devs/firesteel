@@ -1,0 +1,11 @@
+Model Information:
+* title:	Toon Characters 3d / Style LowPolyFlat / Seal
+* source:	https://sketchfab.com/3d-models/toon-characters-3d-style-lowpolyflat-seal-dcb997351230416382fc1e84624f127d
+* author:	DanielWichterich (https://sketchfab.com/DanielWichterich)
+
+Model License:
+* license type:	CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
+* requirements:	Author must be credited. No commercial use. Modified versions can not be distributed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Toon Characters 3d / Style LowPolyFlat / Seal" (https://sketchfab.com/3d-models/toon-characters-3d-style-lowpolyflat-seal-dcb997351230416382fc1e84624f127d) by DanielWichterich (https://sketchfab.com/DanielWichterich) licensed under CC-BY-NC-ND-4.0 (http://creativecommons.org/licenses/by-nc-nd/4.0/)
