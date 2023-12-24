@@ -8,12 +8,12 @@
 #include <XEngine/Input/Joystick.hpp>
 #include <XEngine/Rendering/Renderer.hpp>
 #include <XEngine/Rendering/Camera.hpp>
-#include "XEngine/Rendering/Shader.hpp"
-#include "XEngine/Rendering/Window.hpp"
-#include "XEngine/Rendering/Texture.hpp"
-#include "XEngine/Components/LightSource.hpp"
-#include "XEngine/Rendering/Light.hpp"
-#include "XEngine/Rendering/Transform.hpp"
+#include <XEngine/Rendering/Shader.hpp>
+#include <XEngine/Rendering/Window.hpp>
+#include <XEngine/Rendering/Texture.hpp>
+#include <XEngine/Components/LightSource.hpp>
+#include <XEngine/Rendering/Light.hpp>
+#include <XEngine/Rendering/Transform.hpp>
 
 Joystick main_j(0);
 XEngine::Shader box_shader;
@@ -28,7 +28,8 @@ glm::vec3 point_light_positions[] = {
 const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm::vec3));
 XEngine::LightSource lights[point_lights_amount];
 XEngine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
-XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f), glm::vec3(2.0f), glm::vec3(1.4f), glm::vec3(0.75f) };
+XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
+    glm::vec3(0.0f), glm::vec3(1.4f), glm::vec3(0.75f), glm::vec3(0.7f, 0.5f, 0.35f) };
 XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
     1.0f, 0.07f, 0.032f, glm::vec3(0.f), glm::vec3(1.f), glm::vec3(1.f) };
 
@@ -45,7 +46,7 @@ class EditorApp : public XEngine::App {
         //Light source.
         light_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for(unsigned int i = 0; i < point_lights_amount; i++) {
-            lights[i] = XEngine::LightSource(glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f),
+            lights[i] = XEngine::LightSource(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(1.0f),
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }

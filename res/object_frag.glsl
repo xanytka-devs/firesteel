@@ -2,7 +2,6 @@
 out vec4 fragColor;
 
 struct Material {
-	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
 	vec3 emission;
@@ -22,6 +21,7 @@ struct DirectionalLight {
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	vec3 color;
 };
 struct PointLight {
 	//Location.
@@ -34,6 +34,7 @@ struct PointLight {
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	vec3 color;
 };
 struct SpotLight {
 	//Location.
@@ -50,6 +51,7 @@ struct SpotLight {
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
+	vec3 color;
 };
 
 in vec3 frag_POS;
@@ -57,6 +59,7 @@ in vec2 frag_UV;
 in vec3 frag_NORMAL;
 
 uniform int render_mode;
+uniform int no_textures;
 uniform Material material;
 uniform vec3 view_pos;
 
@@ -79,6 +82,11 @@ void main() {
 	vec3 diff_map = vec3(texture(diffuse0, frag_UV));
 	vec3 spec_map = vec3(texture(specular0, frag_UV));
 	vec3 emis_map = vec3(texture(emission0, frag_UV));
+	if(no_textures == 1) {
+		diff_map = material.diffuse;
+		spec_map = material.specular;
+		emis_map = material.emission;
+	}
 	vec3 result;
 	//Directional light.
 	result = calc_dir_light(norm, view_dir, diff_map, spec_map, emis_map);
@@ -94,7 +102,7 @@ void main() {
 
 vec3 calc_dir_light(vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec_map, vec3 emission_map) {
 	//Ambient.
-	vec3 ambient = dir_light.ambient * material.ambient;
+	vec3 ambient = dir_light.ambient * diff_map;
 	//Diffuse.
 	vec3 light_dir = normalize(-dir_light.direction);
 	float diff = max(dot(norm, light_dir), 0.0);
@@ -106,14 +114,14 @@ vec3 calc_dir_light(vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec_map, vec3
 	//Emission
     vec3 glow = emission_map * material.emission_factor * material.emission_color;
 	//Output.
-	if(render_mode == 0) return ambient + diffuse + specular + glow;
+	if(render_mode == 0) return (ambient + diffuse + specular + glow) * dir_light.color;
 	else if(render_mode == 1) return vec3(frag_UV, 1.0);
 	else if(render_mode == 2) return frag_NORMAL * spec_map;
 }
 
 vec3 calc_point_light(int idx, vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec_map, vec3 emission_map) {
 	//Ambient.
-	vec3 ambient = point_lights[idx].ambient * material.ambient;
+	vec3 ambient = point_lights[idx].ambient * diff_map;
 	//Diffuse.
 	vec3 light_dir = normalize(point_lights[idx].position - frag_POS);
 	float diff = max(dot(norm, light_dir), 0.0);
@@ -128,14 +136,14 @@ vec3 calc_point_light(int idx, vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spe
 	float dist = length(point_lights[idx].position - frag_POS);
 	float attenuation = 1.0 / (point_lights[idx].k0 + point_lights[idx].k1 * dist + point_lights[idx].k2 * (dist * dist));
 	//Output.
-	if(render_mode == 0) return (ambient + diffuse + specular + glow) * attenuation;
+	if(render_mode == 0) return ((ambient + diffuse + specular + glow) * point_lights[idx].color) * attenuation;
 	else if(render_mode == 1) return vec3(frag_UV, 1.0);
 	else if(render_mode == 2) return frag_NORMAL * spec_map;
 }
 
 vec3 calc_spot_light(int idx, vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec_map, vec3 emission_map) {
 	//Ambient.
-	vec3 ambient = spot_lights[idx].ambient * material.ambient;
+	vec3 ambient = spot_lights[idx].ambient * diff_map;
 	vec3 light_dir = normalize(spot_lights[idx].position - frag_POS);
 	float theta = dot(light_dir, normalize(-spot_lights[idx].direction));
 	if(theta > spot_lights[idx].outer_cutoff) {
@@ -158,12 +166,12 @@ vec3 calc_spot_light(int idx, vec3 norm, vec3 view_dir, vec3 diff_map, vec3 spec
 		float dist = length(spot_lights[idx].position - frag_POS);
 		float attenuation = 1.0 / (spot_lights[idx].k0 + spot_lights[idx].k1 * dist + spot_lights[idx].k2 * (dist * dist));
 		//Output.
-		if(render_mode == 0) return (ambient + diffuse + specular + glow) * attenuation;
+		if(render_mode == 0) return ((ambient + diffuse + specular + glow) * spot_lights[idx].color) * attenuation;
 		else if(render_mode == 1) return vec3(frag_UV, 1.0);
 		else if(render_mode == 2) return frag_NORMAL * spec_map;
 	}
 	//Output.
-	if(render_mode == 0) return ambient;
+	if(render_mode == 0) return ambient * spot_lights[idx].color;
 	else if(render_mode == 1) return vec3(frag_UV, 1.0);
 	else if(render_mode == 2) return frag_NORMAL * spec_map;
 }

@@ -1,5 +1,3 @@
-#include <sstream>
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -74,9 +72,7 @@ namespace XEngine {
             last_frame = cur_time;
             frameCount++;
             if (cur_time - last_frame_fps >= 1.0) {
-                std::stringstream delta_msg;
-                delta_msg << "FPS: " << frameCount;
-                LOG_INFO(delta_msg.str().c_str());
+                LOG_INFO(("FPS: " + std::to_string(frameCount)).c_str());
                 frameCount = 0;
                 last_frame_fps = cur_time;
             }
@@ -84,7 +80,6 @@ namespace XEngine {
             window.update();
             update();
         }
-
         //Terminate libs and rendering//
         on_shutdown();
         Renderer::terminate();

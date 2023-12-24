@@ -12,7 +12,7 @@ namespace XEngine {
 	class Transform {
 	public:
 		Transform(glm::vec3 t_pos = glm::vec3(0.f),
-			glm::vec4 t_rot = glm::vec4(0.f, 0.f, 0.f, 1.f), 
+			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
 			glm::vec3 t_size = glm::vec3(1.f));
 		void initialize();
 		void load_model(std::string t_path);

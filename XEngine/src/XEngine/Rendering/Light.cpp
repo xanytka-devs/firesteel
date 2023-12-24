@@ -9,6 +9,7 @@ namespace XEngine {
 		t_shader.set_3_floats(name + ".ambient", ambient);
 		t_shader.set_3_floats(name + ".diffuse", diffuse);
 		t_shader.set_3_floats(name + ".specular", specular);
+		t_shader.set_3_floats(name + ".color", color);
 	}
 
 	void PointLight::render(Shader t_shader, int idx) {
@@ -18,6 +19,7 @@ namespace XEngine {
 		t_shader.set_3_floats(name + ".ambient", ambient);
 		t_shader.set_3_floats(name + ".diffuse", diffuse);
 		t_shader.set_3_floats(name + ".specular", specular);
+		t_shader.set_3_floats(name + ".color", color);
 		//Attenuation.
 		t_shader.set_float(name + ".k0", k0);
 		t_shader.set_float(name + ".k1", k1);
@@ -34,6 +36,7 @@ namespace XEngine {
 		t_shader.set_3_floats(name + ".ambient", ambient);
 		t_shader.set_3_floats(name + ".diffuse", diffuse);
 		t_shader.set_3_floats(name + ".specular", specular);
+		t_shader.set_3_floats(name + ".color", color);
 		//Attenuation.
 		t_shader.set_float(name + ".k0", k0);
 		t_shader.set_float(name + ".k1", k1);

@@ -48,6 +48,7 @@ namespace XEngine {
 
 	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, aiColor4D t_diffuse, aiColor4D t_specular)
 		: vertices(t_vertices), indices(t_indices), diffuse(t_diffuse), specular(t_specular) {
+		m_no_textures = true;
 		setup();
 	}
 
@@ -87,27 +88,32 @@ namespace XEngine {
 	/// </summary>
 	/// <param name="t_shader">Shader for model.</param>
 	void Mesh::render(Shader t_shader) {
-		//Load textures.
-		unsigned int diffuse_idx = 0;
-		unsigned int specular_idx = 0;
-		for(unsigned int i = 0; i < textures.size(); i++) {
-			//Activate texture.
-			glActiveTexture(GL_TEXTURE0 + i);
-			//Retrieve texture info.
-			std::string name;
-			switch (textures[i].type) {
-			case aiTextureType_DIFFUSE:
-				name = "diffuse" + std::to_string(diffuse_idx++);
-				break;
-			case aiTextureType_SPECULAR:
-				name = "specular" + std::to_string(specular_idx++);
-				break;
+		if (m_no_textures) {
+			t_shader.set_4_floats("material.diffuse", diffuse.r, diffuse.g, diffuse.b, diffuse.a);
+			t_shader.set_4_floats("material.specular", specular.r, specular.g, specular.b, specular.a);
+			t_shader.set_int("no_textures", 1);
+		} else {
+			//Load textures.
+			unsigned int diffuse_idx = 0;
+			unsigned int specular_idx = 0;
+			for (unsigned int i = 0; i < textures.size(); i++) {
+				//Activate texture.
+				glActiveTexture(GL_TEXTURE0 + i);
+				//Retrieve texture info.
+				std::string name;
+				switch (textures[i].type) {
+				case aiTextureType_DIFFUSE:
+					name = "diffuse" + std::to_string(diffuse_idx++);
+					break;
+				case aiTextureType_SPECULAR:
+					name = "specular" + std::to_string(specular_idx++);
+					break;
+				}
+				//Set shader value and bind texture.
+				t_shader.set_int(name, i);
+				textures[i].enable();
 			}
-			//Set shader value and bind texture.
-			t_shader.set_int(name, i);
-			textures[i].enable();
 		}
-
 		//Enable buffers.
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

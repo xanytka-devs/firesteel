@@ -15,10 +15,9 @@ namespace XEngine {
 			glm::vec3 t_pos = glm::vec3(1.0f),
 			glm::vec4 t_rotation = glm::vec4(1.0f),
 			glm::vec3 t_size = glm::vec3(1.0f))
-			: color(t_color), light({ t_pos, t_k0, t_k1, t_k2, t_ambient, t_diffuse,t_specular }),
-			Cube(t_pos, t_rotation, t_size) {
-			shoud_rotate = false;
-		}
+			: color(t_color), light({ t_pos, t_k0, t_k1, t_k2, t_ambient, t_diffuse, t_specular }),
+			Cube(t_pos, t_rotation, t_size) { }
+
 		void render(Shader t_shader) {
 			t_shader.set_3_floats("light_color", color);
 			Cube::render(t_shader);

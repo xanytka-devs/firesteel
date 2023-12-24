@@ -33,6 +33,7 @@ namespace XEngine {
 		aiColor4D diffuse;
 		aiColor4D specular;
 	private:
+		bool m_no_textures = false;
 		unsigned int vbo, ebo;
 
 		void setup();

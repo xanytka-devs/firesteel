@@ -39,6 +39,9 @@ ASSIMP_BUILD_ARCHITECTURE:STRING=
 // the library.
 ASSIMP_BUILD_ASSIMP_TOOLS:BOOL=OFF
 
+//If the Assimp view tool is built. (requires DirectX)
+ASSIMP_BUILD_ASSIMP_VIEW:BOOL=OFF
+
 //describe the current compiler.
 ASSIMP_BUILD_COMPILER:STRING=
 
@@ -375,6 +378,27 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
 //Doxygen documentation generation tool (https://www.doxygen.nl)
 DOXYGEN_EXECUTABLE:FILEPATH=G:/doxygen/bin/doxygen.exe
 
+//Path to a library.
+DirectX_D3DCOMPILER_LIBRARY:FILEPATH=DirectX_D3DCOMPILER_LIBRARY-NOTFOUND
+
+//Path to a library.
+DirectX_D3DX9_LIBRARY:FILEPATH=DirectX_D3DX9_LIBRARY-NOTFOUND
+
+//Path to a library.
+DirectX_DXERR_LIBRARY:FILEPATH=DirectX_DXERR_LIBRARY-NOTFOUND
+
+//Path to a library.
+DirectX_DXGI_LIBRARY:FILEPATH=DirectX_DXGI_LIBRARY-NOTFOUND
+
+//Path to a library.
+DirectX_DXGUID_LIBRARY:FILEPATH=DirectX_DXGUID_LIBRARY-NOTFOUND
+
+//x
+DirectX_INCLUDE_DIR:STRING=DirectX_INCLUDE_DIR-NOTFOUND
+
+//x
+DirectX_LIBRARY:STRING=DirectX_LIBRARY-NOTFOUND
+
 //Value Computed by CMake
 GLFW_BINARY_DIR:STATIC=G:/! New/XEngine/build/XEngine/glfw
 
@@ -651,6 +675,22 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: DOXYGEN_EXECUTABLE
 DOXYGEN_EXECUTABLE-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_D3DCOMPILER_LIBRARY
+DirectX_D3DCOMPILER_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_D3DX9_LIBRARY
+DirectX_D3DX9_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_DXERR_LIBRARY
+DirectX_DXERR_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_DXGI_LIBRARY
+DirectX_DXGI_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_DXGUID_LIBRARY
+DirectX_DXGUID_LIBRARY-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_INCLUDE_DIR
+DirectX_INCLUDE_DIR-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: DirectX_LIBRARY
+DirectX_LIBRARY-ADVANCED:INTERNAL=1
+//x
+DirectX_PREFIX_PATH_INT_CHECK:INTERNAL=;;;;;;;;C:/apps_x86/Microsoft DirectX SDK*;C:/Program Files (x86)/Microsoft DirectX SDK*;C:/apps/Microsoft DirectX SDK*;C:/Program Files/Microsoft DirectX SDK*;C:/Program Files (x86)/Windows Kits/8.1;C:\Program Files/Microsoft DirectX SDK*
 //Details about finding Doxygen
 FIND_PACKAGE_MESSAGE_DETAILS_Doxygen:INTERNAL=[G:/doxygen/bin/doxygen.exe][cfound components: doxygen ][v1.9.7()]
 //Details about finding Threads

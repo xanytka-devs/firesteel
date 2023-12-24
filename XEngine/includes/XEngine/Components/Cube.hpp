@@ -8,10 +8,8 @@
 namespace XEngine {
 	class Cube : public Transform {
 	public:
-        Cube(glm::vec3 t_pos = glm::vec3(0.0f), glm::vec4 t_rot = glm::vec4(0.f, 0.f, 0.f, 1.0f), glm::vec3 t_size = glm::vec3(1.0f))
+        Cube(glm::vec3 t_pos = glm::vec3(0.0f), glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.0f), glm::vec3 t_size = glm::vec3(1.0f))
 			: Transform(t_pos, t_rot, t_size) {}
-
-        bool shoud_rotate = true;
 
 		void initialize() {
 			unsigned int vert_num = 36;
@@ -62,9 +60,6 @@ namespace XEngine {
             std::vector<unsigned int> indicies(vert_num);
             for (unsigned int i = 0; i < vert_num; i++)
                 indicies[i] = i;
-            /*Texture texture_albedo("..\\..\\res\\quads_diffusion.png", "material.diffuse");
-            Texture texture_specular("..\\..\\res\\quads_specular.png", "material.specular");
-            Texture texture_emission("..\\..\\res\\quads_emission.png", "material.emission");*/
             m_meshes.push_back(Mesh(Vertex::generate_list(vertices, vert_num), indicies));
 		}
 
