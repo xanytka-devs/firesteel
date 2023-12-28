@@ -10,7 +10,6 @@ namespace XEngine {
     double last_frame_fps = 0.f;
     double last_frame = 0.f;
     int frameCount = 0;
-    unsigned int SCR_W = 800, SCR_H = 600;
 
     /// <summary>
     /// Occures at app startup (instantiation).
@@ -41,9 +40,6 @@ namespace XEngine {
     /// <param name="t_title">Name of the window.</param>
     /// <returns>Exit code. Only 0 is success.</returns>
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
-        //Set window params.
-        SCR_W = t_win_width;
-        SCR_H = t_win_height;
         //Initiate core//
         Renderer::initialize();
         //Cap located in "Window.hpp". Disables double buffer.
@@ -51,6 +47,7 @@ namespace XEngine {
         glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
 #endif
         //Create window.
+        window = Window(t_win_width, t_win_height, t_title);
         if(!window.initialize()) {
             LOG_CRIT("Failed to create window.");
             Renderer::terminate();
@@ -72,13 +69,15 @@ namespace XEngine {
             last_frame = cur_time;
             frameCount++;
             if (cur_time - last_frame_fps >= 1.0) {
-                LOG_INFO(("FPS: " + std::to_string(frameCount)).c_str());
+                fps = frameCount;
                 frameCount = 0;
                 last_frame_fps = cur_time;
             }
             //Send update to recievers.
+            window.ui_update();
             window.update();
             update();
+            window.ui_draw();
         }
         //Terminate libs and rendering//
         on_shutdown();

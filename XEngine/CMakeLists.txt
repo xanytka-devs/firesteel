@@ -16,8 +16,6 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Rendering/Mesh.hpp
 	includes/XEngine/Rendering/Transform.hpp
 	includes/XEngine/Rendering/Light.hpp
-	includes/XEngine/Components/Cube.hpp
-	includes/XEngine/Components/LightSource.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp

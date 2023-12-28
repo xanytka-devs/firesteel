@@ -143,7 +143,7 @@ namespace XEngine {
 			//Texture not loaded.
 			if (!skip) {
 				Texture tex(m_path, str.C_Str(), t_type);
-				LOG_INFO((tex.path + "\\" + tex.file).c_str());
+				LOG_INFO(("Loaded texture: '" + tex.path + "\\" + tex.file + "'.").c_str());
 				output.push_back(tex);
 				m_textures_loaded.push_back(tex);
 			}

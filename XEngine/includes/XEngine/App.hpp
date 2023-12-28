@@ -23,6 +23,7 @@ namespace XEngine {
 
 		Window window;
 		float delta_time = 0.f;
+		int fps = 0;
 	};
 
 }

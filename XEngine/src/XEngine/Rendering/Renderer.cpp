@@ -44,6 +44,9 @@ namespace XEngine {
 		return glfwGetTime();
 	}
 
+	void Renderer::set_clear_color(float t_r, float t_g, float t_b, float t_a) {
+		m_color = glm::vec4(t_r, t_g, t_b, t_a);
+	}
 	void Renderer::set_clear_color(glm::vec3 t_rgb) {
 		m_color = glm::vec4(t_rgb, 1);
 	}
