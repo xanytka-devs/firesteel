@@ -80,21 +80,25 @@ void UI::setTheme() {
 }
 
 float cols[] = { 0.15f, 0.15f, 0.15f };
+float pos[] = { 0.f, 0.f, 0.f };
+float rot[] = { 0.f, 0.f, 0.f };
 void UI::update_bg() {
     glm::vec4 val = XEngine::Renderer::get_clear_color();
     cols[0] = val.x;
     cols[1] = val.y;
     cols[2] = val.z;
 }
+void UI::update_pos(XEngine::Camera* t_camera) {
+    glm::vec3 val = t_camera->position;
+    pos[0] = val.x;
+    pos[1] = val.y;
+    pos[2] = val.z;
+    rot[0] = t_camera->pitch;
+    rot[1] = t_camera->yaw;
+}
 void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
     //Setup.
     setupDock(t_app);
-    /*(*app).camPosition[0] = (*app).camera.getPosition().x;
-    (*app).camPosition[1] = (*app).baseCamera.getPosition().y;
-    (*app).camPosition[2] = (*app).baseCamera.getPosition().z;
-    (*app).camRotation[0] = (*app).baseCamera.getRotation().x;
-    (*app).camRotation[1] = (*app).baseCamera.getRotation().y;
-    (*app).camRotation[2] = (*app).baseCamera.getRotation().z;*/
     //Draw ImGui.
     //Basic values and info.
     ImGui::Begin("Editor");
@@ -108,6 +112,8 @@ void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
     ImGui::SliderFloat("Far plane", &t_camera->far_plane, 0.1f, 1000.f);
     ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
     ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
+    ImGui::DragFloat3("Position", pos);
+    ImGui::DragFloat2("Rotation", rot);
     ImGui::End();
 }
 
@@ -133,16 +139,56 @@ void UI::setupDock(XEngine::App* t_app) {
     ImGuiID dockspace_id = ImGui::GetID("XEditor UI");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     //Start menu.
-    if (ImGui::BeginMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("New Project")) { }
-            if (ImGui::MenuItem("Open Project")) { }
+    if(ImGui::BeginMenuBar()) {
+        if(ImGui::BeginMenu("File")) {
+            if(ImGui::MenuItem("New Project")) { }
+            if(ImGui::MenuItem("Open Project")) { }
             ImGui::Separator();
-            if (ImGui::MenuItem("Save")) { }
-            if (ImGui::MenuItem("Save as...")) {  }
+            if(ImGui::MenuItem("Save")) { }
+            if(ImGui::MenuItem("Save as...")) {  }
             ImGui::Separator();
-            if (ImGui::MenuItem("Exit"))
+            if(ImGui::MenuItem("Exit"))
                 (*t_app).shutdown();
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Edit")) {
+            if (ImGui::MenuItem("Undo")) {}
+            if (ImGui::MenuItem("Redo")) {}
+            ImGui::Separator();
+            if (ImGui::MenuItem("Project settings")) {}
+            if (ImGui::MenuItem("Preferences")) {}
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("View")) {
+            ImGui::Text("Saved");
+            if (ImGui::MenuItem("Default")) {}
+            if (ImGui::MenuItem("Wide")) {}
+            if (ImGui::MenuItem("Tall")) {}
+            ImGui::Separator();
+            if (ImGui::BeginMenu("Windows")) {
+                if (ImGui::MenuItem("Configurator")) {}
+                if (ImGui::MenuItem("Shader view")) {}
+                if (ImGui::MenuItem("Perfomance")) {}
+                if (ImGui::MenuItem("Files")) {}
+                ImGui::EndMenu();
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Reset")) {}
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Build")) {
+            if (ImGui::MenuItem("Compile project")) {}
+            if (ImGui::MenuItem("Build settings")) {}
+            if (ImGui::MenuItem("Delete last build")) {}
+            ImGui::Separator();
+            if (ImGui::MenuItem("Publish...")) {}
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Packages")) {
+            if (ImGui::MenuItem("View connected")) {}
+            ImGui::Separator();
+            if (ImGui::MenuItem("Add package...")) {}
+            if (ImGui::MenuItem("Create package...")) {}
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();

@@ -26,8 +26,6 @@ namespace XEngine {
         width = t_width; height = t_height;
     }
 
-    void Window::disable_cap_60() { cap_60 = false; }
-
     /// <summary>
     /// Callback for window movement.
     /// </summary>
@@ -61,7 +59,7 @@ namespace XEngine {
         if (!m_window) { return false; }
         //Set context.
         glfwMakeContextCurrent(m_window);
-#ifndef RENDER_CAP_60_SWAP
+#ifdef NDEBUG
         glfwSwapInterval(0);
 #endif
         LOG_INFO(("Window '" + m_title + "' initialized.").c_str());
@@ -73,11 +71,7 @@ namespace XEngine {
     /// </summary>
     void Window::update() {
         //Window processes.
-#ifndef RENDER_CAP_60_NDB
-        glFlush();
-#else
         glfwSwapBuffers(m_window);
-#endif
         glfwPollEvents();
         //Set clear color.
         glm::vec4 color = Renderer::get_clear_color();

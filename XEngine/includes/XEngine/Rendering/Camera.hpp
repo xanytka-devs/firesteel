@@ -10,6 +10,7 @@ namespace XEngine {
 	public:
 		Camera();
 		Camera(glm::vec3 t_pos);
+		Camera(glm::vec3 t_pos, float t_yaw, float t_pitch);
 		void update_direction(double t_dx, double t_dy);
 
 		glm::mat4 get_view_matrix();

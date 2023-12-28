@@ -22,7 +22,7 @@ namespace XEngine {
     /// Occures on app shutdown (destruction).
     /// </summary>
     App::~App() {
-        LOG_INFO("Shuting down XEngine App.");
+        LOG_INFO("Shutting down XEngine App.");
     }
 
     /// <summary>
@@ -42,10 +42,6 @@ namespace XEngine {
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
         //Initiate core//
         Renderer::initialize();
-        //Cap located in "Window.hpp". Disables double buffer.
-#ifndef RENDER_CAP_60_NDB
-        glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_FALSE);
-#endif
         //Create window.
         window = Window(t_win_width, t_win_height, t_title);
         if(!window.initialize()) {
@@ -65,7 +61,7 @@ namespace XEngine {
         while(!window.closing()) {
             //Update delta time.
             double cur_time = glfwGetTime();
-            delta_time = cur_time - last_frame;
+            delta_time = static_cast<float>(cur_time - last_frame);
             last_frame = cur_time;
             frameCount++;
             if (cur_time - last_frame_fps >= 1.0) {

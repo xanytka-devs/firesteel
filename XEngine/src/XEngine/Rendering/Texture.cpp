@@ -10,7 +10,7 @@
 
 namespace XEngine {
 
-	Texture::Texture() { }
+	Texture::Texture() : id(-1), type(aiTextureType_NONE) { }
 
 	/// <summary>
 	/// Creates new texture instance.
@@ -20,7 +20,7 @@ namespace XEngine {
 	/// <param name="t_type">Texture type.</param>
 	Texture::Texture(std::string t_path, std::string t_file, aiTextureType t_type) :
 		path(t_path), file(t_file), type(t_type) {
-		load();
+		generate(); load();
 	}
 
 	/// <summary>

@@ -29,7 +29,7 @@ glm::vec3 point_light_positions[] = {
 };
 const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm::vec3));
 LightSource lights[point_lights_amount];
-XEngine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
+XEngine::Camera camera(glm::vec3(-1.8f, 3.07f, 3.82f), -56.f, -36.f);
 XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
     glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
 XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
@@ -40,6 +40,7 @@ class EditorApp : public XEngine::App {
     virtual void initiazile() override {
         //Initialize ImGui.
         window.ui_initialize();
+        UI::update_pos(&camera);
         //Joystick checks.
         main_j.update();
         //Model.
@@ -164,6 +165,8 @@ class EditorApp : public XEngine::App {
             //Move with mouse wheel.
             if(mouse_dy != 0)
                 camera.position += camera.forward * (App::delta_time * mouse_dy * 2.5f);
+            //Update UI.
+            UI::update_pos(&camera);
             clicked_now = false;
         } else {
             window.set_cursor_state(XEngine::CursorState::NONE);

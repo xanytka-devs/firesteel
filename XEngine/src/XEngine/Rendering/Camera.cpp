@@ -2,7 +2,7 @@
 
 namespace XEngine {
 
-	Camera::Camera() : is_perspective(true), far_plane(100.f), near_plane(0.1f) { }
+	Camera::Camera() { }
 
 	/// <summary>
 	/// Sets up camera.
@@ -11,6 +11,19 @@ namespace XEngine {
 	Camera::Camera(glm::vec3 t_pos)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
 		yaw(-90.f), pitch(0.f), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
+		is_perspective(true), far_plane(100.f), near_plane(0.1f) {
+		update_vectors();
+	}
+
+	/// <summary>
+	/// Sets up camera.
+	/// </summary>
+	/// <param name="t_pos">Position of new camera.</param>
+	/// <param name="t_yaw">Yaw.</param>
+	/// <param name="t_pitch">Pitch.</param>
+	Camera::Camera(glm::vec3 t_pos, float t_yaw, float t_pitch)
+		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
+		yaw(t_yaw), pitch(t_pitch), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
 		is_perspective(true), far_plane(100.f), near_plane(0.1f) {
 		update_vectors();
 	}
