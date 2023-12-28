@@ -46,7 +46,7 @@ namespace XEngine {
 		setup();
 	}
 
-	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, aiColor4D t_diffuse, aiColor4D t_specular)
+	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, glm::vec4 t_diffuse, glm::vec4 t_specular)
 		: vertices(t_vertices), indices(t_indices), diffuse(t_diffuse), specular(t_specular) {
 		m_no_textures = true;
 		setup();
@@ -88,11 +88,11 @@ namespace XEngine {
 	/// </summary>
 	/// <param name="t_shader">Shader for model.</param>
 	void Mesh::render(Shader t_shader) {
-		if (m_no_textures) {
-			t_shader.set_4_floats("material.diffuse", diffuse.r, diffuse.g, diffuse.b, diffuse.a);
-			t_shader.set_4_floats("material.specular", specular.r, specular.g, specular.b, specular.a);
-			t_shader.set_int("no_textures", 1);
-		} else {
+		t_shader.set_4_floats("material.diffuse", diffuse.r, diffuse.g, diffuse.b, diffuse.a);
+		t_shader.set_4_floats("material.specular", specular.r, specular.g, specular.b, specular.a);
+		t_shader.set_int("no_textures", 1);
+		if (!m_no_textures) {
+			t_shader.set_int("no_textures", 0);
 			//Load textures.
 			unsigned int diffuse_idx = 0;
 			unsigned int specular_idx = 0;

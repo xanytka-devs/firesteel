@@ -10,10 +10,10 @@ namespace XEngine {
         //Location.
         glm::vec3 direction;
         //Base variables.
-        glm::vec3 ambient;
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        glm::vec3 color = glm::vec3(1.f);
+        glm::vec4 ambient;
+        glm::vec4 diffuse;
+        glm::vec4 specular;
+        glm::vec4 color = glm::vec4(1.f);
     };
 
     struct PointLight {
@@ -25,10 +25,10 @@ namespace XEngine {
         float k1;
         float k2;
         //Base variables.
-        glm::vec3 ambient;
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        glm::vec3 color = glm::vec3(1.f);
+        glm::vec4 ambient;
+        glm::vec4 diffuse;
+        glm::vec4 specular;
+        glm::vec4 color = glm::vec4(1.f);
     };
 
     struct SpotLight {
@@ -44,10 +44,10 @@ namespace XEngine {
         float inner_cutoff;
         float outer_cutoff;
         //Base variables.
-        glm::vec3 ambient;
-        glm::vec3 diffuse;
-        glm::vec3 specular;
-        glm::vec3 color = glm::vec3(1.f);
+        glm::vec4 ambient;
+        glm::vec4 diffuse;
+        glm::vec4 specular;
+        glm::vec4 color = glm::vec4(1.f);
     };
 }
 

@@ -7,10 +7,10 @@
 
 class LightSource : public Cube {
 public:
-	LightSource(glm::vec3 t_color = glm::vec3(1.0f),
-		glm::vec3 t_ambient = glm::vec3(1.0f),
-		glm::vec3 t_diffuse = glm::vec3(1.0f),
-		glm::vec3 t_specular = glm::vec3(1.0f),
+	LightSource(glm::vec4 t_color = glm::vec4(1.0f),
+		glm::vec4 t_ambient = glm::vec4(1.0f),
+		glm::vec4 t_diffuse = glm::vec4(1.0f),
+		glm::vec4 t_specular = glm::vec4(1.0f),
 		float t_k0 = 1.0f, float t_k1 = 0.07f, float t_k2 = 0.032f,
 		glm::vec3 t_pos = glm::vec3(1.0f),
 		glm::vec4 t_rotation = glm::vec4(1.0f),
@@ -19,11 +19,11 @@ public:
 		Cube(t_pos, t_rotation, t_size) { }
 
 	void render(XEngine::Shader t_shader) {
-		t_shader.set_3_floats("light_color", color);
+		t_shader.set_4_floats("light_color", color);
 		Cube::render(t_shader);
 	}
 
-	glm::vec3 color;
+	glm::vec4 color;
 	XEngine::PointLight light;
 };
 

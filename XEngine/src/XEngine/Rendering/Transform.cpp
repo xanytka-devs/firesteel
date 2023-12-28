@@ -67,7 +67,7 @@ namespace XEngine {
 		std::vector<Texture> textures;
 		//Vertices.
 		for (unsigned int i = 0; i < t_mesh->mNumVertices; i++) {
-			Vertex vertex;
+			Vertex vertex{};
 			//Positions.
 			vertex.pos = glm::vec3(
 				t_mesh->mVertices[i].x,
@@ -100,20 +100,23 @@ namespace XEngine {
 			aiMaterial* material = t_scene->mMaterials[t_mesh->mMaterialIndex];
 			//Does the model even have textures?
 			if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0 && material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
-				//Diffuse color.
+				m_no_textures = true;
+				//Diffuse and specular color.
 				aiColor4D def(1.0f);
+				aiColor4D spec(1.0f);
 				aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &def);
-				aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &def);
+				aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &spec);
 				//Output.
-				return Mesh(vertices, indices, def, def);
-			} else {
-				//Albedo.
-				std::vector<Texture> diff_maps = load_textures(material, aiTextureType_DIFFUSE);
-				textures.insert(textures.end(), diff_maps.begin(), diff_maps.end());
-				//Specular.
-				std::vector<Texture> spec_maps = load_textures(material, aiTextureType_SPECULAR);
-				textures.insert(textures.end(), spec_maps.begin(), spec_maps.end());
+				glm::vec4 def_v = glm::vec4(def.r, def.g, def.b, def.a);
+				glm::vec4 spec_v = glm::vec4(spec.r, spec.g, spec.b, spec.a);
+				return Mesh(vertices, indices, def_v, spec_v);
 			}
+			//Albedo.
+			std::vector<Texture> diff_maps = load_textures(material, aiTextureType_DIFFUSE);
+			textures.insert(textures.end(), diff_maps.begin(), diff_maps.end());
+			//Specular.
+			std::vector<Texture> spec_maps = load_textures(material, aiTextureType_SPECULAR);
+			textures.insert(textures.end(), spec_maps.begin(), spec_maps.end());
 		}
 		//Output.
 		return Mesh(vertices, indices, textures);

@@ -32,7 +32,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Rendering/Window.cpp
 	src/XEngine/Rendering/Shader.cpp
 	src/XEngine/Rendering/Camera.cpp
-	src/XEngine/Rendering/Material.cpp
 	src/XEngine/Rendering/Texture.cpp
 	src/XEngine/Rendering/Mesh.cpp
 	src/XEngine/Rendering/Transform.cpp

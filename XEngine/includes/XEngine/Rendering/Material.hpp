@@ -4,14 +4,12 @@
 #include <glm/glm.hpp>
 
 struct Material {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
-    glm::vec3 emission;
+    glm::vec4 ambient;
+    glm::vec4 diffuse;
+    glm::vec4 specular;
+    glm::vec4 emission;
     float emission_factor;
     float shininess;
-
-    static Material white;
 };
 
 #endif // MATERIAL_H

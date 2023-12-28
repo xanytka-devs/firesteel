@@ -26,6 +26,7 @@ namespace XEngine {
 		std::vector<Mesh> m_meshes;
 		std::string m_path;
 		std::vector<Texture> m_textures_loaded;
+		bool m_no_textures = false;
 
 		void process_node(aiNode* t_node, const aiScene* t_scene);
 		Mesh process_mesh(aiMesh* mesh, const aiScene* t_scene);

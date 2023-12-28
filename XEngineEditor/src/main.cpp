@@ -20,7 +20,7 @@
 Joystick main_j(0);
 XEngine::Shader box_shader;
 XEngine::Shader light_shader;
-XEngine::Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
+XEngine::Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(1.f));
 glm::vec3 point_light_positions[] = {
         glm::vec3(0.7f,  0.2f,  2.0f),
         glm::vec3(2.3f, -3.3f, -4.0f),
@@ -31,9 +31,9 @@ const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm
 LightSource lights[point_lights_amount];
 XEngine::Camera camera(glm::vec3(0.f, 0.f, 3.f));
 XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
-    glm::vec3(0.0f), glm::vec3(1.4f), glm::vec3(0.75f), glm::vec3(0.7f, 0.5f, 0.35f) };
+    glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
 XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
-    1.0f, 0.07f, 0.032f, glm::vec3(0.f), glm::vec3(1.f), glm::vec3(1.f) };
+    1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f), glm::vec4(1.f), glm::vec4(1.f) };
 
 class EditorApp : public XEngine::App {
 
@@ -43,12 +43,12 @@ class EditorApp : public XEngine::App {
         //Joystick checks.
         main_j.update();
         //Model.
-        model.load_model("..\\..\\res\\seal\\seal.gltf");
+        model.load_model("..\\..\\res\\desert_eagle\\scene.gltf");
         box_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         //Light source.
         light_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for(unsigned int i = 0; i < point_lights_amount; i++) {
-            lights[i] = LightSource(glm::vec3(1.0f), glm::vec3(0.0f), glm::vec3(1.0f), glm::vec3(1.0f),
+            lights[i] = LightSource(glm::vec4(1.0f), glm::vec4(0.0f), glm::vec4(1.0f), glm::vec4(1.0f),
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }
@@ -58,7 +58,7 @@ class EditorApp : public XEngine::App {
     bool flashlight = false;
 	virtual void update() override {
         //Create transformations.
-        camera.aspect = window.width / window.height;
+        camera.aspect = static_cast<float>(window.width) / static_cast<float>(window.height);
         glm::mat4 view = camera.get_view_matrix();
         glm::mat4 projection = camera.get_projection_matrix();
         //Render model.
@@ -131,7 +131,7 @@ class EditorApp : public XEngine::App {
         //Movement.
         float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
         float j_y = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_Y);
-        float mouse_dy = Mouse::get_wheel_dy();
+        float mouse_dy = static_cast<float>(Mouse::get_wheel_dy());
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
         if(clicked) {
