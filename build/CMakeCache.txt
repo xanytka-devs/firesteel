@@ -287,7 +287,7 @@ CMAKE_PROJECT_DESCRIPTION:STATIC=
 CMAKE_PROJECT_HOMEPAGE_URL:STATIC=
 
 //Value Computed by CMake
-CMAKE_PROJECT_NAME:STATIC=XEngine
+CMAKE_PROJECT_NAME:STATIC=XEngineProject
 
 //Value Computed by CMake
 CMAKE_PROJECT_VERSION:STATIC=3.4.0
@@ -439,8 +439,74 @@ GLM_BUILD_LIBRARY:BOOL=ON
 //Build the test programs
 GLM_BUILD_TESTS:BOOL=OFF
 
+//JACK header
+JACK_INCLUDEDIR:PATH=JACK_INCLUDEDIR-NOTFOUND
+
+//JACK library
+JACK_LINK_LIBRARIES:FILEPATH=JACK_LINK_LIBRARIES-NOTFOUND
+
 //the suffix for the assimp windows library
 LIBRARY_SUFFIX:STRING=-vc143-mt
+
+//Include example projects
+PA_BUILD_EXAMPLES:BOOL=OFF
+
+//Build dynamic library
+PA_BUILD_SHARED_LIBS:BOOL=OFF
+
+//Include test projects
+PA_BUILD_TESTS:BOOL=OFF
+
+//Enable debug output for Portaudio
+PA_ENABLE_DEBUG_OUTPUT:BOOL=OFF
+
+//Enable support for ASIO
+PA_USE_ASIO:BOOL=OFF
+
+//Enable support for DirectSound
+PA_USE_DS:BOOL=ON
+
+//Use skeleton host API
+PA_USE_SKELETON:BOOL=OFF
+
+//Enable support for WASAPI
+PA_USE_WASAPI:BOOL=ON
+
+//Enable support for WDMKS
+PA_USE_WDMKS:BOOL=ON
+
+//Use WDM/KS API for device info
+PA_USE_WDMKS_DEVICE_INFO:BOOL=ON
+
+//Enable support for WMME
+PA_USE_WMME:BOOL=ON
+
+//Turn compiler warnings into errors
+PA_WARNINGS_ARE_ERRORS:BOOL=OFF
+
+//Arguments to supply to pkg-config
+PKG_CONFIG_ARGN:STRING=
+
+//pkg-config executable
+PKG_CONFIG_EXECUTABLE:FILEPATH=PKG_CONFIG_EXECUTABLE-NOTFOUND
+
+//Value Computed by CMake
+PortAudio_BINARY_DIR:STATIC=G:/! New/XEngine/build/XEngine/portaudiod
+
+//Value Computed by CMake
+PortAudio_IS_TOP_LEVEL:STATIC=OFF
+
+//Dependencies for the target
+PortAudio_LIB_DEPENDS:STATIC=general;winmm;general;dsound;general;ole32;general;uuid;general;ole32;general;uuid;general;setupapi;general;ole32;general;uuid;
+
+//Value Computed by CMake
+PortAudio_SOURCE_DIR:STATIC=G:/! New/XEngine/external/portaudio
+
+//Path to a library.
+TRE_LIBRARY:FILEPATH=TRE_LIBRARY-NOTFOUND
+
+//Path to a file.
+TRE_REGEX_H:PATH=TRE_REGEX_H-NOTFOUND
 
 //Use MSVC runtime library DLL
 USE_MSVC_RUNTIME_LIBRARY_DLL:BOOL=ON
@@ -456,6 +522,15 @@ XEngineEditor_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
 XEngineEditor_SOURCE_DIR:STATIC=G:/! New/XEngine/XEngineEditor
+
+//Value Computed by CMake
+XEngineProject_BINARY_DIR:STATIC=G:/! New/XEngine/build
+
+//Value Computed by CMake
+XEngineProject_IS_TOP_LEVEL:STATIC=ON
+
+//Value Computed by CMake
+XEngineProject_SOURCE_DIR:STATIC=G:/! New/XEngine
 
 //Value Computed by CMake
 XEngine_BINARY_DIR:STATIC=G:/! New/XEngine/build/XEngine
@@ -486,6 +561,9 @@ glm_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
 glm_SOURCE_DIR:STATIC=G:/! New/XEngine/external/glm
+
+//The directory containing a CMake configuration file for pthreads.
+pthreads_DIR:PATH=pthreads_DIR-NOTFOUND
 
 //Value Computed by CMake
 zlib_BINARY_DIR:STATIC=G:/! New/XEngine/build/XEngine/assimp/contrib/zlib
@@ -627,7 +705,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=14
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=15
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib
@@ -711,6 +789,12 @@ HAVE_STDINT_H:INTERNAL=1
 HAVE_SYS_TYPES_H:INTERNAL=1
 //CHECK_TYPE_SIZE: off64_t unknown
 OFF64_T:INTERNAL=
+//ADVANCED property for variable: PKG_CONFIG_ARGN
+PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
+PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+//Have include regex.h
+REGEX_H:INTERNAL=
 //Have include unistd.h
 Z_HAVE_UNISTD_H:INTERNAL=
 //CMAKE_INSTALL_PREFIX during last run

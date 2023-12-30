@@ -1,3 +1,9 @@
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.hpp>
+
+#include <fstream>
+#include <sstream>
+#include <streambuf>
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -5,8 +11,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "XEngine/Log.hpp"
 #include "XEngine/Rendering/Texture.hpp"
-#include "XEngine/ResManager.hpp"
 
 namespace XEngine {
 
@@ -37,7 +43,10 @@ namespace XEngine {
 	void Texture::load(bool t_flip) {
 		//Load texture.
 		int width, height, channels;
-		unsigned char* data = ResManager::load_image((path + "/" + file).c_str(), &width, &height, &channels, t_flip);
+		std::string full_path = path + "/" + file;
+		stbi_set_flip_vertically_on_load(t_flip);
+		unsigned char* data = stbi_load(full_path.c_str(), &width, &height, &channels, 3);
+		if (!data) LOG_ERRR(("stbi (Texture::load()): '" + full_path + "' not loaded.").c_str());
 		//Set texture mode.
 		GLenum color_m = GL_RGB;
 		GLenum color_m_sup = GL_RGB;
@@ -63,7 +72,7 @@ namespace XEngine {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 		//Free data.
-		ResManager::free_image(data);
+		stbi_image_free(data);
 	}
 
 	/// <summary>

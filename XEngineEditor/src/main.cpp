@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <XEngine/App.hpp>
+#include <XEngine/Sound.hpp>
 #include <XEngine/Input/Keyboard.hpp>
 #include <XEngine/Input/Mouse.hpp>
 #include <XEngine/Input/Joystick.hpp>
@@ -53,6 +54,8 @@ class EditorApp : public XEngine::App {
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }
+        //Initialize audio manager.
+        XEngine::AudioManager::initialize();
     }
 
     int mode = 0;
@@ -194,6 +197,7 @@ class EditorApp : public XEngine::App {
             lights[i].remove();
         light_shader.remove();
         window.ui_shutdown();
+        XEngine::AudioManager::remove();
     }
 
 };

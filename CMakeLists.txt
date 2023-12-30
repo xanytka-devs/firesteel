@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
-project(XEngine)
-set(PROJECT_NAME XEngine)
+project(XEngineProject)
+set(PROJECT_NAME XEngineProject)
 
 add_subdirectory(XEngine)
 add_subdirectory(XEngineEditor)
