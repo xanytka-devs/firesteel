@@ -18,7 +18,7 @@ namespace XEngine {
 			buffer << file.rdbuf();
 			output = buffer.str();
 		}
-		else LOG_ERRR(("Couldn't load file at: '" + t_path + "'.").c_str());
+		else LOG_ERRR("Couldn't load file at: '" + t_path + "'.");
 		file.close();
 		return output;
 

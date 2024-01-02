@@ -62,7 +62,7 @@ namespace XEngine {
 #ifdef NDEBUG
         glfwSwapInterval(0);
 #endif
-        LOG_INFO(("Window '" + m_title + "' initialized.").c_str());
+        LOG_INFO("Window '" + m_title + "' initialized.");
         return true;
     }
 

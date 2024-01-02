@@ -14,7 +14,7 @@ namespace XEngine {
 
 	class Audio {
 	public:
-		Audio(std::string t_source);
+		Audio(std::string t_source, bool t_loop = false, bool t_play_on_awake = false);
 
 		void play();
 		void stop();
@@ -22,6 +22,7 @@ namespace XEngine {
 		void remove();
 	private:
 		std::string m_source;
+		bool m_loop;
 	};
 }
 

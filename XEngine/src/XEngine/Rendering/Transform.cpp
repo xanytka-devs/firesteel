@@ -30,7 +30,7 @@ namespace XEngine {
 		const aiScene* scene = import.ReadFile(t_path, aiProcess_Triangulate | aiProcess_FlipUVs);
 		//Check if scene isn't corrupted.
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-			LOG_ERRR(("Couldn't load model at: '" + t_path + "'.").c_str());
+			LOG_ERRR("Couldn't load model at: '" + t_path + "'.");
 			return;
 		}
 		//Start processing.
@@ -146,7 +146,7 @@ namespace XEngine {
 			//Texture not loaded.
 			if (!skip) {
 				Texture tex(m_path, str.C_Str(), t_type);
-				LOG_INFO(("Loaded texture: '" + tex.path + "\\" + tex.file + "'.").c_str());
+				LOG_INFO("Loaded texture: '" + tex.path + "\\" + tex.file + "'.");
 				output.push_back(tex);
 				m_textures_loaded.push_back(tex);
 			}

@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <XEngine/App.hpp>
-#include <XEngine/Sound.hpp>
+#include <XEngine/Audio/Sound.hpp>
 #include <XEngine/Input/Keyboard.hpp>
 #include <XEngine/Input/Mouse.hpp>
 #include <XEngine/Input/Joystick.hpp>
@@ -56,6 +56,7 @@ class EditorApp : public XEngine::App {
         }
         //Initialize audio manager.
         XEngine::AudioManager::initialize();
+        XEngine::Audio a{ "..\\..\\res\\sound.wav" };
     }
 
     int mode = 0;
@@ -90,7 +91,6 @@ class EditorApp : public XEngine::App {
             spot_light.render(box_shader, 0);
             box_shader.set_int("num_spot_lights", 1);
         }
-        //light.position = dir_light.direction * -glm::vec3(1.f, 2.5f, 1.f);
         box_shader.set_mat4("projection", projection);
         box_shader.set_mat4("view", view);
         box_shader.set_int("render_mode", mode);
@@ -138,7 +138,7 @@ class EditorApp : public XEngine::App {
         float mouse_dy = static_cast<float>(Mouse::get_wheel_dy());
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
-        if(clicked) {
+        if(!clicked) {
             window.set_cursor_state(XEngine::CursorState::DISABLED);
             //Position changes.
             // F/B movement.
@@ -163,7 +163,7 @@ class EditorApp : public XEngine::App {
             else if(main_j.is_present()) {
                 dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
                 dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);
-                if(dx >= 0.5 || dy >= 0.5 || dx <= -0.5 || dy <= -0.5) camera.update_direction(dx, dy);
+                if(dx >= 0.5 || dy >= 0.5 || dx <= -0.5 || dy <= -0.5) camera.update_direction(dx * 0.5, dy * 0.5);
             }
             //Move with mouse wheel.
             if(mouse_dy != 0)
