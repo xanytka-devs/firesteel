@@ -35,6 +35,7 @@ XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
     glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
 XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
     1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f), glm::vec4(1.f), glm::vec4(1.f) };
+XEngine::Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
 
 class EditorApp : public XEngine::App {
 
@@ -42,6 +43,8 @@ class EditorApp : public XEngine::App {
         //Initialize ImGui.
         window.ui_initialize();
         UI::update_pos(&camera);
+        //Initialize audio manager.
+        XEngine::AudioManager::initialize();
         //Joystick checks.
         main_j.update();
         //Model.
@@ -54,9 +57,6 @@ class EditorApp : public XEngine::App {
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }
-        //Initialize audio manager.
-        XEngine::AudioManager::initialize();
-        XEngine::Audio a{ "..\\..\\res\\sound.wav" };
     }
 
     int mode = 0;
@@ -106,8 +106,8 @@ class EditorApp : public XEngine::App {
         //Take care of input.
         input();
         //UI rendering.
-        UI::setTheme();
-        UI::draw(this, &camera);
+        //UI::setTheme();
+        //UI::draw(this, &camera);
     }
 
     bool clicked = false;
@@ -118,6 +118,7 @@ class EditorApp : public XEngine::App {
             App::shutdown();
         //Default mode.
         if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT)) { mode = 0;
+            a.play();
             XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
         }
         //Wireframe mode.
@@ -138,7 +139,7 @@ class EditorApp : public XEngine::App {
         float mouse_dy = static_cast<float>(Mouse::get_wheel_dy());
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
-        if(!clicked) {
+        if(clicked) {
             window.set_cursor_state(XEngine::CursorState::DISABLED);
             //Position changes.
             // F/B movement.

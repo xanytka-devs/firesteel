@@ -1,25 +1,20 @@
 #include <iostream>
 #include <vector>
+#include <thread>
 #include <portaudio/include/portaudio.h>
 #include <libsndfile/include/sndfile.h>
-#include <AudioFile/AudioFile.h>
 
 #include "XEngine/Log.hpp"
 #include "XEngine/Audio/Sound.hpp"
 
 namespace XEngine {
 
-    int SAMPLE_RATE = 44100;
-
     typedef struct {
         SNDFILE* file;
         SF_INFO	info;
+        float volume;
     } pa_callback_data_t;
 
-    /* This routine will be called by the PortAudio engine when audio is needed.
-    ** It may called at interrupt level on some machines so don't do anything
-    ** that could mess up the system like calling malloc() or free().
-    */
     static int pa_stream_callback(const void* input, void* output, unsigned long frameCount,
         const PaStreamCallbackTimeInfo* timeInfo, PaStreamCallbackFlags statusFlags, void* userData) {
         pa_callback_data_t* data = (pa_callback_data_t*)userData;
@@ -28,7 +23,12 @@ namespace XEngine {
 
         memset(output, 0, sizeof(float) * frameCount * data->info.channels); 	/* clear output buffer */
 
-        framesRead = sf_readf_float(data->file, (float*)output, frameCount);
+        float* out = (float*)output;
+        framesRead = sf_readf_float(data->file, out, frameCount);
+
+        for (int i = 0; i < frameCount * data->info.channels; ++i) {
+            out[i] *= (data->volume/100.f);
+        }
 
         if (framesRead < frameCount) {
             return paComplete;
@@ -39,7 +39,7 @@ namespace XEngine {
 
     static void report_error(PaError t_err) {
         Pa_Terminate();
-        std::string output = "PortAudio (AudioManager::initialize()): Error #" + std::to_string(t_err) + " : " + Pa_GetErrorText(t_err);
+        std::string output = "PortAudio: Error #" + std::to_string(t_err) + " : " + Pa_GetErrorText(t_err);
         LOG_ERRR(output.c_str());
     }
 
@@ -116,43 +116,65 @@ namespace XEngine {
         LOG_INFO("Shutting down PortAudio.");
     }
 
-    Audio::Audio(std::string t_source, bool t_loop, bool t_play_on_awake)
-        : m_source(t_source), m_loop(t_loop) {
-        play();
+    Audio::Audio(std::string t_source, bool t_loop, AudioLayer t_layer, bool t_play_on_awake)
+        : m_source(t_source), m_loop(t_loop), m_layer(t_layer) {
+        if(t_play_on_awake) play();
     }
 
     static pa_callback_data_t audio_data;
-    void Audio::play() {
-        audio_data.file = sf_open(m_source.c_str(), SFM_READ, &audio_data.info);
-        AudioFile<int> audioFile;
-        audioFile.shouldLogErrorsToConsole(true);
-        audioFile.load(m_source);
-        //Start stream.
+    void play_stream(pa_callback_data_t* data, AudioLayer m_layer) {
+        // Start stream.
         err = Pa_OpenDefaultStream(&stream, 0,
-            audioFile.getNumChannels(), paFloat32, audioFile.getSampleRate(), 
-            paFramesPerBufferUnspecified, pa_stream_callback, &audio_data);
-        if (err != paNoError) goto report;
-        err = Pa_StartStream(stream);
-        if (err != paNoError) goto report;
-        // Do some other tasks or wait for user interaction
-        audioFile.printSummary();
-        while (Pa_IsStreamActive(stream)) {
-            Pa_Sleep(100);
+            data->info.channels, paFloat32, data->info.samplerate * m_layer.pitch,
+            paFramesPerBufferUnspecified, pa_stream_callback, data);
+        if (err != paNoError) {
+            report_error(err);
+            return;
         }
-        //Stop stream.
+        err = Pa_StartStream(stream);
+        if (err != paNoError) {
+            Pa_CloseStream(stream);
+            report_error(err);
+            return;
+        }
+        // Sleep for a while or perform other tasks while audio is playing asynchronously.
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        // Stop stream.
         err = Pa_StopStream(stream);
-        if (err != paNoError) goto report;
-        //Close stream.
-        Pa_CloseStream(stream);
-        if (err != paNoError) goto report;
-        return;
-    report:
-        if (stream) {
+        if (err != paNoError) {
             Pa_AbortStream(stream);
             Pa_CloseStream(stream);
+            report_error(err);
+            return;
         }
-        report_error(err);
-        return;
+        // Close stream.
+        Pa_CloseStream(stream);
+        if (err != paNoError) {
+            report_error(err);
+            return;
+        }
+    }
+
+    void Audio::play() {
+        audio_data.file = sf_open(m_source.c_str(), SFM_READ, &audio_data.info);
+        if (!audio_data.file) {
+            LOG_INFO("PortAudio (Audio::playAsync()): Couldn't open audio file.");
+            return;
+        }
+        //Set volume.
+        audio_data.volume = m_layer.volume;
+        while (m_loop) {
+            //Detach the thread, allowing it to run independently.
+            std::thread async_thread(play_stream, &audio_data, m_layer);
+            async_thread.detach();
+            //Reset position in file to play once again.
+            sf_seek(audio_data.file, 0, SEEK_SET);
+            //Sleep for a short time before starting a new thread.
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        //If not in loop - just play audio once.
+        play_stream(&audio_data, m_layer);
+        sf_close(audio_data.file);
     }
 
     void Audio::stop() {
@@ -161,7 +183,7 @@ namespace XEngine {
 
     void Audio::remove() {
         if (sf_close(audio_data.file) != 0)
-            LOG_INFO("PortAudio (Audio::remove()): Could not close Audio File!");
+            LOG_INFO("PortAudio (Audio::remove()): Couldn't close audio file.");
     }
 
     void Audio::set_source(std::string t_source) {

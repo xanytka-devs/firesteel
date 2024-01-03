@@ -12,9 +12,16 @@ namespace XEngine {
 	private:
 	};
 
+	struct AudioLayer {
+		std::string name;
+		float volume = 100.f;
+		float pitch = 1.f;
+	};
+
+	static AudioLayer master_layer{"master"};
 	class Audio {
 	public:
-		Audio(std::string t_source, bool t_loop = false, bool t_play_on_awake = false);
+		Audio(std::string t_source, bool t_loop = false, AudioLayer t_layer = master_layer, bool t_play_on_awake = false);
 
 		void play();
 		void stop();
@@ -22,6 +29,7 @@ namespace XEngine {
 		void remove();
 	private:
 		std::string m_source;
+		AudioLayer m_layer;
 		bool m_loop;
 	};
 }

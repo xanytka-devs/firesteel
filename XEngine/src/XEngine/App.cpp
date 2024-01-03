@@ -1,3 +1,5 @@
+#include <thread>
+#include <mutex>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -32,6 +34,26 @@ namespace XEngine {
         window.close();
     }
 
+    std::mutex render_mutex;
+    void update_loop(App* app, Window* window, float delta_time, double last_frame, double last_frame_fps, int fps) {
+        while (!(*window).closing()) {
+            //Lock mutex.
+            std::lock_guard<std::mutex> lock(render_mutex);
+            //Update delta time.
+            double cur_time = glfwGetTime();
+            delta_time = static_cast<float>(cur_time - last_frame);
+            last_frame = cur_time;
+            frameCount++;
+            if (cur_time - last_frame_fps >= 1.0) {
+                fps = frameCount;
+                frameCount = 0;
+                last_frame_fps = cur_time;
+            }
+            //Send update to recievers.
+            app->update();
+        }
+    }
+
     /// <summary>
     /// Creates new instance of window for application.
     /// </summary>
@@ -57,25 +79,17 @@ namespace XEngine {
         //Set parameters.
         window.set_params();
         initiazile();
+        std::thread render_thread(update_loop, this, &window, delta_time, last_frame, last_frame_fps, fps);
         //Update loop//
         while(!window.closing()) {
-            //Update delta time.
-            double cur_time = glfwGetTime();
-            delta_time = static_cast<float>(cur_time - last_frame);
-            last_frame = cur_time;
-            frameCount++;
-            if (cur_time - last_frame_fps >= 1.0) {
-                fps = frameCount;
-                frameCount = 0;
-                last_frame_fps = cur_time;
-            }
-            //Send update to recievers.
+            //Enter critical section.
             window.ui_update();
             window.update();
-            update();
+            std::lock_guard<std::mutex> lock(render_mutex);
             window.ui_draw();
         }
         //Terminate libs and rendering//
+        render_thread.join();
         on_shutdown();
         Renderer::terminate();
         return 0;

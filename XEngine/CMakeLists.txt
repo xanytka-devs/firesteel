@@ -79,9 +79,6 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE assimp)
 add_subdirectory(../external/portaudio ${CMAKE_CURRENT_BINARY_DIR}/portaudiod)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\XEngine\\portaudiod\\portaudiod)
 
-add_subdirectory(../external/AudioFile ${CMAKE_CURRENT_BINARY_DIR}/AudioFile)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE AudioFile)
-
 add_subdirectory(../external/libsndfile ${CMAKE_CURRENT_BINARY_DIR}/libsndfile)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\XEngine\\libsndfile\\Release\\sndfile)
 

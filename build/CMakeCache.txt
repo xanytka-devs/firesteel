@@ -135,17 +135,8 @@ Assimp_IS_TOP_LEVEL:STATIC=OFF
 //Value Computed by CMake
 Assimp_SOURCE_DIR:STATIC=G:/! New/XEngine/external/assimp
 
-//Value Computed by CMake
-AudioFile_BINARY_DIR:STATIC=G:/! New/XEngine/build/XEngine/AudioFile
-
-//Value Computed by CMake
-AudioFile_IS_TOP_LEVEL:STATIC=OFF
-
-//Value Computed by CMake
-AudioFile_SOURCE_DIR:STATIC=G:/! New/XEngine/external/AudioFile
-
 //Build examples
-BUILD_EXAMPLES:BOOL=OFF
+BUILD_EXAMPLES:BOOL=ON
 
 //Build programs
 BUILD_PROGRAMS:BOOL=ON
@@ -158,9 +149,6 @@ BUILD_SHARED_LIBS:BOOL=OFF
 
 //Build the testing tree.
 BUILD_TESTING:BOOL=ON
-
-//Build tests
-BUILD_TESTS:BOOL=OFF
 
 //Path to a program.
 CMAKE_AR:FILEPATH=C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.37.32822/bin/Hostx64/x64/lib.exe
@@ -888,7 +876,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=17
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=16
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib

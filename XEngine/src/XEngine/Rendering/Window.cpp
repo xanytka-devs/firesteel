@@ -1,3 +1,5 @@
+#include <thread>
+#include <mutex>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <GLFW/glfw3.h>
@@ -15,6 +17,7 @@ namespace XEngine {
 
     unsigned int Window::width = 800;
     unsigned int Window::height = 600;
+    bool ui_initialized = false;
 
     Window::Window() : m_window(nullptr), m_title("Hello XEngine!") {}
     Window::Window(unsigned int t_width, unsigned int t_height, const char* t_title)
@@ -62,10 +65,12 @@ namespace XEngine {
 #ifdef NDEBUG
         glfwSwapInterval(0);
 #endif
+        glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
         LOG_INFO("Window '" + m_title + "' initialized.");
         return true;
     }
 
+    const char* err{""};
     /// <summary>
     /// Updates events and clears buffers.
     /// </summary>
@@ -77,6 +82,7 @@ namespace XEngine {
         glm::vec4 color = Renderer::get_clear_color();
         glClearColor(color.x, color.y, color.z, color.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glGetError();
     }
 
     /// <summary>
@@ -93,6 +99,7 @@ namespace XEngine {
         //Create context for ImGui.
         ImGui_ImplGlfw_InitForOpenGL(m_window, true);
         ImGui_ImplOpenGL3_Init("#version 330 core");
+        ui_initialized = true;
         LOG_INFO("ImGui initialized.");
     }
 
@@ -100,6 +107,7 @@ namespace XEngine {
     /// Updates ImGui.
     /// </summary>
     void Window::ui_update() {
+        if(!ui_initialized) return;
         //Update ImGui.
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -110,6 +118,7 @@ namespace XEngine {
     /// Draws ImGui.
     /// </summary>
     void Window::ui_draw() {
+        if(!ui_initialized) return;
         //Draw ImGui.
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -170,6 +179,7 @@ namespace XEngine {
     /// Shuts down ImGui.
     /// </summary>
     void Window::ui_shutdown() {
+        if(!ui_initialized) return;
         //Shutdown ImGui.
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
