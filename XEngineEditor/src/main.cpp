@@ -106,8 +106,8 @@ class EditorApp : public XEngine::App {
         //Take care of input.
         input();
         //UI rendering.
-        //UI::setTheme();
-        //UI::draw(this, &camera);
+        UI::setTheme();
+        UI::draw(this, &camera);
     }
 
     bool clicked = false;
