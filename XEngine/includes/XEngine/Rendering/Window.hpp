@@ -5,11 +5,19 @@
 struct GLFWwindow;
 
 namespace XEngine {
+
+	enum WindowParam {
+		W_NONE = 0,
+		W_TITLE,
+		W_CURSOR,
+		W_VSYNC
+	};
+
 	enum CursorState {
-		NONE = 0,
-		LOCKED,
-		DISABLED,
-		HIDDEN
+		C_NONE = 0,
+		C_LOCKED,
+		C_DISABLED,
+		C_HIDDEN
 	};
 
 	class Window {
@@ -26,18 +34,20 @@ namespace XEngine {
 		void ui_shutdown();
 
 		static void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height);
-		void set_params();
+		void set_param(WindowParam t_param, bool t_val);
+		void set_param(WindowParam t_param, int t_val);
+		void set_param(WindowParam t_param, const char* t_val);
+		void set_param(WindowParam t_param, std::string t_val);
+		void set_init_params();
 		void close();
 		bool closing();
 
-		void set_cursor_state(CursorState t_state);
-
-		void set_title(const char* t_title);
 		static unsigned int width;
 		static unsigned int height;
 	private:
 		GLFWwindow* m_window;
 		std::string m_title;
+		bool m_vsync = false;
 	};
 }
 

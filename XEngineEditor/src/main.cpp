@@ -3,10 +3,8 @@
 #include <iostream>
 
 #include <XEngine/App.hpp>
-#include <XEngine/Audio/Sound.hpp>
-#include <XEngine/Input/Keyboard.hpp>
-#include <XEngine/Input/Mouse.hpp>
-#include <XEngine/Input/Joystick.hpp>
+#include <XEngine/Audio.hpp>
+#include <XEngine/Input.hpp>
 #include <XEngine/Rendering/Renderer.hpp>
 #include <XEngine/Rendering/Camera.hpp>
 #include <XEngine/Rendering/Shader.hpp>
@@ -16,12 +14,13 @@
 #include <XEngine/Rendering/Transform.hpp>
 
 #include "Components/LightSource.hpp"
+#include "Components/Pushka.hpp"
 #include "UI.hpp"
 
 Joystick main_j(0);
 XEngine::Shader box_shader;
 XEngine::Shader light_shader;
-XEngine::Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(1.f));
+XEngine::Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
 glm::vec3 point_light_positions[] = {
         glm::vec3(0.7f,  0.2f,  2.0f),
         glm::vec3(2.3f, -3.3f, -4.0f),
@@ -36,20 +35,26 @@ XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
 XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
     1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f), glm::vec4(1.f), glm::vec4(1.f) };
 XEngine::Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
+//Pushka pushka(&camera);
 
 class EditorApp : public XEngine::App {
 
     virtual void initiazile() override {
+        //Print renderer summary.
+        XEngine::Renderer::print_host_info();
+        window.set_param(XEngine::W_VSYNC, true);
         //Initialize ImGui.
         window.ui_initialize();
         UI::update_pos(&camera);
         //Initialize audio manager.
         XEngine::AudioManager::initialize();
+        XEngine::AudioManager::print_host_info();
         //Joystick checks.
         main_j.update();
         //Model.
-        model.load_model("..\\..\\res\\desert_eagle\\scene.gltf");
+        model.load_model("..\\..\\res\\seal\\seal.gltf");
         box_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
+        //pushka.initialize();
         //Light source.
         light_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for(unsigned int i = 0; i < point_lights_amount; i++) {
@@ -95,6 +100,7 @@ class EditorApp : public XEngine::App {
         box_shader.set_mat4("view", view);
         box_shader.set_int("render_mode", mode);
         model.render(box_shader);
+        //pushka.render(box_shader);
         //Render light.
         light_shader.enable();
         light_shader.set_mat4("projection", projection );
@@ -140,7 +146,7 @@ class EditorApp : public XEngine::App {
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
         if(clicked) {
-            window.set_cursor_state(XEngine::CursorState::DISABLED);
+            window.set_param(XEngine::W_CURSOR, XEngine::C_DISABLED);
             //Position changes.
             // F/B movement.
             if(Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
@@ -160,11 +166,12 @@ class EditorApp : public XEngine::App {
             //Camera rotation.
             double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
             if(clicked_now) dx = dy = 0;
-            if(dx != 0 || dy != 0) camera.update_direction(dx, dy);
+            if(dx != 0 || dy != 0) rotate_camera(dx, dy);
             else if(main_j.is_present()) {
                 dx = main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_X);
                 dy = -main_j.axis_state(JoystickControls::AXES_RIGHT_STICK_Y);
-                if(dx >= 0.5 || dy >= 0.5 || dx <= -0.5 || dy <= -0.5) camera.update_direction(dx * 0.5, dy * 0.5);
+                if(dx >= 0.5 || dy >= 0.5 || dx <= -0.5 || dy <= -0.5)
+                    rotate_camera(dx, dy);
             }
             //Move with mouse wheel.
             if(mouse_dy != 0)
@@ -173,7 +180,7 @@ class EditorApp : public XEngine::App {
             UI::update_pos(&camera);
             clicked_now = false;
         } else {
-            window.set_cursor_state(XEngine::CursorState::NONE);
+            window.set_param(XEngine::W_CURSOR, XEngine::C_NONE);
             //Camera zoom.
             camera.fov -= mouse_dy;
             if(camera.fov < 1.f) camera.fov = 180.f;
@@ -191,8 +198,19 @@ class EditorApp : public XEngine::App {
         main_j.update();
     }
 
+    void rotate_camera(double dz, double dy) {
+        camera.rotation.z += static_cast<float>(dz);
+        if(camera.rotation.y > 89.f) camera.rotation.y = 89.f;
+        else if(camera.rotation.y < -89.f) camera.rotation.y = -89.f;
+        float sum = camera.rotation.y + static_cast<float>(dy);
+        if(sum > 89.f || sum < -89.f) return;
+        camera.rotation.y = sum;
+        camera.update_vectors();
+    }
+
     virtual void on_shutdown() override {
         model.remove();
+        //pushka.remove();
         box_shader.remove();
         for(unsigned int i = 0; i < point_lights_amount; i++)
             lights[i].remove();

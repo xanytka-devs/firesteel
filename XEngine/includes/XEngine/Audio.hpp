@@ -7,6 +7,7 @@ namespace XEngine {
 	class AudioManager {
 	public:
 		static void initialize();
+		static void print_host_info();
 		static bool is_active();
 		static void remove();
 	private:

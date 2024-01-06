@@ -11,28 +11,25 @@ namespace XEngine {
 		Camera();
 		Camera(glm::vec3 t_pos);
 		Camera(glm::vec3 t_pos, float t_yaw, float t_pitch);
-		void update_direction(double t_dx, double t_dy);
 
-		glm::mat4 get_view_matrix();
+		glm::mat4 get_view_matrix() const;
 		glm::mat4 get_projection_matrix(float t_clip_size = 1);
+		void update_vectors();
 
 		glm::vec3 position;
+		glm::vec4 rotation;
 		glm::vec3 world_up;
 
 		glm::vec3 forward;
 		glm::vec3 up;
 		glm::vec3 right;
 
-		float yaw;
-		float pitch;
 		float fov;
 
 		float near_plane;
 		float far_plane;
 		float aspect;
 		bool is_perspective;
-	private:
-		void update_vectors();
 	};
 }
 

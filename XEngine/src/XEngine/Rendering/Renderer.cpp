@@ -44,6 +44,25 @@ namespace XEngine {
 		return glfwGetTime();
 	}
 
+	std::string Renderer::get_vendor() {
+		return std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
+	}
+
+	std::string Renderer::get_renderer() {
+		return std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+	}
+
+	std::string Renderer::get_version() {
+		return std::string(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+	}
+
+	void Renderer::print_host_info() {
+		printf("Rendering | OpenGL (GLFW & GLAD)\n");
+		printf(("	Vendor: " + get_vendor() + "\n").c_str());
+		printf(("	Renderer: " + get_renderer() + "\n").c_str());
+		printf(("	Version: " + get_version() + "\n").c_str());
+	}
+
 	void Renderer::set_clear_color(float t_r, float t_g, float t_b, float t_a) {
 		m_color = glm::vec4(t_r, t_g, t_b, t_a);
 	}

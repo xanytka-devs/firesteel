@@ -10,7 +10,7 @@ namespace XEngine {
 	/// <param name="t_pos">Position of new camera.</param>
 	Camera::Camera(glm::vec3 t_pos)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
-		yaw(-90.f), pitch(0.f), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
+		rotation(glm::vec4(0.f, 0.f, -90.f, 1.f)), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
 		is_perspective(true), far_plane(100.f), near_plane(0.1f) {
 		update_vectors();
 	}
@@ -23,7 +23,7 @@ namespace XEngine {
 	/// <param name="t_pitch">Pitch.</param>
 	Camera::Camera(glm::vec3 t_pos, float t_yaw, float t_pitch)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
-		yaw(t_yaw), pitch(t_pitch), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
+		rotation(glm::vec4(0.f, t_pitch, t_yaw, 1.f)), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
 		is_perspective(true), far_plane(100.f), near_plane(0.1f) {
 		update_vectors();
 	}
@@ -34,9 +34,12 @@ namespace XEngine {
 	void Camera::update_vectors() {
 		//Get directions.
 		glm::vec3 dir{};
-		dir.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		dir.y = sin(glm::radians(pitch));
-		dir.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+		float roll = glm::radians(rotation.x);
+		float pitch = glm::radians(rotation.y);
+		float yaw = glm::radians(rotation.z);
+		dir.x = cos(yaw) * cos(pitch);
+		dir.y = sin(pitch);
+		dir.z = sin(yaw) * cos(pitch);
 		//Calculate directions.
 		forward = glm::normalize(dir);
 		right = glm::normalize(glm::cross(forward, world_up));
@@ -44,26 +47,10 @@ namespace XEngine {
 	}
 
 	/// <summary>
-	/// Temp. | For camera rotation.
-	/// </summary>
-	/// <param name="t_dx">X movement.</param>
-	/// <param name="t_dy">Y movement.</param>
-	void Camera::update_direction(double t_dx, double t_dy) {
-		//Update yaw and pitch.
-		yaw += t_dx;
-		pitch += t_dy;
-		//Limit pitch.
-		if (pitch > 89.f) pitch = 89.f;
-		else if (pitch < -89.f) pitch = -89.f;
-		//Update vectors.
-		update_vectors();
-	}
-
-	/// <summary>
 	/// Calculate view matrix.
 	/// </summary>
 	/// <returns></returns>
-	glm::mat4 Camera::get_view_matrix() {
+	glm::mat4 Camera::get_view_matrix() const {
 		return glm::lookAt(position, position + forward, up);
 	}
 

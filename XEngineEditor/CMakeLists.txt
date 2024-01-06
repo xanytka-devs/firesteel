@@ -6,6 +6,7 @@ set(EDITOR_INCLUDES
 	includes/Components/Cube.hpp
 	includes/Components/CordPlane.hpp
 	includes/Components/LightSource.hpp
+	includes/Components/Pushka.hpp
 	includes/UI.hpp
 )
 set(EDITOR_SOURCES

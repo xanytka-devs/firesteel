@@ -93,8 +93,8 @@ void UI::update_pos(XEngine::Camera* t_camera) {
     pos[0] = val.x;
     pos[1] = val.y;
     pos[2] = val.z;
-    rot[0] = t_camera->pitch;
-    rot[1] = t_camera->yaw;
+    rot[0] = t_camera->rotation.y;
+    rot[1] = t_camera->rotation.z;
 }
 void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
     //Setup.

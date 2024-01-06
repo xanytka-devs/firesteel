@@ -8,8 +8,7 @@ set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
 set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/App.hpp
 	includes/XEngine/Utils.hpp
-	includes/XEngine/Audio/Sound.hpp
-	includes/XEngine/Audio/AudioStreamHandler.hpp
+	includes/XEngine/Audio.hpp
 	includes/XEngine/Rendering/Renderer.hpp
 	includes/XEngine/Rendering/Window.hpp
 	includes/XEngine/Rendering/Camera.hpp
@@ -18,6 +17,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/XEngine/Rendering/Mesh.hpp
 	includes/XEngine/Rendering/Transform.hpp
 	includes/XEngine/Rendering/Light.hpp
+	includes/XEngine/Input.hpp
 	includes/XEngine/Input/Keyboard.hpp
 	includes/XEngine/Input/Mouse.hpp
 	includes/XEngine/Input/Joystick.hpp
@@ -30,8 +30,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/XEngine/Log.cpp
 	src/XEngine/App.cpp
 	src/XEngine/Utils.cpp
-	src/XEngine/Audio/Sound.cpp
-	src/XEngine/Audio/AudioStreamHandler.cpp
+	src/XEngine/Audio.cpp
 	src/XEngine/Rendering/Renderer.cpp
 	src/XEngine/Rendering/Window.cpp
 	src/XEngine/Rendering/Shader.cpp

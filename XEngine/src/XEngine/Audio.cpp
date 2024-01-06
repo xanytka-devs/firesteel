@@ -5,7 +5,7 @@
 #include <libsndfile/include/sndfile.h>
 
 #include "XEngine/Log.hpp"
-#include "XEngine/Audio/Sound.hpp"
+#include "XEngine/Audio.hpp"
 
 namespace XEngine {
 
@@ -49,24 +49,43 @@ namespace XEngine {
     const PaDeviceInfo* outputInfo;
     int numChannels;
     PaStream* stream = NULL;
-    static void get_device_info() {
+    void AudioManager::print_host_info() {
         //Input debug info.
-        inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
-        printf("Input device #%d:\n", inputParameters.device);
-        inputInfo = Pa_GetDeviceInfo(inputParameters.device);
-        printf("    Name: %s\n", inputInfo->name);
-        printf("      LL: %g s\n", inputInfo->defaultLowInputLatency);
-        printf("      HL: %g s\n", inputInfo->defaultHighInputLatency);
+        printf("Audio | PortAudio (GLFW & GLAD)\n");
+        printf("    Input device #%d:\n", inputParameters.device);
+        printf("        Name: %s\n", inputInfo->name);
+        printf("        LL: %g s\n", inputInfo->defaultLowInputLatency);
+        printf("        HL: %g s\n", inputInfo->defaultHighInputLatency);
         //Output debug info.
-        outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
-        printf("Output device #%d:\n", outputParameters.device);
+        printf("    Output device #%d:\n", outputParameters.device);
+        printf("        Name: %s\n", outputInfo->name);
+        printf("        LL: %g s\n", outputInfo->defaultLowOutputLatency);
+        printf("        HL: %g s\n", outputInfo->defaultHighOutputLatency);
+        printf("    Num channels: %d\n", numChannels);
+    }
+
+    void AudioManager::initialize() {
+        //Initialize library and report version.
+        err = Pa_Initialize();
+        if(err != paNoError) goto report;
+        LOG_INFO("PortAudio initialized.");
+        LOG_INFO("PortAudio version: " + std::to_string(Pa_GetVersion()));
+        //Get devices.
+        int numDevices = Pa_GetDeviceCount();
+        if(numDevices < 0) {
+            LOG_ERRR("PortAudio (AudioManager::initialize()): Pa_GetDeviceCount returned " + numDevices);
+            err = numDevices;
+            goto report;
+        }
+        LOG_INFO("Number of devices: " + std::to_string(numDevices));
+        //Input info.
+        inputParameters.device = Pa_GetDefaultInputDevice();
+        inputInfo = Pa_GetDeviceInfo(inputParameters.device);
+        //Output info.
+        outputParameters.device = Pa_GetDefaultOutputDevice();
         outputInfo = Pa_GetDeviceInfo(outputParameters.device);
-        printf("   Name: %s\n", outputInfo->name);
-        printf("     LL: %g s\n", outputInfo->defaultLowOutputLatency);
-        printf("     HL: %g s\n", outputInfo->defaultHighOutputLatency);
         numChannels = inputInfo->maxInputChannels < outputInfo->maxOutputChannels
             ? inputInfo->maxInputChannels : outputInfo->maxOutputChannels;
-        printf("Num channels: %d\n", numChannels);
         //Input params.
         inputParameters.channelCount = numChannels;
         inputParameters.sampleFormat = paInt32;
@@ -77,25 +96,6 @@ namespace XEngine {
         outputParameters.sampleFormat = paInt32;
         outputParameters.suggestedLatency = outputInfo->defaultHighOutputLatency;
         outputParameters.hostApiSpecificStreamInfo = NULL;
-    }
-
-    void AudioManager::initialize() {
-        //Initialize library and report version.
-        err = Pa_Initialize();
-        if(err != paNoError) goto report;
-        LOG_INFO("PortAudio initialized.");
-        LOG_INFO("PortAudio version: " + std::to_string(Pa_GetVersion()));
-        //Get devices.
-        int numDevices;
-        const PaDeviceInfo* deviceInfo;
-        numDevices = Pa_GetDeviceCount();
-        if(numDevices < 0) {
-            LOG_ERRR("PortAudio (AudioManager::initialize()): Pa_GetDeviceCount returned " + numDevices);
-            err = numDevices;
-            goto report;
-        }
-        LOG_INFO("Number of devices: " + std::to_string(numDevices));
-        get_device_info();    
         return;
     report:
         if(stream) {

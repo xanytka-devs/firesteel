@@ -44,15 +44,6 @@ namespace XEngine {
     }
 
     /// <summary>
-    /// Updates window title.
-    /// </summary>
-    /// <param name="t_title">New title</param>
-    void Window::set_title(const char* t_title) {
-        m_title = t_title;
-        glfwSetWindowTitle(m_window, t_title);
-    }
-
-    /// <summary>
     /// Window initialization.
     /// </summary>
     /// <returns>true=success;false=failure</returns>
@@ -62,8 +53,9 @@ namespace XEngine {
         if (!m_window) { return false; }
         //Set context.
         glfwMakeContextCurrent(m_window);
+        if(m_vsync) glfwSwapInterval(1);
 #ifdef NDEBUG
-        glfwSwapInterval(0);
+        else glfwSwapInterval(0);
 #endif
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
         LOG_INFO("Window '" + m_title + "' initialized.");
@@ -133,7 +125,7 @@ namespace XEngine {
     /// <summary>
     /// Sets up all parameters.
     /// </summary>
-    void Window::set_params() {
+    void Window::set_init_params() {
         //Set viewport.
         glViewport(0, 0, width, height);
         glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
@@ -146,25 +138,49 @@ namespace XEngine {
         glEnable(GL_DEPTH_TEST);
     }
 
-    /// <summary>
-    /// Set cursor state.
-    /// </summary>
-    /// <param name="t_state">State value.</param>
-    void Window::set_cursor_state(CursorState t_state) {
-        switch (t_state) {
-        case NONE:
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    void Window::set_param(WindowParam t_param, bool t_val) {
+        set_param(t_param, t_val ? 1 : 0);
+    }
+
+    void Window::set_param(WindowParam t_param, int t_val) {
+        switch (t_param) {
+        case W_VSYNC:
+            m_vsync = (t_val == 1);
             break;
-        case LOCKED:
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+        case W_CURSOR:
+            switch (t_val) {
+            case C_NONE:
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                break;
+            case C_LOCKED:
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+                break;
+            case C_DISABLED:
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                break;
+            case C_HIDDEN:
+                glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+                break;
+            }
             break;
-        case DISABLED:
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            break;
-        case HIDDEN:
-            glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        default:
             break;
         }
+    }
+
+    void Window::set_param(WindowParam t_param, const char* t_val) {
+        switch (t_param) {
+        case W_TITLE:
+            m_title = t_val;
+            glfwSetWindowTitle(m_window, t_val);
+            break;
+        default:
+            break;
+        }
+    }
+
+    void Window::set_param(WindowParam t_param, std::string t_val) {
+        set_param(t_param, t_val.c_str());
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ namespace XEngine {
             return -1;
         }
         //Set parameters.
-        window.set_params();
+        window.set_init_params();
         initiazile();
         //Update loop//
         while (!window.closing()) {
