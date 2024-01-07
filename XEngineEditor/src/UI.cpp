@@ -93,15 +93,24 @@ void UI::update_pos(XEngine::Camera* t_camera) {
     pos[0] = val.x;
     pos[1] = val.y;
     pos[2] = val.z;
-    rot[0] = t_camera->rotation.y;
-    rot[1] = t_camera->rotation.z;
+    rot[0] = t_camera->rotation.x;
+    rot[1] = t_camera->rotation.y;
+    rot[2] = t_camera->rotation.z;
 }
-void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
-    //Setup.
-    setupDock(t_app);
-    //Draw ImGui.
+
+bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
+    return x == t_a2.x && y == t_a2.y && z == t_a2.z;
+}
+
+bool is_editor_open = true;
+bool is_demo_win_open = false;
+
+void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
     //Basic values and info.
-    ImGui::Begin("Editor");
+    ImGui::Text("Window");
+    bool vsync = t_app->window.get_param_b(XEngine::W_VSYNC);
+    ImGui::Checkbox("V-Sync", &vsync);
+    t_app->window.set_param(XEngine::W_VSYNC, vsync);
     ImGui::Text("General");
     ImGui::Text(("FPS: " + std::to_string(t_app->fps)).c_str());
     ImGui::ColorEdit3("Bg Color", cols);
@@ -113,11 +122,16 @@ void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
     ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
     ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
     ImGui::DragFloat3("Position", pos);
-    ImGui::DragFloat2("Rotation", rot);
+    ImGui::DragFloat3("Rotation", rot);
+    t_camera->position = glm::vec3(pos[0], pos[1], pos[2]);
+    if (!is_equal(rot[0], rot[1], rot[2], glm::vec3(t_camera->rotation.x, t_camera->rotation.y, t_camera->rotation.z))) {
+        t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
+        t_camera->update_vectors();
+    }
     ImGui::End();
 }
 
-void UI::setupDock(XEngine::App* t_app) {
+void setup_dock(XEngine::App* t_app) {
     //Variables.
     bool open = true;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;
@@ -136,62 +150,76 @@ void UI::setupDock(XEngine::App* t_app) {
     ImGui::Begin("XEditor UI", &open, window_flags);
     ImGui::PopStyleVar(3);
     ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_NavEnableGamepad;
     ImGuiID dockspace_id = ImGui::GetID("XEditor UI");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     //Start menu.
     if(ImGui::BeginMenuBar()) {
         if(ImGui::BeginMenu("File")) {
-            if(ImGui::MenuItem("New Project")) { }
-            if(ImGui::MenuItem("Open Project")) { }
+            if(ImGui::MenuItem("New Project (Ctrl+N)")) { }
+            if(ImGui::MenuItem("Open Project (Ctrl+O)")) { }
             ImGui::Separator();
-            if(ImGui::MenuItem("Save")) { }
-            if(ImGui::MenuItem("Save as...")) {  }
+            if(ImGui::MenuItem("Save (Ctrl+S)")) { }
+            if(ImGui::MenuItem("Save as... (Alt+S)")) {  }
             ImGui::Separator();
-            if(ImGui::MenuItem("Exit"))
+            if(ImGui::MenuItem("Exit (Esc)"))
                 (*t_app).shutdown();
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo")) {}
-            if (ImGui::MenuItem("Redo")) {}
+        if(ImGui::BeginMenu("Edit")) {
+            if (ImGui::MenuItem("Hot reload (R)")) {}
+            if (ImGui::MenuItem("Undo (Ctrl+Z)")) {}
+            if (ImGui::MenuItem("Redo (Ctrl+Shift+Z)")) {}
             ImGui::Separator();
             if (ImGui::MenuItem("Project settings")) {}
             if (ImGui::MenuItem("Preferences")) {}
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("View")) {
-            ImGui::Text("Saved");
-            if (ImGui::MenuItem("Default")) {}
-            if (ImGui::MenuItem("Wide")) {}
-            if (ImGui::MenuItem("Tall")) {}
+        if(ImGui::BeginMenu("View")) {
+            ImGui::Text("Layouts");
+            if(ImGui::MenuItem("Default")) {}
+            if(ImGui::MenuItem("Wide")) {}
+            if(ImGui::MenuItem("Tall")) {}
             ImGui::Separator();
-            if (ImGui::BeginMenu("Windows")) {
-                if (ImGui::MenuItem("Configurator")) {}
-                if (ImGui::MenuItem("Shader view")) {}
-                if (ImGui::MenuItem("Perfomance")) {}
-                if (ImGui::MenuItem("Files")) {}
+            if(ImGui::BeginMenu("Windows")) {
+                if(ImGui::MenuItem("Editor")) is_editor_open = true;
+                if(ImGui::MenuItem("ImGui Demo")) is_demo_win_open = true;
+                if(ImGui::MenuItem("Shader view")) {}
+                if(ImGui::MenuItem("Perfomance")) {}
+                if(ImGui::MenuItem("Files")) {}
                 ImGui::EndMenu();
             }
             ImGui::Separator();
-            if (ImGui::MenuItem("Reset")) {}
+            if(ImGui::MenuItem("Reset (Ctrl+R)")) ImGui::ClearIniSettings();
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Build")) {
-            if (ImGui::MenuItem("Compile project")) {}
-            if (ImGui::MenuItem("Build settings")) {}
-            if (ImGui::MenuItem("Delete last build")) {}
+        if(ImGui::BeginMenu("Build")) {
+            if(ImGui::MenuItem("Compile project (Ctrl+B)")) {}
+            if(ImGui::MenuItem("Build settings (Ctrl+Shift+B)")) {}
+            if(ImGui::MenuItem("Delete last build (Alt+B)")) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Publish...")) {}
+            if(ImGui::MenuItem("Publish... (Ctrl+P)")) {}
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Packages")) {
-            if (ImGui::MenuItem("View connected")) {}
+            if(ImGui::MenuItem("View connected (Ctrl+T)")) {}
             ImGui::Separator();
-            if (ImGui::MenuItem("Add package...")) {}
-            if (ImGui::MenuItem("Create package...")) {}
+            if(ImGui::MenuItem("Add package... (Ctrl+Shift+T)")) {}
+            if(ImGui::MenuItem("Create package... (Ctrl+G)")) {}
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
     }
     ImGui::End();
+}
+
+void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
+    //Setup.
+    setup_dock(t_app);
+    //Draw ImGui.
+    if(is_demo_win_open) ImGui::ShowDemoWindow(&is_demo_win_open);
+    if(is_editor_open) {
+        ImGui::Begin("Editor", &is_editor_open);
+        draw_editor(t_app, t_camera);
+    }
 }

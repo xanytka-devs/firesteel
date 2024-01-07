@@ -93,6 +93,7 @@ set(IMGUI_SOURCES
 	../external/imgui/imgui_draw.cpp
 	../external/imgui/imgui_tables.cpp
 	../external/imgui/imgui_widgets.cpp
+	../external/imgui/imgui_demo.cpp
 )
 add_library(ImGui STATIC
 	${IMGUI_INCLUDES}

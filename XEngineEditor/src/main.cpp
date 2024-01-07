@@ -1,8 +1,11 @@
+#include <string>
+#include <vector>
 #include <memory>
 #include <sstream>
 #include <iostream>
 
 #include <XEngine/App.hpp>
+#include <XEngine/Utils.hpp>
 #include <XEngine/Audio.hpp>
 #include <XEngine/Input.hpp>
 #include <XEngine/Rendering/Renderer.hpp>
@@ -17,10 +20,12 @@
 #include "Components/Pushka.hpp"
 #include "UI.hpp"
 
+using namespace XEngine;
+
 Joystick main_j(0);
-XEngine::Shader box_shader;
-XEngine::Shader light_shader;
-XEngine::Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
+Shader box_shader;
+Shader light_shader;
+Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
 glm::vec3 point_light_positions[] = {
         glm::vec3(0.7f,  0.2f,  2.0f),
         glm::vec3(2.3f, -3.3f, -4.0f),
@@ -29,44 +34,70 @@ glm::vec3 point_light_positions[] = {
 };
 const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm::vec3));
 LightSource lights[point_lights_amount];
-XEngine::Camera camera(glm::vec3(-1.8f, 3.07f, 3.82f), -56.f, -36.f);
-XEngine::DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
+Camera camera(glm::vec3(-1.8f, 3.07f, 3.82f), -56.f, -36.f);
+DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
     glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
-XEngine::SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)), glm::cos(glm::radians(20.f)),
-    1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f), glm::vec4(1.f), glm::vec4(1.f) };
-XEngine::Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
+SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)),
+    glm::cos(glm::radians(20.f)), 1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f),
+    glm::vec4(1.f), glm::vec4(1.f) };
+Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
 //Pushka pushka(&camera);
 
-class EditorApp : public XEngine::App {
+class EditorApp : public App {
 
     virtual void initiazile() override {
+#ifndef NDEBUG
+        printf("\nXEngine Editor\nDebug Output\n\n");
+#endif
         //Print renderer summary.
-        XEngine::Renderer::print_host_info();
-        window.set_param(XEngine::W_VSYNC, true);
+        window.set_param(W_VSYNC, true);
+        Renderer::print_host_info();
+        //Initialize audio manager.
+        AudioManager::initialize();
+        AudioManager::print_host_info();
+        over_init();
+        //Joystick checks.
+        main_j.update();
         //Initialize ImGui.
         window.ui_initialize();
         UI::update_pos(&camera);
-        //Initialize audio manager.
-        XEngine::AudioManager::initialize();
-        XEngine::AudioManager::print_host_info();
-        //Joystick checks.
-        main_j.update();
+    }
+
+    void over_init() {
         //Model.
         model.load_model("..\\..\\res\\seal\\seal.gltf");
-        box_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
+        box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         //pushka.initialize();
         //Light source.
-        light_shader = XEngine::Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
-        for(unsigned int i = 0; i < point_lights_amount; i++) {
+        light_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
+        for (unsigned int i = 0; i < point_lights_amount; i++) {
             lights[i] = LightSource(glm::vec4(1.0f), glm::vec4(0.0f), glm::vec4(1.0f), glm::vec4(1.0f),
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }
     }
 
+    bool is_reloading = false;
+
+    void hot_reload() {
+        is_reloading = true;
+#ifndef NDEBUG
+        printf("\n[INFO] Using hot reload...\n");
+#endif
+        over_shut();
+        over_init();
+#ifndef NDEBUG
+        printf("[INFO] Hot reload complete.\n");
+#endif
+        is_reloading = false;
+    }
+
     int mode = 0;
     bool flashlight = false;
 	virtual void update() override {
+        if(is_reloading) return;
+        //Take care of input.
+        input();
         //Create transformations.
         camera.aspect = static_cast<float>(window.width) / static_cast<float>(window.height);
         glm::mat4 view = camera.get_view_matrix();
@@ -109,8 +140,6 @@ class EditorApp : public XEngine::App {
         if (!flashlight)
             for (unsigned int i = 0; i < point_lights_amount; i++)
                 lights[i].render(light_shader);
-        //Take care of input.
-        input();
         //UI rendering.
         UI::setTheme();
         UI::draw(this, &camera);
@@ -122,22 +151,24 @@ class EditorApp : public XEngine::App {
         //On 'Esc' close app.
         if(Keyboard::key_state(KeyCode::ESCAPE) || main_j.button_state(JoystickControls::J_HOME))
             App::shutdown();
+        //Hot reloading.
+        if(Keyboard::key_state(KeyCode::R)) hot_reload();
         //Default mode.
-        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::DPAD_LEFT)) { mode = 0;
+        if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::TRIGGER_LEFT)) { mode = 0;
             a.play();
-            XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+            Renderer::switch_mode(RenderMode::DEFAULT);
         }
         //Wireframe mode.
-        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::DPAD_RIGHT)) { mode = 0;
-            XEngine::Renderer::switch_mode(XEngine::RenderMode::WIREFRAME);
+        if(Keyboard::key_down(KeyCode::KEY_2) || main_j.button_state(JoystickControls::TRIGGER_RIGHT)) { mode = 0;
+            Renderer::switch_mode(RenderMode::WIREFRAME);
         }
         //UV mode.
         if(Keyboard::key_down(KeyCode::KEY_3)) { mode = 1;
-            XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+            Renderer::switch_mode(RenderMode::DEFAULT);
         }
         //Normal mode.
         if(Keyboard::key_down(KeyCode::KEY_4)) { mode = 2;
-            XEngine::Renderer::switch_mode(XEngine::RenderMode::DEFAULT);
+            Renderer::switch_mode(RenderMode::DEFAULT);
         }
         //Movement.
         float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
@@ -146,7 +177,7 @@ class EditorApp : public XEngine::App {
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
         if(clicked) {
-            window.set_param(XEngine::W_CURSOR, XEngine::C_DISABLED);
+            window.set_param(W_CURSOR, C_DISABLED);
             //Position changes.
             // F/B movement.
             if(Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
@@ -180,7 +211,7 @@ class EditorApp : public XEngine::App {
             UI::update_pos(&camera);
             clicked_now = false;
         } else {
-            window.set_param(XEngine::W_CURSOR, XEngine::C_NONE);
+            window.set_param(W_CURSOR, C_NONE);
             //Camera zoom.
             camera.fov -= mouse_dy;
             if(camera.fov < 1.f) camera.fov = 180.f;
@@ -190,8 +221,8 @@ class EditorApp : public XEngine::App {
         //Lighting.
         if(Keyboard::key_down(KeyCode::F) || main_j.button_state(JoystickControls::BTN_UP)) {
             flashlight = !flashlight;
-            if(flashlight) XEngine::Renderer::set_clear_color(glm::vec3(0.f, 0.f, 0.f));
-            else XEngine::Renderer::set_clear_color(glm::vec3(0.15f, 0.15f, 0.15f));
+            if(flashlight) Renderer::set_clear_color(glm::vec3(0.f, 0.f, 0.f));
+            else Renderer::set_clear_color(glm::vec3(0.15f, 0.15f, 0.15f));
             UI::update_bg();
         }
         //Update joystick.
@@ -200,30 +231,44 @@ class EditorApp : public XEngine::App {
 
     void rotate_camera(double dz, double dy) {
         camera.rotation.z += static_cast<float>(dz);
+        if(camera.rotation.z >= 360) camera.rotation.z -= 360;
+        if(camera.rotation.z <= -360) camera.rotation.z += 360;
+        camera.rotation.y += static_cast<float>(dy);
         if(camera.rotation.y > 89.f) camera.rotation.y = 89.f;
         else if(camera.rotation.y < -89.f) camera.rotation.y = -89.f;
-        float sum = camera.rotation.y + static_cast<float>(dy);
-        if(sum > 89.f || sum < -89.f) return;
-        camera.rotation.y = sum;
         camera.update_vectors();
     }
 
     virtual void on_shutdown() override {
+        over_shut();
+        AudioManager::remove();
+        window.ui_shutdown();
+        Utils::write_file("window_config.ini",
+            "[Window][Hello XEngine!]\nSize=" + std::to_string(window.width) + "," + std::to_string(window.height));
+    }
+
+    void over_shut() {
         model.remove();
         //pushka.remove();
         box_shader.remove();
-        for(unsigned int i = 0; i < point_lights_amount; i++)
+        for (unsigned int i = 0; i < point_lights_amount; i++)
             lights[i].remove();
         light_shader.remove();
-        window.ui_shutdown();
-        XEngine::AudioManager::remove();
     }
 
 };
 
 int main() {
     //Entire application startup.
+    //Get saved window size.
+    std::vector<std::string> w_size = { "1300", "800" };
+    std::string file = Utils::read_from_file("window_config.ini");
+    if (file != "") {
+        std::vector<std::string> content = Utils::split_str(&file, '\n');
+        w_size = Utils::split_str(&(Utils::split_str(&content[1], '=')[1]), ',');
+    }
+    //Create instance of app.
     auto editor = std::make_unique<EditorApp>();
-    int returnC = editor->start(800, 600, "Hello XEngine!");  
+    int returnC = editor->start(std::stoi(w_size[0]), std::stoi(w_size[1]), "Hello XEngine!");
     return 0;
 }

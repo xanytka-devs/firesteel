@@ -54,9 +54,7 @@ namespace XEngine {
         //Set context.
         glfwMakeContextCurrent(m_window);
         if(m_vsync) glfwSwapInterval(1);
-#ifdef NDEBUG
         else glfwSwapInterval(0);
-#endif
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
         LOG_INFO("Window '" + m_title + "' initialized.");
         return true;
@@ -138,6 +136,24 @@ namespace XEngine {
         glEnable(GL_DEPTH_TEST);
     }
 
+    int Window::get_param_i(WindowParam t_param) {
+        switch (t_param) {
+        case XEngine::W_CURSOR:
+            return m_cur_state;
+            break;
+        case XEngine::W_VSYNC:
+            return m_vsync;
+            break;
+        default:
+            return 0;
+            break;
+        }
+    }
+
+    bool Window::get_param_b(WindowParam t_param) {
+        return get_param_i(t_param) == 1;
+    }
+
     void Window::set_param(WindowParam t_param, bool t_val) {
         set_param(t_param, t_val ? 1 : 0);
     }
@@ -146,8 +162,12 @@ namespace XEngine {
         switch (t_param) {
         case W_VSYNC:
             m_vsync = (t_val == 1);
+            glfwMakeContextCurrent(m_window);
+            if(m_vsync) glfwSwapInterval(1);
+            else glfwSwapInterval(0);
             break;
         case W_CURSOR:
+            m_cur_state = CursorState(t_val);
             switch (t_val) {
             case C_NONE:
                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

@@ -146,7 +146,6 @@ namespace XEngine {
 			//Texture not loaded.
 			if (!skip) {
 				Texture tex(m_path, str.C_Str(), t_type);
-				LOG_INFO("Loaded texture: '" + tex.path + "\\" + tex.file + "'.");
 				output.push_back(tex);
 				m_textures_loaded.push_back(tex);
 			}
@@ -181,6 +180,9 @@ namespace XEngine {
 		//Remove each mesh.
 		for (unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].remove();
+		//Remove each texture.
+		for (unsigned int i = 0; i < m_textures_loaded.size(); i++)
+			m_textures_loaded[i].remove();
 	}
 
 }

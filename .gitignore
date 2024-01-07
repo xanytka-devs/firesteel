@@ -19,7 +19,10 @@ ZERO_CHECK.log
 bin
 out
 build/*
+!build/*/
+build/*/*
 !build/CMakeCache.txt
+!build/XEngineEditor/imgui.ini
 
 # Prerequisites
 *.d

@@ -40,12 +40,16 @@ namespace XEngine {
 		void set_param(WindowParam t_param, std::string t_val);
 		void set_init_params();
 		void close();
+
+		int get_param_i(WindowParam t_param);
+		bool get_param_b(WindowParam t_param);
 		bool closing();
 
 		static unsigned int width;
 		static unsigned int height;
 	private:
 		GLFWwindow* m_window;
+		CursorState m_cur_state;
 		std::string m_title;
 		bool m_vsync = false;
 	};
