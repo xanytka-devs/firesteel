@@ -58,9 +58,5 @@ build/*/*
 *.app
 
 # Submodules
-external/glfw/
-external/imgui/
-external/glm/
-external/assimp/
-external/portaudio/
-external/libsndfile/
+external/*
+!external/glad

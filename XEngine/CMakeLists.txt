@@ -1,47 +1,51 @@
 cmake_minimum_required(VERSION 3.12)
-project(XEngine)
-set(ENGINE_PROJECT_NAME XEngine)
+project(xengine)
+set(ENGINE_PROJECT_NAME xengine)
 
 set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
 	includes/stb/stb_image.hpp
 )
 set(ENGINE_PUBLIC_INCLUDES
-	includes/XEngine/App.hpp
-	includes/XEngine/Utils.hpp
-	includes/XEngine/Audio.hpp
-	includes/XEngine/Rendering/Renderer.hpp
-	includes/XEngine/Rendering/Window.hpp
-	includes/XEngine/Rendering/Camera.hpp
-	includes/XEngine/Rendering/Material.hpp
-	includes/XEngine/Rendering/Texture.hpp
-	includes/XEngine/Rendering/Mesh.hpp
-	includes/XEngine/Rendering/Transform.hpp
-	includes/XEngine/Rendering/Light.hpp
-	includes/XEngine/Input.hpp
-	includes/XEngine/Input/Keyboard.hpp
-	includes/XEngine/Input/Mouse.hpp
-	includes/XEngine/Input/Joystick.hpp
+	includes/xengine/app.hpp
+	includes/xengine/utils.hpp
+	includes/xengine/audio.hpp
+	includes/xengine/enviroment.hpp
+	includes/xengine/rendering/renderer.hpp
+	includes/xengine/rendering/window.hpp
+	includes/xengine/rendering/camera.hpp
+	includes/xengine/rendering/material.hpp
+	includes/xengine/rendering/texture.hpp
+	includes/xengine/rendering/mesh.hpp
+	includes/xengine/rendering/transform.hpp
+	includes/xengine/rendering/light.hpp
+	includes/xengine/physics/rigidbody.hpp
+	includes/xengine/input.hpp
+	includes/xengine/input/keyboard.hpp
+	includes/xengine/input/mouse.hpp
+	includes/xengine/input/joystick.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
-	includes/XEngine/Log.hpp
-	includes/XEngine/Rendering/Shader.hpp
+	includes/xengine/log.hpp
+	includes/xengine/rendering/shader.hpp
 )
 set(ENGINE_PRIVATE_SOURCES
-	src/XEngine/Log.cpp
-	src/XEngine/App.cpp
-	src/XEngine/Utils.cpp
-	src/XEngine/Audio.cpp
-	src/XEngine/Rendering/Renderer.cpp
-	src/XEngine/Rendering/Window.cpp
-	src/XEngine/Rendering/Shader.cpp
-	src/XEngine/Rendering/Camera.cpp
-	src/XEngine/Rendering/Texture.cpp
-	src/XEngine/Rendering/Mesh.cpp
-	src/XEngine/Rendering/Transform.cpp
-	src/XEngine/Rendering/Light.cpp
-	src/XEngine/Input/Keyboard.cpp
-	src/XEngine/Input/Mouse.cpp
-	src/XEngine/Input/Joystick.cpp
+	src/xengine/log.cpp
+	src/xengine/app.cpp
+	src/xengine/utils.cpp
+	src/xengine/audio.cpp
+	src/xengine/enviroment.cpp
+	src/xengine/rendering/renderer.cpp
+	src/xengine/rendering/window.cpp
+	src/xengine/rendering/shader.cpp
+	src/xengine/rendering/camera.cpp
+	src/xengine/rendering/texture.cpp
+	src/xengine/rendering/mesh.cpp
+	src/xengine/rendering/transform.cpp
+	src/xengine/rendering/light.cpp
+	src/xengine/physics/rigidbody.cpp
+	src/xengine/input/keyboard.cpp
+	src/xengine/input/mouse.cpp
+	src/xengine/input/joystick.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
@@ -76,10 +80,10 @@ add_subdirectory(../external/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE assimp)
 
 add_subdirectory(../external/portaudio ${CMAKE_CURRENT_BINARY_DIR}/portaudiod)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\XEngine\\portaudiod\\portaudiod)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\xengine\\portaudiod\\portaudiod)
 
 add_subdirectory(../external/libsndfile ${CMAKE_CURRENT_BINARY_DIR}/libsndfile)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\XEngine\\libsndfile\\Release\\sndfile)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\xengine\\libsndfile\\Release\\sndfile)
 
 set(IMGUI_INCLUDES
 	../external/imgui/imgui.h

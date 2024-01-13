@@ -65,7 +65,7 @@ class EditorApp : public App {
 
     void over_init() {
         //Model.
-        model.load_model("..\\..\\res\\seal\\seal.gltf");
+        model.load_model("..\\..\\res\\sphere\\scene.gltf");
         box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         //pushka.initialize();
         //Light source.

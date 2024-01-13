@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.12)
-project(XEngineEditor)
-set(EDITOR_PROJECT_NAME XEngineEditor)
+project(xeditor)
+set(EDITOR_PROJECT_NAME xeditor)
 
 set(EDITOR_INCLUDES
-	includes/Components/Cube.hpp
-	includes/Components/CordPlane.hpp
-	includes/Components/LightSource.hpp
-	includes/Components/Pushka.hpp
-	includes/UI.hpp
+	includes/components/cube.hpp
+	includes/components/cord_plane.hpp
+	includes/components/light_source.hpp
+	includes/components/pushka.hpp
+	includes/ui.hpp
 )
 set(EDITOR_SOURCES
 	src/main.cpp
-	src/UI.cpp
+	src/ui.cpp
 )
 
 set(EDITOR_ALL
@@ -23,7 +23,7 @@ add_executable(${EDITOR_PROJECT_NAME}
 	${EDITOR_ALL}
 )
 
-target_link_libraries(${EDITOR_PROJECT_NAME} XEngine ImGui glm)
+target_link_libraries(${EDITOR_PROJECT_NAME} xengine ImGui glm)
 target_compile_features(${EDITOR_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${EDITOR_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${EDITOR_PROJECT_NAME} PRIVATE src)

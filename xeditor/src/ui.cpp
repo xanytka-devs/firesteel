@@ -4,6 +4,7 @@
 
 #include <XEngine/Rendering/Renderer.hpp>
 #include <XEngine/Rendering/Camera.hpp>
+#include <XEngine/Enviroment.hpp>
 
 #include "UI.hpp"
 
@@ -115,6 +116,12 @@ void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
     ImGui::Text(("FPS: " + std::to_string(t_app->fps)).c_str());
     ImGui::ColorEdit3("Bg Color", cols);
     XEngine::Renderer::set_clear_color(cols[0], cols[1], cols[2]);
+    //Enviroment.
+    ImGui::Text("Enviroment");
+    glm::vec3 t_g = XEngine::Enviroment::gravity;
+    float grav[] = { t_g.x, t_g.y, t_g.z };
+    ImGui::DragFloat3("Gravity", grav);
+    XEngine::Enviroment::gravity = glm::vec3(grav[0], grav[1], grav[2]);
     //Camera redactor.
     ImGui::Text("Camera");
     ImGui::Checkbox("Prespective", &(t_camera->is_perspective));
