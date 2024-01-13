@@ -4,7 +4,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "XEngine/Rendering/Mesh.hpp"
+#include "xengine/rendering/mesh.hpp"
 
 namespace XEngine {
 

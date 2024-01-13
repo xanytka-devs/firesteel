@@ -7,8 +7,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "XEngine/Rendering/Transform.hpp"
-#include "XEngine/Log.hpp"
+#include "xengine/rendering/transform.hpp"
+#include "xengine/log.hpp"
 
 namespace XEngine {
 
@@ -158,15 +158,21 @@ namespace XEngine {
 	/// Render model.
 	/// </summary>
 	/// <param name="t_shader">Shader for meshes.</param>
-	void Transform::render(Shader t_shader) {
+	void Transform::render(Shader t_shader, bool t_override_model) {
 		//Set matrix.
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, position);
-		model = glm::scale(model, size);
-		model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
-		model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
-		model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
-		t_shader.set_mat4("model", model);
+		if (!t_override_model) {
+			model = glm::translate(model, position);
+			model = glm::scale(model, size);
+			model = glm::rotate(model, glm::radians(rotation.x), glm::vec3(1, 0, 0));
+			model = glm::rotate(model, glm::radians(rotation.y), glm::vec3(0, 1, 0));
+			model = glm::rotate(model, glm::radians(rotation.z), glm::vec3(0, 0, 1));
+			t_shader.set_mat4("model", model);
+		} else {
+			//Override matrix.
+			t_shader.set_mat4("model", custom_model);
+			custom_model = glm::mat4(1.0f);
+		}
 		t_shader.set_float("material.shininess", 0.5f);
 		//Render each mesh.
 		for (unsigned int i = 0; i < m_meshes.size(); i++)

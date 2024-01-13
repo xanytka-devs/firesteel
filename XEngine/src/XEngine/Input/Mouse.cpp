@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "XEngine/Input/Mouse.hpp"
+#include "xengine/input/mouse.hpp"
 
 double Mouse::m_x = 0;
 double Mouse::m_y = 0;

@@ -2,8 +2,8 @@
 #include <sstream>
 #include <streambuf>
 
-#include "XEngine/Log.hpp"
-#include "XEngine/Utils.hpp"
+#include "xengine/log.hpp"
+#include "xengine/utils.hpp"
 
 namespace XEngine {
 

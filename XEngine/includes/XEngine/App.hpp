@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#include "XEngine/Rendering/Window.hpp"
+#include "xengine/rendering/window.hpp"
 
 namespace XEngine {
 

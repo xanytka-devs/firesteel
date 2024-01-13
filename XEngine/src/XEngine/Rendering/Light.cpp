@@ -1,4 +1,4 @@
-#include "XEngine/Rendering/Light.hpp"
+#include "xengine/rendering/light.hpp"
 
 namespace XEngine {
 

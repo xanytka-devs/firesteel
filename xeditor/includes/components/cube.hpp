@@ -1,9 +1,9 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include <XEngine/Rendering/Renderer.hpp>
-#include <XEngine/Rendering/Transform.hpp>
-#include <XEngine/Rendering/Material.hpp>
+#include <xengine/rendering/renderer.hpp>
+#include <xengine/rendering/transform.hpp>
+#include <xengine/rendering/material.hpp>
 
 class Cube : public XEngine::Transform {
 public:

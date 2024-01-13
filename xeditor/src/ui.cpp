@@ -2,11 +2,11 @@
 #include <imgui_internal.h>
 #include <string>
 
-#include <XEngine/Rendering/Renderer.hpp>
-#include <XEngine/Rendering/Camera.hpp>
-#include <XEngine/Enviroment.hpp>
+#include <xengine/rendering/renderer.hpp>
+#include <xengine/rendering/camera.hpp>
+#include <xengine/enviroment.hpp>
 
-#include "UI.hpp"
+#include "ui.hpp"
 
 void UI::setTheme() {
     ImGuiStyle& style = ImGui::GetStyle();

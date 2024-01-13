@@ -1,9 +1,9 @@
 #ifndef CORD_PLANE_H
 #define CORD_PLANE_H
 
-#include <XEngine/Rendering/Renderer.hpp>
-#include <XEngine/Rendering/Transform.hpp>
-#include <XEngine/Rendering/Material.hpp>
+#include <xengine/rendering/renderer.hpp>
+#include <xengine/rendering/transform.hpp>
+#include <xengine/rendering/material.hpp>
 
 class CordPlane : public XEngine::Transform {
 public:

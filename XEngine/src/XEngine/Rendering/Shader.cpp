@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 
-#include "XEngine/Rendering/Shader.hpp"
-#include "XEngine/Utils.hpp"
+#include "xengine/rendering/shader.hpp"
+#include "xengine/utils.hpp"
 
 namespace XEngine {
 

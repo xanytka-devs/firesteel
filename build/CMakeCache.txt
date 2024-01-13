@@ -59,7 +59,7 @@ ASSIMP_BUILD_NONFREE_C4D_IMPORTER:BOOL=OFF
 ASSIMP_BUILD_SAMPLES:BOOL=OFF
 
 //If the test suite for Assimp is built in addition to the library.
-ASSIMP_BUILD_TESTS:BOOL=ON
+ASSIMP_BUILD_TESTS:BOOL=OFF
 
 //Build your own zlib
 ASSIMP_BUILD_ZLIB:BOOL=ON
@@ -133,10 +133,10 @@ Assimp_IS_TOP_LEVEL:STATIC=OFF
 Assimp_SOURCE_DIR:STATIC=G:/! New/xengine/external/assimp
 
 //Build examples
-BUILD_EXAMPLES:BOOL=ON
+BUILD_EXAMPLES:BOOL=OFF
 
 //Build programs
-BUILD_PROGRAMS:BOOL=ON
+BUILD_PROGRAMS:BOOL=OFF
 
 //Build regtest
 BUILD_REGTEST:BOOL=OFF
@@ -145,7 +145,7 @@ BUILD_REGTEST:BOOL=OFF
 BUILD_SHARED_LIBS:BOOL=OFF
 
 //Build the testing tree.
-BUILD_TESTING:BOOL=ON
+BUILD_TESTING:BOOL=OFF
 
 //Path to a program.
 CMAKE_AR:FILEPATH=C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/lib.exe
@@ -159,16 +159,16 @@ CMAKE_CONFIGURATION_TYPES:STRING=Debug;Release;MinSizeRel;RelWithDebInfo
 CMAKE_CXX_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3 /GR /EHsc
 
 //Flags used by the CXX compiler during DEBUG builds.
-CMAKE_CXX_FLAGS_DEBUG:STRING=/MDd /Zi /Ob0 /Od /RTC1
+CMAKE_CXX_FLAGS_DEBUG:STRING=/MTd /Zi /Ob0 /Od /RTC1
 
 //Flags used by the CXX compiler during MINSIZEREL builds.
-CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
+CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/MT /O1 /Ob1 /DNDEBUG
 
 //Flags used by the CXX compiler during RELEASE builds.
-CMAKE_CXX_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DNDEBUG
+CMAKE_CXX_FLAGS_RELEASE:STRING=/MT /O2 /Ob2 /DNDEBUG
 
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
-CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MD /Zi /O2 /Ob1 /DNDEBUG
+CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=/MT /Zi /O2 /Ob1 /DNDEBUG
 
 //Libraries linked by default with all C++ applications.
 CMAKE_CXX_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -177,16 +177,16 @@ CMAKE_CXX_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.l
 CMAKE_C_FLAGS:STRING=/DWIN32 /D_WINDOWS /W3
 
 //Flags used by the C compiler during DEBUG builds.
-CMAKE_C_FLAGS_DEBUG:STRING=/MDd /Zi /Ob0 /Od /RTC1
+CMAKE_C_FLAGS_DEBUG:STRING=/MTd /Zi /Ob0 /Od /RTC1
 
 //Flags used by the C compiler during MINSIZEREL builds.
-CMAKE_C_FLAGS_MINSIZEREL:STRING=/MD /O1 /Ob1 /DNDEBUG
+CMAKE_C_FLAGS_MINSIZEREL:STRING=/MT /O1 /Ob1 /DNDEBUG
 
 //Flags used by the C compiler during RELEASE builds.
-CMAKE_C_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DNDEBUG
+CMAKE_C_FLAGS_RELEASE:STRING=/MT /O2 /Ob2 /DNDEBUG
 
 //Flags used by the C compiler during RELWITHDEBINFO builds.
-CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD /Zi /O2 /Ob1 /DNDEBUG
+CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MT /Zi /O2 /Ob1 /DNDEBUG
 
 //Libraries linked by default with all C applications.
 CMAKE_C_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
@@ -461,7 +461,7 @@ GITCOMMAND:FILEPATH=C:/Program Files/Git/cmd/git.exe
 GLFW_BINARY_DIR:STATIC=G:/! New/xengine/build/xengine/glfw
 
 //Build the GLFW documentation
-GLFW_BUILD_DOCS:BOOL=ON
+GLFW_BUILD_DOCS:BOOL=OFF
 
 //Build the GLFW example programs
 GLFW_BUILD_EXAMPLES:BOOL=OFF
@@ -496,9 +496,6 @@ GLM_BUILD_LIBRARY:BOOL=ON
 
 //Build the test programs
 GLM_BUILD_TESTS:BOOL=OFF
-
-//Install man pages for programs
-INSTALL_MANPAGES:BOOL=ON
 
 //Generate and install pkg-config module
 INSTALL_PKGCONFIG_MODULE:BOOL=ON
@@ -589,9 +586,6 @@ PortAudio_BINARY_DIR:STATIC=G:/! New/xengine/build/xengine/portaudiod
 
 //Value Computed by CMake
 PortAudio_IS_TOP_LEVEL:STATIC=OFF
-
-//Dependencies for the target
-PortAudio_LIB_DEPENDS:STATIC=general;winmm;general;dsound;general;ole32;general;uuid;general;ole32;general;uuid;general;setupapi;general;ole32;general;uuid;
 
 //Value Computed by CMake
 PortAudio_SOURCE_DIR:STATIC=G:/! New/xengine/external/portaudio
@@ -746,8 +740,6 @@ CMAKE_CACHE_PATCH_VERSION:INTERNAL=0
 CMAKE_COMMAND:INTERNAL=G:/CMake/bin/cmake.exe
 //Path to cpack program executable.
 CMAKE_CPACK_COMMAND:INTERNAL=G:/CMake/bin/cpack.exe
-//ADVANCED property for variable: CMAKE_CTEST_COMMAND
-CMAKE_CTEST_COMMAND-ADVANCED:INTERNAL=1
 //Path to ctest program executable.
 CMAKE_CTEST_COMMAND:INTERNAL=G:/CMake/bin/ctest.exe
 //ADVANCED property for variable: CMAKE_CXX_FLAGS
@@ -852,7 +844,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MT
 CMAKE_MT-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=16
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=13
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //noop for ranlib
@@ -1031,6 +1023,8 @@ HAVE_WAITPID:INTERNAL=
 //Have function write
 HAVE_WRITE:INTERNAL=1
 INLINE_CODE:INTERNAL=/* #undef inline */
+//Install man pages for programs
+INSTALL_MANPAGES:INTERNAL=ON
 //ADVANCED property for variable: MAKECOMMAND
 MAKECOMMAND-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: MEMORYCHECK_COMMAND

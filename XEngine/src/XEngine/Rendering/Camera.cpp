@@ -1,4 +1,4 @@
-#include "XEngine/Rendering/Camera.hpp"
+#include "xengine/rendering/camera.hpp"
 
 namespace XEngine {
 

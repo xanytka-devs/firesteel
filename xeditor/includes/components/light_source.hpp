@@ -1,7 +1,7 @@
 #ifndef LIGHT_SOURCE_H
 #define LIGHT_SOURCE_H
 
-#include <XEngine/Rendering/Light.hpp>
+#include <xengine/rendering/light.hpp>
 
 #include "Components/Cube.hpp"
 

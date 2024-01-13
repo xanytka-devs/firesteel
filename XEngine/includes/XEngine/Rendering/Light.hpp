@@ -2,7 +2,7 @@
 #define LIGHT_H
 
 #include <glm/glm.hpp>
-#include "XEngine/Rendering/Shader.hpp"
+#include "xengine/rendering/shader.hpp"
 
 namespace XEngine {
     struct DirectionalLight {

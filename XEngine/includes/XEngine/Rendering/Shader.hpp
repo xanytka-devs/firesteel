@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "XEngine/Log.hpp"
+#include "xengine/log.hpp"
 
 unsigned int typedef GLuint;
 unsigned int typedef GLenum;

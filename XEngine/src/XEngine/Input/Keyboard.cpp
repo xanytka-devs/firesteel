@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "XEngine/Input/Keyboard.hpp"
+#include "xengine/input/keyboard.hpp"
 
 bool Keyboard::m_keys[GLFW_KEY_LAST] = { 0 };
 bool Keyboard::m_keys_changed[GLFW_KEY_LAST] = { 0 };

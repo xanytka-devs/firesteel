@@ -4,27 +4,28 @@
 #include <sstream>
 #include <iostream>
 
-#include <XEngine/App.hpp>
-#include <XEngine/Utils.hpp>
-#include <XEngine/Audio.hpp>
-#include <XEngine/Input.hpp>
-#include <XEngine/Rendering/Renderer.hpp>
-#include <XEngine/Rendering/Camera.hpp>
-#include <XEngine/Rendering/Shader.hpp>
-#include <XEngine/Rendering/Window.hpp>
-#include <XEngine/Rendering/Texture.hpp>
-#include <XEngine/Rendering/Light.hpp>
-#include <XEngine/Rendering/Transform.hpp>
+#include <xengine/app.hpp>
+#include <xengine/utils.hpp>
+#include <xengine/audio.hpp>
+#include <xengine/input.hpp>
+#include <xengine/rendering/renderer.hpp>
+#include <xengine/rendering/camera.hpp>
+#include <xengine/rendering/shader.hpp>
+#include <xengine/rendering/window.hpp>
+#include <xengine/rendering/texture.hpp>
+#include <xengine/rendering/light.hpp>
+#include <xengine/rendering/transform.hpp>
 
-#include "Components/LightSource.hpp"
-#include "Components/Pushka.hpp"
-#include "UI.hpp"
+#include "components/light_source.hpp"
+#include "components/billboard.hpp"
+#include "ui.hpp"
 
 using namespace XEngine;
 
 Joystick main_j(0);
 Shader box_shader;
 Shader light_shader;
+Shader gizmo_shader;
 Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
 glm::vec3 point_light_positions[] = {
         glm::vec3(0.7f,  0.2f,  2.0f),
@@ -41,7 +42,8 @@ SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(
     glm::cos(glm::radians(20.f)), 1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f),
     glm::vec4(1.f), glm::vec4(1.f) };
 Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
-//Pushka pushka(&camera);
+Billboard dir_light_gizmo(glm::vec3(0.f, 1.f, 0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.5f),
+    &camera, "..\\..\\res\\gizmos\\dir_light.png");
 
 class EditorApp : public App {
 
@@ -67,7 +69,6 @@ class EditorApp : public App {
         //Model.
         model.load_model("..\\..\\res\\sphere\\scene.gltf");
         box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
-        //pushka.initialize();
         //Light source.
         light_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for (unsigned int i = 0; i < point_lights_amount; i++) {
@@ -75,6 +76,9 @@ class EditorApp : public App {
                 1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
             lights[i].initialize();
         }
+        //Gizmo.
+        gizmo_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\billboard_frag.glsl");
+        dir_light_gizmo.initialize();
     }
 
     bool is_reloading = false;
@@ -131,7 +135,6 @@ class EditorApp : public App {
         box_shader.set_mat4("view", view);
         box_shader.set_int("render_mode", mode);
         model.render(box_shader);
-        //pushka.render(box_shader);
         //Render light.
         light_shader.enable();
         light_shader.set_mat4("projection", projection );
@@ -140,6 +143,13 @@ class EditorApp : public App {
         if (!flashlight)
             for (unsigned int i = 0; i < point_lights_amount; i++)
                 lights[i].render(light_shader);
+        //Gizmo.
+        gizmo_shader.set_mat4("projection", projection);
+        gizmo_shader.set_mat4("view", view);
+        gizmo_shader.set_4_floats("albedo_color", dir_light.color);
+        gizmo_shader.set_int("render_mode", mode);
+        dir_light_gizmo.position = glm::vec3(0.f, -dir_light.direction.y, -dir_light.direction.z * 1.5);
+        dir_light_gizmo.render(gizmo_shader);
         //UI rendering.
         UI::setTheme();
         UI::draw(this, &camera);
@@ -249,9 +259,10 @@ class EditorApp : public App {
 
     void over_shut() {
         model.remove();
-        //pushka.remove();
         box_shader.remove();
-        for (unsigned int i = 0; i < point_lights_amount; i++)
+        //dir_light_gizmo.remove();
+        //gizmo_shader.remove();
+        for(unsigned int i = 0; i < point_lights_amount; i++)
             lights[i].remove();
         light_shader.remove();
     }

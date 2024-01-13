@@ -7,11 +7,11 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
-#include "XEngine/Log.hpp"
-#include "XEngine/Rendering/Renderer.hpp"
-#include "XEngine/Rendering/Window.hpp"
-#include "XEngine/Input/Keyboard.hpp"
-#include "XEngine/Input/Mouse.hpp"
+#include "xengine/log.hpp"
+#include "xengine/rendering/renderer.hpp"
+#include "xengine/rendering/window.hpp"
+#include "xengine/input/keyboard.hpp"
+#include "xengine/input/mouse.hpp"
 
 namespace XEngine {
 

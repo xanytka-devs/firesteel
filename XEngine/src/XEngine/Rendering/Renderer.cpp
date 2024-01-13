@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "XEngine/Rendering/Renderer.hpp"
-#include "XEngine/Log.hpp"
+#include "xengine/rendering/renderer.hpp"
+#include "xengine/log.hpp"
 
 namespace XEngine {
 

@@ -11,8 +11,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "XEngine/Log.hpp"
-#include "XEngine/Rendering/Texture.hpp"
+#include "xengine/log.hpp"
+#include "xengine/rendering/texture.hpp"
 
 namespace XEngine {
 

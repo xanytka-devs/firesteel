@@ -1,7 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
-#include <XEngine/App.hpp>
+#include <xengine/app.hpp>
 
 class UI {
 public:

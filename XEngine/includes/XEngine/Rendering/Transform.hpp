@@ -1,7 +1,7 @@
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
 
-#include "XEngine/Rendering/Mesh.hpp"
+#include "xengine/rendering/mesh.hpp"
 
 struct aiNode;
 struct aiMesh;
@@ -16,7 +16,7 @@ namespace XEngine {
 			glm::vec3 t_size = glm::vec3(1.f));
 		void initialize();
 		void load_model(std::string t_path);
-		void render(Shader t_shader);
+		void render(Shader t_shader, bool t_override_model = false);
 		void remove();
 
 		glm::vec3 position;
@@ -27,6 +27,7 @@ namespace XEngine {
 		std::string m_path;
 		std::vector<Texture> m_textures_loaded;
 		bool m_no_textures = false;
+		glm::mat4 custom_model = glm::mat4(1.0f);
 
 		void process_node(aiNode* t_node, const aiScene* t_scene);
 		Mesh process_mesh(aiMesh* mesh, const aiScene* t_scene);

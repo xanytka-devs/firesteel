@@ -14,3 +14,7 @@
 [submodule "external/libsndfile"]
 	path = external/libsndfile
 	url = https://github.com/libsndfile/libsndfile
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <windows.h>
 
-#include "XEngine/Log.hpp"
+#include "xengine/log.hpp"
 
 namespace XEngine {
 

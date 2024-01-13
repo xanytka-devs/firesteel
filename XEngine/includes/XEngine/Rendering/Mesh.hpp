@@ -4,8 +4,8 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "XEngine/Rendering/Shader.hpp"
-#include "XEngine/Rendering/Texture.hpp"
+#include "xengine/rendering/shader.hpp"
+#include "xengine/rendering/texture.hpp"
 
 namespace XEngine {
 	struct Vertex {
