@@ -1,3 +1,4 @@
+
 [submodule "external/glfw"]
 	path = external/glfw
 	url = https://github.com/glfw/glfw.git
@@ -10,3 +11,6 @@
 [submodule "external/portaudio"]
 	path = external/portaudio
 	url = https://github.com/PortAudio/portaudio.git
+[submodule "external/libsndfile"]
+	path = external/libsndfile
+	url = https://github.com/libsndfile/libsndfile
