@@ -5,10 +5,12 @@
 #include <iostream>
 
 #include <xengine/app.hpp>
+#include <xengine/enviroment.hpp>
 #include <xengine/utils.hpp>
 #include <xengine/audio.hpp>
 #include <xengine/input.hpp>
 #include <xengine/rendering/renderer.hpp>
+#include <xengine/rendering/material.hpp>
 #include <xengine/rendering/camera.hpp>
 #include <xengine/rendering/shader.hpp>
 #include <xengine/rendering/window.hpp>
@@ -42,6 +44,7 @@ SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(
     glm::cos(glm::radians(20.f)), 1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f),
     glm::vec4(1.f), glm::vec4(1.f) };
 Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
+Material model_mat = { glm::vec4(0), glm::vec4(1), glm::vec4(0), glm::vec4(0), glm::vec4(0), 0.f, 0.5f };
 Billboard dir_light_gizmo(glm::vec3(0.f, 1.f, 0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.5f),
     &camera, "..\\..\\res\\gizmos\\dir_light.png");
 
@@ -69,6 +72,7 @@ class EditorApp : public App {
         //Model.
         model.load_model("..\\..\\res\\sphere\\scene.gltf");
         box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
+        model.set_material(&model_mat);
         //Light source.
         light_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for (unsigned int i = 0; i < point_lights_amount; i++) {
@@ -109,6 +113,7 @@ class EditorApp : public App {
         //Render model.
         box_shader.enable();
         box_shader.set_3_floats("view_pos", camera.position);
+        model.set_material(&model_mat);
         //Point light.
         if(!flashlight) {
             for (unsigned int i = 0; i < point_lights_amount; i++)
@@ -152,7 +157,7 @@ class EditorApp : public App {
         dir_light_gizmo.render(gizmo_shader);
         //UI rendering.
         UI::setTheme();
-        UI::draw(this, &camera);
+        UI::draw(this, &camera, &model_mat);
     }
 
     bool clicked = false;
@@ -191,19 +196,19 @@ class EditorApp : public App {
             //Position changes.
             // F/B movement.
             if(Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
-                camera.position += camera.forward * (App::delta_time * 2.5f);
+                camera.position += camera.forward * (Enviroment::delta_time * 2.5f);
             if(Keyboard::key_state(KeyCode::S) || j_y >= 0.5f)
-                camera.position -= camera.forward * (App::delta_time * 2.5f);
+                camera.position -= camera.forward * (Enviroment::delta_time * 2.5f);
             // R/L movement.
             if(Keyboard::key_state(KeyCode::D) || j_x >= 0.5f)
-                camera.position += camera.right * (App::delta_time * 2.5f);
+                camera.position += camera.right * (Enviroment::delta_time * 2.5f);
             if(Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
-                camera.position -= camera.right * (App::delta_time * 2.5f);
+                camera.position -= camera.right * (Enviroment::delta_time * 2.5f);
             // U/D movement.
             if(Keyboard::key_state(KeyCode::SPACE) || main_j.button_state(JoystickControls::DPAD_UP))
-                camera.position += camera.up * (App::delta_time * 2.5f);
+                camera.position += camera.up * (Enviroment::delta_time * 2.5f);
             if(Keyboard::key_state(KeyCode::LEFT_SHIFT) || main_j.button_state(JoystickControls::DPAD_DOWN))
-                camera.position -= camera.up * (App::delta_time * 2.5f);
+                camera.position -= camera.up * (Enviroment::delta_time * 2.5f);
             //Camera rotation.
             double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
             if(clicked_now) dx = dy = 0;
@@ -216,7 +221,7 @@ class EditorApp : public App {
             }
             //Move with mouse wheel.
             if(mouse_dy != 0)
-                camera.position += camera.forward * (App::delta_time * mouse_dy * 2.5f);
+                camera.position += camera.forward * (Enviroment::delta_time * mouse_dy * 2.5f);
             //Update UI.
             UI::update_pos(&camera);
             clicked_now = false;

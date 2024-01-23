@@ -173,7 +173,12 @@ namespace XEngine {
 			t_shader.set_mat4("model", custom_model);
 			custom_model = glm::mat4(1.0f);
 		}
-		t_shader.set_float("material.shininess", 0.5f);
+		t_shader.set_4_floats("material.diffuse", m_material.diffuse);
+		t_shader.set_4_floats("material.specular", m_material.specular);
+		t_shader.set_4_floats("material.emission", m_material.emission);
+		t_shader.set_4_floats("material.emission_color", m_material.emission_color);
+		t_shader.set_float("material.shininess", m_material.shininess);
+		t_shader.set_float("material.emission_factor", m_material.emission_factor);
 		//Render each mesh.
 		for (unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].render(t_shader);

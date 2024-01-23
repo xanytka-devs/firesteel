@@ -12,7 +12,7 @@ CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
 
-#Visual Studio garbage
+# Visual Studio garbage
 .vs/
 
 # Other folders

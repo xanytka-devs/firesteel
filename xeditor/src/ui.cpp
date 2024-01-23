@@ -104,6 +104,7 @@ bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
 }
 
 bool is_editor_open = true;
+bool is_material_redactor_open = true;
 bool is_demo_win_open = false;
 
 void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
@@ -135,6 +136,33 @@ void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
         t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
         t_camera->update_vectors();
     }
+    ImGui::End();
+}
+
+float mat_array[4] = { 0.f, 0.f, 0.f, 0.f };
+float mat_drag_1 = 0.f;
+void draw_drag_mat(const char* t_name, glm::vec4 t_vec) {
+    mat_array[0] = t_vec.r;
+    mat_array[1] = t_vec.g;
+    mat_array[2] = t_vec.b;
+    mat_array[3] = t_vec.a;
+    ImGui::DragFloat4(t_name, mat_array, 0.05f, 0.f);
+}
+void draw_drag_mat_1(const char* t_name, glm::vec4 t_vec) {
+    mat_drag_1 = t_vec.r;
+    ImGui::DragFloat(t_name, &mat_drag_1, 0.05f, 0.f);
+}
+
+void draw_material_redactor(XEngine::App* t_app, XEngine::Material* t_mat) {
+    ImGui::Text("Material");
+    //Vector sliders.
+    draw_drag_mat_1("Emission", t_mat->emission);
+    t_mat->emission = glm::vec4(mat_drag_1, mat_drag_1, mat_drag_1, mat_drag_1);
+    draw_drag_mat("Emission color", t_mat->emission_color);
+    t_mat->emission_color = glm::vec4(mat_array[0], mat_array[1], mat_array[2], mat_array[3]);
+    //Other values.
+    ImGui::SliderFloat("Shininess", &t_mat->shininess, 0.1f, 1.f);
+    ImGui::SliderFloat("Emission factor", &t_mat->emission_factor, 0.1f, 1.f);
     ImGui::End();
 }
 
@@ -191,7 +219,7 @@ void setup_dock(XEngine::App* t_app) {
             if(ImGui::BeginMenu("Windows")) {
                 if(ImGui::MenuItem("Editor")) is_editor_open = true;
                 if(ImGui::MenuItem("ImGui Demo")) is_demo_win_open = true;
-                if(ImGui::MenuItem("Shader view")) {}
+                if(ImGui::MenuItem("Material redactor")) is_material_redactor_open = true;
                 if(ImGui::MenuItem("Perfomance")) {}
                 if(ImGui::MenuItem("Files")) {}
                 ImGui::EndMenu();
@@ -220,7 +248,7 @@ void setup_dock(XEngine::App* t_app) {
     ImGui::End();
 }
 
-void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
+void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera, XEngine::Material* t_mat) {
     //Setup.
     setup_dock(t_app);
     //Draw ImGui.
@@ -228,5 +256,9 @@ void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera) {
     if(is_editor_open) {
         ImGui::Begin("Editor", &is_editor_open);
         draw_editor(t_app, t_camera);
+    }
+    if(is_material_redactor_open) {
+        ImGui::Begin("Material", &is_material_redactor_open);
+        draw_material_redactor(t_app, t_mat);
     }
 }

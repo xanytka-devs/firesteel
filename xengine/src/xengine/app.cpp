@@ -3,6 +3,7 @@
 
 #include "xengine/app.hpp"
 #include "xengine/log.hpp"
+#include "xengine/enviroment.hpp"
 #include "xengine/rendering/renderer.hpp"
 
 namespace XEngine {
@@ -32,6 +33,26 @@ namespace XEngine {
         window.close();
     }
 
+    float delta_time = 0.f;
+
+    void App::update_loop_call() {
+        //Update delta time.
+        double cur_time = glfwGetTime();
+        Enviroment::delta_time = delta_time = static_cast<float>(cur_time - last_frame);
+        last_frame = cur_time;
+        frameCount++;
+        if (cur_time - last_frame_fps >= 1.0) {
+            fps = frameCount;
+            frameCount = 0;
+            last_frame_fps = cur_time;
+        }
+        //Send update to recievers.
+        window.ui_update();
+        window.update();
+        update();
+        window.ui_draw();
+    }
+
     /// <summary>
     /// Creates new instance of window for application.
     /// </summary>
@@ -58,23 +79,7 @@ namespace XEngine {
         window.set_init_params();
         initiazile();
         //Update loop//
-        while (!window.closing()) {
-            //Update delta time.
-            double cur_time = glfwGetTime();
-            delta_time = static_cast<float>(cur_time - last_frame);
-            last_frame = cur_time;
-            frameCount++;
-            if (cur_time - last_frame_fps >= 1.0) {
-                fps = frameCount;
-                frameCount = 0;
-                last_frame_fps = cur_time;
-            }
-            //Send update to recievers.
-            window.ui_update();
-            window.update();
-            update();
-            window.ui_draw();
-        }
+        while(!window.closing()) update_loop_call();
         //Terminate libs and rendering//
         on_shutdown();
         Renderer::terminate();

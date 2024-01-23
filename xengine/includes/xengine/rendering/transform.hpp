@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include "xengine/rendering/mesh.hpp"
+#include "xengine/rendering/material.hpp"
 
 struct aiNode;
 struct aiMesh;
@@ -19,6 +20,10 @@ namespace XEngine {
 		void render(Shader t_shader, bool t_override_model = false);
 		void remove();
 
+		void set_material(Material* t_mat) { m_material = *t_mat; m_custom_material = true; }
+		Material get_material() const { return m_material; }
+		void reset_material() { m_custom_material = false; }
+
 		glm::vec3 position;
 		glm::vec4 rotation;
 		glm::vec3 size;
@@ -26,7 +31,9 @@ namespace XEngine {
 		std::vector<Mesh> m_meshes;
 		std::string m_path;
 		std::vector<Texture> m_textures_loaded;
+		Material m_material;
 		bool m_no_textures = false;
+		bool m_custom_material = false;
 		glm::mat4 custom_model = glm::mat4(1.0f);
 
 		void process_node(aiNode* t_node, const aiScene* t_scene);

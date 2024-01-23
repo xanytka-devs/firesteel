@@ -10,7 +10,8 @@ namespace XEngine {
 		W_NONE = 0,
 		W_TITLE,
 		W_CURSOR,
-		W_VSYNC
+		W_VSYNC,
+		W_RESIZABLE
 	};
 
 	enum CursorState {
@@ -33,7 +34,6 @@ namespace XEngine {
 		void ui_draw();
 		void ui_shutdown();
 
-		static void framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height);
 		void set_param(WindowParam t_param, bool t_val);
 		void set_param(WindowParam t_param, int t_val);
 		void set_param(WindowParam t_param, const char* t_val);
@@ -48,10 +48,14 @@ namespace XEngine {
 		static unsigned int width;
 		static unsigned int height;
 	private:
+		static void framebuffer_callback(GLFWwindow* t_window, int t_width, int t_height);
+		static void size_callback(GLFWwindow* t_window, int t_width, int t_height);
+
 		GLFWwindow* m_window;
-		CursorState m_cur_state;
+		CursorState m_cur_state = CursorState::C_NONE;
 		std::string m_title;
 		bool m_vsync = false;
+		bool m_resizable = false;
 	};
 }
 

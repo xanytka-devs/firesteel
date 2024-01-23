@@ -7,6 +7,7 @@ namespace XEngine {
 	class Enviroment {
 	public:
 		static glm::vec3 gravity;
+		static float delta_time;
 	};
 }
 

@@ -19,13 +19,13 @@ namespace XEngine {
     unsigned int Window::height = 600;
     bool ui_initialized = false;
 
-    Window::Window() : m_window(nullptr), m_title("Hello XEngine!") {}
+    Window::Window() : m_title("Hello XEngine!"), m_window(nullptr) {}
     Window::Window(unsigned int t_width, unsigned int t_height, const char* t_title)
-        : m_window(nullptr), m_title(t_title) {
+        : m_title(t_title), m_window(nullptr) {
         width = t_width; height = t_height;
     }
     Window::Window(unsigned int t_width, unsigned int t_height, std::string t_title)
-        : m_window(nullptr), m_title(t_title) {
+        : m_title(t_title), m_window(nullptr) {
         width = t_width; height = t_height;
     }
 
@@ -35,12 +35,27 @@ namespace XEngine {
     /// <param name="t_window">Window handle.</param>
     /// <param name="t_width">Window width.</param>
     /// <param name="t_height">Window height.</param>
-    void Window::framebuffer_size_callback(GLFWwindow* t_window, int t_width, int t_height) {
-        //Set viewport.
-        glViewport(0, 0, t_width, t_height);
+    void Window::framebuffer_callback(GLFWwindow* t_window, int t_width, int t_height) {
         //Update window params.
         width = t_width;
         height = t_height;
+        //Window processes.
+        glViewport(0, 0, width, height);
+    }
+
+    /// <summary>
+    /// Callback for window movement.
+    /// </summary>
+    /// <param name="t_window">Window handle.</param>
+    /// <param name="t_width">Window width.</param>
+    /// <param name="t_height">Window height.</param>
+    void Window::size_callback(GLFWwindow* t_window, int t_width, int t_height) {
+        //Update window params.
+        width = t_width;
+        height = t_height;
+        //Window processes.
+        glViewport(0, 0, width, height);
+        //TODO: Update on resize.
     }
 
     /// <summary>
@@ -56,11 +71,11 @@ namespace XEngine {
         if(m_vsync) glfwSwapInterval(1);
         else glfwSwapInterval(0);
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
+        glfwInitHint(GLFW_RESIZABLE, GLFW_TRUE);
         LOG_INFO("Window '" + m_title + "' initialized.");
         return true;
     }
 
-    const char* err{""};
     /// <summary>
     /// Updates events and clears buffers.
     /// </summary>
@@ -126,7 +141,8 @@ namespace XEngine {
     void Window::set_init_params() {
         //Set viewport.
         glViewport(0, 0, width, height);
-        glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+        glfwSetFramebufferSizeCallback(m_window, framebuffer_callback);
+        glfwSetWindowSizeCallback(m_window, size_callback);
         //Callbacks for input.
         glfwSetKeyCallback(m_window, Keyboard::key_callback);
         glfwSetCursorPosCallback(m_window, Mouse::cursor_callback);
@@ -143,6 +159,9 @@ namespace XEngine {
             break;
         case XEngine::W_VSYNC:
             return m_vsync;
+            break;
+        case XEngine::W_RESIZABLE:
+            return m_resizable;
             break;
         default:
             return 0;
@@ -161,7 +180,7 @@ namespace XEngine {
     void Window::set_param(WindowParam t_param, int t_val) {
         switch (t_param) {
         case W_VSYNC:
-            m_vsync = (t_val == 1);
+            m_vsync = t_val;
             glfwMakeContextCurrent(m_window);
             if(m_vsync) glfwSwapInterval(1);
             else glfwSwapInterval(0);
@@ -182,6 +201,9 @@ namespace XEngine {
                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
                 break;
             }
+            break;
+        case XEngine::W_RESIZABLE:
+            glfwInitHint(GLFW_RESIZABLE, t_val);
             break;
         default:
             break;

@@ -10,6 +10,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/xengine/utils.hpp
 	includes/xengine/audio.hpp
 	includes/xengine/enviroment.hpp
+	includes/xengine/component.hpp
 	includes/xengine/rendering/renderer.hpp
 	includes/xengine/rendering/window.hpp
 	includes/xengine/rendering/camera.hpp

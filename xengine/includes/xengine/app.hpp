@@ -10,6 +10,7 @@ namespace XEngine {
 		App();
 		virtual ~App();
 		void shutdown();
+		void update_loop_call();
 
 		App(const App&) = delete;
 		App(App&&) = delete;
@@ -22,7 +23,6 @@ namespace XEngine {
 		virtual void on_shutdown() { }
 
 		Window window;
-		float delta_time = 0.f;
 		int fps = 0;
 	};
 

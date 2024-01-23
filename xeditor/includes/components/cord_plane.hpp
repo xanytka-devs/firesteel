@@ -3,7 +3,6 @@
 
 #include <xengine/rendering/renderer.hpp>
 #include <xengine/rendering/transform.hpp>
-#include <xengine/rendering/material.hpp>
 
 class CordPlane : public XEngine::Transform {
 public:
