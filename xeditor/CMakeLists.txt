@@ -28,4 +28,5 @@ target_compile_features(${EDITOR_PROJECT_NAME} PUBLIC cxx_std_17)
 target_include_directories(${EDITOR_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${EDITOR_PROJECT_NAME} PRIVATE src)
 
+set_target_properties(xeditor PROPERTIES FOLDER "XEngine")
 set_target_properties(${EDITOR_PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
