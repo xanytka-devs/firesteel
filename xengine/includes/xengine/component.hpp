@@ -1,21 +1,25 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "xengine/rendering/transform.hpp"
-
 namespace XEngine {
+	class Transform;
+
 	class Component {
 	public:
-		Component(Transform t_transform) : m_transform(&t_transform) {}
+		Component();
+		Component(Transform& t_transform);
 
-		void initialize() { }
-		void update() { }
-		void on_destroy() { }
+		virtual void initialize() { }
+		virtual void update() { }
+		virtual void on_destroy() { m_transform = nullptr; }
 
-		Transform get_transform() { return *m_transform; }
-	private:
-		unsigned int m_id = 0;
+		Transform get_transform() const;
+		int get_id() const;
+
+		static void reset_global_id() { last_id = 0; }
 	protected:
+		static int last_id;
+		unsigned const int m_id;
 		Transform* m_transform;
 	};
 }

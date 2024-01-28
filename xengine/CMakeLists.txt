@@ -43,7 +43,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/xengine/rendering/mesh.cpp
 	src/xengine/rendering/transform.cpp
 	src/xengine/rendering/light.cpp
-	src/xengine/physics/rigidbody.cpp
 	src/xengine/input/keyboard.cpp
 	src/xengine/input/mouse.cpp
 	src/xengine/input/joystick.cpp

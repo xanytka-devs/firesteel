@@ -17,6 +17,7 @@
 #include <xengine/rendering/texture.hpp>
 #include <xengine/rendering/light.hpp>
 #include <xengine/rendering/transform.hpp>
+#include <xengine/physics/rigidbody.hpp>
 
 #include "components/light_source.hpp"
 #include "components/billboard.hpp"
@@ -73,6 +74,7 @@ class EditorApp : public App {
         model.load_model("..\\..\\res\\sphere\\scene.gltf");
         box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         model.set_material(&model_mat);
+        model.add_component<Rigidbody>(1.0f, glm::vec3(0.0f), glm::vec3(0.0f), false);
         //Light source.
         light_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
         for (unsigned int i = 0; i < point_lights_amount; i++) {
@@ -186,29 +188,32 @@ class EditorApp : public App {
             Renderer::switch_mode(RenderMode::DEFAULT);
         }
         //Movement.
+        if(Keyboard::key_down(KeyCode::T))
+            model.get_component<Rigidbody>().add_force(FT_Force, glm::vec3(0.f, 1.f, 0.f));
         float j_x = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_X);
         float j_y = main_j.axis_state(JoystickControls::AXES_LEFT_STICK_Y);
         float mouse_dy = static_cast<float>(Mouse::get_wheel_dy());
         //Check if RMB is pressed.
         if(Mouse::button_down(1)) clicked = !clicked;
         if(clicked) {
+            float dt = Enviroment::delta_time;
             window.set_param(W_CURSOR, C_DISABLED);
             //Position changes.
             // F/B movement.
             if(Keyboard::key_state(KeyCode::W) || j_y <= -0.5f)
-                camera.position += camera.forward * (Enviroment::delta_time * 2.5f);
+                camera.position += camera.forward * (dt * 2.5f);
             if(Keyboard::key_state(KeyCode::S) || j_y >= 0.5f)
-                camera.position -= camera.forward * (Enviroment::delta_time * 2.5f);
+                camera.position -= camera.forward * (dt * 2.5f);
             // R/L movement.
             if(Keyboard::key_state(KeyCode::D) || j_x >= 0.5f)
-                camera.position += camera.right * (Enviroment::delta_time * 2.5f);
+                camera.position += camera.right * (dt * 2.5f);
             if(Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
-                camera.position -= camera.right * (Enviroment::delta_time * 2.5f);
+                camera.position -= camera.right * (dt * 2.5f);
             // U/D movement.
             if(Keyboard::key_state(KeyCode::SPACE) || main_j.button_state(JoystickControls::DPAD_UP))
-                camera.position += camera.up * (Enviroment::delta_time * 2.5f);
+                camera.position += camera.up * (dt * 2.5f);
             if(Keyboard::key_state(KeyCode::LEFT_SHIFT) || main_j.button_state(JoystickControls::DPAD_DOWN))
-                camera.position -= camera.up * (Enviroment::delta_time * 2.5f);
+                camera.position -= camera.up * (dt * 2.5f);
             //Camera rotation.
             double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
             if(clicked_now) dx = dy = 0;
@@ -221,7 +226,7 @@ class EditorApp : public App {
             }
             //Move with mouse wheel.
             if(mouse_dy != 0)
-                camera.position += camera.forward * (Enviroment::delta_time * mouse_dy * 2.5f);
+                camera.position += camera.forward * (dt * mouse_dy * 2.5f);
             //Update UI.
             UI::update_pos(&camera);
             clicked_now = false;
@@ -270,6 +275,7 @@ class EditorApp : public App {
         for(unsigned int i = 0; i < point_lights_amount; i++)
             lights[i].remove();
         light_shader.remove();
+        Component::reset_global_id();
     }
 
 };

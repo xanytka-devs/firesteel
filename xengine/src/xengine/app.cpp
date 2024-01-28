@@ -33,12 +33,10 @@ namespace XEngine {
         window.close();
     }
 
-    float delta_time = 0.f;
-
     void App::update_loop_call() {
         //Update delta time.
         double cur_time = glfwGetTime();
-        Enviroment::delta_time = delta_time = static_cast<float>(cur_time - last_frame);
+        Enviroment::delta_time = static_cast<float>(cur_time - last_frame);
         last_frame = cur_time;
         frameCount++;
         if (cur_time - last_frame_fps >= 1.0) {

@@ -17,9 +17,9 @@ void UI::setTheme() {
     ImVec4 _grey = ImVec4(0.60f, 0.60f, 0.60f, 0.35f);
     ImVec4 _dark = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
     ImVec4 _darkgrey = ImVec4(0.23f, 0.23f, 0.23f, 0.35f);
-    ImVec4 _themeColor = ImVec4(1.f, 0.5f, 0.f, 1.f);
-    ImVec4 _lightThemeColor = ImVec4(1.f, 0.6f, 0.f, 1.f);
-    ImVec4 _darkThemeColor = ImVec4(0.7f, 0.3f, 0.f, 1.f);
+    ImVec4 _theme_clr = ImVec4(1.f, 0.5f, 0.f, 1.f);
+    ImVec4 _light_theme_clr = ImVec4(1.f, 0.6f, 0.f, 1.f);
+    ImVec4 _dark_theme_clr = ImVec4(0.7f, 0.3f, 0.f, 1.f);
     ImVec4 _lighgrey = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
 
     // Color array
@@ -31,7 +31,7 @@ void UI::setTheme() {
     style.Colors[ImGuiCol_Border] = _grey;
     style.Colors[ImGuiCol_BorderShadow] = _black;
     style.Colors[ImGuiCol_FrameBg] = _darkgrey;
-    style.Colors[ImGuiCol_FrameBgHovered] = _darkThemeColor;
+    style.Colors[ImGuiCol_FrameBgHovered] = _dark_theme_clr;
     style.Colors[ImGuiCol_FrameBgActive] = _grey;
     style.Colors[ImGuiCol_TitleBg] = _darkgrey;
     style.Colors[ImGuiCol_TitleBgActive] = _darkgrey;
@@ -50,19 +50,19 @@ void UI::setTheme() {
     style.Colors[ImGuiCol_HeaderHovered] = _grey;
     style.Colors[ImGuiCol_HeaderActive] = _grey;
     style.Colors[ImGuiCol_Separator] = _grey;
-    style.Colors[ImGuiCol_SeparatorHovered] = _themeColor;
-    style.Colors[ImGuiCol_SeparatorActive] = _lightThemeColor;
+    style.Colors[ImGuiCol_SeparatorHovered] = _theme_clr;
+    style.Colors[ImGuiCol_SeparatorActive] = _light_theme_clr;
     style.Colors[ImGuiCol_ResizeGrip] = _darkgrey;
-    style.Colors[ImGuiCol_ResizeGripHovered] = _themeColor;
-    style.Colors[ImGuiCol_ResizeGripActive] = _lightThemeColor;
-    style.Colors[ImGuiCol_Tab] = _themeColor;
-    style.Colors[ImGuiCol_TabHovered] = _lightThemeColor;
-    style.Colors[ImGuiCol_TabActive] = _themeColor;
+    style.Colors[ImGuiCol_ResizeGripHovered] = _theme_clr;
+    style.Colors[ImGuiCol_ResizeGripActive] = _light_theme_clr;
+    style.Colors[ImGuiCol_Tab] = _theme_clr;
+    style.Colors[ImGuiCol_TabHovered] = _light_theme_clr;
+    style.Colors[ImGuiCol_TabActive] = _theme_clr;
     style.Colors[ImGuiCol_TabUnfocused] = _grey;
     style.Colors[ImGuiCol_TabUnfocused] = _grey;
     style.Colors[ImGuiCol_TabUnfocusedActive] = _grey;
-    style.Colors[ImGuiCol_DockingPreview] = _themeColor;
-    style.Colors[ImGuiCol_DockingEmptyBg] = _themeColor;
+    style.Colors[ImGuiCol_DockingPreview] = _theme_clr;
+    style.Colors[ImGuiCol_DockingEmptyBg] = _theme_clr;
     style.Colors[ImGuiCol_PlotLines] = _white;
     style.Colors[ImGuiCol_PlotLinesHovered] = _grey;
     style.Colors[ImGuiCol_PlotHistogram] = _white;
@@ -99,7 +99,7 @@ void UI::update_pos(XEngine::Camera* t_camera) {
     rot[2] = t_camera->rotation.z;
 }
 
-bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
+static bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
     return x == t_a2.x && y == t_a2.y && z == t_a2.z;
 }
 
@@ -107,53 +107,58 @@ bool is_editor_open = true;
 bool is_material_redactor_open = true;
 bool is_demo_win_open = false;
 
-void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
+static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
     //Basic values and info.
-    ImGui::Text("Window");
-    bool vsync = t_app->window.get_param_b(XEngine::W_VSYNC);
-    ImGui::Checkbox("V-Sync", &vsync);
-    t_app->window.set_param(XEngine::W_VSYNC, vsync);
-    ImGui::Text("General");
     ImGui::Text(("FPS: " + std::to_string(t_app->fps)).c_str());
-    ImGui::ColorEdit3("Bg Color", cols);
-    XEngine::Renderer::set_clear_color(cols[0], cols[1], cols[2]);
+    if(ImGui::CollapsingHeader("Window")) {
+        bool vsync = t_app->window.get_param_b(XEngine::W_VSYNC);
+        ImGui::Checkbox("V-Sync", &vsync);
+        t_app->window.set_param(XEngine::W_VSYNC, vsync);
+        ImGui::ColorEdit3("Bg Color", cols);
+        XEngine::Renderer::set_clear_color(cols[0], cols[1], cols[2]);
+    }
     //Enviroment.
-    ImGui::Text("Enviroment");
-    glm::vec3 t_g = XEngine::Enviroment::gravity;
-    float grav[] = { t_g.x, t_g.y, t_g.z };
-    ImGui::DragFloat3("Gravity", grav);
-    XEngine::Enviroment::gravity = glm::vec3(grav[0], grav[1], grav[2]);
+    if(ImGui::CollapsingHeader("Enviroment")) {
+        glm::vec3 t_g = XEngine::Enviroment::gravity;
+        float grav[] = { t_g.x, t_g.y, t_g.z };
+        ImGui::DragFloat3("Gravity", grav);
+        XEngine::Enviroment::gravity = glm::vec3(grav[0], grav[1], grav[2]);
+    }
     //Camera redactor.
-    ImGui::Text("Camera");
-    ImGui::Checkbox("Prespective", &(t_camera->is_perspective));
-    ImGui::SliderFloat("Far plane", &t_camera->far_plane, 0.1f, 1000.f);
-    ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
-    ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
-    ImGui::DragFloat3("Position", pos);
-    ImGui::DragFloat3("Rotation", rot);
-    t_camera->position = glm::vec3(pos[0], pos[1], pos[2]);
-    if (!is_equal(rot[0], rot[1], rot[2], glm::vec3(t_camera->rotation.x, t_camera->rotation.y, t_camera->rotation.z))) {
-        t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
-        t_camera->update_vectors();
+    if(ImGui::CollapsingHeader("Objects")) {
+        if(ImGui::TreeNode("Camera")) {
+            ImGui::Checkbox("Prespective", &(t_camera->is_perspective));
+            ImGui::SliderFloat("Far plane", &t_camera->far_plane, 0.1f, 1000.f);
+            ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
+            ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
+            ImGui::DragFloat3("Position", pos);
+            ImGui::DragFloat3("Rotation", rot);
+            t_camera->position = glm::vec3(pos[0], pos[1], pos[2]);
+            if (!is_equal(rot[0], rot[1], rot[2], glm::vec3(t_camera->rotation.x, t_camera->rotation.y, t_camera->rotation.z))) {
+                t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
+                t_camera->update_vectors();
+            }
+            ImGui::TreePop();
+        }
     }
     ImGui::End();
 }
 
 float mat_array[4] = { 0.f, 0.f, 0.f, 0.f };
 float mat_drag_1 = 0.f;
-void draw_drag_mat(const char* t_name, glm::vec4 t_vec) {
+static void draw_drag_mat(const char* t_name, glm::vec4 t_vec) {
     mat_array[0] = t_vec.r;
     mat_array[1] = t_vec.g;
     mat_array[2] = t_vec.b;
     mat_array[3] = t_vec.a;
     ImGui::DragFloat4(t_name, mat_array, 0.05f, 0.f);
 }
-void draw_drag_mat_1(const char* t_name, glm::vec4 t_vec) {
+static void draw_drag_mat_1(const char* t_name, glm::vec4 t_vec) {
     mat_drag_1 = t_vec.r;
     ImGui::DragFloat(t_name, &mat_drag_1, 0.05f, 0.f);
 }
 
-void draw_material_redactor(XEngine::App* t_app, XEngine::Material* t_mat) {
+static void draw_material_redactor(XEngine::App* t_app, XEngine::Material* t_mat) {
     ImGui::Text("Material");
     //Vector sliders.
     draw_drag_mat_1("Emission", t_mat->emission);
@@ -166,7 +171,7 @@ void draw_material_redactor(XEngine::App* t_app, XEngine::Material* t_mat) {
     ImGui::End();
 }
 
-void setup_dock(XEngine::App* t_app) {
+static void setup_dock(XEngine::App* t_app) {
     //Variables.
     bool open = true;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoWindowMenuButton;

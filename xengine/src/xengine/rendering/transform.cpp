@@ -12,16 +12,43 @@
 
 namespace XEngine {
 
+	int Component::last_id = 0;
+
+	/// <summary>
+	/// Initializes component.
+	/// </summary>
+	Component::Component() : m_transform(nullptr), m_id(-1) { }
+
+	/// <summary>
+	/// Initializes component.
+	/// </summary>
+	/// <param name="t_transform">Assigned transform.</param>
+	Component::Component(Transform& t_transform) : m_transform(&t_transform), m_id(last_id) {
+		last_id++;
+	}
+
+	/// <summary>
+	/// Gets assigned transform.
+	/// </summary>
+	/// <returns>Assigned transform.</returns>
+	Transform Component::get_transform() const { return *m_transform; }
+
+	/// <summary>
+	/// Gets component id.
+	/// </summary>
+	/// <returns>Component id.</returns>
+	int Component::get_id() const { return m_id; }
+
 	Transform::Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size) :
 		position(t_pos), rotation(t_rot), size(t_size) { }
 
 	/// <summary>
-	/// Initializes model.
+	/// Initializes transform.
 	/// </summary>
 	void Transform::initialize() { }
 
 	/// <summary>
-	/// Loads model.
+	/// Loads transform.
 	/// </summary>
 	/// <param name="t_path">Path to model.</param>
 	void Transform::load_model(std::string t_path) {
@@ -36,6 +63,26 @@ namespace XEngine {
 		//Start processing.
 		m_path = t_path.substr(0, t_path.find_last_of("\\"));
 		process_node(scene->mRootNode, scene);
+	}
+
+	void Transform::set_material(Material* t_mat) {
+		m_material = *t_mat;
+	}
+	Material Transform::get_material() const {
+		return m_material;
+	}
+
+	void Transform::add_component(std::shared_ptr<Component> t_comp) {
+		m_components.push_back(t_comp); t_comp->initialize();
+	}
+
+	int Transform::components_amount() {
+		return static_cast<int>(m_components.size());
+	}
+
+	Component Transform::get_component(int t_id) {
+		if(t_id < m_components.size()) return *(m_components[t_id].get());
+		return Component();
 	}
 
 	/// <summary>
@@ -155,10 +202,13 @@ namespace XEngine {
 	}
 
 	/// <summary>
-	/// Render model.
+	/// Render transform.
 	/// </summary>
 	/// <param name="t_shader">Shader for meshes.</param>
 	void Transform::render(Shader t_shader, bool t_override_model) {
+		//Call update function in components.
+		for(std::shared_ptr<Component> c : m_components)
+			c->update();
 		//Set matrix.
 		glm::mat4 model = glm::mat4(1.0f);
 		if (!t_override_model) {
@@ -180,20 +230,33 @@ namespace XEngine {
 		t_shader.set_float("material.shininess", m_material.shininess);
 		t_shader.set_float("material.emission_factor", m_material.emission_factor);
 		//Render each mesh.
-		for (unsigned int i = 0; i < m_meshes.size(); i++)
+		for(unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].render(t_shader);
 	}
 
 	/// <summary>
-	/// Deletes model (cleanup).
+	/// Deletes transform (cleanup).
 	/// </summary>
 	void Transform::remove() {
+		//Remove components.
+		reset_components();
 		//Remove each mesh.
-		for (unsigned int i = 0; i < m_meshes.size(); i++)
+		for(unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].remove();
 		//Remove each texture.
-		for (unsigned int i = 0; i < m_textures_loaded.size(); i++)
+		for(unsigned int i = 0; i < m_textures_loaded.size(); i++)
 			m_textures_loaded[i].remove();
+	}
+
+	/// <summary>
+	/// Removes all components from transform.
+	/// </summary>
+	void Transform::reset_components() {
+		//Call on_destroy function in components.
+		for(std::shared_ptr<Component> c : m_components)
+			c->on_destroy();
+		//Clear components list.
+		m_components.clear();
 	}
 
 }
