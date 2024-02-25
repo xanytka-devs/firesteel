@@ -14,6 +14,15 @@
 # EXTERNAL cache entries
 ########################
 
+//Value Computed by CMake
+2d_demo_BINARY_DIR:STATIC=G:/! New/xengine/build/examples/2d_demo
+
+//Value Computed by CMake
+2d_demo_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+2d_demo_SOURCE_DIR:STATIC=G:/! New/xengine/examples/2d_demo
+
 //Android JNI IOSystem support is active
 ASSIMP_ANDROID_JNIIOSYSTEM:BOOL=OFF
 
@@ -141,7 +150,7 @@ BUILD_PROGRAMS:BOOL=OFF
 //Build regtest
 BUILD_REGTEST:BOOL=OFF
 
-//Build shared libraries
+//Build package with shared libraries.
 BUILD_SHARED_LIBS:BOOL=OFF
 
 //Build the testing tree.
@@ -683,6 +692,21 @@ Vorbis_Vorbis_INCLUDE_DIR:PATH=Vorbis_Vorbis_INCLUDE_DIR-NOTFOUND
 //Path to a library.
 Vorbis_Vorbis_LIBRARY:FILEPATH=Vorbis_Vorbis_LIBRARY-NOTFOUND
 
+//Build default editor config.
+XE_BUILD_EDITOR:BOOL=ON
+
+//Build engine project.
+XE_BUILD_ENGINE:BOOL=ON
+
+//Build other examples.
+XE_BUILD_EXAMPLES:BOOL=ON
+
+//Include audio package.
+XE_ENG_AUDIO:BOOL=ON
+
+//Include IO package.
+XE_ENG_IO:BOOL=ON
+
 //Value Computed by CMake
 XEngine_BINARY_DIR:STATIC=G:/! New/xengine/build
 
@@ -694,6 +718,15 @@ XEngine_SOURCE_DIR:STATIC=G:/! New/xengine
 
 //Dependencies for the target
 assimp_LIB_DEPENDS:STATIC=general;zlibstatic;
+
+//Value Computed by CMake
+audio_demo_BINARY_DIR:STATIC=G:/! New/xengine/build/examples/audio_demo
+
+//Value Computed by CMake
+audio_demo_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+audio_demo_SOURCE_DIR:STATIC=G:/! New/xengine/examples/audio_demo
 
 //Value Computed by CMake
 glad_BINARY_DIR:STATIC=G:/! New/xengine/build/xengine/glad
@@ -735,13 +768,22 @@ pthreads_DIR:PATH=pthreads_DIR-NOTFOUND
 test_utils_LIB_DEPENDS:STATIC=general;sndfile;
 
 //Value Computed by CMake
-xeditor_BINARY_DIR:STATIC=G:/! New/xengine/build/xeditor
+triangle_demo_BINARY_DIR:STATIC=G:/! New/xengine/build/examples/triangle_demo
+
+//Value Computed by CMake
+triangle_demo_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+triangle_demo_SOURCE_DIR:STATIC=G:/! New/xengine/examples/triangle_demo
+
+//Value Computed by CMake
+xeditor_BINARY_DIR:STATIC=G:/! New/xengine/build/examples/xeditor
 
 //Value Computed by CMake
 xeditor_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-xeditor_SOURCE_DIR:STATIC=G:/! New/xengine/xeditor
+xeditor_SOURCE_DIR:STATIC=G:/! New/xengine/examples/xeditor
 
 //Value Computed by CMake
 xengine_BINARY_DIR:STATIC=G:/! New/xengine/build/xengine

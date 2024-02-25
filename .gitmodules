@@ -8,12 +8,6 @@
 [submodule "external/assimp"]
 	path = external/assimp
 	url = https://github.com/assimp/assimp.git
-[submodule "external/portaudio"]
-	path = external/portaudio
-	url = https://github.com/PortAudio/portaudio.git
-[submodule "external/libsndfile"]
-	path = external/libsndfile
-	url = https://github.com/libsndfile/libsndfile
 [submodule "external/imgui"]
 	path = external/imgui
 	url = https://github.com/ocornut/imgui

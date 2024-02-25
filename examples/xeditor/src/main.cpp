@@ -18,26 +18,26 @@
 #include <xengine/rendering/light.hpp>
 #include <xengine/rendering/transform.hpp>
 #include <xengine/physics/rigidbody.hpp>
+#include <xengine/physics/collider.hpp>
 
-#include "components/light_source.hpp"
+#include "components/light_cube.hpp"
 #include "components/billboard.hpp"
 #include "ui.hpp"
 
 using namespace XEngine;
 
 Joystick main_j(0);
-Shader box_shader;
-Shader light_shader;
+Shader base_shader;
+Shader unlit_shader;
 Shader gizmo_shader;
 Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
 glm::vec3 point_light_positions[] = {
-        glm::vec3(0.7f,  0.2f,  2.0f),
         glm::vec3(2.3f, -3.3f, -4.0f),
         glm::vec3(-4.0f,  2.0f, -12.0f),
-        glm::vec3(0.0f,  0.0f, -3.0f)
+        glm::vec3(0.0f,  1.0f, -2.5f),
 };
 const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm::vec3));
-LightSource lights[point_lights_amount];
+Cube lights = Cube(glm::vec3(0.7f, 0.2f, 2.0f), glm::vec4(0, 0, 0, 1), glm::vec3(0.25f), glm::vec4(0.f, 0.5f, 0.5f, 1.f));
 Camera camera(glm::vec3(-1.8f, 3.07f, 3.82f), -56.f, -36.f);
 DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
     glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
@@ -49,6 +49,8 @@ Material model_mat = { glm::vec4(0), glm::vec4(1), glm::vec4(0), glm::vec4(0), g
 Billboard dir_light_gizmo(glm::vec3(0.f, 1.f, 0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.5f),
     &camera, "..\\..\\res\\gizmos\\dir_light.png");
 
+int LightSource::global_id = 0;
+
 class EditorApp : public App {
 
     virtual void initiazile() override {
@@ -58,6 +60,11 @@ class EditorApp : public App {
         //Print renderer summary.
         window.set_param(W_VSYNC, true);
         Renderer::print_host_info();
+        //Initialize component system.
+        ComponentRegistry::instance().push<LightSource>();
+        ComponentRegistry::instance().push<Rigidbody>();
+        ComponentRegistry::instance().push<BoxCollider>();
+        ComponentRegistry::instance().push<SphereCollider>();
         //Initialize audio manager.
         AudioManager::initialize();
         AudioManager::print_host_info();
@@ -72,16 +79,18 @@ class EditorApp : public App {
     void over_init() {
         //Model.
         model.load_model("..\\..\\res\\sphere\\scene.gltf");
-        box_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
+        base_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
         model.set_material(&model_mat);
         model.add_component<Rigidbody>(1.0f, glm::vec3(0.0f), glm::vec3(0.0f), false);
+        model.add_component<SphereCollider>();
+        model.initialize();
         //Light source.
-        light_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\light_frag.glsl");
-        for (unsigned int i = 0; i < point_lights_amount; i++) {
-            lights[i] = LightSource(glm::vec4(1.0f), glm::vec4(0.0f), glm::vec4(1.0f), glm::vec4(1.0f),
-                1.0f, 0.07f, 0.032f, point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
-            lights[i].initialize();
-        }
+        unlit_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\unlit_frag.glsl");
+        lights.add_component<LightSource>();
+        lights.get_component<LightSource>().light.ambient = glm::vec4(0.25f);
+        lights.initialize();
+        for(unsigned int i = 0; i < point_lights_amount; i++)
+            lights.create_instance(point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
         //Gizmo.
         gizmo_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\billboard_frag.glsl");
         dir_light_gizmo.initialize();
@@ -113,53 +122,60 @@ class EditorApp : public App {
         glm::mat4 view = camera.get_view_matrix();
         glm::mat4 projection = camera.get_projection_matrix();
         //Render model.
-        box_shader.enable();
-        box_shader.set_3_floats("view_pos", camera.position);
+        base_shader.enable();
+        base_shader.set_3_floats("view_pos", camera.position);
         model.set_material(&model_mat);
-        //Point light.
-        if(!flashlight) {
-            for (unsigned int i = 0; i < point_lights_amount; i++)
-                lights[i].light.render(box_shader, i);
-            box_shader.set_int("num_point_lights", 4);
-        } else box_shader.set_int("num_point_lights", 0);
-        //Directional light.
+        //Light.
         dir_light.direction = glm::vec3(
             glm::rotate(glm::mat4(1.f), glm::radians(0.1f), glm::vec3(1.f, 0.f, 0.f)) *
             glm::vec4(dir_light.direction, 1.f)
         );
+        //Directional light.
+        dir_light.render(base_shader);
         if(!flashlight) {
-            //Directional light.
-            dir_light.render(box_shader);
-            box_shader.set_int("num_spot_lights", 0);
+            //Point light.
+            lights.render_light(base_shader);
+            base_shader.set_int("num_point_lights", LightSource::global_id);
+            //Spot light.
+            base_shader.set_int("num_spot_lights", 0);
         } else {
+            //Point light.
+            base_shader.set_int("num_point_lights", 0);
             //Spot light.
             spot_light.position = camera.position;
             spot_light.direction = camera.forward;
-            spot_light.render(box_shader, 0);
-            box_shader.set_int("num_spot_lights", 1);
+            spot_light.render(base_shader, 0);
+            base_shader.set_int("num_spot_lights", 1);
         }
-        box_shader.set_mat4("projection", projection);
-        box_shader.set_mat4("view", view);
-        box_shader.set_int("render_mode", mode);
-        model.render(box_shader);
+        //Set material params.
+        Material mat = model.get_material();
+        base_shader.set_4_floats("material.diffuse", mat.diffuse);
+        base_shader.set_4_floats("material.specular", mat.specular);
+        base_shader.set_4_floats("material.emission", mat.emission);
+        base_shader.set_4_floats("material.emission_color", mat.emission_color);
+        base_shader.set_float("material.shininess", mat.shininess);
+        base_shader.set_float("material.emission_factor", mat.emission_factor);
+        base_shader.set_mat4("projection", projection);
+        base_shader.set_mat4("view", view);
+        base_shader.set_int("render_mode", mode);
+        model.render(base_shader);
         //Render light.
-        light_shader.enable();
-        light_shader.set_mat4("projection", projection );
-        light_shader.set_mat4("view", view);
-        light_shader.set_int("render_mode", mode);
-        if (!flashlight)
-            for (unsigned int i = 0; i < point_lights_amount; i++)
-                lights[i].render(light_shader);
+        unlit_shader.enable();
+        unlit_shader.set_mat4("projection", projection);
+        unlit_shader.set_mat4("view", view);
+        unlit_shader.set_int("render_mode", mode);
+        unlit_shader.set_4_floats("color", lights.color);
+        if(!flashlight) lights.render(unlit_shader);
         //Gizmo.
         gizmo_shader.set_mat4("projection", projection);
         gizmo_shader.set_mat4("view", view);
         gizmo_shader.set_4_floats("albedo_color", dir_light.color);
         gizmo_shader.set_int("render_mode", mode);
-        dir_light_gizmo.position = glm::vec3(0.f, -dir_light.direction.y, -dir_light.direction.z * 1.5);
+        dir_light_gizmo.rotation = glm::vec4(dir_light.direction.y, 0.f, 0.f, 1.0f) * 10.f;
         dir_light_gizmo.render(gizmo_shader);
         //UI rendering.
         UI::setTheme();
-        UI::draw(this, &camera, &model_mat);
+        UI::draw({ this, &camera, &lights, &model });
     }
 
     bool clicked = false;
@@ -172,7 +188,6 @@ class EditorApp : public App {
         if(Keyboard::key_state(KeyCode::R)) hot_reload();
         //Default mode.
         if(Keyboard::key_down(KeyCode::KEY_1) || main_j.button_state(JoystickControls::TRIGGER_LEFT)) { mode = 0;
-            a.play();
             Renderer::switch_mode(RenderMode::DEFAULT);
         }
         //Wireframe mode.
@@ -210,10 +225,10 @@ class EditorApp : public App {
             if(Keyboard::key_state(KeyCode::A) || j_x <= -0.5f)
                 camera.position -= camera.right * (dt * 2.5f);
             // U/D movement.
-            if(Keyboard::key_state(KeyCode::SPACE) || main_j.button_state(JoystickControls::DPAD_UP))
-                camera.position += camera.up * (dt * 2.5f);
+            if(Keyboard::key_state(KeyCode::SPACEBAR) || main_j.button_state(JoystickControls::DPAD_UP))
+                camera.position += glm::vec3(0.f, 1.f, 0.f) * (dt * 2.5f);
             if(Keyboard::key_state(KeyCode::LEFT_SHIFT) || main_j.button_state(JoystickControls::DPAD_DOWN))
-                camera.position -= camera.up * (dt * 2.5f);
+                camera.position -= glm::vec3(0.f, 1.f, 0.f) * (dt * 2.5f);
             //Camera rotation.
             double dx = Mouse::get_cursor_dx(), dy = Mouse::get_cursor_dy();
             if(clicked_now) dx = dy = 0;
@@ -243,8 +258,11 @@ class EditorApp : public App {
             flashlight = !flashlight;
             if(flashlight) Renderer::set_clear_color(glm::vec3(0.f, 0.f, 0.f));
             else Renderer::set_clear_color(glm::vec3(0.15f, 0.15f, 0.15f));
-            UI::update_bg();
         }
+        //Sound button.
+        if(!a.is_playing()) a.stop();
+        if(Keyboard::key_down(KeyCode::V) || main_j.button_state(JoystickControls::BTN_DOWN))
+            a.play();
         //Update joystick.
         main_j.update();
     }
@@ -269,13 +287,12 @@ class EditorApp : public App {
 
     void over_shut() {
         model.remove();
-        box_shader.remove();
-        //dir_light_gizmo.remove();
-        //gizmo_shader.remove();
-        for(unsigned int i = 0; i < point_lights_amount; i++)
-            lights[i].remove();
-        light_shader.remove();
-        Component::reset_global_id();
+        base_shader.remove();
+        dir_light_gizmo.remove();
+        gizmo_shader.remove();
+        lights.remove();
+        unlit_shader.remove();
+        LightSource::reset_global_id();
     }
 
 };

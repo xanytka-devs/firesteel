@@ -3,7 +3,7 @@ project(xeditor)
 set(EDITOR_PROJECT_NAME xeditor)
 
 set(EDITOR_INCLUDES
-	includes/components/cube.hpp
+	includes/components/light_cube.hpp
 	includes/components/billboard.hpp
 	includes/components/cord_plane.hpp
 	includes/components/light_source.hpp

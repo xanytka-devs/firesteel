@@ -6,9 +6,15 @@
 
 class UI {
 public:
+	struct UIEditorData {
+		XEngine::App* t_app;
+		XEngine::Camera* t_camera;
+		Cube* t_cube;
+		Transform* t_model;
+	};
+
 	static void setTheme();
-	static void draw(XEngine::App* t_app, XEngine::Camera* t_camera, XEngine::Material* t_mat);
-	static void update_bg();
+	static void draw(UIEditorData t_data);
 	static void update_pos(XEngine::Camera* t_camera);
 };
 

@@ -7,18 +7,18 @@ struct GLFWwindow;
 namespace XEngine {
 
 	enum WindowParam {
-		W_NONE = 0,
-		W_TITLE,
-		W_CURSOR,
-		W_VSYNC,
-		W_RESIZABLE
+		W_NONE = 0x0,
+		W_TITLE = 0x1,
+		W_CURSOR = 0x2,
+		W_VSYNC = 0x3,
+		W_RESIZABLE = 0x4
 	};
 
 	enum CursorState {
-		C_NONE = 0,
-		C_LOCKED,
-		C_DISABLED,
-		C_HIDDEN
+		C_NONE = 0x0,
+		C_LOCKED = 0x1,
+		C_DISABLED = 0x2,
+		C_HIDDEN = 0x3
 	};
 
 	class Window {

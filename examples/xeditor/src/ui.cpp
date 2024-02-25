@@ -5,8 +5,11 @@
 #include <xengine/rendering/renderer.hpp>
 #include <xengine/rendering/camera.hpp>
 #include <xengine/enviroment.hpp>
+#include <xengine/io/os.hpp>
 
+#include "components/light_cube.hpp"
 #include "ui.hpp"
+#include <xengine/physics/rigidbody.hpp>
 
 void UI::setTheme() {
     ImGuiStyle& style = ImGui::GetStyle();
@@ -80,15 +83,10 @@ void UI::setTheme() {
     style.Colors[ImGuiCol_ModalWindowDimBg] = _grey;
 }
 
-float cols[] = { 0.15f, 0.15f, 0.15f };
+float bg_cols[] = { 0.15f, 0.15f, 0.15f };
+float cube_cols[] = { 1.f, 1.f, 1.f };
 float pos[] = { 0.f, 0.f, 0.f };
 float rot[] = { 0.f, 0.f, 0.f };
-void UI::update_bg() {
-    glm::vec4 val = XEngine::Renderer::get_clear_color();
-    cols[0] = val.x;
-    cols[1] = val.y;
-    cols[2] = val.z;
-}
 void UI::update_pos(XEngine::Camera* t_camera) {
     glm::vec3 val = t_camera->position;
     pos[0] = val.x;
@@ -104,70 +102,110 @@ static bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
 }
 
 bool is_editor_open = true;
-bool is_material_redactor_open = true;
 bool is_demo_win_open = false;
 
-static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera) {
+static glm::vec3 DragFloat3(const char* t_name, glm::vec3 t_value,
+    float t_add_val = 1.0f, float t_min = -1024.f, float t_max = 1024.f) {
+    float conversion_array[3] = { t_value.x, t_value.y, t_value.z };
+    ImGui::DragFloat3(t_name, conversion_array, t_add_val, t_min, t_max);
+    return glm::vec3(conversion_array[0], conversion_array[1], conversion_array[2]);
+}
+
+static glm::vec4 DragFloat4(const char* t_name, glm::vec4 t_value,
+    float t_add_val = 1.0f, float t_min = -1024.f, float t_max = 1024.f) {
+    float conversion_array[4] = { t_value.x, t_value.y, t_value.z, t_value.w };
+    ImGui::DragFloat4(t_name, conversion_array, t_add_val, t_min, t_max);
+    return glm::vec4(conversion_array[0], conversion_array[1], conversion_array[2], conversion_array[3]);
+}
+
+static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_cube, Transform* t_model) {
     //Basic values and info.
     ImGui::Text(("FPS: " + std::to_string(t_app->fps)).c_str());
     if(ImGui::CollapsingHeader("Window")) {
         bool vsync = t_app->window.get_param_b(XEngine::W_VSYNC);
         ImGui::Checkbox("V-Sync", &vsync);
         t_app->window.set_param(XEngine::W_VSYNC, vsync);
-        ImGui::ColorEdit3("Bg Color", cols);
-        XEngine::Renderer::set_clear_color(cols[0], cols[1], cols[2]);
+        XEngine::Renderer::set_clear_color(DragFloat3("BG Color", XEngine::Renderer::get_clear_color(), 0.01f, 0.f, 1.f));
     }
     //Enviroment.
     if(ImGui::CollapsingHeader("Enviroment")) {
-        glm::vec3 t_g = XEngine::Enviroment::gravity;
-        float grav[] = { t_g.x, t_g.y, t_g.z };
-        ImGui::DragFloat3("Gravity", grav);
-        XEngine::Enviroment::gravity = glm::vec3(grav[0], grav[1], grav[2]);
+        XEngine::Enviroment::gravity = DragFloat3("Gravity", XEngine::Enviroment::gravity);
     }
-    //Camera redactor.
+    //Object redactor.
     if(ImGui::CollapsingHeader("Objects")) {
         if(ImGui::TreeNode("Camera")) {
-            ImGui::Checkbox("Prespective", &(t_camera->is_perspective));
-            ImGui::SliderFloat("Far plane", &t_camera->far_plane, 0.1f, 1000.f);
-            ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
-            ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
-            ImGui::DragFloat3("Position", pos);
-            ImGui::DragFloat3("Rotation", rot);
-            t_camera->position = glm::vec3(pos[0], pos[1], pos[2]);
-            if (!is_equal(rot[0], rot[1], rot[2], glm::vec3(t_camera->rotation.x, t_camera->rotation.y, t_camera->rotation.z))) {
-                t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
-                t_camera->update_vectors();
+            ImGui::Text("Transform data");
+            ImGui::Text("Instances: 0"); //Currently camera can't be instanced, so instances amount is hard-coded.
+            ImGui::Text("Components (1)"); //Currently camera isn't a component, so components amount is hard-coded.
+            if(ImGui::TreeNode("Camera")) {
+                ImGui::Checkbox("Prespective", &(t_camera->is_perspective));
+                ImGui::SliderFloat("Far plane", &t_camera->far_plane, 0.1f, 1000.f);
+                ImGui::SliderFloat("Near plane", &t_camera->near_plane, 0.1f, 10.f);
+                ImGui::SliderFloat("FOV", &t_camera->fov, 0.1f, 180.f);
+                ImGui::DragFloat3("Position", pos);
+                ImGui::DragFloat3("Rotation", rot);
+                t_camera->position = glm::vec3(pos[0], pos[1], pos[2]);
+                if (!is_equal(rot[0], rot[1], rot[2], glm::vec3(t_camera->rotation.x, t_camera->rotation.y, t_camera->rotation.z))) {
+                    t_camera->rotation = glm::vec4(rot[0], rot[1], rot[2], 1.f);
+                    t_camera->update_vectors();
+                }
+                ImGui::TreePop();
+            }
+            ImGui::TreePop();
+        }
+        if(ImGui::TreeNode("Lights")) {
+            ImGui::Text("Transform data");
+            ImGui::Text(("Instances: " + std::to_string(t_cube->instances_amount())).c_str());
+            ImGui::Text(("Components (" + std::to_string(t_cube->components_amount()) + ")").c_str());
+            if(ImGui::TreeNode("LightSource")) {
+                ImGui::Text(("PointLight global ID: " + std::to_string(LightSource::global_id)).c_str());
+                t_cube->color = DragFloat4("Color", t_cube->color, 0.01f, 0.f, 1.f);
+                ImGui::TreePop();
+            }
+            ImGui::TreePop();
+        }
+        if(ImGui::TreeNode("Model")) {
+            ImGui::Text("Transform data");
+            ImGui::Text(("Instances: " + std::to_string(t_model->instances_amount())).c_str());
+#ifdef XENGINE_IO
+            if(ImGui::Button("Load model")) t_model->load_model(XEngine::OS::open_file_dialog(t_model->get_model_path()));
+#endif
+            t_model->position = DragFloat3("Position", t_model->position);
+            t_model->rotation = DragFloat4("Rotation", t_model->rotation);
+            t_model->size = DragFloat3("Scale", t_model->size);
+            ImGui::Text(("Components (" + std::to_string(t_model->components_amount()) + ")").c_str());
+            if(ImGui::TreeNode("Rigidbody")) {
+                ImGui::Checkbox("Use gravity", &t_model->get_component<Rigidbody>().use_gravity);
+                float mass = t_model->get_component<Rigidbody>().mass;
+                ImGui::DragFloat("Mass", &mass, 0.1f, 0.f);
+                t_model->get_component<Rigidbody>().mass = mass;
+                t_model->get_component<Rigidbody>().acceleration = DragFloat3("Acceleration",
+                    t_model->get_component<Rigidbody>().acceleration, 0.1f);
+                t_model->get_component<Rigidbody>().velocity = DragFloat3("Velocity",
+                    t_model->get_component<Rigidbody>().velocity, 0.1f);
+                ImGui::TreePop();
             }
             ImGui::TreePop();
         }
     }
-    ImGui::End();
-}
-
-float mat_array[4] = { 0.f, 0.f, 0.f, 0.f };
-float mat_drag_1 = 0.f;
-static void draw_drag_mat(const char* t_name, glm::vec4 t_vec) {
-    mat_array[0] = t_vec.r;
-    mat_array[1] = t_vec.g;
-    mat_array[2] = t_vec.b;
-    mat_array[3] = t_vec.a;
-    ImGui::DragFloat4(t_name, mat_array, 0.05f, 0.f);
-}
-static void draw_drag_mat_1(const char* t_name, glm::vec4 t_vec) {
-    mat_drag_1 = t_vec.r;
-    ImGui::DragFloat(t_name, &mat_drag_1, 0.05f, 0.f);
-}
-
-static void draw_material_redactor(XEngine::App* t_app, XEngine::Material* t_mat) {
-    ImGui::Text("Material");
-    //Vector sliders.
-    draw_drag_mat_1("Emission", t_mat->emission);
-    t_mat->emission = glm::vec4(mat_drag_1, mat_drag_1, mat_drag_1, mat_drag_1);
-    draw_drag_mat("Emission color", t_mat->emission_color);
-    t_mat->emission_color = glm::vec4(mat_array[0], mat_array[1], mat_array[2], mat_array[3]);
-    //Other values.
-    ImGui::SliderFloat("Shininess", &t_mat->shininess, 0.1f, 1.f);
-    ImGui::SliderFloat("Emission factor", &t_mat->emission_factor, 0.1f, 1.f);
+    //Controls tab.
+    if(ImGui::CollapsingHeader("Controls")) {
+        ImGui::Text("Without RMB");
+        ImGui::TextWrapped("Scrollwheel - Zoom in/out");
+        ImGui::Text("With RMB");
+        ImGui::TextWrapped("Scrollwheel - Move forwards/backwards, relative to camera");
+        ImGui::TextWrapped("WASD - Movement scheme");
+        ImGui::TextWrapped("Left Shift - Move down");
+        ImGui::TextWrapped("Spacebar - Move up");
+        ImGui::TextWrapped("1 - Default rendering (Base)");
+        ImGui::TextWrapped("2 - Wireframe rendering");
+        ImGui::TextWrapped("3 - UV rendering");
+        ImGui::TextWrapped("4 - Normal rendering");
+        ImGui::TextWrapped("V - Play sample sound");
+        ImGui::TextWrapped("T - Add velocity to rigidbody (model)");
+        ImGui::TextWrapped("F - Spot/Point light mode");
+        ImGui::TextWrapped("R - Hot resource reload");
+    }
     ImGui::End();
 }
 
@@ -224,7 +262,6 @@ static void setup_dock(XEngine::App* t_app) {
             if(ImGui::BeginMenu("Windows")) {
                 if(ImGui::MenuItem("Editor")) is_editor_open = true;
                 if(ImGui::MenuItem("ImGui Demo")) is_demo_win_open = true;
-                if(ImGui::MenuItem("Material redactor")) is_material_redactor_open = true;
                 if(ImGui::MenuItem("Perfomance")) {}
                 if(ImGui::MenuItem("Files")) {}
                 ImGui::EndMenu();
@@ -253,17 +290,13 @@ static void setup_dock(XEngine::App* t_app) {
     ImGui::End();
 }
 
-void UI::draw(XEngine::App* t_app, XEngine::Camera* t_camera, XEngine::Material* t_mat) {
+void UI::draw(UIEditorData t_data) {
     //Setup.
-    setup_dock(t_app);
+    setup_dock(t_data.t_app);
     //Draw ImGui.
     if(is_demo_win_open) ImGui::ShowDemoWindow(&is_demo_win_open);
     if(is_editor_open) {
         ImGui::Begin("Editor", &is_editor_open);
-        draw_editor(t_app, t_camera);
-    }
-    if(is_material_redactor_open) {
-        ImGui::Begin("Material", &is_material_redactor_open);
-        draw_material_redactor(t_app, t_mat);
+        draw_editor(t_data.t_app, t_data.t_camera, t_data.t_cube, t_data.t_model);
     }
 }

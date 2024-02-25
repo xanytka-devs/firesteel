@@ -6,8 +6,8 @@
 
 namespace XEngine {
 	enum RenderMode {
-		DEFAULT = 0,
-		WIREFRAME
+		DEFAULT = 0x0,
+		WIREFRAME = 0x1
 	};
 
 	class Renderer {

@@ -1,0 +1,10 @@
+{
+	"version": "0.1a",
+	"package_info": {
+		"id": 1,
+		"name": "xengine.rendering.opengl",
+		"version": "0.1",
+		"category": "rendering",
+		"language": "cpp"
+	}
+}

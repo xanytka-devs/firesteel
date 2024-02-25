@@ -25,16 +25,29 @@ namespace XEngine {
 			use_gravity(t_use_gravity), Component(t_transform) { }
 
 		virtual void update() override {
+			//Calculate velocity.
 			float dt = Enviroment::delta_time;
 			m_transform->position += velocity * dt + 0.5f * acceleration * (dt * dt);
 			velocity += acceleration * dt;
+			//Calculate gravity.
 			if(use_gravity) velocity += Enviroment::gravity * dt;
 		}
 
+		/// <summary>
+		/// Adds force to object.
+		/// </summary>
+		/// <param name="t_type">Type of force.</param>
+		/// <param name="t_direction">Direction.</param>
+		/// <param name="t_magnitude">Magnitude.</param>
 		void add_force(ForceType t_type, glm::vec3 t_direction, float t_magnitude) {
 			add_force(t_type, t_direction * t_magnitude);
 		}
 
+		/// <summary>
+		/// Adds force to object.
+		/// </summary>
+		/// <param name="t_type">Type of force.</param>
+		/// <param name="t_value">Amount.</param>
 		void add_force(ForceType t_type, glm::vec3 t_value) {
 			switch (t_type) {
 			case XEngine::FT_Acceleration:
@@ -51,10 +64,16 @@ namespace XEngine {
 			}
 		}
 
-		void transfer_energy(float t_val) {
+		/// <summary>
+		/// Transfers energy.
+		/// </summary>
+		/// <param name="t_direction">Direction of energy.</param>
+		/// <param name="t_val">Amount of energy.</param>
+		void transfer_energy(glm::vec3 t_direction, float t_val) {
+			//If no energy - return.
 			if(t_val == 0) return;
 			//Ek= 0,5 * m * v^2
-			float delta_v = sqrt(2 * abs(t_val) / mass);
+			glm::vec3 delta_v = t_direction * sqrt(2 * abs(t_val) / mass);
 			velocity += t_val > 0 ? delta_v : -delta_v;
 		}
 

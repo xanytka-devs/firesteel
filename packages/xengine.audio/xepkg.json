@@ -1,0 +1,10 @@
+{
+	"version": "0.1a",
+	"package_info": {
+		"id": 2,
+		"name": "xengine.audio",
+		"version": "0.1",
+		"category": "audio",
+		"language": "cpp"
+	}
+}

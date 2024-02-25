@@ -4,11 +4,11 @@ set(ENGINE_PROJECT_NAME xengine)
 
 set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
 	includes/stb/stb_image.hpp
+	includes/miniaudio/miniaudio.h
 )
 set(ENGINE_PUBLIC_INCLUDES
 	includes/xengine/app.hpp
 	includes/xengine/utils.hpp
-	includes/xengine/audio.hpp
 	includes/xengine/enviroment.hpp
 	includes/xengine/component.hpp
 	includes/xengine/rendering/renderer.hpp
@@ -20,10 +20,14 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/xengine/rendering/transform.hpp
 	includes/xengine/rendering/light.hpp
 	includes/xengine/physics/rigidbody.hpp
+	includes/xengine/physics/collider.hpp
+	includes/xengine/procedural/geometry.hpp
 	includes/xengine/input.hpp
 	includes/xengine/input/keyboard.hpp
 	includes/xengine/input/mouse.hpp
 	includes/xengine/input/joystick.hpp
+	includes/xengine/io/os.hpp
+	includes/xengine/audio.hpp
 )
 set(ENGINE_PRIVATE_INCLUDES
 	includes/xengine/log.hpp
@@ -33,7 +37,6 @@ set(ENGINE_PRIVATE_SOURCES
 	src/xengine/log.cpp
 	src/xengine/app.cpp
 	src/xengine/utils.cpp
-	src/xengine/audio.cpp
 	src/xengine/enviroment.cpp
 	src/xengine/rendering/renderer.cpp
 	src/xengine/rendering/window.cpp
@@ -46,6 +49,8 @@ set(ENGINE_PRIVATE_SOURCES
 	src/xengine/input/keyboard.cpp
 	src/xengine/input/mouse.cpp
 	src/xengine/input/joystick.cpp
+	src/xengine/io/os.cpp
+	src/xengine/audio.cpp
 )
 set(ENGINE_ALL
 	${ENGINE_PRIVATE_SOURCES}
@@ -79,12 +84,6 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glm)
 add_subdirectory(../external/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE assimp)
 
-add_subdirectory(../external/portaudio ${CMAKE_CURRENT_BINARY_DIR}/portaudiod)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\xengine\\portaudiod\\portaudiod)
-
-add_subdirectory(../external/libsndfile ${CMAKE_CURRENT_BINARY_DIR}/libsndfile)
-target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ..\\xengine\\libsndfile\\Release\\sndfile)
-
 set(IMGUI_INCLUDES
 	../external/imgui/imgui.h
 	../external/imgui/backends/imgui_impl_glfw.h
@@ -115,7 +114,5 @@ set_target_properties(glad PROPERTIES FOLDER "External")
 set_target_properties(glfw PROPERTIES FOLDER "External")
 set_target_properties(glm PROPERTIES FOLDER "External")
 set_target_properties(ImGui PROPERTIES FOLDER "External")
-set_target_properties(PortAudio PROPERTIES FOLDER "External")
-set_target_properties(sndfile PROPERTIES FOLDER "External")
 set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER "External")
 set_target_properties(zlibstatic PROPERTIES FOLDER "External")

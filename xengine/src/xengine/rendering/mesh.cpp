@@ -41,13 +41,17 @@ namespace XEngine {
 		return output;
 	}
 
-	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, std::vector<Texture> t_textures)
+	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices,
+		std::vector<Texture> t_textures)
 		: vertices(t_vertices), indices(t_indices), textures(t_textures) {
+		m_no_textures = (textures.size() == 0);
 		setup();
 	}
 
-	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, glm::vec4 t_diffuse, glm::vec4 t_specular)
-		: vertices(t_vertices), indices(t_indices), diffuse(t_diffuse), specular(t_specular) {
+	Mesh::Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices, 
+	glm::vec4 t_diffuse, glm::vec4 t_specular, glm::vec4 t_emis)
+		: vertices(t_vertices), indices(t_indices),
+		diffuse(t_diffuse), specular(t_specular), emission(t_emis) {
 		m_no_textures = true;
 		setup();
 	}
@@ -90,12 +94,14 @@ namespace XEngine {
 	void Mesh::render(Shader t_shader) {
 		t_shader.set_4_floats("material.diffuse", diffuse.r, diffuse.g, diffuse.b, diffuse.a);
 		t_shader.set_4_floats("material.specular", specular.r, specular.g, specular.b, specular.a);
+		t_shader.set_4_floats("material.emission", emission.r, emission.g, emission.b, emission.a);
 		t_shader.set_int("no_textures", 1);
 		if (!m_no_textures) {
 			t_shader.set_int("no_textures", 0);
 			//Load textures.
 			unsigned int diffuse_idx = 0;
 			unsigned int specular_idx = 0;
+			unsigned int emission_idx = 0;
 			for (unsigned int i = 0; i < textures.size(); i++) {
 				//Activate texture.
 				glActiveTexture(GL_TEXTURE0 + i);
@@ -107,6 +113,9 @@ namespace XEngine {
 					break;
 				case aiTextureType_SPECULAR:
 					name = "specular" + std::to_string(specular_idx++);
+					break;
+				case aiTextureType_EMISSIVE:
+					name = "emission" + std::to_string(emission_idx++);
 					break;
 				}
 				//Set shader value and bind texture.

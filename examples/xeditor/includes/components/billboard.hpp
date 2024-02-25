@@ -39,25 +39,12 @@ public:
         std::vector<unsigned int> indicies(vert_num);
         for (unsigned int i = 0; i < vert_num; i++)
             indicies[i] = i;
-        m_meshes.push_back(XEngine::Mesh(XEngine::Vertex::generate_list(vertices, vert_num), indicies/*,
-           { XEngine::Texture(m_sprite, m_file, aiTextureType(1))}*/));
+        m_meshes.push_back(XEngine::Mesh(XEngine::Vertex::generate_list(vertices, vert_num), indicies,
+           { XEngine::Texture(m_sprite, m_file, aiTextureType(1))}));
     }
 
     glm::vec4 cam_rot = (*m_cam).rotation;
     void render(XEngine::Shader t_shader) {
-        Transform::position = position;
-        // Получение позиции камеры
-        glm::vec3 cameraPos = m_cam->position;
-        // Создание вектора, направленного от объекта к камере
-        glm::vec3 facing = glm::normalize(cameraPos - position);
-        // Вычисление новой матрицы вида, ориентированной в сторону камеры
-        glm::mat4 viewMatrix = glm::lookAt(position, cameraPos, m_cam->up);
-        // Отключение вращения объекта вокруг своей оси
-        glm::mat4 noRotationMatrix = glm::mat4(1.0f);
-        noRotationMatrix = glm::mat4(glm::mat3(viewMatrix));
-        // Применение новой матрицы вида без вращения к объекту
-        custom_model = noRotationMatrix;
-        // Рендеринг объекта
         Transform::render(t_shader, true);
     }
 };
