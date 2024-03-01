@@ -26,6 +26,8 @@
 
 using namespace XEngine;
 
+std::string relative_path = "..\\..\\..\\";
+
 Joystick main_j(0);
 Shader base_shader;
 Shader unlit_shader;
@@ -44,10 +46,10 @@ DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
 SpotLight spot_light = { camera.position, camera.forward, glm::cos(glm::radians(12.5f)),
     glm::cos(glm::radians(20.f)), 1.0f, 0.07f, 0.032f, glm::vec4(0.f), glm::vec4(1.f),
     glm::vec4(1.f), glm::vec4(1.f) };
-Audio a{ "..\\..\\res\\sound.wav", false, {"test", 100.f, 2.f}};
+Audio a{ relative_path + "res\\sound.wav", false, {"test", 100.f, 2.f}};
 Material model_mat = { glm::vec4(0), glm::vec4(1), glm::vec4(0), glm::vec4(0), glm::vec4(0), 0.f, 0.5f };
 Billboard dir_light_gizmo(glm::vec3(0.f, 1.f, 0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.5f),
-    &camera, "..\\..\\res\\gizmos\\dir_light.png");
+    &camera, relative_path + "res\\gizmos\\dir_light.png");
 
 int LightSource::global_id = 0;
 
@@ -78,21 +80,21 @@ class EditorApp : public App {
 
     void over_init() {
         //Model.
-        model.load_model("..\\..\\res\\sphere\\scene.gltf");
-        base_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\object_frag.glsl");
+        model.load_model(relative_path + "res\\sphere\\scene.gltf");
+        base_shader = Shader((relative_path + "res\\object_vert.glsl").c_str(), (relative_path + "res\\object_frag.glsl").c_str());
         model.set_material(&model_mat);
         model.add_component<Rigidbody>(1.0f, glm::vec3(0.0f), glm::vec3(0.0f), false);
         model.add_component<SphereCollider>();
         model.initialize();
         //Light source.
-        unlit_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\unlit_frag.glsl");
+        unlit_shader = Shader((relative_path + "res\\object_vert.glsl").c_str(), (relative_path + "res\\unlit_frag.glsl").c_str());
         lights.add_component<LightSource>();
         lights.get_component<LightSource>().light.ambient = glm::vec4(0.25f);
         lights.initialize();
         for(unsigned int i = 0; i < point_lights_amount; i++)
             lights.create_instance(point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
         //Gizmo.
-        gizmo_shader = Shader("..\\..\\res\\object_vert.glsl", "..\\..\\res\\billboard_frag.glsl");
+        gizmo_shader = Shader((relative_path + "res\\object_vert.glsl").c_str(), (relative_path + "res\\billboard_frag.glsl").c_str());
         dir_light_gizmo.initialize();
     }
 
