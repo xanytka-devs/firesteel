@@ -19,12 +19,13 @@ namespace XEngine {
 	public:
 		Transform(glm::vec3 t_pos = glm::vec3(0.f),
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
-			glm::vec3 t_size = glm::vec3(1.f), 
+			glm::vec3 t_size = glm::vec3(1.f), std::string t_name = "",
 			bool is_instance = false, Transform* source_instance = nullptr);
 		void initialize();
+		bool is_initialized() const { return m_is_initialized; }
 		void load_model(std::string t_path);
 		void remove_model();
-		std::string get_model_path() { return m_model_path + m_model_file; }
+		std::string get_model_path() const { return m_model_path + m_model_file; }
 		void render(Shader t_shader, bool t_update_components = true);
 		void remove();
 
@@ -32,6 +33,26 @@ namespace XEngine {
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
 			glm::vec3 t_size = glm::vec3(1.f));
 		int instances_amount();
+		bool is_instance() const { return m_is_instance; }
+
+		Transform operator =(Transform t) {
+			position = t.position;
+			rotation = t.rotation;
+			size = t.size;
+			name = t.name;
+			m_instances = t.m_instances;
+			m_components = t.m_components;
+			m_is_initialized = t.m_is_initialized;
+			m_is_instance = t.m_is_instance;
+			m_source_instance = t.m_source_instance;
+			m_no_textures = t.m_no_textures;
+			m_material = t.m_material;
+			m_meshes = t.m_meshes;
+			m_model_path = t.m_model_path;
+			m_model_file = t.m_model_file;
+			m_textures = t.m_textures;
+			return *this;
+		}
 
 		void set_material(Material* t_mat);
 		Material get_material() const;
@@ -49,7 +70,7 @@ namespace XEngine {
 			//Return shared pointer.
 			return component;
 		}
-		void add_component(std::shared_ptr<Component> t_comp);
+		void add_component(std::shared_ptr<Component> t_comp, bool t_init = true);
 		int components_amount();
 		Component get_component(int t_id);
 		template <typename T>
@@ -71,12 +92,14 @@ namespace XEngine {
 		glm::vec3 position;
 		glm::vec4 rotation;
 		glm::vec3 size;
+		std::string name;
 	protected:
 		//Global attributes.
 		std::vector<Transform> m_instances;
 		std::vector<std::shared_ptr<Component>> m_components;
 		//Local attributes.
-		const bool m_is_instance;
+		bool m_is_initialized = false;
+		bool m_is_instance;
 		Transform* m_source_instance;
 		bool m_no_textures = false;
 		Material m_material;

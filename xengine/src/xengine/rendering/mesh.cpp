@@ -138,6 +138,12 @@ namespace XEngine {
 		glDeleteVertexArrays(1, &vao);
 		glDeleteBuffers(1, &vbo);
 		glDeleteBuffers(1, &ebo);
+		//Clear arrays.
+		vertices.clear();
+		indices.clear();
+		for(unsigned int i = 0; i < textures.size(); i++)
+			textures[i].remove();
+		textures.clear();
 	}
 
 }

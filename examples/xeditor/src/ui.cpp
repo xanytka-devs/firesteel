@@ -1,6 +1,9 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <string>
+#include <iostream>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 #include <xengine/rendering/renderer.hpp>
 #include <xengine/rendering/camera.hpp>
@@ -11,6 +14,11 @@
 #include "ui.hpp"
 #include <xengine/physics/rigidbody.hpp>
 
+void UI::init() {
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->AddFontFromFileTTF("..\\..\\..\\res\\consola.ttf", 13, NULL, io.Fonts->GetGlyphRangesCyrillic());
+}
+
 void UI::setTheme() {
     ImGuiStyle& style = ImGui::GetStyle();
 
@@ -18,7 +26,7 @@ void UI::setTheme() {
     ImVec4 _black = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
     ImVec4 _white = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
     ImVec4 _grey = ImVec4(0.60f, 0.60f, 0.60f, 0.35f);
-    ImVec4 _dark = ImVec4(0.08f, 0.08f, 0.08f, 1.00f);
+    ImVec4 _dark = ImVec4(0.08f, 0.08f, 0.08f, 0.75f);
     ImVec4 _darkgrey = ImVec4(0.23f, 0.23f, 0.23f, 0.35f);
     ImVec4 _theme_clr = ImVec4(1.f, 0.5f, 0.f, 1.f);
     ImVec4 _light_theme_clr = ImVec4(1.f, 0.6f, 0.f, 1.f);
@@ -101,7 +109,10 @@ static bool is_equal(float x, float y, float z, glm::vec3 t_a2) {
     return x == t_a2.x && y == t_a2.y && z == t_a2.z;
 }
 
+bool is_note_open = true;
 bool is_editor_open = true;
+bool is_scene_view_open = true;
+bool is_file_viewer_open = true;
 bool is_demo_win_open = false;
 
 static glm::vec3 DragFloat3(const char* t_name, glm::vec3 t_value,
@@ -118,6 +129,8 @@ static glm::vec4 DragFloat4(const char* t_name, glm::vec4 t_value,
     return glm::vec4(conversion_array[0], conversion_array[1], conversion_array[2], conversion_array[3]);
 }
 
+Transform* scelected_obj = nullptr;
+bool did_select = false;
 static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_cube, Transform* t_model) {
     //Basic values and info.
     ImGui::Text(("FPS: " + std::to_string(t_app->fps)).c_str());
@@ -132,6 +145,40 @@ static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_
         XEngine::Enviroment::gravity = DragFloat3("Gravity", XEngine::Enviroment::gravity);
     }
     //Object redactor.
+    if(did_select)
+        if(ImGui::CollapsingHeader(scelected_obj->name.c_str())) {
+            scelected_obj->position = DragFloat3("Position", scelected_obj->position, 0.1f);
+            scelected_obj->rotation = DragFloat4("Rotation", scelected_obj->rotation, 0.1f);
+            scelected_obj->size = DragFloat3("Scale", scelected_obj->size, 0.1f);
+#ifdef XENGINE_IO
+            if (ImGui::Button("Load model")) scelected_obj->load_model(XEngine::OS::open_file_dialog(scelected_obj->get_model_path()));
+#endif
+            ImGui::Text(("Instances: " + std::to_string(scelected_obj->instances_amount())).c_str());
+            ImGui::Text(("Components (" + std::to_string(scelected_obj->components_amount()) + ")").c_str());
+            for(int i = 0; i < scelected_obj->components_amount(); i++) {
+                if(scelected_obj->get_component<LightSource>().is_initialized()) {
+                    if(ImGui::TreeNode("LightSource")) {
+                        ImGui::Text(("PointLight global ID: " + std::to_string(LightSource::global_id)).c_str());
+                        scelected_obj->get_component<LightSource>().color = DragFloat4("Color",
+                           scelected_obj->get_component<LightSource>().color, 0.01f, 0.f, 1.f);
+                        ImGui::TreePop();
+                    }
+                }
+                if(scelected_obj->get_component<Rigidbody>().is_initialized()) {
+                    if(ImGui::TreeNode("Rigidbody")) {
+                        ImGui::Checkbox("Use gravity", &scelected_obj->get_component<Rigidbody>().use_gravity);
+                        float mass = scelected_obj->get_component<Rigidbody>().mass;
+                        ImGui::DragFloat("Mass", &mass, 0.1f, 0.f);
+                        scelected_obj->get_component<Rigidbody>().mass = mass;
+                        scelected_obj->get_component<Rigidbody>().acceleration = DragFloat3("Acceleration",
+                            scelected_obj->get_component<Rigidbody>().acceleration, 0.1f);
+                        scelected_obj->get_component<Rigidbody>().velocity = DragFloat3("Velocity",
+                            scelected_obj->get_component<Rigidbody>().velocity, 0.1f);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+        }
     if(ImGui::CollapsingHeader("Objects")) {
         if(ImGui::TreeNode("Camera")) {
             ImGui::Text("Transform data");
@@ -170,9 +217,9 @@ static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_
 #ifdef XENGINE_IO
             if(ImGui::Button("Load model")) t_model->load_model(XEngine::OS::open_file_dialog(t_model->get_model_path()));
 #endif
-            t_model->position = DragFloat3("Position", t_model->position);
-            t_model->rotation = DragFloat4("Rotation", t_model->rotation);
-            t_model->size = DragFloat3("Scale", t_model->size);
+            t_model->position = DragFloat3("Position", t_model->position, 0.1f);
+            t_model->rotation = DragFloat4("Rotation", t_model->rotation, 0.1f);
+            t_model->size = DragFloat3("Scale", t_model->size, 0.1f);
             ImGui::Text(("Components (" + std::to_string(t_model->components_amount()) + ")").c_str());
             if(ImGui::TreeNode("Rigidbody")) {
                 ImGui::Checkbox("Use gravity", &t_model->get_component<Rigidbody>().use_gravity);
@@ -191,7 +238,7 @@ static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_
     //Controls tab.
     if(ImGui::CollapsingHeader("Controls")) {
         ImGui::Text("Without RMB");
-        ImGui::TextWrapped("Scrollwheel - Zoom in/out");
+        ImGui::TextWrapped("Left Shift + Scrollwheel - Zoom in/out");
         ImGui::Text("With RMB");
         ImGui::TextWrapped("Scrollwheel - Move forwards/backwards, relative to camera");
         ImGui::TextWrapped("WASD - Movement scheme");
@@ -206,6 +253,34 @@ static void draw_editor(XEngine::App* t_app, XEngine::Camera* t_camera, Cube* t_
         ImGui::TextWrapped("F - Spot/Point light mode");
         ImGui::TextWrapped("R - Hot resource reload");
     }
+    ImGui::End();
+}
+
+static void draw_scene_viewer(Scene* t_scene) {
+    if(ImGui::CollapsingHeader(t_scene->name)) {
+        for(Transform* t : t_scene->transforms) {
+            if(ImGui::Button(t->name.c_str())) {
+                scelected_obj = t;
+                did_select = true;
+            }
+        }
+    }
+    ImGui::End();
+}
+
+std::string cur_path = fs::current_path().parent_path().parent_path().parent_path().string() + "\\res";
+static void draw_file_viewer() {
+    ImGui::Text(cur_path.c_str());
+    if(ImGui::Button("..")) cur_path = fs::directory_entry(cur_path).path().parent_path().string();
+    ImGui::BeginTable("files", 1);
+    for(const auto& entry : fs::directory_iterator(cur_path)) {
+        if(entry.is_directory()) {
+            if(ImGui::Button((u8"[D] " + entry.path().filename().u8string()).c_str())) cur_path = entry.path().string();
+        }
+        else ImGui::Button((u8"[F] " + entry.path().filename().u8string()).c_str());
+        ImGui::TableNextColumn();
+    }
+    ImGui::EndTable();
     ImGui::End();
 }
 
@@ -261,9 +336,9 @@ static void setup_dock(XEngine::App* t_app) {
             ImGui::Separator();
             if(ImGui::BeginMenu("Windows")) {
                 if(ImGui::MenuItem("Editor")) is_editor_open = true;
+                if(ImGui::MenuItem("Files")) is_file_viewer_open = true;
+                if(ImGui::MenuItem("Scene")) is_scene_view_open = true;
                 if(ImGui::MenuItem("ImGui Demo")) is_demo_win_open = true;
-                if(ImGui::MenuItem("Perfomance")) {}
-                if(ImGui::MenuItem("Files")) {}
                 ImGui::EndMenu();
             }
             ImGui::Separator();
@@ -298,5 +373,25 @@ void UI::draw(UIEditorData t_data) {
     if(is_editor_open) {
         ImGui::Begin("Editor", &is_editor_open);
         draw_editor(t_data.t_app, t_data.t_camera, t_data.t_cube, t_data.t_model);
+    }
+    if(is_file_viewer_open) {
+        ImGui::Begin("Files", &is_file_viewer_open);
+        draw_file_viewer();
+    }
+    if(is_scene_view_open) {
+        ImGui::Begin("Scene");
+        draw_scene_viewer(t_data.t_scene);
+    }
+    if(is_note_open) {
+        ImGui::Begin("Note", &is_note_open);
+        ImGui::TextWrapped(u8"Добро пожаловать в XEditor!");
+        ImGui::TextWrapped(u8"  XEditor является GUI для програмного слоя XEngine.");
+        ImGui::TextWrapped(u8" В этой версии:");
+        ImGui::TextWrapped(u8"  • Улучшена система столкновений");
+        ImGui::TextWrapped(u8"  • Обновлён вид редактора");
+        ImGui::TextWrapped(u8"  • Система пакетов");
+        ImGui::TextWrapped(u8"  • Процедурная геометрия (плоскость и куб)");
+        ImGui::Text(u8"Версия: 0.1.1");
+        ImGui::End();
     }
 }

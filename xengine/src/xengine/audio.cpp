@@ -66,7 +66,6 @@ namespace XEngine {
     ma_decoder decoder;
     ma_device_config deviceConfig;
     ma_device device;
-    ma_event g_stopEvent;
 
     Audio::Audio(std::string t_source, bool t_loop, const AudioLayer t_layer, bool t_play_on_awake)
         : m_source(t_source), m_loop(t_loop), m_layer(t_layer) {

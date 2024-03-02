@@ -12,20 +12,19 @@
  При издании физических копий игры необходимо [сделать запрос к Xanytka](https://support.xanytka.ru/publisher/phys_copies).
 
 # Сторонние библиотеки
-## OpenGL (built-in[^1])
+## Математика
+* [GLM](https://github.com/g-truc/glm)
+## OpenGL[^1]
 * [GLAD](https://glad.dav1d.de/)
 * [GLFW](https://github.com/glfw/glfw)
 * [ImGUI](https://github.com/ocornut/imgui)
-## Аудио
-* [MiniAudio](https://github.com/mackron/miniaudio)
-* [SNDFile](https://github.com/libsndfile/libsndfile)
-> [!IMPORTANT]
-> Библиотека SNDFile будет заменена на [AudioBump](https://github.com/xanytka-devs/audio-bump).
-## Математика
-* [GLM](https://github.com/g-truc/glm)
-## Загрузка ресурсов
+## Загрузка ресурсов[^1]
 * [Assimp](https://github.com/assimp/assimp)
 * [STB](https://github.com/nothings/stb)
+## Аудио[^1]
+* [MiniAudio](https://github.com/mackron/miniaudio)
+> [!IMPORTANT]
+> Стандартные декодеры в MiniAudio будут заменены на декодеры из [AudioBump](https://github.com/xanytka-devs/audio-bump).
 
 # Как скачать новейшую версию?
  Если вам необходимо уже готовое приложение, то качайте релизную версию в пункте [Релизов](https://github.com/xanytka-devs/xengine/releases).

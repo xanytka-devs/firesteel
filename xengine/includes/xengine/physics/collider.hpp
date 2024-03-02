@@ -159,6 +159,7 @@ namespace XEngine {
 
 		void initialize() {
 			ColliderStorage::instance().m_stored.push_back(m_collider);
+			Component::initialize();
 		}
 
 		void update() {
@@ -182,6 +183,7 @@ namespace XEngine {
 
 		void initialize() {
 			ColliderStorage::instance().m_stored.push_back(m_collider);
+			Component::initialize();
 		}
 
 		void update() {

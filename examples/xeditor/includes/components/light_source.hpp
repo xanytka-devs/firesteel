@@ -22,6 +22,7 @@ public:
 	void initialize() {
 		id = global_id;
 		global_id++;
+		Component::initialize();
 	}
 
 	void update() {

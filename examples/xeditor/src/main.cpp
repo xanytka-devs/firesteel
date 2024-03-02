@@ -1,7 +1,5 @@
 #include <string>
 #include <vector>
-#include <memory>
-#include <sstream>
 #include <iostream>
 
 #include <xengine/app.hpp>
@@ -32,14 +30,14 @@ Joystick main_j(0);
 Shader base_shader;
 Shader unlit_shader;
 Shader gizmo_shader;
-Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f));
+Transform model(glm::vec3(0.f), glm::vec4(glm::vec3(0.f), 1.f), glm::vec3(0.05f), "Model");
 glm::vec3 point_light_positions[] = {
         glm::vec3(2.3f, -3.3f, -4.0f),
         glm::vec3(-4.0f,  2.0f, -12.0f),
         glm::vec3(0.0f,  1.0f, -2.5f),
 };
 const int point_lights_amount = (int)(sizeof(point_light_positions) / sizeof(glm::vec3));
-Cube lights = Cube(glm::vec3(0.7f, 0.2f, 2.0f), glm::vec4(0, 0, 0, 1), glm::vec3(0.25f), glm::vec4(0.f, 0.5f, 0.5f, 1.f));
+Cube lights = Cube(glm::vec3(0.7f, 0.2f, 2.0f), glm::vec4(0, 0, 0, 1), glm::vec3(0.125f), glm::vec4(0.f, 0.5f, 0.5f, 1.f));
 Camera camera(glm::vec3(-1.8f, 3.07f, 3.82f), -56.f, -36.f);
 DirectionalLight dir_light = { glm::vec3(-0.2f, -1.f, -0.3f),
     glm::vec4(0.0f), glm::vec4(1.4f), glm::vec4(0.75f), glm::vec4(0.7f, 0.5f, 0.35f, 1.0f) };
@@ -52,6 +50,8 @@ Billboard dir_light_gizmo(glm::vec3(0.f, 1.f, 0.f), glm::vec4(glm::vec3(0.f), 1.
     &camera, relative_path + "res\\gizmos\\dir_light.png");
 
 int LightSource::global_id = 0;
+int Enviroment::scene_id = 0;
+SceneManager Enviroment::scene_manager = SceneManager();
 
 class EditorApp : public App {
 
@@ -62,6 +62,8 @@ class EditorApp : public App {
         //Print renderer summary.
         window.set_param(W_VSYNC, true);
         Renderer::print_host_info();
+        //Add scene.
+        Enviroment::scene_manager.add_scene(Scene("Example scene"));
         //Initialize component system.
         ComponentRegistry::instance().push<LightSource>();
         ComponentRegistry::instance().push<Rigidbody>();
@@ -75,6 +77,7 @@ class EditorApp : public App {
         main_j.update();
         //Initialize ImGui.
         window.ui_initialize();
+        UI::init();
         UI::update_pos(&camera);
     }
 
@@ -90,9 +93,9 @@ class EditorApp : public App {
         unlit_shader = Shader((relative_path + "res\\object_vert.glsl").c_str(), (relative_path + "res\\unlit_frag.glsl").c_str());
         lights.add_component<LightSource>();
         lights.get_component<LightSource>().light.ambient = glm::vec4(0.25f);
-        lights.initialize();
         for(unsigned int i = 0; i < point_lights_amount; i++)
-            lights.create_instance(point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.25f));
+            lights.create_instance(point_light_positions[i], glm::vec4(0, 0, 0, 1), glm::vec3(0.125f));
+        lights.initialize();
         //Gizmo.
         gizmo_shader = Shader((relative_path + "res\\object_vert.glsl").c_str(), (relative_path + "res\\billboard_frag.glsl").c_str());
         dir_light_gizmo.initialize();
@@ -177,7 +180,7 @@ class EditorApp : public App {
         dir_light_gizmo.render(gizmo_shader);
         //UI rendering.
         UI::setTheme();
-        UI::draw({ this, &camera, &lights, &model });
+        UI::draw({ this, &camera, &lights, &model, Enviroment::get_current_scene() });
     }
 
     bool clicked = false;
@@ -249,10 +252,12 @@ class EditorApp : public App {
             clicked_now = false;
         } else {
             window.set_param(W_CURSOR, C_NONE);
-            //Camera zoom.
-            camera.fov -= mouse_dy;
-            if(camera.fov < 1.f) camera.fov = 180.f;
-            else if(camera.fov > 180.f) camera.fov = 1.f;
+            if(Keyboard::key_state(KeyCode::LEFT_SHIFT)) {
+                //Camera zoom.
+                camera.fov -= mouse_dy;
+                if (camera.fov < 1.f) camera.fov = 180.f;
+                else if (camera.fov > 180.f) camera.fov = 1.f;
+            }
             clicked_now = true;
         }
         //Lighting.
@@ -262,7 +267,6 @@ class EditorApp : public App {
             else Renderer::set_clear_color(glm::vec3(0.15f, 0.15f, 0.15f));
         }
         //Sound button.
-        if(!a.is_playing()) a.stop();
         if(Keyboard::key_down(KeyCode::V) || main_j.button_state(JoystickControls::BTN_DOWN))
             a.play();
         //Update joystick.

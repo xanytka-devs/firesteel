@@ -8,6 +8,7 @@
 #include <assimp/postprocess.h>
 
 #include "xengine/rendering/transform.hpp"
+#include <xengine/enviroment.hpp>
 
 namespace XEngine {
 
@@ -40,9 +41,9 @@ namespace XEngine {
 		return nullptr;
 	}
 
-	Transform::Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size,
+	Transform::Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size, std::string t_name,
 						bool is_instance, Transform* source_instance) :
-		position(t_pos), rotation(t_rot), size(t_size),
+		position(t_pos), rotation(t_rot), size(t_size), name(t_name),
 		m_is_instance(is_instance), m_source_instance(source_instance) { }
 
 	/// <summary>
@@ -51,6 +52,8 @@ namespace XEngine {
 	void Transform::initialize() {
 		for(std::shared_ptr<Component> c : m_components)
 			c->initialize();
+		m_is_initialized = true;
+		Enviroment::get_current_scene()->transforms.push_back(this);
 	}
 
 	/// <summary>
@@ -68,7 +71,7 @@ namespace XEngine {
 			return Transform();
 		}
 		//Set variables (if needed).
-		if (t_pos == glm::vec3(0.f) &&
+		if(t_pos == glm::vec3(0.f) &&
 			t_rot == glm::vec4(glm::vec3(0.f), 1.f) &&
 			t_size == glm::vec3(1.f)) {
 			t_pos = position;
@@ -76,11 +79,13 @@ namespace XEngine {
 			t_size = size;
 		}
 		//Create instance.
-		Transform inst = Transform(t_pos, t_rot, t_size, true, this);
+		Transform inst = Transform(t_pos, t_rot, t_size, 
+		name + " (" + std::to_string(instances_amount()) + ")", true, this);
 		//Duplicate components.
 		for(const auto& comp : m_components)
 			inst.add_component(comp->clone());
 		m_instances.push_back(inst);
+		//Enviroment::get_current_scene()->transforms.push_back(&m_instances[m_instances.size() - 1]);
 		return inst;
 	}
 
@@ -133,10 +138,11 @@ namespace XEngine {
 	/// Add new component by pointer.
 	/// </summary>
 	/// <param name="t_comp">Pointer to component.</param>
-	void Transform::add_component(std::shared_ptr<Component> t_comp) {
+	/// <param name="t_init">Initialize component?</param>
+	void Transform::add_component(std::shared_ptr<Component> t_comp, bool t_init) {
 		t_comp->set_transform(this);
 		m_components.push_back(t_comp);
-		t_comp->initialize();
+		if(t_init) t_comp->initialize();
 	}
 
 	/// <summary>
@@ -171,7 +177,7 @@ namespace XEngine {
 			m_meshes.push_back(process_mesh(mesh, t_scene));
 		}
 		//Process all child nodes.
-		for (unsigned int i = 0; i < t_node->mNumChildren; i++) {
+		for(unsigned int i = 0; i < t_node->mNumChildren; i++) {
 			process_node(t_node->mChildren[i], t_scene);
 		}
 	}
@@ -187,7 +193,7 @@ namespace XEngine {
 		std::vector<unsigned int> indices;
 		std::vector<Texture> textures;
 		//Vertices.
-		for (unsigned int i = 0; i < t_mesh->mNumVertices; i++) {
+		for(unsigned int i = 0; i < t_mesh->mNumVertices; i++) {
 			Vertex vertex{};
 			//Positions.
 			vertex.pos = glm::vec3(
@@ -211,16 +217,17 @@ namespace XEngine {
 			vertices.push_back(vertex);
 		}
 		//Process indices.
-		for (unsigned int i = 0; i < t_mesh->mNumFaces; i++) {
+		for(unsigned int i = 0; i < t_mesh->mNumFaces; i++) {
 			aiFace face = t_mesh->mFaces[i];
 			for(unsigned int j = 0; j < face.mNumIndices; j++)
 				indices.push_back(face.mIndices[j]);
 		}
 		//Process material.
-		if (t_mesh->mMaterialIndex >= 0) {
+		if(t_mesh->mMaterialIndex >= 0) {
 			aiMaterial* material = t_scene->mMaterials[t_mesh->mMaterialIndex];
 			//Does the model even have textures?
-			if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0 && material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
+			if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0
+				&& material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
 				m_no_textures = true;
 				//Diffuse and specular color.
 				aiColor4D def(1.0f);
@@ -321,11 +328,11 @@ namespace XEngine {
 	/// </summary>
 	void Transform::remove_model() {
 		//Remove each mesh.
-		for (unsigned int i = 0; i < m_meshes.size(); i++)
+		for(unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].remove();
 		m_meshes.clear();
 		//Remove each texture.
-		for (unsigned int i = 0; i < m_textures.size(); i++)
+		for(unsigned int i = 0; i < m_textures.size(); i++)
 			m_textures[i].remove();
 		m_textures.clear();
 	}

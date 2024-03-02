@@ -17,7 +17,7 @@ public:
 
     Billboard(glm::vec3 t_pos, glm::vec4 t_rot, 
        glm::vec3 t_size, XEngine::Camera* t_cam, std::string t_sprite)
-        : XEngine::Transform(t_pos, t_rot, t_size), m_cam(t_cam) {
+        : XEngine::Transform(t_pos, t_rot, t_size, "Billboard"), m_cam(t_cam) {
         std::vector<std::string> file = XEngine::Utils::split_str(&t_sprite, '\\');
         for(int i = 0; i < file.size(); i++) {
             if(i == file.size() - 1) m_file = file[i];
@@ -41,6 +41,7 @@ public:
             indicies[i] = i;
         m_meshes.push_back(XEngine::Mesh(XEngine::Vertex::generate_list(vertices, vert_num), indicies,
            { XEngine::Texture(m_sprite, m_file, aiTextureType(1))}));
+        Transform::initialize();
     }
 
     glm::vec4 cam_rot = (*m_cam).rotation;

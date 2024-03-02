@@ -20,6 +20,10 @@ namespace XEngine {
             return instance;
         }
 
+        ~ComponentRegistry() {
+            creators_.clear();
+        }
+
         template <typename T>
         void push() {
             creators_[typeid(T)] = [=](const Component& original) -> std::shared_ptr<Component> {
@@ -38,7 +42,8 @@ namespace XEngine {
 		Component();
 		Component(Transform& t_transform);
 
-		virtual void initialize() { }
+        virtual void initialize() { m_is_initialized = true; }
+        bool is_initialized() const { return m_is_initialized; }
 		virtual void update() { }
 		virtual void on_destroy() { m_transform = nullptr; }
 
@@ -50,6 +55,7 @@ namespace XEngine {
         }
 	protected:
 		Transform* m_transform;
+        bool m_is_initialized = false;
 	};
 }
 

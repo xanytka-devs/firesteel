@@ -96,10 +96,7 @@ void main() {
 	for(int s = 0; s < num_spot_lights; s++)
 		result += calc_spot_light(s, norm, view_dir, diff_map, spec_map, emis_map);
 	//Output.
-	if(gl_FrontFacing)
-		fragColor = result;
-	else
-		fragColor = vec4(0.0);
+	fragColor = result;
 }
 
 vec4 calc_dir_light(vec3 norm, vec3 view_dir, vec4 diff_map, vec4 spec_map, vec4 emission_map) {
