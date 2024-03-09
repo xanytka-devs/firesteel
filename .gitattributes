@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
-xengine/includes/stb/** linguist-vendored
-xengine/includes/miniaudion/** linguist-vendored
+xengine/includes/stb/* linguist-vendored
+xengine/includes/miniaudio/* linguist-vendored

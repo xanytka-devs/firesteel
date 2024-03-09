@@ -12,24 +12,26 @@ namespace XEngine {
     constexpr auto MAX_DEVICES = 2;
     constexpr auto MAX_SOUNDS = 32;
 
+    ma_result result;
+    ma_decoder decoder;
+    ma_device_config deviceConfig;
+    ma_device device;
     bool AudioManager::m_is_active = false;
 
     /// <summary>
     /// Logs host device information.
     /// </summary>
     void AudioManager::print_host_info() {
-        /*//Input debug info.
-        printf("Audio | MiniAudio\n");
-        printf("    Input device #%d:\n", inputParameters.device);
-        printf("        Name: %s\n", inputInfo->name);
-        printf("        LL: %g s\n", inputInfo->defaultLowInputLatency);
-        printf("        HL: %g s\n", inputInfo->defaultHighInputLatency);
-        //Output debug info.
-        printf("    Output device #%d:\n", outputParameters.device);
-        printf("        Name: %s\n", outputInfo->name);
-        printf("        LL: %g s\n", outputInfo->defaultLowOutputLatency);
-        printf("        HL: %g s\n", outputInfo->defaultHighOutputLatency);
-        printf("    Num channels: %d\n", numChannels);*/
+        //deviceConfig = ma_device_config_init(ma_device_type_playback);
+        ////Input debug info.
+        //printf("Audio | MiniAudio\n");
+        //printf("    Input device #%d:\n", *deviceConfig.capture.pDeviceID);
+        //printf("        Channels: %g s\n", deviceConfig.capture.channels);
+        //printf("        Format: %g s\n", deviceConfig.capture.format);
+        ////Output debug info.
+        //printf("    Output device #%d:\n", *deviceConfig.playback.pDeviceID);
+        //printf("        Channels: %g s\n", deviceConfig.playback.channels);
+        //printf("        Format: %g s\n", deviceConfig.playback.format);
     }
 
     /// <summary>
@@ -62,10 +64,6 @@ namespace XEngine {
         (void)pInput;
     }
 
-    ma_result result;
-    ma_decoder decoder;
-    ma_device_config deviceConfig;
-    ma_device device;
 
     Audio::Audio(std::string t_source, bool t_loop, const AudioLayer t_layer, bool t_play_on_awake)
         : m_source(t_source), m_loop(t_loop), m_layer(t_layer) {

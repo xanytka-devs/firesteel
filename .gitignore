@@ -22,7 +22,6 @@ build/*
 !build/*/
 build/*/*
 !build/CMakeCache.txt
-!build/XEngineEditor/imgui.ini
 
 # Prerequisites
 *.d
