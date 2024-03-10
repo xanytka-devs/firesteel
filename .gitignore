@@ -22,6 +22,7 @@ build/*
 !build/*/
 build/*/*
 !build/CMakeCache.txt
+testing
 
 # Prerequisites
 *.d

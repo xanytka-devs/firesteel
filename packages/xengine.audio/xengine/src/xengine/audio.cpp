@@ -82,7 +82,7 @@ namespace XEngine {
     int Audio::get_length() {
         ma_uint64 length;
         ma_data_source_get_length_in_pcm_frames(decoder.pBackend, &length);
-        return length;
+        return static_cast<int>(length);
     }
 
     /// <summary>

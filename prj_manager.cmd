@@ -46,7 +46,7 @@ echo add_executable(${%prj_name%_PROJECT_NAME}>>%cmake_file%
 echo 	${%prj_name%_SOURCES}>>%cmake_file%
 echo )>>%cmake_file%
 echo.>>%cmake_file%
-echo target_link_libraries(${%prj_name%_PROJECT_NAME} xengine ImGui glm)>>%cmake_file%
+echo target_link_libraries(${%prj_name%_PROJECT_NAME} xengine)>>%cmake_file%
 echo target_compile_features(${%prj_name%_PROJECT_NAME} PUBLIC cxx_std_17)>>%cmake_file%
 echo target_include_directories(${%prj_name%_PROJECT_NAME} PRIVATE src)>>%cmake_file%
 echo.>>%cmake_file%

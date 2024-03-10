@@ -125,7 +125,7 @@ namespace XEngine {
 		}
 		//Enable buffers.
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<int>(indices.size()), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		//Unbind active texture.
 		glActiveTexture(GL_TEXTURE0);

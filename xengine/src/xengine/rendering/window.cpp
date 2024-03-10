@@ -2,11 +2,10 @@
 #include <mutex>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <GLFW/glfw3.h>
-#include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
+#include "xengine/app.hpp"
 #include "xengine/log.hpp"
 #include "xengine/rendering/renderer.hpp"
 #include "xengine/rendering/window.hpp"
@@ -55,7 +54,7 @@ namespace XEngine {
         height = t_height;
         //Window processes.
         glViewport(0, 0, width, height);
-        //TODO: Update on resize.
+        App::current_app->update_loop_call();
     }
 
     /// <summary>
@@ -152,7 +151,7 @@ namespace XEngine {
         glEnable(GL_DEPTH_TEST);
     }
 
-    int Window::get_param_i(WindowParam t_param) {
+    int Window::get_param_i(WindowParam t_param) const {
         switch (t_param) {
         case XEngine::W_CURSOR:
             return m_cur_state;
@@ -160,34 +159,31 @@ namespace XEngine {
         case XEngine::W_VSYNC:
             return m_vsync;
             break;
-        case XEngine::W_RESIZABLE:
-            return m_resizable;
-            break;
         default:
             return 0;
             break;
         }
     }
 
-    bool Window::get_param_b(WindowParam t_param) {
+    bool Window::get_param_b(WindowParam t_param) const {
         return get_param_i(t_param) == 1;
     }
 
     void Window::set_param(WindowParam t_param, bool t_val) {
-        set_param(t_param, t_val ? 1 : 0);
+        set_param(t_param, t_val ? 1.f : 0.f);
     }
 
-    void Window::set_param(WindowParam t_param, int t_val) {
+    void Window::set_param(WindowParam t_param, float t_val1, float t_val2) {
         switch (t_param) {
         case W_VSYNC:
-            m_vsync = t_val;
+            m_vsync = t_val1;
             glfwMakeContextCurrent(m_window);
             if(m_vsync) glfwSwapInterval(1);
             else glfwSwapInterval(0);
             break;
         case W_CURSOR:
-            m_cur_state = CursorState(t_val);
-            switch (t_val) {
+            m_cur_state = CursorState(t_val1);
+            switch ((int)t_val1) {
             case C_NONE:
                 glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 break;
@@ -202,8 +198,14 @@ namespace XEngine {
                 break;
             }
             break;
-        case XEngine::W_RESIZABLE:
-            glfwInitHint(GLFW_RESIZABLE, t_val);
+        case W_OPACITY:
+            glfwSetWindowOpacity(m_window, t_val1);
+            break;
+        case W_POS:
+            glfwSetWindowPos(m_window, (int)t_val1, (int)t_val2);
+            break;
+        case W_SIZE:
+            glfwSetWindowSize(m_window, (int)t_val1, (int)t_val2);
             break;
         default:
             break;

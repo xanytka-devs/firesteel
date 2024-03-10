@@ -1,6 +1,3 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include "xengine/app.hpp"
 #include "xengine/log.hpp"
 #include "xengine/enviroment.hpp"
@@ -11,12 +8,14 @@ namespace XEngine {
     double last_frame_fps = 0.f;
     double last_frame = 0.f;
     int frameCount = 0;
+    App* App::current_app = nullptr;
 
     /// <summary>
     /// Occures at app startup (instantiation).
     /// </summary>
     App::App() {
         LOG_INFO("Initializing XEngine App.");
+        current_app = this;
     }
 
     /// <summary>
@@ -35,7 +34,7 @@ namespace XEngine {
 
     void App::update_loop_call() {
         //Update delta time.
-        double cur_time = glfwGetTime();
+        double cur_time = Renderer::get_time();
         Enviroment::delta_time = static_cast<float>(cur_time - last_frame);
         last_frame = cur_time;
         frameCount++;

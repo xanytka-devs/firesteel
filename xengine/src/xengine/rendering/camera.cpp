@@ -2,7 +2,11 @@
 
 namespace XEngine {
 
-	Camera::Camera() { }
+	Camera::Camera() 
+		: position(glm::vec3(0.f)), world_up(glm::vec3(0.f, 1.f, 0.f)),
+		rotation(glm::vec4(0.f, 0.f, -90.f, 1.f)), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
+		is_perspective(true), far_plane(100.f), near_plane(0.1f),
+		up(glm::vec3(0.f)), right(glm::vec3(0.f)), aspect(0.5f) { }
 
 	/// <summary>
 	/// Sets up camera.

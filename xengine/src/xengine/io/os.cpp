@@ -36,4 +36,23 @@ namespace XEngine {
         return t_default;
 	}
 
+    void OS::set_window_style(WindowStyle t_style) {
+        HWND window_handle = GetForegroundWindow();
+        long style = GetWindowLong(window_handle, GWL_STYLE);
+        switch (t_style) {
+        case XEngine::OS::WS_NO_MAXIMIZE:
+            style &= ~WS_MAXIMIZEBOX;
+            break;
+        case XEngine::OS::WS_NO_MINIMIZE:
+            style &= ~WS_MINIMIZEBOX;
+            break;
+        case XEngine::OS::WS_NO_RESIZE:
+            style &= ~WS_THICKFRAME;
+            break;
+        default:
+            break;
+        }
+        SetWindowLong(window_handle, GWL_STYLE, style);
+    }
+
 }

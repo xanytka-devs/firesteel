@@ -2,6 +2,7 @@
 #define WINDOW_H
 
 #include <string>
+#include "../../external/imgui/imgui.h"
 struct GLFWwindow;
 
 namespace XEngine {
@@ -11,7 +12,9 @@ namespace XEngine {
 		W_TITLE = 0x1,
 		W_CURSOR = 0x2,
 		W_VSYNC = 0x3,
-		W_RESIZABLE = 0x4
+		W_OPACITY = 0x4,
+		W_POS = 0x5,
+		W_SIZE = 0x6
 	};
 
 	enum CursorState {
@@ -35,14 +38,14 @@ namespace XEngine {
 		void ui_shutdown();
 
 		void set_param(WindowParam t_param, bool t_val);
-		void set_param(WindowParam t_param, int t_val);
+		void set_param(WindowParam t_param, float t_val1, float t_val2 = 0.f);
 		void set_param(WindowParam t_param, const char* t_val);
 		void set_param(WindowParam t_param, std::string t_val);
 		void set_init_params();
 		void close();
 
-		int get_param_i(WindowParam t_param);
-		bool get_param_b(WindowParam t_param);
+		int get_param_i(WindowParam t_param) const;
+		bool get_param_b(WindowParam t_param) const;
 		bool closing();
 
 		static unsigned int width;
@@ -55,7 +58,6 @@ namespace XEngine {
 		CursorState m_cur_state = CursorState::C_NONE;
 		std::string m_title;
 		bool m_vsync = false;
-		bool m_resizable = false;
 	};
 }
 

@@ -7,6 +7,8 @@ namespace XEngine {
 
 	class App {
 	public:
+		static App* current_app;
+
 		App();
 		virtual ~App();
 		void shutdown();

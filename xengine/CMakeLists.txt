@@ -2,61 +2,12 @@ cmake_minimum_required(VERSION 3.12)
 project(xengine)
 set(ENGINE_PROJECT_NAME xengine)
 
-set(ENGINE_PUBLIC_EXTERNAL_INCLUDES
-	includes/stb/stb_image.hpp
-	includes/miniaudio/miniaudio.h
-)
-set(ENGINE_PUBLIC_INCLUDES
-	includes/xengine/app.hpp
-	includes/xengine/utils.hpp
-	includes/xengine/enviroment.hpp
-	includes/xengine/component.hpp
-	includes/xengine/rendering/renderer.hpp
-	includes/xengine/rendering/window.hpp
-	includes/xengine/rendering/camera.hpp
-	includes/xengine/rendering/material.hpp
-	includes/xengine/rendering/texture.hpp
-	includes/xengine/rendering/mesh.hpp
-	includes/xengine/rendering/transform.hpp
-	includes/xengine/rendering/light.hpp
-	includes/xengine/physics/rigidbody.hpp
-	includes/xengine/physics/collider.hpp
-	includes/xengine/procedural/geometry.hpp
-	includes/xengine/input.hpp
-	includes/xengine/input/keyboard.hpp
-	includes/xengine/input/mouse.hpp
-	includes/xengine/input/joystick.hpp
-	includes/xengine/io/os.hpp
-	includes/xengine/audio.hpp
-)
-set(ENGINE_PRIVATE_INCLUDES
-	includes/xengine/log.hpp
-	includes/xengine/rendering/shader.hpp
-)
-set(ENGINE_PRIVATE_SOURCES
-	src/xengine/log.cpp
-	src/xengine/app.cpp
-	src/xengine/utils.cpp
-	src/xengine/enviroment.cpp
-	src/xengine/rendering/renderer.cpp
-	src/xengine/rendering/window.cpp
-	src/xengine/rendering/shader.cpp
-	src/xengine/rendering/camera.cpp
-	src/xengine/rendering/texture.cpp
-	src/xengine/rendering/mesh.cpp
-	src/xengine/rendering/transform.cpp
-	src/xengine/rendering/light.cpp
-	src/xengine/input/keyboard.cpp
-	src/xengine/input/mouse.cpp
-	src/xengine/input/joystick.cpp
-	src/xengine/io/os.cpp
-	src/xengine/audio.cpp
-)
+file(GLOB_RECURSE ENGINE_INCLUDES "*.hpp")
+file(GLOB_RECURSE ENGINE_SOURCES "*.cpp")
+
 set(ENGINE_ALL
-	${ENGINE_PRIVATE_SOURCES}
-	${ENGINE_PRIVATE_INCLUDES}
-	${ENGINE_PUBLIC_INCLUDES}
-	${ENGINE_PUBLIC_EXTERNAL_INCLUDES}
+	${ENGINE_INCLUDES}
+	${ENGINE_SOURCES}
 )
 
 add_library(${ENGINE_PROJECT_NAME} STATIC
