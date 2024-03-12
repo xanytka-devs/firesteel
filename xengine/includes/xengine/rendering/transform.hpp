@@ -1,5 +1,5 @@
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
+#ifndef OG_TRANSFORM_H
+#define OG_TRANSFORM_H
 
 #include "xengine/log.hpp"
 #include "xengine/component.hpp"
@@ -60,7 +60,7 @@ namespace XEngine {
 		template <typename T, typename... Args>
 		std::shared_ptr<T> add_component(Args&&... args) {
 			//Check if valid.
-			if(!std::is_base_of<Component, T>::value) {
+			if (!std::is_base_of<Component, T>::value) {
 				LOG_WARN("T must be derived from Component.");
 				return std::make_shared<T>();
 			}
@@ -82,8 +82,8 @@ namespace XEngine {
 				return default_component;
 			}
 			//Search for component.
-			for(const auto& component : m_components)
-				if(typeid(*component) == typeid(T))
+			for (const auto& component : m_components)
+				if (typeid(*component) == typeid(T))
 					return dynamic_cast<T&>(*(component.get()));
 			//If component not found - return empty constructor.
 			return default_component;
@@ -115,4 +115,4 @@ namespace XEngine {
 	};
 }
 
-#endif // TRANSFORM_H
+#endif // OG_TRANSFORM_H

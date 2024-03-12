@@ -1,7 +1,8 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef OG_WINDOW_H
+#define OG_WINDOW_H
 
 #include <string>
+//Includes ImGui without need to add it to CMake project.
 #include "../../external/imgui/imgui.h"
 struct GLFWwindow;
 
@@ -32,6 +33,8 @@ namespace XEngine {
 
 		bool initialize();
 		void update();
+		void close();
+
 		void ui_initialize();
 		void ui_update();
 		void ui_draw();
@@ -42,7 +45,6 @@ namespace XEngine {
 		void set_param(WindowParam t_param, const char* t_val);
 		void set_param(WindowParam t_param, std::string t_val);
 		void set_init_params();
-		void close();
 
 		int get_param_i(WindowParam t_param) const;
 		bool get_param_b(WindowParam t_param) const;
@@ -61,4 +63,4 @@ namespace XEngine {
 	};
 }
 
-#endif // WINDOW_H
+#endif // OG_WINDOW_H

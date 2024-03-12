@@ -1,8 +1,8 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef OG_MESH_H
+#define OG_MESH_H
 
 #include <vector>
-#include <glm/glm.hpp>
+#include "xengine/math.hpp"
 
 #include "xengine/rendering/shader.hpp"
 #include "xengine/rendering/texture.hpp"
@@ -42,4 +42,4 @@ namespace XEngine {
 	};
 }
 
-#endif // MESH_H
+#endif // OG_MESH_H

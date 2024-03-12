@@ -1,14 +1,10 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef OG_SHADER_H
+#define OG_SHADER_H
 
 #include <sstream>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 #include "xengine/log.hpp"
-
-unsigned int typedef GLuint;
-unsigned int typedef GLenum;
+#include "xengine/math.hpp"
 
 namespace XEngine {
 	class Shader {
@@ -19,7 +15,7 @@ namespace XEngine {
 		Shader(const char* t_vertShaderPath, const char* t_fragShaderPath);
 		void enable();
 		void generate(const char* t_vertShaderPath, const char* t_fragShaderPath);
-		GLuint compile(const char* t_path, GLenum t_type);
+		unsigned int compile(const char* t_path, unsigned int t_type);
 		void remove();
 
 		void set_bool(const std::string& t_name, bool t_val);
@@ -34,4 +30,4 @@ namespace XEngine {
 	};
 }
 
-#endif //SHADER_H
+#endif // OG_SHADER_H

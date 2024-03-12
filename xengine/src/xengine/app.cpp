@@ -59,6 +59,7 @@ namespace XEngine {
     /// <returns>Exit code. Only 0 is success.</returns>
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
         //Initiate core//
+        preinitiazile();
         Renderer::initialize();
         //Create window.
         window = Window(t_win_width, t_win_height, t_title);

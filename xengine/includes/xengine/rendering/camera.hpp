@@ -1,8 +1,7 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef OG_CAMERA_H
+#define OG_CAMERA_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "xengine/math.hpp"
 
 namespace XEngine {
 
@@ -33,4 +32,4 @@ namespace XEngine {
 	};
 }
 
-#endif // CAMERA_H
+#endif // OG_CAMERA_H

@@ -1,7 +1,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "xengine/rendering/window.hpp"
+#include "rendering/window.hpp"
+#include "enviroment.hpp"
 
 namespace XEngine {
 
@@ -20,6 +21,7 @@ namespace XEngine {
 		App& operator = (App&&) = delete;
 
 		virtual int start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title);
+		virtual void preinitiazile() { }
 		virtual void initiazile() { }
 		virtual void update() { }
 		virtual void on_shutdown() { }

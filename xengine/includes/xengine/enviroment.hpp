@@ -2,8 +2,9 @@
 #define ENVIROMENT_H
 
 #include <vector>
-#include <glm/glm.hpp>
-#include "xengine/rendering/transform.hpp"
+#include "math.hpp"
+#include "rendering/renderer.hpp"
+#include "rendering/transform.hpp"
 
 namespace XEngine {
 	class Scene {

@@ -1,7 +1,7 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include <glm/glm.hpp>
+#include "../math.hpp"
 
 namespace XEngine {
     struct Material {

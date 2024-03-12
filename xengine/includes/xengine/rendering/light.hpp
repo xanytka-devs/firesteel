@@ -1,5 +1,5 @@
-#ifndef LIGHT_H
-#define LIGHT_H
+#ifndef OG_LIGHT_H
+#define OG_LIGHT_H
 
 #include <glm/glm.hpp>
 #include "xengine/rendering/shader.hpp"
@@ -51,4 +51,4 @@ namespace XEngine {
     };
 }
 
-#endif // LIGHT_H
+#endif // OG_LIGHT_H
