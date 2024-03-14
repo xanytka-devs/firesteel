@@ -2,6 +2,7 @@
 #define OG_WINDOW_H
 
 #include <string>
+#include "xengine/math.hpp"
 //Includes ImGui without need to add it to CMake project.
 #include "../../external/imgui/imgui.h"
 struct GLFWwindow;
@@ -41,7 +42,7 @@ namespace XEngine {
 		void ui_shutdown();
 
 		void set_param(WindowParam t_param, bool t_val);
-		void set_param(WindowParam t_param, float t_val1, float t_val2 = 0.f);
+		void set_param(WindowParam t_param, glm::vec2 t_vec);
 		void set_param(WindowParam t_param, const char* t_val);
 		void set_param(WindowParam t_param, std::string t_val);
 		void set_init_params();
