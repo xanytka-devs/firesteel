@@ -8,10 +8,6 @@ namespace XEngine {
 		is_perspective(true), far_plane(100.f), near_plane(0.1f),
 		up(glm::vec3(0.f)), right(glm::vec3(0.f)), aspect(0.5f) { }
 
-	/// <summary>
-	/// Sets up camera.
-	/// </summary>
-	/// <param name="t_pos">Position of new camera.</param>
 	Camera::Camera(glm::vec3 t_pos)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
 		rotation(glm::vec4(0.f, 0.f, -90.f, 1.f)), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
@@ -19,12 +15,6 @@ namespace XEngine {
 		update_vectors();
 	}
 
-	/// <summary>
-	/// Sets up camera.
-	/// </summary>
-	/// <param name="t_pos">Position of new camera.</param>
-	/// <param name="t_yaw">Yaw.</param>
-	/// <param name="t_pitch">Pitch.</param>
 	Camera::Camera(glm::vec3 t_pos, float t_yaw, float t_pitch)
 		: position(t_pos), world_up(glm::vec3(0.f, 1.f, 0.f)),
 		rotation(glm::vec4(0.f, t_pitch, t_yaw, 1.f)), fov(45.f), forward(glm::vec3(0.f, 0.f, -1.f)),
@@ -32,9 +22,6 @@ namespace XEngine {
 		update_vectors();
 	}
 
-	/// <summary>
-	/// Updates camera vectors.
-	/// </summary>
 	void Camera::update_vectors() {
 		//Get directions.
 		glm::vec3 dir{};
@@ -50,19 +37,10 @@ namespace XEngine {
 		up = glm::normalize(glm::cross(right, forward));
 	}
 
-	/// <summary>
-	/// Calculate view matrix.
-	/// </summary>
-	/// <returns></returns>
 	glm::mat4 Camera::get_view_matrix() const {
 		return glm::lookAt(position, position + forward, up);
 	}
 
-	/// <summary>
-	/// Calculate projection matrix.
-	/// </summary>
-	/// <param name="t_clip_size"></param>
-	/// <returns></returns>
 	glm::mat4 Camera::get_projection_matrix(float t_clip_size) {
 		if(is_perspective) return glm::perspective(glm::radians(fov), t_clip_size * aspect, near_plane, far_plane);
 		else return glm::ortho(-t_clip_size, t_clip_size,

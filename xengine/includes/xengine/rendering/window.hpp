@@ -1,10 +1,12 @@
-#ifndef OG_WINDOW_H
-#define OG_WINDOW_H
+#ifndef WINDOW_H
+#define WINDOW_H
 
 #include <string>
-#include "xengine/math.hpp"
 //Includes ImGui without need to add it to CMake project.
-#include "../../external/imgui/imgui.h"
+#include <../../external/imgui/imgui.h>
+#include "xengine/math.hpp"
+#include "xengine/common.hpp"
+
 struct GLFWwindow;
 
 namespace XEngine {
@@ -32,29 +34,72 @@ namespace XEngine {
 		Window(unsigned int t_width, unsigned int t_height, const char* t_title);
 		Window(unsigned int t_width, unsigned int t_height, std::string t_title);
 
+		/// <summary>
+		/// Window initialization.
+		/// </summary>
+		/// <returns>true=success;false=failure</returns>
 		bool initialize();
+		/// <summary>
+		/// Updates events and clears buffers.
+		/// </summary>
 		void update();
+		/// <summary>
+		/// Closes window.
+		/// </summary>
 		void close();
 
+		/// <summary>
+		/// Initializes ImGui.
+		/// </summary>
 		void ui_initialize();
+		/// <summary>
+		/// Updates ImGui.
+		/// </summary>
 		void ui_update();
+		/// <summary>
+		/// Draws ImGui.
+		/// </summary>
 		void ui_draw();
+		/// <summary>
+		/// Shuts down ImGui.
+		/// </summary>
 		void ui_shutdown();
 
 		void set_param(WindowParam t_param, bool t_val);
+		void set_param(WindowParam t_param, int t_val);
 		void set_param(WindowParam t_param, glm::vec2 t_vec);
 		void set_param(WindowParam t_param, const char* t_val);
 		void set_param(WindowParam t_param, std::string t_val);
+		/// <summary>
+		/// Sets up all parameters.
+		/// </summary>
 		void set_init_params();
 
 		int get_param_i(WindowParam t_param) const;
 		bool get_param_b(WindowParam t_param) const;
+		/// <summary>
+		/// Checks if window's going to close.
+		/// </summary>
+		/// <returns></returns>
 		bool closing();
+		GLFWwindow* get_handle() { return m_window; }
 
 		static unsigned int width;
 		static unsigned int height;
 	private:
+		/// <summary>
+		/// Callback for window movement.
+		/// </summary>
+		/// <param name="t_window">Window handle.</param>
+		/// <param name="t_width">Window width.</param>
+		/// <param name="t_height">Window height.</param>
 		static void framebuffer_callback(GLFWwindow* t_window, int t_width, int t_height);
+		/// <summary>
+		/// Callback for window movement.
+		/// </summary>
+		/// <param name="t_window">Window handle.</param>
+		/// <param name="t_width">Window width.</param>
+		/// <param name="t_height">Window height.</param>
 		static void size_callback(GLFWwindow* t_window, int t_width, int t_height);
 
 		GLFWwindow* m_window;
@@ -64,4 +109,4 @@ namespace XEngine {
 	};
 }
 
-#endif // OG_WINDOW_H
+#endif // WINDOW_H

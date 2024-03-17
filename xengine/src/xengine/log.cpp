@@ -5,9 +5,7 @@
 
 namespace XEngine {
 
-#ifdef NDEBUG
-
-#else
+#ifndef NDEBUG
 	/// <summary>
 	/// Logs message to console with specified color and prompt.
 	/// </summary>

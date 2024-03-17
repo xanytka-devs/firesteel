@@ -57,3 +57,5 @@ packages
 *.exe
 *.out
 *.app
+/external/vk_video
+/external/vulkan

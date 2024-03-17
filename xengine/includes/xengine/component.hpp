@@ -39,7 +39,14 @@ namespace XEngine {
 
 	class Component {
 	public:
+        /// <summary>
+        /// Initializes component.
+        /// </summary>
 		Component();
+        /// <summary>
+        /// Initializes component.
+        /// </summary>
+        /// <param name="t_transform">Assigned transform.</param>
 		Component(Transform& t_transform);
 
         virtual void initialize() { m_is_initialized = true; }
@@ -47,6 +54,10 @@ namespace XEngine {
 		virtual void update() { }
 		virtual void on_destroy() { m_transform = nullptr; }
 
+        /// <summary>
+        /// Gets assigned transform.
+        /// </summary>
+        /// <returns>Assigned transform.</returns>
 		Transform get_transform() const;
 		void set_transform(Transform* t_value);
 

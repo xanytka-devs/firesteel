@@ -6,6 +6,10 @@
 
 namespace XEngine {
     struct DirectionalLight {
+        /// <summary>
+        /// Set lighting values to shader.
+        /// </summary>
+        /// <param name="t_shader">Shader to set values to.</param>
         void render(Shader t_shader);
         //Location.
         glm::vec3 direction;
@@ -17,6 +21,10 @@ namespace XEngine {
     };
 
     struct PointLight {
+        /// <summary>
+        /// Set lighting values to shader.
+        /// </summary>
+        /// <param name="t_shader">Shader to set values to.</param>
         void render(Shader t_shader, int idx);
         //Location.
         glm::vec3 position;
@@ -32,6 +40,10 @@ namespace XEngine {
     };
 
     struct SpotLight {
+        /// <summary>
+        /// Set lighting values to shader.
+        /// </summary>
+        /// <param name="t_shader">Shader to set values to.</param>
         void render(Shader t_shader, int idx);
         //Location.
         glm::vec3 position;

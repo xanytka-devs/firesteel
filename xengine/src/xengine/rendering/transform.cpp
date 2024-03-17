@@ -1,8 +1,5 @@
 #include <vector>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "xengine/math.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -11,22 +8,10 @@
 #include "xengine/enviroment.hpp"
 
 namespace XEngine {
-
-	/// <summary>
-	/// Initializes component.
-	/// </summary>
 	Component::Component() : m_transform(nullptr) { }
 
-	/// <summary>
-	/// Initializes component.
-	/// </summary>
-	/// <param name="t_transform">Assigned transform.</param>
 	Component::Component(Transform& t_transform) : m_transform(&t_transform) { }
 
-	/// <summary>
-	/// Gets assigned transform.
-	/// </summary>
-	/// <returns>Assigned transform.</returns>
 	Transform Component::get_transform() const { return *m_transform; }
 
 	void Component::set_transform(Transform* t_value) {
@@ -46,9 +31,6 @@ namespace XEngine {
 		position(t_pos), rotation(t_rot), size(t_size), name(t_name),
 		m_is_instance(is_instance), m_source_instance(source_instance) { }
 
-	/// <summary>
-	/// Initializes transform.
-	/// </summary>
 	void Transform::initialize() {
 		for(std::shared_ptr<Component> c : m_components)
 			c->initialize();
@@ -56,13 +38,6 @@ namespace XEngine {
 		Enviroment::get_current_scene()->transforms.push_back(this);
 	}
 
-	/// <summary>
-	/// Creates instance of this object.
-	/// </summary>
-	/// <param name="t_pos">New position.</param>
-	/// <param name="t_rot">New rotation.</param>
-	/// <param name="t_size">New size.</param>
-	/// <returns>Instances transform.</returns>
 	Transform Transform::create_instance(glm::vec3 t_pos,
 		glm::vec4 t_rot, glm::vec3 t_size) {
 		//Check if limit isn't reached.
@@ -89,18 +64,10 @@ namespace XEngine {
 		return inst;
 	}
 
-	/// <summary>
-	/// Returns amount of instances.
-	/// </summary>
-	/// <returns>Amount of instances.</returns>
 	int Transform::instances_amount() {
 		return static_cast<int>(m_instances.size());
 	}
 
-	/// <summary>
-	/// Loads transform.
-	/// </summary>
-	/// <param name="t_path">Path to model.</param>
 	void Transform::load_model(std::string t_path) {
 		//Clear old model (if present).
 		remove_model();
@@ -118,46 +85,24 @@ namespace XEngine {
 		process_node(scene->mRootNode, scene);
 	}
 
-	/// <summary>
-	/// Set material.
-	/// </summary>
-	/// <param name="t_mat">New material.</param>
 	void Transform::set_material(Material* t_mat) {
 		m_material = *t_mat;
 	}
 
-	/// <summary>
-	/// Gets material.
-	/// </summary>
-	/// <returns>Material.</returns>
 	Material Transform::get_material() const {
 		return m_material;
 	}
 
-	/// <summary>
-	/// Add new component by pointer.
-	/// </summary>
-	/// <param name="t_comp">Pointer to component.</param>
-	/// <param name="t_init">Initialize component?</param>
 	void Transform::add_component(std::shared_ptr<Component> t_comp, bool t_init) {
 		t_comp->set_transform(this);
 		m_components.push_back(t_comp);
 		if(t_init) t_comp->initialize();
 	}
 
-	/// <summary>
-	/// Gets components amount.
-	/// </summary>
-	/// <returns>Components amount.</returns>
 	int Transform::components_amount() {
 		return static_cast<int>(m_components.size());
 	}
 
-	/// <summary>
-	/// Gets component by local ID (index).
-	/// </summary>
-	/// <param name="t_id">Index of component.</param>
-	/// <returns>Component (if present).</returns>
 	Component Transform::get_component(int t_id) {
 		//Checks if ID is valid.
 		if(t_id < static_cast<int>(m_components.size())) return *(m_components[t_id].get());
@@ -165,11 +110,6 @@ namespace XEngine {
 		return Component();
 	}
 
-	/// <summary>
-	/// Processes node.
-	/// </summary>
-	/// <param name="t_node">Node.</param>
-	/// <param name="t_scene">Scene for node.</param>
 	void Transform::process_node(aiNode* t_node, const aiScene* t_scene) {
 		//Process all meshes.
 		for(unsigned int i = 0; i < t_node->mNumMeshes; i++) {
@@ -182,12 +122,6 @@ namespace XEngine {
 		}
 	}
 
-	/// <summary>
-	/// Processes mesh.
-	/// </summary>
-	/// <param name="t_mesh">Mesh.</param>
-	/// <param name="t_scene">Scene for mesh.</param>
-	/// <returns>Instance of mesh.</returns>
 	Mesh Transform::process_mesh(aiMesh* t_mesh, const aiScene* t_scene) {
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -253,12 +187,6 @@ namespace XEngine {
 		return Mesh(vertices, indices, textures);
 	}
 
-	/// <summary>
-	/// Load textures from model file.
-	/// </summary>
-	/// <param name="t_mat">Material with textures.</param>
-	/// <param name="t_type">Texture type.</param>
-	/// <returns>Texture, if present.</returns>
 	std::vector<Texture> Transform::load_textures(aiMaterial* t_mat, aiTextureType t_type) {
 		std::vector<Texture> output;
 		//Check each texture.
@@ -285,12 +213,6 @@ namespace XEngine {
 		return output;
 	}
 
-	/// <summary>
-	/// Method to draw instance of an object.
-	/// </summary>
-	/// <param name="t_shader">Shader for meshes.</param>
-	/// <param name="inst">Instance transform.</param>
-	/// <param name="t_update_components">Update components?</param>
 	void Transform::draw_instance(Shader t_shader, Transform inst, bool t_update_components) {
 		//Call update function in components.
 		if(t_update_components)
@@ -309,11 +231,6 @@ namespace XEngine {
 			m_meshes[i].render(t_shader);
 	}
 
-	/// <summary>
-	/// Render transform.
-	/// </summary>
-	/// <param name="t_shader">Shader for meshes.</param>
-	/// <param name="t_update_components">Update components?</param>
 	void Transform::render(Shader t_shader, bool t_update_components) {
 		//Don't render if it's instance.
 		if(m_is_instance) return;
@@ -323,9 +240,6 @@ namespace XEngine {
 			draw_instance(t_shader, inst, t_update_components);
 	}
 
-	/// <summary>
-	/// Removes current model (if present).
-	/// </summary>
 	void Transform::remove_model() {
 		//Remove each mesh.
 		for(unsigned int i = 0; i < m_meshes.size(); i++)
@@ -337,9 +251,6 @@ namespace XEngine {
 		m_textures.clear();
 	}
 
-	/// <summary>
-	/// Deletes transform (cleanup).
-	/// </summary>
 	void Transform::remove() {
 		//Remove components.
 		for(std::shared_ptr<Component> c : m_components)

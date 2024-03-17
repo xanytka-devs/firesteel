@@ -9,6 +9,12 @@
 
 namespace XEngine {
 	struct Vertex {
+		/// <summary>
+		/// Generates list of vertexes from floats.
+		/// </summary>
+		/// <param name="t_vertices">Vertices list.</param>
+		/// <param name="t_vert_num">Number of vertices.</param>
+		/// <returns>List of vertexes.</returns>
 		static std::vector<struct Vertex> generate_list(float* t_vertices, int t_vert_num);
 
 		glm::vec3 pos;
@@ -24,7 +30,14 @@ namespace XEngine {
 		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices,
 			glm::vec4 t_diffuse, glm::vec4 t_specular, glm::vec4 t_emis);
 
+		/// <summary>
+		/// Render mesh.
+		/// </summary>
+		/// <param name="t_shader">Shader for model.</param>
 		void render(Shader t_shader);
+		/// <summary>
+		/// Delete mesh (cleanup).
+		/// </summary>
 		void remove();
 
 		std::vector<Vertex> vertices;
@@ -38,6 +51,9 @@ namespace XEngine {
 		bool m_no_textures = false;
 		unsigned int vbo, ebo;
 
+		/// <summary>
+		/// Sets up buffers.
+		/// </summary>
 		void setup();
 	};
 }

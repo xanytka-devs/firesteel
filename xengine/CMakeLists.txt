@@ -4,19 +4,27 @@ set(ENGINE_PROJECT_NAME xengine)
 
 file(GLOB_RECURSE ENGINE_INCLUDES "*.hpp")
 file(GLOB_RECURSE ENGINE_SOURCES "*.cpp")
+file(GLOB_RECURSE ENGINE_PKG_INCLUDES "../packages/*.hpp" "../packages/*.h")
+file(GLOB_RECURSE ENGINE_PKG_SOURCES "../packages/*.cpp")
 
 set(ENGINE_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
+	${ENGINE_PKG_INCLUDES}
+	${ENGINE_PKG_SOURCES}
 )
 
 add_library(${ENGINE_PROJECT_NAME} STATIC
 	${ENGINE_ALL}
 )
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../ FILES
 	${ENGINE_ALL}
 )
+get_filename_component(VULKAN_LIB_PATH ../packages/xengine.rendering.vulkan/lib/ ABSOLUTE)
+set(CMAKE_VS_SDK_LIBRARY_DIRECTORIES ${VULKAN_LIB_PATH};$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64))
+get_filename_component(VULKAN_LIB_PATH ../packages/xengine.rendering.vulkan/lib/vulkan-1.lib ABSOLUTE)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ${VULKAN_LIB_PATH})
 
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC stb)
@@ -26,7 +34,7 @@ target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 add_subdirectory(../external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glfw)
 
-add_subdirectory(../external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
+add_subdirectory(../packages/xengine.rendering.opengl/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glad)
 
 add_subdirectory(../external/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)

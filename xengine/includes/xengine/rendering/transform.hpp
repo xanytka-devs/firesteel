@@ -21,17 +21,51 @@ namespace XEngine {
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
 			glm::vec3 t_size = glm::vec3(1.f), std::string t_name = "",
 			bool is_instance = false, Transform* source_instance = nullptr);
+
+		/// <summary>
+		/// Initializes transform.
+		/// </summary>
 		void initialize();
 		bool is_initialized() const { return m_is_initialized; }
+		/// <summary>
+		/// Loads transform.
+		/// </summary>
+		/// <param name="t_path">Path to model.</param>
 		void load_model(std::string t_path);
+		/// <summary>
+		/// Removes current model (if present).
+		/// </summary>
 		void remove_model();
+		/// <summary>
+		/// Returns full path to model.
+		/// </summary>
+		/// <returns>Absolute path to model.</returns>
 		std::string get_model_path() const { return m_model_path + m_model_file; }
+		/// <summary>
+		/// Render transform.
+		/// </summary>
+		/// <param name="t_shader">Shader for meshes.</param>
+		/// <param name="t_update_components">Update components?</param>
 		void render(Shader t_shader, bool t_update_components = true);
+		/// <summary>
+		/// Deletes transform (cleanup).
+		/// </summary>
 		void remove();
 
+		/// <summary>
+		/// Creates instance of this object.
+		/// </summary>
+		/// <param name="t_pos">New position.</param>
+		/// <param name="t_rot">New rotation.</param>
+		/// <param name="t_size">New size.</param>
+		/// <returns>Instances transform.</returns>
 		Transform create_instance(glm::vec3 t_pos = glm::vec3(0.f),
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
 			glm::vec3 t_size = glm::vec3(1.f));
+		/// <summary>
+		/// Returns amount of instances.
+		/// </summary>
+		/// <returns>Amount of instances.</returns>
 		int instances_amount();
 		bool is_instance() const { return m_is_instance; }
 
@@ -54,9 +88,24 @@ namespace XEngine {
 			return *this;
 		}
 
+		/// <summary>
+		/// Set material.
+		/// </summary>
+		/// <param name="t_mat">New material.</param>
 		void set_material(Material* t_mat);
+		/// <summary>
+		/// Gets material.
+		/// </summary>
+		/// <returns>Material.</returns>
 		Material get_material() const;
 
+		/// <summary>
+		/// Add new component by class.
+		/// </summary>
+		/// <typeparam name="T">Class, derived from Component.</typeparam>
+		/// <typeparam name="...Args">Additional initialization variables.</typeparam>
+		/// <param name="...args">Additional initialization variables.</param>
+		/// <returns>Pointer to new component (optional).</returns>
 		template <typename T, typename... Args>
 		std::shared_ptr<T> add_component(Args&&... args) {
 			//Check if valid.
@@ -70,9 +119,28 @@ namespace XEngine {
 			//Return shared pointer.
 			return component;
 		}
+		/// <summary>
+		/// Add new component by pointer.
+		/// </summary>
+		/// <param name="t_comp">Pointer to component.</param>
+		/// <param name="t_init">Initialize component?</param>
 		void add_component(std::shared_ptr<Component> t_comp, bool t_init = true);
+		/// <summary>
+		/// Gets components amount.
+		/// </summary>
+		/// <returns>Components amount.</returns>
 		int components_amount();
+		/// <summary>
+		/// Gets component by local ID (index).
+		/// </summary>
+		/// <param name="t_id">Index of component.</param>
+		/// <returns>Component (if present).</returns>
 		Component get_component(int t_id);
+		/// <summary>
+		/// Get component by class.
+		/// </summary>
+		/// <typeparam name="T">Class, derived from Component.</typeparam>
+		/// <returns>Instance of given class from transform (if present).</returns>
 		template <typename T>
 		T& get_component() const {
 			static T default_component;
@@ -108,9 +176,32 @@ namespace XEngine {
 		std::string m_model_file;
 		std::vector<Texture> m_textures;
 		//Functions.
+		/// <summary>
+		/// Processes model node.
+		/// </summary>
+		/// <param name="t_node">Node.</param>
+		/// <param name="t_scene">Scene for node.</param>
 		void process_node(aiNode* t_node, const aiScene* t_scene);
+		/// <summary>
+		/// Processes mesh.
+		/// </summary>
+		/// <param name="t_mesh">Mesh.</param>
+		/// <param name="t_scene">Scene for mesh.</param>
+		/// <returns>Instance of mesh.</returns>
 		Mesh process_mesh(aiMesh* mesh, const aiScene* t_scene);
+		/// <summary>
+		/// Load textures from model file.
+		/// </summary>
+		/// <param name="t_mat">Material with textures.</param>
+		/// <param name="t_type">Texture type.</param>
+		/// <returns>Texture, if present.</returns>
 		std::vector<Texture> load_textures(aiMaterial* t_mat, aiTextureType t_type);
+		/// <summary>
+		/// Method to draw instance of an object.
+		/// </summary>
+		/// <param name="t_shader">Shader for meshes.</param>
+		/// <param name="inst">Instance transform.</param>
+		/// <param name="t_update_components">Update components?</param>
 		void draw_instance(Shader t_shader, Transform inst, bool t_override_model);
 	};
 }

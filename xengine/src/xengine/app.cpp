@@ -8,26 +8,15 @@ namespace XEngine {
     double last_frame_fps = 0.f;
     double last_frame = 0.f;
     int frameCount = 0;
-    App* App::current_app = nullptr;
 
-    /// <summary>
-    /// Occures at app startup (instantiation).
-    /// </summary>
     App::App() {
         LOG_INFO("Initializing XEngine App.");
-        current_app = this;
     }
 
-    /// <summary>
-    /// Occures on app shutdown (destruction).
-    /// </summary>
     App::~App() {
         LOG_INFO("Shutting down XEngine App.");
     }
 
-    /// <summary>
-    /// Quits app.
-    /// </summary>
     void App::shutdown() {
         window.close();
     }
@@ -50,13 +39,6 @@ namespace XEngine {
         window.ui_draw();
     }
 
-    /// <summary>
-    /// Creates new instance of window for application.
-    /// </summary>
-    /// <param name="t_win_width">Width of the window.</param>
-    /// <param name="t_win_height">Height of the window.</param>
-    /// <param name="t_title">Name of the window.</param>
-    /// <returns>Exit code. Only 0 is success.</returns>
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
         //Initiate core//
         preinitiazile();
@@ -69,7 +51,7 @@ namespace XEngine {
             return -1;
         }
         //Initialize renderer libs.
-        if(!Renderer::initialize_libs()) {
+        if(!Renderer::initialize_libs(window.get_handle())) {
             LOG_CRIT("Failed to initialize libs.");
             return -1;
         }

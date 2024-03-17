@@ -12,21 +12,38 @@ namespace XEngine {
 		Scene() : m_id(-1) { }
 		Scene(const char* t_name) : m_id(-1), name(t_name) { }
 
+		/// <summary>
+		/// Get ID of this scene.
+		/// </summary>
+		/// <returns>ID of this scene.</returns>
 		int get_id() const { return m_id; }
+		/// <summary>
+		/// Set ID to this scene.
+		/// </summary>
+		/// <param name="t_id">New ID.</param>
 		void set_id(int t_id) { m_id = t_id; }
 
 		std::vector<Transform*> transforms;
 		const char* name = "Scene";
 	private:
-		int m_id;
+		unsigned char m_id;
 	};
 
 	class SceneManager {
 	public:
 		SceneManager() { }
 
-		int get_amount() const { return (int)m_scenes.size(); }
+		/// <summary>
+		/// Get amount of scenes.
+		/// </summary>
+		/// <returns>Amount of scenes.</returns>
+		unsigned char get_amount() const { return (unsigned char)m_scenes.size(); }
 
+		/// <summary>
+		/// Add new scene to manager.
+		/// </summary>
+		/// <param name="t_scene">New scene.</param>
+		/// <returns>Pointer to added scene (optional).</returns>
 		std::shared_ptr<Scene> add_scene(Scene t_scene) {
 			//Check if scene is already on the list.
 			if(t_scene.get_id() != -1) {
@@ -41,14 +58,19 @@ namespace XEngine {
 			return ptr;
 		}
 
-		Scene* get_scene(int t_id) {
+		/// <summary>
+		/// Get scene by given ID.
+		/// </summary>
+		/// <param name="t_id">ID of scene to search for.</param>
+		/// <returns>Pointer to scene (if found).</returns>
+		Scene* get_scene(unsigned char t_id) {
 			if(t_id < get_amount() + 1)
 				return m_scenes[t_id].get();
 			return nullptr;
 		}
 	private:
 		std::vector<std::shared_ptr<Scene>> m_scenes;
-		int m_last_id = 0;
+		unsigned char m_last_id = 0;
 	};
 
 	class Enviroment {
@@ -56,7 +78,12 @@ namespace XEngine {
 		static glm::vec3 gravity;
 		static float delta_time;
 		static SceneManager scene_manager;
-		static int scene_id;
+		static unsigned char scene_id;
+
+		/// <summary>
+		/// Get current scene.
+		/// </summary>
+		/// <returns>Current scene.</returns>
 		static Scene* get_current_scene() { return scene_manager.get_scene(Enviroment::scene_id); }
 	};
 }
