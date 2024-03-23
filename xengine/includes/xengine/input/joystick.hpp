@@ -38,6 +38,13 @@ public:
 	/// <summary>
 	/// Sets up joystick input.
 	/// </summary>
+	Joystick() {
+		m_id = get_id(0);
+		update();
+	}
+	/// <summary>
+	/// Sets up joystick input.
+	/// </summary>
 	/// <param name="t_id">ID for joystick.</param>
 	Joystick(int t_id) {
 		m_id = get_id(t_id);

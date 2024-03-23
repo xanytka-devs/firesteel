@@ -3,7 +3,8 @@
 
 #include <string>
 //Includes ImGui without need to add it to CMake project.
-#include <../../external/imgui/imgui.h>
+#include <imgui/imgui.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 #include "xengine/math.hpp"
 #include "xengine/common.hpp"
 
@@ -86,6 +87,10 @@ namespace XEngine {
 
 		static unsigned int width;
 		static unsigned int height;
+
+		float ui_font_size = 13;
+		const char* ui_font_dir = "";
+		bool ui_need_to_reload = false;
 	private:
 		/// <summary>
 		/// Callback for window movement.
@@ -94,13 +99,6 @@ namespace XEngine {
 		/// <param name="t_width">Window width.</param>
 		/// <param name="t_height">Window height.</param>
 		static void framebuffer_callback(GLFWwindow* t_window, int t_width, int t_height);
-		/// <summary>
-		/// Callback for window movement.
-		/// </summary>
-		/// <param name="t_window">Window handle.</param>
-		/// <param name="t_width">Window width.</param>
-		/// <param name="t_height">Window height.</param>
-		static void size_callback(GLFWwindow* t_window, int t_width, int t_height);
 
 		GLFWwindow* m_window;
 		CursorState m_cur_state = CursorState::C_NONE;

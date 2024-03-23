@@ -10,6 +10,9 @@ namespace XEngine {
 	/// </summary>
 	class App {
 	public:
+		static App* instance() {
+			return m_instance;
+		}
 		/// <summary>
 		/// Occures at app startup (instantiation).
 		/// </summary>
@@ -53,14 +56,19 @@ namespace XEngine {
 		/// Runs on app shutdown.
 		/// </summary>
 		virtual void on_shutdown() { }
-
-		Window window;
-		int fps = 0;
-	private:
 		/// <summary>
 		/// Dedicated update function.
 		/// </summary>
 		void update_loop_call();
+
+		Window window;
+		int fps = 0;
+		/// <summary>
+		/// Stop app updating for 1 frame.
+		/// </summary>
+		bool update_app = true;
+	private:
+		static App* m_instance;
 	};
 
 }

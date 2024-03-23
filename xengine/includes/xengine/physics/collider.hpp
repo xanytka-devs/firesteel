@@ -19,13 +19,14 @@ namespace XEngine {
 	class Collider {
 	public:
 		//Basic constructor.
-		Collider(CollisionType t_type) : type(t_type) { }
+		Collider(CollisionType t_type) : type(t_type),
+			bb_max(glm::vec3(0)), bb_min(glm::vec3(0)), sp_center(glm::vec3(0)), sp_radius(0) { }
 		//AABB.
 		Collider(glm::vec3 t_min, glm::vec3 t_max) : type(CollisionType::CT_AABB),
-			bb_min(t_min), bb_max(t_max) { }
+			bb_min(t_min), bb_max(t_max), sp_center(glm::vec3(0)), sp_radius(0) { }
 		//Sphere.
 		Collider(glm::vec3 t_center, float t_radius) : type(CollisionType::CT_SPHERE),
-			sp_center(t_center), sp_radius(t_radius) { }
+			sp_center(t_center), sp_radius(t_radius), bb_max(glm::vec3(0)), bb_min(glm::vec3(0)) { }
 
 		CollisionType type;
 		//AABB.
@@ -105,7 +106,7 @@ namespace XEngine {
 		/// <returns>True if collider partialy contains region.</returns>
 		bool intersects(Collider t_collider) {
 			//AABB & AABB - Overlap all axes.
-			if (type == CollisionType::CT_AABB && t_collider.type == CollisionType::CT_AABB) {
+			if(type == CollisionType::CT_AABB && t_collider.type == CollisionType::CT_AABB) {
 				glm::vec3 rad = calc_dimensions() / 2.0f;
 				glm::vec3 rad_col = t_collider.calc_dimensions() / 2.0f;
 
@@ -120,12 +121,12 @@ namespace XEngine {
 				return true;
 			}
 			//SPHERE & SPHERE - Distance between centers must be less than combined radius.
-			else if (type == CollisionType::CT_SPHERE && t_collider.type == CollisionType::CT_SPHERE)
+			else if(type == CollisionType::CT_SPHERE && t_collider.type == CollisionType::CT_SPHERE)
 				return glm::length(sp_center - t_collider.sp_center) < (sp_radius + t_collider.sp_radius);
 			// SPHERE & AABB - Find distance (squared) to the closest plane.
-			else if (type == CollisionType::CT_SPHERE && t_collider.type == CollisionType::CT_AABB) {
+			else if(type == CollisionType::CT_SPHERE && t_collider.type == CollisionType::CT_AABB) {
 				float dist_sqrd = 0.0f;
-				for (int i = 0; i < 3; i++) {
+				for(int i = 0; i < 3; i++) {
 					//Determine closest side.
 					float closestPt = std::max(t_collider.bb_min[i],
 						std::min(sp_center[i], t_collider.bb_max[i]));
@@ -136,21 +137,53 @@ namespace XEngine {
 				return dist_sqrd < (sp_radius * sp_radius);
 			}
 			// AABB & SPHERE - Call collider's algorithm.
-			else if (type == CollisionType::CT_AABB && t_collider.type == CollisionType::CT_SPHERE)
+			else if(type == CollisionType::CT_AABB && t_collider.type == CollisionType::CT_SPHERE)
 				return t_collider.intersects(*this);
 		}
 	};
 
-	class ColliderStorage {
+	class CollissionSystem {
 	public:
-		static ColliderStorage instance() {
-			static ColliderStorage m_instance;
+		static CollissionSystem instance() {
+			static CollissionSystem m_instance;
 			return m_instance;
 		}
 		std::vector<Collider> m_stored;
+
+		void update() {
+			for(size_t i1 = 0; i1 < m_stored.size(); i1++) {
+				for(size_t i2 = 0; i2 < m_stored.size(); i2++) {
+					if(m_stored[i1].intersects(m_stored[i2]))
+						printf("INTERSECTION\n");
+				}
+			}
+		}
+
+		void remove() {
+			m_stored.clear();
+		}
 	};
 
-	class BoxCollider : public Component {
+	class ColliderBase;
+
+	struct CollisionCallback {
+		void (*func)(ColliderBase t_other);
+	};
+
+	class ColliderBase {
+	public:
+		ColliderBase() : m_collider(CollisionType::CT_NONE), m_callback({}) {}
+		void on_collision(ColliderBase t_other) const { m_callback.func(t_other); }
+		Collider get_collider() const { return m_collider; }
+		void set_callback(CollisionCallback t_callback) {
+			m_callback = t_callback;
+		}
+	private:
+		Collider m_collider;
+		CollisionCallback m_callback;
+	};
+
+	class BoxCollider : public Component, ColliderBase {
 	public:
 		BoxCollider() : Component(), m_collider(CollisionType::CT_AABB) { }
 		BoxCollider(Transform& t_transform) : Component(t_transform),
@@ -158,7 +191,7 @@ namespace XEngine {
 			m_collider(center - size, center + size) { }
 
 		void initialize() {
-			ColliderStorage::instance().m_stored.push_back(m_collider);
+			CollissionSystem::instance().m_stored.push_back(m_collider);
 			Component::initialize();
 		}
 
@@ -168,21 +201,21 @@ namespace XEngine {
 		}
 
 		glm::vec3 center{ 0.f };
-		glm::vec4 rotation{ 0.f, 0.f, 0.f, 1.f };
+		glm::vec3 rotation{ 0.f };
 		glm::vec3 size{ 1.f };
 	private:
 		Collider m_collider;
 	};
 
-	class SphereCollider : public Component {
+	class SphereCollider : public Component, ColliderBase {
 	public:
 		SphereCollider() : Component(), m_collider(CollisionType::CT_SPHERE) { }
 		SphereCollider(Transform& t_transform) : Component(t_transform),
 			center(m_transform->position), radius((m_transform->size.x + m_transform->size.y + m_transform->size.z) / 3),
-			m_collider(center, radius){ }
+			m_collider(center, radius) { }
 
 		void initialize() {
-			ColliderStorage::instance().m_stored.push_back(m_collider);
+			CollissionSystem::instance().m_stored.push_back(m_collider);
 			Component::initialize();
 		}
 

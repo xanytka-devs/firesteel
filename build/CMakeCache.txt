@@ -463,6 +463,9 @@ GLM_ENABLE_SIMD_SSSE3:BOOL=OFF
 //Force 'pure' instructions
 GLM_FORCE_PURE:BOOL=OFF
 
+//Enable ARM NEON optimizations
+GLM_TEST_ENABLE_SIMD_NEON:BOOL=OFF
+
 //the suffix for the assimp windows library
 LIBRARY_SUFFIX:STRING=-vc143-mt
 

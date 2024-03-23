@@ -19,7 +19,7 @@ namespace XEngine {
 	public:
 		Transform(glm::vec3 t_pos = glm::vec3(0.f),
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
-			glm::vec3 t_size = glm::vec3(1.f), std::string t_name = "",
+			glm::vec3 t_size = glm::vec3(1.f), std::string t_name = "New Object",
 			bool is_instance = false, Transform* source_instance = nullptr);
 
 		/// <summary>
@@ -44,9 +44,8 @@ namespace XEngine {
 		/// <summary>
 		/// Render transform.
 		/// </summary>
-		/// <param name="t_shader">Shader for meshes.</param>
 		/// <param name="t_update_components">Update components?</param>
-		void render(Shader t_shader, bool t_update_components = true);
+		void render(bool t_update_components = true);
 		/// <summary>
 		/// Deletes transform (cleanup).
 		/// </summary>

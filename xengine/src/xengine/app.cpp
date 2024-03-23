@@ -8,8 +8,10 @@ namespace XEngine {
     double last_frame_fps = 0.f;
     double last_frame = 0.f;
     int frameCount = 0;
+    App* App::m_instance{ nullptr };
 
     App::App() {
+        m_instance = this;
         LOG_INFO("Initializing XEngine App.");
     }
 
@@ -21,22 +23,24 @@ namespace XEngine {
         window.close();
     }
 
+    bool drawn_ui = true;
     void App::update_loop_call() {
         //Update delta time.
         double cur_time = Renderer::get_time();
         Enviroment::delta_time = static_cast<float>(cur_time - last_frame);
         last_frame = cur_time;
         frameCount++;
-        if (cur_time - last_frame_fps >= 1.0) {
+        if(cur_time - last_frame_fps >= 1.0) {
             fps = frameCount;
             frameCount = 0;
             last_frame_fps = cur_time;
         }
         //Send update to recievers.
+        if(!drawn_ui) { window.ui_draw(); drawn_ui = true; }
+        drawn_ui = false;
         window.ui_update();
         window.update();
-        update();
-        window.ui_draw();
+        if(update_app) update();
     }
 
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
@@ -58,8 +62,12 @@ namespace XEngine {
         //Set parameters.
         window.set_init_params();
         initiazile();
+        update_loop_call();
         //Update loop//
-        while(!window.closing()) update_loop_call();
+        while(!window.closing()) {
+            update_loop_call();
+            update_app = true;
+        }
         //Terminate libs and rendering//
         on_shutdown();
         Renderer::terminate();

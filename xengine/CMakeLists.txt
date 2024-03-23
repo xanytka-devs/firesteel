@@ -26,6 +26,9 @@ set(CMAKE_VS_SDK_LIBRARY_DIRECTORIES ${VULKAN_LIB_PATH};$(VC_LibraryPath_x64);$(
 get_filename_component(VULKAN_LIB_PATH ../packages/xengine.rendering.vulkan/lib/vulkan-1.lib ABSOLUTE)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ${VULKAN_LIB_PATH})
 
+get_filename_component(FT_LIB_PATH ../external/freetype/freetype.lib ABSOLUTE)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ${FT_LIB_PATH})
+
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC stb)
 target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
@@ -45,6 +48,7 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE assimp)
 
 set(IMGUI_INCLUDES
 	../external/imgui/imgui.h
+	../external/imgui/misc/cpp/imgui_stdlib.h
 	../external/imgui/backends/imgui_impl_glfw.h
 	../external/imgui/backends/imgui_impl_opengl3.h
 )
@@ -52,6 +56,7 @@ set(IMGUI_SOURCES
 	../external/imgui/imgui.cpp
 	../external/imgui/backends/imgui_impl_glfw.cpp
 	../external/imgui/backends/imgui_impl_opengl3.cpp
+	../external/imgui/misc/cpp/imgui_stdlib.cpp
 	../external/imgui/imgui_draw.cpp
 	../external/imgui/imgui_tables.cpp
 	../external/imgui/imgui_widgets.cpp

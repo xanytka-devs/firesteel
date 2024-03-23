@@ -17,11 +17,16 @@ namespace XEngine {
 		/// </summary>
 		/// <param name="t_vert_shader_path">Vertex shader path.</param>
 		/// <param name="t_frag_shader_path">Fragment shader path.</param>
-		Shader(const char* t_vert_shader_path, const char* t_frag_shader_path);
+		/// <param name="t_load">Load shader as it's initialized.</param>
+		Shader(const char* t_vert_shader_path, const char* t_frag_shader_path, bool t_load = true);
 		/// <summary>
 		/// Set program as current.
 		/// </summary>
 		void enable();
+		/// <summary>
+		/// Disable current shader.
+		/// </summary>
+		void disable();
 		/// <summary>
 		/// Generates and links vertex and fragment sahders.
 		/// </summary>
@@ -58,6 +63,19 @@ namespace XEngine {
 		/// <param name="t_name">Name of the variable.</param>
 		/// <param name="t_val">Value.</param>
 		void set_float(std::string t_name, float t_val);
+		/// <summary>
+		/// Set 2 of shader's 'float' variable.
+		/// </summary>
+		/// <param name="t_name">Name of the variable.</param>
+		/// <param name="t_val1">First value.</param>
+		/// <param name="t_val2">Second value.</param>
+		void set_2_floats(std::string t_name, float t_val1, float t_val2);
+		/// <summary>
+		/// Set 3 of shader's 'float' variable by 'Vector 2'.
+		/// </summary>
+		/// <param name="t_name">Name of the variable.</param>
+		/// <param name="t_vec">Value.</param>
+		void set_2_floats(std::string t_name, glm::vec2 t_vec);
 		/// <summary>
 		/// Set 3 of shader's 'float' variable.
 		/// </summary>

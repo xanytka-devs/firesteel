@@ -17,7 +17,7 @@ namespace XEngine {
 
 	class Rigidbody : public Component {
 	public:
-		Rigidbody() : Component() { }
+		Rigidbody() : Component(), acceleration(glm::vec3(0)), velocity(glm::vec3(0)), mass(0.f), use_gravity(true) { }
 
 		Rigidbody(Transform& t_transform, float t_mass = 1.0f, glm::vec3 t_velocity = glm::vec3(0.f),
 			glm::vec3 t_acceleration = glm::vec3(0.f), bool t_use_gravity = false)

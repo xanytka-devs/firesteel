@@ -231,13 +231,14 @@ namespace XEngine {
 			m_meshes[i].render(t_shader);
 	}
 
-	void Transform::render(Shader t_shader, bool t_update_components) {
+	void Transform::render(bool t_update_components) {
 		//Don't render if it's instance.
 		if(m_is_instance) return;
 		//Rener all instances.
-		draw_instance(t_shader, *this, t_update_components);
+		m_material.shader.enable();
+		draw_instance(m_material.shader, *this, t_update_components);
 		for(Transform inst : m_instances)
-			draw_instance(t_shader, inst, t_update_components);
+			draw_instance(m_material.shader, inst, t_update_components);
 	}
 
 	void Transform::remove_model() {
