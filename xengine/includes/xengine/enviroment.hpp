@@ -11,7 +11,7 @@ namespace XEngine {
 	class Scene {
 	public:
 		Scene() : m_id(-1) { }
-		Scene(const char* t_name, Camera t_cam) : m_id(-1), name(t_name),
+		Scene(const char* t_name, Camera* t_cam) : m_id(-1), name(t_name),
 			m_camera(t_cam) { }
 
 		/// <summary>
@@ -29,18 +29,18 @@ namespace XEngine {
 		/// Get currently active camera.
 		/// </summary>
 		/// <returns>Active camera.</returns>
-		Camera get_camera() const { return m_camera; }
+		Camera* get_camera() const { return m_camera; }
 		/// <summary>
 		/// Set active camera.
 		/// </summary>
 		/// <param name="t_cam">Active camera.</param>
-		void set_camera(Camera t_cam) { m_camera = t_cam; }
+		void set_camera(Camera* t_cam) { m_camera = t_cam; }
 
 		std::vector<Transform*> transforms;
 		const char* name = "Scene";
 	private:
 		unsigned char m_id;
-		Camera m_camera;
+		Camera* m_camera;
 	};
 
 	class SceneManager {

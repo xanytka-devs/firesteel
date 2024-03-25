@@ -98,6 +98,11 @@ namespace XEngine {
 		/// <param name="t_mat">New material.</param>
 		void set_material(Material* t_mat);
 		/// <summary>
+		/// Set material's cubemap ID.
+		/// </summary>
+		/// <param name="t_id">Cubemap ID (-1 to disable).</param>
+		void set_cubemap(unsigned int t_id);
+		/// <summary>
 		/// Gets material.
 		/// </summary>
 		/// <returns>Material.</returns>

@@ -39,6 +39,11 @@ namespace XEngine {
 		/// Delete mesh (cleanup).
 		/// </summary>
 		void remove();
+		/// <summary>
+		/// Set material's cubemap ID.
+		/// </summary>
+		/// <param name="t_id">Cubemap ID.</param>
+		void set_cubemap(unsigned int t_id);
 
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -50,6 +55,7 @@ namespace XEngine {
 	private:
 		bool m_no_textures = false;
 		unsigned int vbo, ebo;
+		unsigned int m_cubemap_id = 1;
 
 		/// <summary>
 		/// Sets up buffers.

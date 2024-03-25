@@ -89,6 +89,12 @@ namespace XEngine {
 		m_material = *t_mat;
 	}
 
+	void Transform::set_cubemap(unsigned int t_id) {
+		m_material.shader.set_int("use_skybox", (t_id == -1) ? 0 : 1);
+		for(size_t i = 0; i < m_meshes.size(); i++)
+			m_meshes[i].set_cubemap(t_id);
+	}
+
 	Material Transform::get_material() const {
 		return m_material;
 	}
