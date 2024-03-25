@@ -4,7 +4,9 @@
 #include <string>
 //Includes ImGui without need to add it to CMake project.
 #include <imgui/imgui.h>
+#ifdef XENGINE_GUI
 #include <imgui/misc/cpp/imgui_stdlib.h>
+#endif // XENGINE_GUI
 #include "xengine/math.hpp"
 #include "xengine/common.hpp"
 
@@ -52,19 +54,21 @@ namespace XEngine {
 		/// <summary>
 		/// Initializes ImGui.
 		/// </summary>
-		void ui_initialize();
+		void gui_initialize();
 		/// <summary>
+		/// [HANDELED BY APP CLASS]
 		/// Updates ImGui.
 		/// </summary>
-		void ui_update();
+		void gui_update();
 		/// <summary>
+		/// [HANDELED BY APP CLASS]
 		/// Draws ImGui.
 		/// </summary>
-		void ui_draw();
+		void gui_draw();
 		/// <summary>
 		/// Shuts down ImGui.
 		/// </summary>
-		void ui_shutdown();
+		void gui_shutdown();
 
 		void set_param(WindowParam t_param, bool t_val);
 		void set_param(WindowParam t_param, int t_val);
@@ -78,6 +82,7 @@ namespace XEngine {
 
 		int get_param_i(WindowParam t_param) const;
 		bool get_param_b(WindowParam t_param) const;
+		glm::vec2 size() { return glm::vec2(width, height); }
 		/// <summary>
 		/// Checks if window's going to close.
 		/// </summary>

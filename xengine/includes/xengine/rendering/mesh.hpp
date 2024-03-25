@@ -44,9 +44,9 @@ namespace XEngine {
 		std::vector<unsigned int> indices;
 		unsigned int vao;
 		std::vector<Texture> textures;
-		glm::vec4 diffuse;
-		glm::vec4 specular;
-		glm::vec4 emission;
+		glm::vec4 diffuse{ 1.f };
+		glm::vec4 specular{ 0.f };
+		glm::vec4 emission{ 0.f };
 	private:
 		bool m_no_textures = false;
 		unsigned int vbo, ebo;

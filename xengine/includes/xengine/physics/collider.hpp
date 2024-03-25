@@ -139,6 +139,9 @@ namespace XEngine {
 			// AABB & SPHERE - Call collider's algorithm.
 			else if(type == CollisionType::CT_AABB && t_collider.type == CollisionType::CT_SPHERE)
 				return t_collider.intersects(*this);
+			// Other variants are related to CT_NONE,
+			// so there is no point for collision checks.
+			else return false;
 		}
 	};
 

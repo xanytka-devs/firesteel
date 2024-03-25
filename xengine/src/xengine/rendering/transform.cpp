@@ -60,7 +60,7 @@ namespace XEngine {
 		for(const auto& comp : m_components)
 			inst.add_component(comp->clone());
 		m_instances.push_back(inst);
-		//Enviroment::get_current_scene()->transforms.push_back(&m_instances[m_instances.size() - 1]);
+		//Enviroment::get_current_scene()->transforms.push_back(&inst);
 		return inst;
 	}
 

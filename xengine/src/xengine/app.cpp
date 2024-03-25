@@ -36,9 +36,9 @@ namespace XEngine {
             last_frame_fps = cur_time;
         }
         //Send update to recievers.
-        if(!drawn_ui) { window.ui_draw(); drawn_ui = true; }
+        if(!drawn_ui) { window.gui_draw(); drawn_ui = true; }
         drawn_ui = false;
-        window.ui_update();
+        window.gui_update();
         window.update();
         if(update_app) update();
     }

@@ -33,6 +33,11 @@ namespace XEngine {
 		/// <param name="t_path">Path to model.</param>
 		void load_model(std::string t_path);
 		/// <summary>
+		/// Add mesh to model.
+		/// </summary>
+		/// <param name="t_mesh">Additional mesh.</param>
+		void add_mesh(Mesh t_mesh) { m_meshes.push_back(t_mesh); }
+		/// <summary>
 		/// Removes current model (if present).
 		/// </summary>
 		void remove_model();
@@ -155,6 +160,11 @@ namespace XEngine {
 			//If component not found - return empty constructor.
 			return default_component;
 		}
+		/// <summary>
+		/// Get the list of components.
+		/// </summary>
+		/// <returns>List of components.</returns>
+		std::vector<std::shared_ptr<Component>>* get_component_list() { return &m_components; }
 
 		glm::vec3 position;
 		glm::vec4 rotation;
