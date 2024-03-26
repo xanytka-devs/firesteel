@@ -25,7 +25,8 @@ namespace XEngine {
 		/// <summary>
 		/// Initializes transform.
 		/// </summary>
-		void initialize();
+		/// <param name="t_add_to_scene">Add to scene?</param>
+		void initialize(bool t_add_to_scene = true);
 		bool is_initialized() const { return m_is_initialized; }
 		/// <summary>
 		/// Loads transform.

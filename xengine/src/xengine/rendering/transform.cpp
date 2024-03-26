@@ -31,11 +31,11 @@ namespace XEngine {
 		position(t_pos), rotation(t_rot), size(t_size), name(t_name),
 		m_is_instance(is_instance), m_source_instance(source_instance) { }
 
-	void Transform::initialize() {
+	void Transform::initialize(bool t_add_to_scene) {
 		for(std::shared_ptr<Component> c : m_components)
 			c->initialize();
 		m_is_initialized = true;
-		Enviroment::get_current_scene()->transforms.push_back(this);
+		if(t_add_to_scene) Enviroment::get_current_scene()->transforms.push_back(this);
 	}
 
 	Transform Transform::create_instance(glm::vec3 t_pos,
@@ -242,6 +242,9 @@ namespace XEngine {
 		if(m_is_instance) return;
 		//Rener all instances.
 		m_material.shader.enable();
+		m_material.shader.set_mat4("projection", Enviroment::get_current_scene()->get_camera()->get_projection_matrix());
+		m_material.shader.set_mat4("view", Enviroment::get_current_scene()->get_camera()->get_view_matrix());
+		m_material.shader.set_3_floats("view_pos", Enviroment::get_current_scene()->get_camera()->position);
 		draw_instance(m_material.shader, *this, t_update_components);
 		for(Transform inst : m_instances)
 			draw_instance(m_material.shader, inst, t_update_components);
@@ -256,6 +259,8 @@ namespace XEngine {
 		for(unsigned int i = 0; i < m_textures.size(); i++)
 			m_textures[i].remove();
 		m_textures.clear();
+		//Remove material.
+		m_material.shader.remove();
 	}
 
 	void Transform::remove() {

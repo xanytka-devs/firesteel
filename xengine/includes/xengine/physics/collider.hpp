@@ -145,18 +145,35 @@ namespace XEngine {
 		}
 	};
 
+	class ColliderBase;
+
+	typedef void (*CollisionCallback)(ColliderBase t_other);
+
+	class ColliderBase {
+	public:
+		ColliderBase() : m_collider(CollisionType::CT_NONE) {}
+		void on_collision(ColliderBase t_other) const { m_callback(t_other); }
+		Collider get_collider() const { return m_collider; }
+		void set_callback(CollisionCallback t_callback) {
+			m_callback = t_callback;
+		}
+	private:
+		Collider m_collider;
+		CollisionCallback m_callback;
+	};
+
 	class CollissionSystem {
 	public:
 		static CollissionSystem instance() {
 			static CollissionSystem m_instance;
 			return m_instance;
 		}
-		std::vector<Collider> m_stored;
+		std::vector<ColliderBase*> m_stored;
 
 		void update() {
 			for(size_t i1 = 0; i1 < m_stored.size(); i1++) {
 				for(size_t i2 = 0; i2 < m_stored.size(); i2++) {
-					if(m_stored[i1].intersects(m_stored[i2]))
+					if(m_stored[i1]->get_collider().intersects(m_stored[i2]->get_collider()))
 						printf("INTERSECTION\n");
 				}
 			}
@@ -167,24 +184,6 @@ namespace XEngine {
 		}
 	};
 
-	class ColliderBase;
-
-	struct CollisionCallback {
-		void (*func)(ColliderBase t_other);
-	};
-
-	class ColliderBase {
-	public:
-		ColliderBase() : m_collider(CollisionType::CT_NONE), m_callback({}) {}
-		void on_collision(ColliderBase t_other) const { m_callback.func(t_other); }
-		Collider get_collider() const { return m_collider; }
-		void set_callback(CollisionCallback t_callback) {
-			m_callback = t_callback;
-		}
-	private:
-		Collider m_collider;
-		CollisionCallback m_callback;
-	};
 
 	class BoxCollider : public Component, ColliderBase {
 	public:
@@ -194,7 +193,7 @@ namespace XEngine {
 			m_collider(center - size, center + size) { }
 
 		void initialize() {
-			CollissionSystem::instance().m_stored.push_back(m_collider);
+			CollissionSystem::instance().m_stored.push_back(this);
 			Component::initialize();
 		}
 
@@ -218,7 +217,7 @@ namespace XEngine {
 			m_collider(center, radius) { }
 
 		void initialize() {
-			CollissionSystem::instance().m_stored.push_back(m_collider);
+			CollissionSystem::instance().m_stored.push_back(this);
 			Component::initialize();
 		}
 
