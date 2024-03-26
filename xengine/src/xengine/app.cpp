@@ -38,6 +38,7 @@ namespace XEngine {
         //Send update to recievers.
         if(!drawn_ui) { window.gui_draw(); drawn_ui = true; }
         drawn_ui = false;
+        window.pull_events();
         window.gui_update();
         window.update();
         if(update_app) update();

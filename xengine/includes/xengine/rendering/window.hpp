@@ -46,6 +46,7 @@ namespace XEngine {
 		/// Updates events and clears buffers.
 		/// </summary>
 		void update();
+		void pull_events();
 		/// <summary>
 		/// Closes window.
 		/// </summary>
