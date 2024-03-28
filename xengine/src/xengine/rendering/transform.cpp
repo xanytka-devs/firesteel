@@ -242,9 +242,11 @@ namespace XEngine {
 		if(m_is_instance) return;
 		//Rener all instances.
 		m_material.shader.enable();
-		m_material.shader.set_mat4("projection", Enviroment::get_current_scene()->get_camera()->get_projection_matrix());
-		m_material.shader.set_mat4("view", Enviroment::get_current_scene()->get_camera()->get_view_matrix());
-		m_material.shader.set_3_floats("view_pos", Enviroment::get_current_scene()->get_camera()->position);
+		if(Enviroment::get_current_scene()->get_camera() != nullptr) {
+			m_material.shader.set_mat4("projection", Enviroment::get_current_scene()->get_camera()->get_projection_matrix());
+			m_material.shader.set_mat4("view", Enviroment::get_current_scene()->get_camera()->get_view_matrix());
+			m_material.shader.set_3_floats("view_pos", Enviroment::get_current_scene()->get_camera()->position);
+		}
 		draw_instance(m_material.shader, *this, t_update_components);
 		for(Transform inst : m_instances)
 			draw_instance(m_material.shader, inst, t_update_components);

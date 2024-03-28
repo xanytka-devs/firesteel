@@ -7,8 +7,10 @@ namespace XEngine {
 
     double last_frame_fps = 0.f;
     double last_frame = 0.f;
-    int frameCount = 0;
+    int frame_count = 0;
     App* App::m_instance{ nullptr };
+    unsigned char Enviroment::scene_id = 0;
+    SceneManager Enviroment::scene_manager = SceneManager();
 
     App::App() {
         m_instance = this;
@@ -29,24 +31,24 @@ namespace XEngine {
         double cur_time = Renderer::get_time();
         Enviroment::delta_time = static_cast<float>(cur_time - last_frame);
         last_frame = cur_time;
-        frameCount++;
+        frame_count++;
         if(cur_time - last_frame_fps >= 1.0) {
-            fps = frameCount;
-            frameCount = 0;
+            fps = frame_count;
+            frame_count = 0;
             last_frame_fps = cur_time;
         }
         //Send update to recievers.
         if(!drawn_ui) { window.gui_draw(); drawn_ui = true; }
-        drawn_ui = false;
         window.pull_events();
         window.gui_update();
         window.update();
         if(update_app) update();
+        drawn_ui = false;
     }
 
     int App::start(unsigned int t_win_width, unsigned int t_win_height, const char* t_title) {
         //Initiate core//
-        preinitiazile();
+        preinitialize();
         Renderer::initialize();
         //Create window.
         window = Window(t_win_width, t_win_height, t_title);
@@ -62,7 +64,9 @@ namespace XEngine {
         }
         //Set parameters.
         window.set_init_params();
-        initiazile();
+        Enviroment::scene_manager.add_scene(Scene());
+        Enviroment::scene_manager.initialized = false;
+        initialize();
         update_loop_call();
         //Update loop//
         while(!window.closing()) {

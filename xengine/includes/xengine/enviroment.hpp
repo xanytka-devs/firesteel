@@ -10,7 +10,7 @@
 namespace XEngine {
 	class Scene {
 	public:
-		Scene() : m_id(-1) { }
+		Scene() : m_id(-1), m_camera(nullptr) { }
 		Scene(const char* t_name, Camera* t_cam) : m_id(-1), name(t_name),
 			m_camera(t_cam) { }
 
@@ -59,6 +59,10 @@ namespace XEngine {
 		/// <param name="t_scene">New scene.</param>
 		/// <returns>Pointer to added scene (optional).</returns>
 		std::shared_ptr<Scene> add_scene(Scene t_scene) {
+			if(!initialized) {
+				m_scenes.clear();
+				initialized = true;
+			}
 			//Check if scene is already on the list.
 			if(t_scene.get_id() != -1) {
 				for(auto& s : m_scenes)
@@ -73,6 +77,11 @@ namespace XEngine {
 		}
 
 		/// <summary>
+		/// Removes all scenes.
+		/// </summary>
+		void clear_scenes() { m_scenes.clear(); }
+
+		/// <summary>
 		/// Get scene by given ID.
 		/// </summary>
 		/// <param name="t_id">ID of scene to search for.</param>
@@ -82,6 +91,8 @@ namespace XEngine {
 				return m_scenes[t_id].get();
 			return nullptr;
 		}
+
+		bool initialized = false;
 	private:
 		std::vector<std::shared_ptr<Scene>> m_scenes;
 		unsigned char m_last_id = 0;

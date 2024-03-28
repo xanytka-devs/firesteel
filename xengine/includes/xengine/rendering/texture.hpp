@@ -11,12 +11,19 @@ namespace XEngine {
 		/// Creates new texture instance.
 		/// </summary>
 		/// <param name="t_path">Path to texture.</param>
-		/// <param name="t_file">Name of file..</param>
+		/// <param name="t_file">Name of file.</param>
 		/// <param name="t_type">Texture type.</param>
 		Texture(std::string t_path, std::string t_file, aiTextureType t_type) :
 			path(t_path), file(t_file), type(t_type) {
 			generate(); load();
 		}
+
+		Texture(std::string t_path, std::string t_file, bool t_load = false)
+			: path(t_path), file(t_file), type(1), id(0) {
+			if(!t_load) return;
+			generate(); load();
+		}
+		unsigned int get_id() const { return id; }
 
 		/// <summary>
 		/// Generate texture.
@@ -36,10 +43,11 @@ namespace XEngine {
 		/// </summary>
 		void remove();
 
-		unsigned int id;
-		aiTextureType type;
+		int type;
 		std::string path;
 		std::string file;
+	private:
+		unsigned int id;
 	};
 }
 

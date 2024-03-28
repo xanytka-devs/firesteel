@@ -19,7 +19,7 @@ namespace XEngine {
 		/// </summary>
 		/// <param name="t_seed">Randomization base.</param>
 		/// <returns>Random integer (depending on seed).</returns>
-		static int get_int(int t_seed) {
+		static int get_int_s(int t_seed) {
 			srand(t_seed);
 			return rand();
 		}

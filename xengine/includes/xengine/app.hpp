@@ -43,11 +43,11 @@ namespace XEngine {
 		/// <summary>
 		/// Runs before LITERALLY everything.
 		/// </summary>
-		virtual void preinitiazile() { }
+		virtual void preinitialize() { }
 		/// <summary>
 		/// Runs after renderer initialization.
 		/// </summary>
-		virtual void initiazile() { }
+		virtual void initialize() { }
 		/// <summary>
 		/// Runs every frame.
 		/// </summary>
