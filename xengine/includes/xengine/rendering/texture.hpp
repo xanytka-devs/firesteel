@@ -4,6 +4,13 @@
 enum aiTextureType;
 
 namespace XEngine {
+	enum TextureType {
+		TT_NONE		= 0x0000,
+		TT_2D		= 0x0DE1,
+		TT_3D		= 0x806F,
+		TT_CUBEMAP	= 0x8513
+	};
+
 	class Texture {
 	public:
 		Texture();
@@ -13,12 +20,12 @@ namespace XEngine {
 		/// <param name="t_path">Path to texture.</param>
 		/// <param name="t_file">Name of file.</param>
 		/// <param name="t_type">Texture type.</param>
-		Texture(std::string t_path, std::string t_file, aiTextureType t_type) :
+		Texture(const char* t_path, const char* t_file, aiTextureType t_type) :
 			path(t_path), file(t_file), type(t_type) {
 			generate(); load();
 		}
 
-		Texture(std::string t_path, std::string t_file, bool t_load = false)
+		Texture(const char* t_path, const char* t_file, bool t_load = false)
 			: path(t_path), file(t_file), type(1), id(0) {
 			if(!t_load) return;
 			generate(); load();
@@ -41,11 +48,11 @@ namespace XEngine {
 		/// <summary>
 		/// Delete texture (cleanup).
 		/// </summary>
-		void remove();
+		void remove() const;
 
 		int type;
-		std::string path;
-		std::string file;
+		const char* path = "";
+		const char* file = "";
 	private:
 		unsigned int id;
 	};

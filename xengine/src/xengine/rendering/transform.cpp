@@ -1,5 +1,4 @@
 #include <vector>
-#include "xengine/math.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -26,7 +25,7 @@ namespace XEngine {
 		return nullptr;
 	}
 
-	Transform::Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size, std::string t_name,
+	Transform::Transform(glm::vec3 t_pos, glm::vec4 t_rot, glm::vec3 t_size, const char* t_name,
 						bool is_instance, Transform* source_instance) :
 		position(t_pos), rotation(t_rot), size(t_size), name(t_name),
 		m_is_instance(is_instance), m_source_instance(source_instance) { }
@@ -34,8 +33,8 @@ namespace XEngine {
 	void Transform::initialize(bool t_add_to_scene) {
 		for(std::shared_ptr<Component> c : m_components)
 			c->initialize();
-		m_is_initialized = true;
 		if(t_add_to_scene) Enviroment::get_current_scene()->transforms.push_back(this);
+		m_is_initialized = true;
 	}
 
 	Transform Transform::create_instance(glm::vec3 t_pos,
@@ -55,7 +54,7 @@ namespace XEngine {
 		}
 		//Create instance.
 		Transform inst = Transform(t_pos, t_rot, t_size, 
-		name + " (" + std::to_string(instances_amount()) + ")", true, this);
+		(std::string(name) + " (" + std::to_string(instances_amount()) + ")").c_str(), true, this);
 		//Duplicate components.
 		for(const auto& comp : m_components)
 			inst.add_component(comp->clone());
@@ -76,7 +75,7 @@ namespace XEngine {
 		const aiScene* scene = import.ReadFile(t_path, aiProcess_Triangulate | aiProcess_FlipUVs);
 		//Check if scene isn't corrupted.
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-			LOG_ERRR("Couldn't load model at: '" + t_path + "'.");
+			LOG_ERRR("Couldn't load model at: '", t_path.c_str(), "'.");
 			return;
 		}
 		//Start processing.
@@ -90,6 +89,7 @@ namespace XEngine {
 	}
 
 	void Transform::set_cubemap(unsigned int t_id) {
+		m_material.shader.enable();
 		m_material.shader.set_int("use_skybox", (t_id == -1) ? 0 : 1);
 		for(size_t i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].set_cubemap(t_id);
@@ -199,18 +199,18 @@ namespace XEngine {
 		for (unsigned int i = 0; i < t_mat->GetTextureCount(t_type); i++) {
 			aiString str;
 			t_mat->GetTexture(t_type, i, &str);
-			//Prevent duplicate loading.
+			//Prevent duplicates.
 			bool skip = false;
 			for (unsigned int j = 0; j < m_textures.size(); j++) {
-				if (std::strcmp(m_textures[j].path.data(), str.C_Str()) == 0) {
+				if (std::strcmp(m_textures[j].path, str.C_Str()) == 0) {
 					output.push_back(m_textures[j]);
 					skip = true;
 					break;
 				}
 			}
-			//Texture not loaded.
-			if (!skip) {
-				Texture tex(m_model_path, str.C_Str(), t_type);
+			//Textures aren't loaded.
+			if(!skip) {
+				Texture tex(m_model_path.c_str(), str.C_Str(), t_type);
 				output.push_back(tex);
 				m_textures.push_back(tex);
 			}
@@ -235,6 +235,17 @@ namespace XEngine {
 		//Render each mesh.
 		for(unsigned int i = 0; i < m_meshes.size(); i++)
 			m_meshes[i].render(t_shader);
+	}
+
+	void Transform::prerender() {
+		//Don't render if it's instance.
+		if(m_is_instance) return;
+		//Call update function in components.
+		for(std::shared_ptr<Component> c : m_components)
+			c->preupdate();
+		for(Transform inst : m_instances)
+			for(std::shared_ptr<Component> c : inst.m_components)
+				c->preupdate();
 	}
 
 	void Transform::render(bool t_update_components) {

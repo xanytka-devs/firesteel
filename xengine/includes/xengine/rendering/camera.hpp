@@ -1,7 +1,7 @@
-#ifndef OG_CAMERA_H
-#define OG_CAMERA_H
+#ifndef CAMERA_H
+#define CAMERA_H
 
-#include "xengine/math.hpp"
+#include "xengine/common.hpp"
 
 namespace XEngine {
 
@@ -54,4 +54,4 @@ namespace XEngine {
 	};
 }
 
-#endif // OG_CAMERA_H
+#endif // CAMERA_H

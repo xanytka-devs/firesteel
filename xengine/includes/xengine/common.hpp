@@ -13,6 +13,8 @@
 /// COMMON INCLUDE ///
 // Includes, that are distributed across all engine headers.
 #include <xengine/log.hpp>
+#include <xengine/math.hpp>
+#include <../external/nvtx/c/include/nvtx3/nvtx3.hpp>
 
 
 /// RENDERING ///

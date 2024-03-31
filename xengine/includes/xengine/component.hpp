@@ -49,9 +49,22 @@ namespace XEngine {
         /// <param name="t_transform">Assigned transform.</param>
 		Component(Transform& t_transform);
 
+        /// <summary>
+        /// Runs on Transform initialization.
+        /// </summary>
         virtual void initialize() { m_is_initialized = true; }
         bool is_initialized() const { return m_is_initialized; }
-		virtual void update() { }
+        /// <summary>
+        /// Runs before genera update function.
+        /// </summary>
+        virtual void preupdate() { }
+        /// <summary>
+        /// Runs every frame.
+        /// </summary>
+        virtual void update() { }
+		/// <summary>
+		/// Runs on destruction of Transform.
+		/// </summary>
 		virtual void on_destroy() { m_transform = nullptr; }
 
         /// <summary>

@@ -53,17 +53,17 @@ namespace XEngine {
 		/// Get rederer's vendor.
 		/// </summary>
 		/// <returns>Rederer's vendor.</returns>
-		static std::string get_vendor();
+		static const char* get_vendor();
 		/// <summary>
 		/// Get rederer's name.
 		/// </summary>
 		/// <returns>Rederer's name.</returns>
-		static std::string get_renderer();
+		static const char* get_renderer();
 		/// <summary>
 		/// Get rederer's version.
 		/// </summary>
 		/// <returns>Rederer's version.</returns>
-		static std::string get_version();
+		static const char* get_version();
 
 		/// <summary>
 		/// Set renderer's clear color.

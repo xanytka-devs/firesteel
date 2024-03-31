@@ -34,6 +34,9 @@ target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC stb)
 target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
 target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 
+add_subdirectory(../external/nvtx/c ${CMAKE_CURRENT_BINARY_DIR}/nvtx)
+target_link_libraries(${ENGINE_PROJECT_NAME} PUBLIC nvtx3-cpp)
+
 add_subdirectory(../external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glfw)
 

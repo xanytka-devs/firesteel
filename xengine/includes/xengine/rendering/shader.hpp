@@ -71,11 +71,17 @@ namespace XEngine {
 		/// <param name="t_val2">Second value.</param>
 		void set_2_floats(std::string t_name, float t_val1, float t_val2);
 		/// <summary>
-		/// Set 3 of shader's 'float' variable by 'Vector 2'.
+		/// Set 2 of shader's 'float' variable by 'Vector 2'.
 		/// </summary>
 		/// <param name="t_name">Name of the variable.</param>
 		/// <param name="t_vec">Value.</param>
 		void set_2_floats(std::string t_name, glm::vec2 t_vec);
+		/// <summary>
+		/// Set 2 of shader's 'float' variable by 'Vector 2'.
+		/// </summary>
+		/// <param name="t_name">Name of the variable.</param>
+		/// <param name="t_vec">Value.</param>
+		void set_2_floats(std::string t_name, vec2<float> t_vec);
 		/// <summary>
 		/// Set 3 of shader's 'float' variable.
 		/// </summary>
@@ -91,6 +97,12 @@ namespace XEngine {
 		/// <param name="t_vec">Value.</param>
 		void set_3_floats(std::string t_name, glm::vec3 t_vec);
 		/// <summary>
+		/// Set 3 of shader's 'float' variable by 'Vector 3'.
+		/// </summary>
+		/// <param name="t_name">Name of the variable.</param>
+		/// <param name="t_vec">Value.</param>
+		void set_3_floats(std::string t_name, vec3<float> t_vec);
+		/// <summary>
 		/// Set 4 of shader's 'float' variable.
 		/// </summary>
 		/// <param name="t_name">Name of the variable.</param>
@@ -105,6 +117,12 @@ namespace XEngine {
 		/// <param name="t_name">Name of the variable.</param>
 		/// <param name="t_vec">Value.</param>
 		void set_4_floats(std::string t_name, glm::vec4 t_vec);
+		/// <summary>
+		/// Set 4 of shader's 'float' variable by 'Vector 4'.
+		/// </summary>
+		/// <param name="t_name">Name of the variable.</param>
+		/// <param name="t_vec">Value.</param>
+		void set_4_floats(std::string t_name, vec4<float> t_vec);
 		/// <summary>
 		/// Set shader's 'Matrix 3' variable.
 		/// </summary>

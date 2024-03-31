@@ -18518,10 +18518,6 @@ class serializer
                     switch (error_handler)
                     {
                         case error_handler_t::strict:
-                        {
-                            JSON_THROW(type_error::create(316, concat("invalid UTF-8 byte at index ", std::to_string(i), ": 0x", hex_bytes(byte | 0)), nullptr));
-                        }
-
                         case error_handler_t::ignore:
                         case error_handler_t::replace:
                         {
@@ -18609,11 +18605,6 @@ class serializer
             // we finish reading, but do not accept: string was incomplete
             switch (error_handler)
             {
-                case error_handler_t::strict:
-                {
-                    JSON_THROW(type_error::create(316, concat("incomplete UTF-8 string; last byte: 0x", hex_bytes(static_cast<std::uint8_t>(s.back() | 0))), nullptr));
-                }
-
                 case error_handler_t::ignore:
                 {
                     // write all accepted bytes
@@ -18621,6 +18612,7 @@ class serializer
                     break;
                 }
 
+                case error_handler_t::strict:
                 case error_handler_t::replace:
                 {
                     // write all accepted bytes

@@ -16,7 +16,7 @@ namespace XEngine {
 		SetConsoleTitleA("XEngine Debug Output"); //Set cmd title.
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);//Get cmd handle.
 		SetConsoleTextAttribute(hConsole, t_mod); //Set cmd text color.
-		printf(("[" + t_type + "] ").c_str()); //Send prompt.
+		printf(t_type.c_str()); //Send prompt.
 		//Reset color and print msg.
 		SetConsoleTextAttribute(hConsole, 15);
 		printf((t_msg + "\n").c_str());

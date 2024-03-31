@@ -30,58 +30,55 @@ namespace XEngine {
             return XEngine::Mesh(XEngine::Vertex::generate_list(vertices, 6), indicies);
         }
 
-		static Mesh Cube(glm::vec3 t_size = glm::vec3(1.f), glm::vec3 t_center = glm::vec3(0.f)) {
+		static Mesh Cube() {
             //Shortcuts.
-            float x = t_size.x;
-            float y = t_size.y;
-            float z = t_size.z;
-            float c_x = t_center.x;
-            float c_y = t_center.y;
-            float c_z = t_center.z;
+            float x = 0.5f;
+            float y = 0.5f;
+            float z = 0.5f;
             //Main body.
             float vertices[] = {
-                //       POSITIONS                                  NORMAL              UVs
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    0.0f, 0.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    1.0f, 0.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    1.0f, 1.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    1.0f, 1.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    0.0f, 1.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  0.0f, -1.0f,    0.0f, 0.0f,
+                //   POSITIONS            NORMAL              UVs
+                -x, -y, -z,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+                 x, -y, -z,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+                 x,  y, -z,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+                 x,  y, -z,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+                -x,  y, -z,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+                -x, -y, -z,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-                (-1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    0.0f, 0.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    1.0f, 0.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    1.0f, 1.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    1.0f, 1.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    0.0f, 1.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  0.0f,  1.0f,    0.0f, 0.0f,
+                -x, -y,  z,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+                 x, -y,  z,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+                 x,  y,  z,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+                 x,  y,  z,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+                -x,  y,  z,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+                -x, -y,  z,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    1.0f, 0.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    1.0f, 1.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    0.0f, 1.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    0.0f, 1.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    0.0f, 0.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,    -1.0f,  0.0f,  0.0f,    1.0f, 0.0f,
+                -x,  y,  z, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+                -x,  y, -z, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+                -x, -y, -z, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+                -x, -y, -z, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+                -x, -y,  z, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+                -x,  y,  z, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    1.0f, 0.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    1.0f, 1.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    0.0f, 1.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    0.0f, 1.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    0.0f, 0.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     1.0f,  0.0f,  0.0f,    1.0f, 0.0f,
+                 x,  y,  z,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+                 x,  y, -z,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+                 x, -y, -z,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+                 x, -y, -z,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+                 x, -y,  z,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+                 x,  y,  z,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    0.0f, 1.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    1.0f, 1.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    1.0f, 0.0f,
-                ( 1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    1.0f, 0.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    0.0f, 0.0f,
-                (-1.f+c_x)*x, (-1.f+c_y)*y, (-1.f+c_z)*z,     0.0f, -1.0f,  0.0f,    0.0f, 1.0f,
+                -x, -y, -z,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+                 x, -y, -z,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+                 x, -y,  z,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+                 x, -y,  z,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+                -x, -y,  z,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+                -x, -y, -z,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    0.0f, 1.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    1.0f, 1.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    1.0f, 0.0f,
-                ( 1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    1.0f, 0.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, ( 1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    0.0f, 0.0f,
-                (-1.f+c_x)*x, ( 1.f+c_y)*y, (-1.f+c_z)*z,     0.0f,  1.0f,  0.0f,    0.0f, 1.0f
+                -x,  y, -z,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+                 x,  y, -z,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+                 x,  y,  z,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+                 x,  y,  z,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+                -x,  y,  z,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+                -x,  y, -z,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
             };
             //Indicies.
             std::vector<unsigned int> indicies(36);

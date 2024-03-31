@@ -11,6 +11,13 @@
 #include "xengine/common.hpp"
 
 struct GLFWwindow;
+struct ImFont;
+
+struct GuiFont {
+	ImFont* font;
+	const char* path;
+	float size;
+};
 
 namespace XEngine {
 
@@ -94,8 +101,7 @@ namespace XEngine {
 		static unsigned int width;
 		static unsigned int height;
 
-		float ui_font_size = 13;
-		const char* ui_font_dir = "";
+		std::vector<GuiFont> ui_fonts;
 		bool ui_need_to_reload = false;
 	private:
 		/// <summary>

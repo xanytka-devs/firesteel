@@ -19,7 +19,7 @@ namespace XEngine {
 	public:
 		Transform(glm::vec3 t_pos = glm::vec3(0.f),
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
-			glm::vec3 t_size = glm::vec3(1.f), std::string t_name = "New Object",
+			glm::vec3 t_size = glm::vec3(1.f), const char* t_name = "New Object",
 			bool is_instance = false, Transform* source_instance = nullptr);
 
 		/// <summary>
@@ -47,6 +47,10 @@ namespace XEngine {
 		/// </summary>
 		/// <returns>Absolute path to model.</returns>
 		std::string get_model_path() const { return m_model_path + m_model_file; }
+		/// <summary>
+		/// Function, that runs before general render.
+		/// </summary>
+		void prerender();
 		/// <summary>
 		/// Render transform.
 		/// </summary>
