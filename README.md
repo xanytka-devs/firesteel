@@ -1,4 +1,6 @@
 # XEngine
+[![Discord](https://img.shields.io/discord/635140721908908049?style=flat&logo=discord&logoColor=fff)](https://discord.gg/jw6YSwTFrU) [![Documentation Status](https://readthedocs.org/projects/xengine-docs/badge/?version=latest)](https://xengine-docs.readthedocs.io/ru/latest/?badge=latest)
+       [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
  Понятный, кроссплатформенный и полностью настраиваемый движок для создания игр и программ.
 
 ## Возмодности создания игр
@@ -17,6 +19,7 @@
 * [ImGUI](https://github.com/ocornut/imgui)
 * [Assimp](https://github.com/assimp/assimp)
 * [STB](https://github.com/nothings/stb)
+* [JSON](https://github.com/nlohmann/json)
 
 # Как скачать новейшую версию?
  Если вам необходимо уже готовое приложение, то качайте релизную версию в пункте [релизов](https://github.com/xanytka-devs/xengine/releases).
