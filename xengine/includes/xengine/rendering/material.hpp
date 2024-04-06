@@ -23,31 +23,31 @@ namespace XEngine {
                 for(auto& i : data.at("variables").items()) {
                     if(data.at("variables").at(i.key()).is_array()) {
                         if(data.at("variables").at(i.key()).size() == 1)
-                            shader.set_4_floats(i.key(),
+                            shader.set_4_floats("material." + i.key(),
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[0]);
                         else if (data.at("variables").at(i.key()).size() == 2)
-                            shader.set_2_floats(i.key(),
+                            shader.set_2_floats("material." + i.key(),
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[1]);
                         else if(data.at("variables").at(i.key()).size() == 3)
-                            shader.set_3_floats(i.key(),
+                            shader.set_3_floats("material." + i.key(),
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[1],
                                 data.at("variables").at(i.key())[2]);
                         else if(data.at("variables").at(i.key()).size() == 4)
-                            shader.set_4_floats(i.key(),
+                            shader.set_4_floats("material." + i.key(),
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[1],
                                 data.at("variables").at(i.key())[2],
                                 data.at("variables").at(i.key())[3]);
                     } else {
                         if(data.at("variables").at(i.key()).is_number_float())
-                            shader.set_float(i.key(), data.at("variables").value(i.key(), 0.0f));
+                            shader.set_float("material." + i.key(), data.at("variables").value(i.key(), 0.0f));
                         else if(data.at("variables").at(i.key()).is_number_integer())
-                            shader.set_int(i.key(), data.at("variables").value(i.key(), 0));
+                            shader.set_int("material." + i.key(), data.at("variables").value(i.key(), 0));
                     }
                 }
                 shader.disable();

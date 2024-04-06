@@ -32,6 +32,4 @@
 
 /// ENGINE FLAGS ///
 // Additional engine flags.
-#define XENGINE_GUI // Flag to activate/disable ImGui.
-#define XENGINE_UI  // Flag to activate/disable UI package.
-#define XENGINE_IO  // Flag to activate/disable IO package.
+#define XE_IMGUI // Flag to activate/disable ImGui.

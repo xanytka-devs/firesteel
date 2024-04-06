@@ -2,11 +2,11 @@
 #define WINDOW_H
 
 #include <string>
-#ifdef XENGINE_GUI
+#ifdef XE_IMGUI
 //Includes ImGui without need to add it to CMake project.
 #include <imgui/imgui.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
-#endif // XENGINE_GUI
+#endif // XE_IMGUI
 #include "xengine/math.hpp"
 #include "xengine/common.hpp"
 
