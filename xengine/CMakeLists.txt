@@ -21,9 +21,9 @@ add_library(${ENGINE_PROJECT_NAME} STATIC
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/../ FILES
 	${ENGINE_ALL}
 )
-get_filename_component(VULKAN_LIB_PATH ../packages/xengine.rendering.vulkan/lib/ ABSOLUTE)
+get_filename_component(VULKAN_LIB_PATH ../packages/xe.rendering.vulkan/lib/ ABSOLUTE)
 set(CMAKE_VS_SDK_LIBRARY_DIRECTORIES ${VULKAN_LIB_PATH};$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64))
-get_filename_component(VULKAN_LIB_PATH ../packages/xengine.rendering.vulkan/lib/vulkan-1.lib ABSOLUTE)
+get_filename_component(VULKAN_LIB_PATH ../packages/xe.rendering.vulkan/lib/vulkan-1.lib ABSOLUTE)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE ${VULKAN_LIB_PATH})
 
 get_filename_component(FT_LIB_PATH ../external/freetype/freetype.lib ABSOLUTE)
@@ -40,7 +40,7 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PUBLIC nvtx3-cpp)
 add_subdirectory(../external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glfw)
 
-add_subdirectory(../packages/xengine.rendering.opengl/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
+add_subdirectory(../packages/xe.rendering.opengl/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glad)
 
 add_subdirectory(../external/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)

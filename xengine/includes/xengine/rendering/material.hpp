@@ -53,6 +53,9 @@ namespace XEngine {
                 shader.disable();
             }
         }
+        void remove() {
+            shader.remove();
+        }
     };
 }
 

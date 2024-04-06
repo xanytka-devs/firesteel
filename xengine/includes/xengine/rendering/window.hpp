@@ -22,13 +22,15 @@ struct GuiFont {
 namespace XEngine {
 
 	enum WindowParam {
-		W_NONE = 0x0,
-		W_TITLE = 0x1,
-		W_CURSOR = 0x2,
-		W_VSYNC = 0x3,
-		W_OPACITY = 0x4,
-		W_POS = 0x5,
-		W_SIZE = 0x6
+		W_NONE = 0x0, //No property.
+		W_TITLE = 0x1, //Window title.
+		W_CURSOR = 0x2, //State of cursor.
+		W_VSYNC = 0x3, //Use Vertical Sync?
+		W_OPACITY = 0x4, //Window transparency.
+		W_POS = 0x5, //Position of window.
+		W_SIZE = 0x6, //Size of window.
+		W_ICON = 0x7, //Icon for window.
+		W_TITLE_BAR = 0x8 //Decorate the window's titlebar?
 	};
 
 	enum CursorState {
