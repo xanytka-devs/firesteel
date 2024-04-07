@@ -48,7 +48,7 @@ jobs:
         build-mode: ${{ matrix.build-mode }}
     - if: matrix.build-mode == 'manual'
       run: |
-        cd build
+        cd .github
         cmake ..
 
     - name: Perform CodeQL Analysis
