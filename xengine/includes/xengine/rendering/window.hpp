@@ -34,10 +34,10 @@ namespace XEngine {
 	};
 
 	enum CursorState {
-		C_NONE = 0x0,
-		C_LOCKED = 0x1,
-		C_DISABLED = 0x2,
-		C_HIDDEN = 0x3
+		C_NONE = 0x0, //No property.
+		C_LOCKED = 0x1, //Cursor is locked into window's borders.
+		C_DISABLED = 0x2, //Cursor is locked and hidden.
+		C_HIDDEN = 0x3 //Cursor is just hidden.
 	};
 
 	class Window {
@@ -89,6 +89,7 @@ namespace XEngine {
 		/// Sets up all parameters.
 		/// </summary>
 		void set_init_params();
+		void set_drop_callback(void (*t_drop_callback)(int count, const char** paths));
 
 		int get_param_i(WindowParam t_param) const;
 		bool get_param_b(WindowParam t_param) const;
@@ -106,13 +107,8 @@ namespace XEngine {
 		std::vector<GuiFont> ui_fonts;
 		bool ui_need_to_reload = false;
 	private:
-		/// <summary>
-		/// Callback for window movement.
-		/// </summary>
-		/// <param name="t_window">Window handle.</param>
-		/// <param name="t_width">Window width.</param>
-		/// <param name="t_height">Window height.</param>
 		static void framebuffer_callback(GLFWwindow* t_window, int t_width, int t_height);
+		static void m_drop_callback(GLFWwindow* t_window, int t_count, const char** t_paths);
 
 		GLFWwindow* m_window;
 		CursorState m_cur_state = CursorState::C_NONE;

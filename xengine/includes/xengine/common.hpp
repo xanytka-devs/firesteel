@@ -13,7 +13,7 @@
 /// ENGINE FLAGS ///
 // Additional engine flags.
 #define XE_IMGUI // Flag to activate/disable ImGui.
-//#define XE_NTVX3 // Flag to activate/disable NVTX3.
+#define XE_NTVX3 // Flag to activate/disable NVTX3.
 
 /// COMMON INCLUDE ///
 // Includes, that are distributed across all engine headers.

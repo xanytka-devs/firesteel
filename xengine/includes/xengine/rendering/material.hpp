@@ -10,7 +10,7 @@ using json = nlohmann::json;
 namespace XEngine {
     struct Material {
         Shader shader;
-        const char* name = "New Material";
+        std::string name = "New Material";
 
         void load(const char* t_mat_file) {
             std::ifstream f(t_mat_file);
@@ -18,6 +18,7 @@ namespace XEngine {
             shader = Shader(data.at("shaders").value("vertex", "").c_str(),
                 data.at("shaders").value("fragment", "").c_str());
             //Compatability.
+            if(data.contains("name")) name = data.value("name", "New Material");
             if(data.contains("variables")) {
                 shader.enable();
                 for(auto& i : data.at("variables").items()) {

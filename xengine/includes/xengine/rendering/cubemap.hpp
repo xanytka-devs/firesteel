@@ -51,6 +51,10 @@ namespace XEngine {
 		/// <param name="t_shader">Cubemap shader.</param>
 		void render(Shader t_shader);
 		/// <summary>
+		/// Clear cubemap's textures.
+		/// </summary>
+		void clear();
+		/// <summary>
 		/// Delete cubemap (cleanup).
 		/// </summary>
 		void remove();
