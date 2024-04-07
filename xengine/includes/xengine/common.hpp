@@ -10,11 +10,18 @@
 // it will be added to EVERY file in XEngine.
 //
 
+/// ENGINE FLAGS ///
+// Additional engine flags.
+#define XE_IMGUI // Flag to activate/disable ImGui.
+//#define XE_NTVX3 // Flag to activate/disable NVTX3.
+
 /// COMMON INCLUDE ///
 // Includes, that are distributed across all engine headers.
 #include <xengine/log.hpp>
 #include <xengine/math.hpp>
+#ifdef XE_NTVX3
 #include <../external/nvtx/c/include/nvtx3/nvtx3.hpp>
+#endif // XE_NTVX3
 
 
 /// RENDERING ///
@@ -28,8 +35,3 @@
 //#define WEB_RENDERING // TODO
 //#define PSVITA_RENDERING // TODO
 //#define ANDROID_RENDERING // TODO
-
-
-/// ENGINE FLAGS ///
-// Additional engine flags.
-#define XE_IMGUI // Flag to activate/disable ImGui.

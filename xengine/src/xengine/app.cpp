@@ -13,13 +13,17 @@ namespace XEngine {
     SceneManager Enviroment::scene_manager = SceneManager();
 
     App::App() {
+#ifdef XE_NTVX3
         nvtx3::mark("xengine_initalize");
+#endif // XE_NTVX3
         m_instance = this;
         LOG_INFO("Initializing XEngine App.");
     }
 
     App::~App() {
+#ifdef XE_NTVX3
         nvtx3::mark("xengine_shutdown");
+#endif // XE_NTVX3
         LOG_INFO("Shutting down XEngine App.");
     }
 
@@ -29,7 +33,9 @@ namespace XEngine {
 
     bool drawn_ui = true;
     void App::update_loop_call() {
+#ifdef XE_NTVX3
         nvtx3::scoped_range loop{ "update_loop_call" };
+#endif // XE_NTVX3
         //Update delta time.
         double cur_time = Renderer::get_time();
         Enviroment::delta_time = static_cast<float>(cur_time - last_frame);
@@ -72,7 +78,9 @@ namespace XEngine {
         initialize();
         update_loop_call();
         //Update loop//
+#ifdef XE_NTVX3
         nvtx3::scoped_range r{ "update_app_function" };
+#endif // XE_NTVX3
         while(!window.closing()) {
             update_loop_call();
             update_app = true;
