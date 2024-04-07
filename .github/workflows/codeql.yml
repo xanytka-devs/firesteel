@@ -47,6 +47,7 @@ jobs:
         languages: ${{ matrix.language }}
         build-mode: ${{ matrix.build-mode }}
     - if: matrix.build-mode == 'manual'
+      name: Manual CMake build
       run: |
         cd .github
         cmake ..
