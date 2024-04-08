@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(XEngine)
-set(PROJECT_NAME XEngine)
+project(Firesteel)
+set(PROJECT_NAME Firesteel)
 
-add_subdirectory(xengine)
+add_subdirectory(firesteel)
