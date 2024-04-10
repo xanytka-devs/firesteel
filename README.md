@@ -1,4 +1,5 @@
-# XEngine
+![Banner](banner.png "Firesteel banner")
+# Firesteel
 [![Discord](https://img.shields.io/discord/635140721908908049?style=flat&logo=discord&logoColor=fff)](https://discord.gg/jw6YSwTFrU) [![Documentation Status](https://readthedocs.org/projects/xengine-docs/badge/?version=latest)](https://xengine-docs.readthedocs.io/ru/latest/?badge=latest) [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)  
  Понятный, кроссплатформенный и полностью настраиваемый движок для создания игр и программ.
 
