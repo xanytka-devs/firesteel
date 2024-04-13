@@ -5,7 +5,7 @@ set(ENGINE_PROJECT_NAME firesteel)
 file(GLOB_RECURSE ENGINE_INCLUDES "*.hpp")
 file(GLOB_RECURSE ENGINE_SOURCES "*.cpp")
 file(GLOB_RECURSE ENGINE_PKG_INCLUDES "../packages/*.hpp" "../packages/*.h")
-file(GLOB_RECURSE ENGINE_PKG_SOURCES "../packages/*.cpp")
+file(GLOB_RECURSE ENGINE_PKG_SOURCES "../packages/*.cpp" "../packages/*.c")
 
 set(ENGINE_ALL
 	${ENGINE_INCLUDES}
