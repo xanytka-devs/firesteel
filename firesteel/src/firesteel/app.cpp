@@ -50,7 +50,7 @@ namespace firesteel {
         if(!drawn_ui) { window.gui_draw(); drawn_ui = true; }
         window.pull_events();
         if(drawn_ui) window.gui_update();
-        window.update();
+        window.clear();
         if(update_app) update();
         drawn_ui = false;
     }

@@ -18,7 +18,7 @@ namespace firesteel {
             shader = Shader(data.at("shaders").value("vertex", "").c_str(),
                 data.at("shaders").value("fragment", "").c_str());
             //Compatability.
-            if(data.contains("name")) name = data.value("name", "New Material");
+            name = data.value("name", "New Material");
             if(data.contains("variables")) {
                 shader.enable();
                 for(auto& i : data.at("variables").items()) {

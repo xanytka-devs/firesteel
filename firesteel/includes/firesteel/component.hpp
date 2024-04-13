@@ -25,8 +25,8 @@ namespace firesteel {
         }
 
         template <typename T>
-        void push() {
-            creators_[typeid(T)] = [=](const Component& original) -> std::shared_ptr<Component> {
+        static void push() {
+            instance().creators_[typeid(T)] = [=](const Component& original) -> std::shared_ptr<Component> {
                 return std::make_shared<T>(dynamic_cast<const T&>(original));
             };
         }

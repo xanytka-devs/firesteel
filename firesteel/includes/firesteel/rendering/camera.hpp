@@ -17,9 +17,16 @@ namespace firesteel {
 		/// Sets up camera.
 		/// </summary>
 		/// <param name="t_pos">Position of new camera.</param>
-		/// <param name="t_yaw">Yaw.</param>
-		/// <param name="t_pitch">Pitch.</param>
-		Camera(glm::vec3 t_pos, float t_yaw, float t_pitch);
+		/// <param name="t_roll">Roll (X).</param>
+		/// <param name="t_yaw">Yaw (Y).</param>
+		/// <param name="t_pitch">Pitch (Z).</param>
+		Camera(glm::vec3 t_pos, float t_roll, float t_yaw, float t_pitch);
+		/// <summary>
+		/// Sets up camera.
+		/// </summary>
+		/// <param name="t_pos">Position of new camera.</param>
+		/// <param name="t_yaw">Rotation.</param>
+		Camera(glm::vec3 t_pos, glm::vec3 t_rot);
 
 		/// <summary>
 		/// Updates camera vectors.
@@ -38,7 +45,7 @@ namespace firesteel {
 		glm::mat4 get_projection_matrix(float t_clip_size = 1);
 
 		glm::vec3 position;
-		glm::vec4 rotation;
+		glm::vec3 rotation;
 		glm::vec3 world_up;
 
 		glm::vec3 forward;

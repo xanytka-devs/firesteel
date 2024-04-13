@@ -32,7 +32,7 @@ namespace firesteel {
 		/// Loads transform.
 		/// </summary>
 		/// <param name="t_path">Path to model.</param>
-		void load_model(std::string t_path);
+		void load(std::string t_path);
 		/// <summary>
 		/// Add mesh to model.
 		/// </summary>

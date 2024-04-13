@@ -2,13 +2,12 @@
 #define WINDOW_H
 
 #include <string>
+#include "firesteel/common.hpp"
 #ifdef FS_IMGUI
 //Includes ImGui without need to add it to CMake project.
 #include <imgui/imgui.h>
 #include <imgui/misc/cpp/imgui_stdlib.h>
 #endif // FS_IMGUI
-#include "firesteel/math.hpp"
-#include "firesteel/common.hpp"
 
 struct GLFWwindow;
 struct ImFont;
@@ -52,26 +51,27 @@ namespace firesteel {
 		/// <returns>true=success;false=failure</returns>
 		bool initialize();
 		/// <summary>
-		/// Updates events and clears buffers.
+		/// Get events.
 		/// </summary>
-		void update();
 		void pull_events();
 		/// <summary>
 		/// Closes window.
 		/// </summary>
 		void close();
+		/// <summary>
+		/// Clear window's contents.
+		/// </summary>
+		void clear();
 
 		/// <summary>
 		/// Initializes ImGui.
 		/// </summary>
 		void gui_initialize();
 		/// <summary>
-		/// [HANDELED BY APP CLASS]
 		/// Updates ImGui.
 		/// </summary>
 		void gui_update();
 		/// <summary>
-		/// [HANDELED BY APP CLASS]
 		/// Draws ImGui.
 		/// </summary>
 		void gui_draw();
@@ -90,6 +90,7 @@ namespace firesteel {
 		/// </summary>
 		void set_init_params();
 		void set_drop_callback(void (*t_drop_callback)(int count, const char** paths));
+		void set_resize_callback(void (*t_resize_callback)(int t_width, int t_height));
 
 		int get_param_i(WindowParam t_param) const;
 		bool get_param_b(WindowParam t_param) const;

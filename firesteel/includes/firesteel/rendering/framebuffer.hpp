@@ -7,7 +7,6 @@ namespace firesteel {
 	public:
 		FrameBuffer();
 		FrameBuffer(glm::vec2 t_scale, bool t_drawer);
-		~FrameBuffer() { remove(); }
 
 		/// <summary>
 		/// Resize frame buffer.
@@ -31,7 +30,7 @@ namespace firesteel {
 		/// Get ID of buffer's texture.
 		/// </summary>
 		/// <returns>ID of buffer's texture.</returns>
-		unsigned int get_id() const { return m_texture_color_buffer; }
+		unsigned int get_id() const { return m_texture; }
 		/// <summary>
 		/// Draw texture to object.
 		/// </summary>
@@ -43,7 +42,7 @@ namespace firesteel {
 		/// <param name="t_screen_shader">Draw shader.</param>
 		void draw(Shader t_screen_shader);
 	private:
-		unsigned int m_fbo = 0, m_texture_color_buffer = 0, m_rbo = 0, m_vao = 0, m_vbo = 0;
+		unsigned int m_fbo = 0, m_texture = 0, m_rbo = 0, m_vao = 0, m_vbo = 0;
 	};
 }
 

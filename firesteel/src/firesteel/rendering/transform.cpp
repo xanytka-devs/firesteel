@@ -67,7 +67,7 @@ namespace firesteel {
 		return static_cast<int>(m_instances.size());
 	}
 
-	void Transform::load_model(std::string t_path) {
+	void Transform::load(std::string t_path) {
 		//Clear old model (if present).
 		remove_model();
 		//Initialize importer.
