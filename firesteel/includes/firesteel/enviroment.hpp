@@ -36,6 +36,31 @@ namespace firesteel {
 		/// <param name="t_cam">Active camera.</param>
 		void set_camera(Camera* t_cam) { m_camera = t_cam; }
 
+		/// <summary>
+		/// Get ptr to transform by ID.
+		/// </summary>
+		/// <param name="t_id">ID to search for.</param>
+		/// <returns>Ptr to Transform (or nullptr).</returns>
+		Transform* get(int t_id) { return transforms[t_id]; }
+
+		/// <summary>
+		/// Get ptr to transform by name.
+		/// <para>
+		/// [WARNING]
+		/// </para>
+		/// <para>
+		/// If scene has multiple transforms with the same name, then function will only return the first occurance.
+		/// </para>
+		/// </summary>
+		/// <param name="t_name">Name to search for.
+		/// </param>
+		/// <returns>Ptr to Transform (or nullptr).</returns>
+		Transform* get(const char* t_name) {
+			for(size_t i = 0; i < transforms.size(); i++)
+				if(transforms[i]->name == t_name) return transforms[i];
+			return nullptr;
+		}
+
 		std::vector<Transform*> transforms;
 		const char* name = "Scene";
 	private:

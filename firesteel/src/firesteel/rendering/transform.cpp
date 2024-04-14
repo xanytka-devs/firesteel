@@ -72,7 +72,8 @@ namespace firesteel {
 		remove_model();
 		//Initialize importer.
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(t_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = import.ReadFile(t_path, aiProcess_CalcTangentSpace |
+			aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 		//Check if scene isn't corrupted.
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			LOG_ERRR("Couldn't load model at: '", t_path.c_str(), "'.");

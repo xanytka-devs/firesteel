@@ -16,10 +16,15 @@ namespace firesteel {
 		/// <param name="t_vert_num">Number of vertices.</param>
 		/// <returns>List of vertexes.</returns>
 		static std::vector<struct Vertex> generate_list(float* t_vertices, int t_vert_num);
+		/// <summary>
+		/// Calculate tangent vectors for each face.
+		/// </summary>
+		void Vertex::calc_tan_vectors(std::vector<Vertex>& t_list, std::vector<unsigned int>& t_indices);
 
 		glm::vec3 pos;
 		glm::vec3 normal;
 		glm::vec2 uv;
+		glm::vec3 tangent;
 	};
 	typedef struct Vertex Vertex;
 

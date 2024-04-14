@@ -8,6 +8,9 @@
 using json = nlohmann::json;
 
 namespace firesteel {
+    /// <summary>
+    /// Basic class for shader storage & loading.
+    /// </summary>
     struct Material {
         Shader shader;
         std::string name = "New Material";
@@ -15,8 +18,9 @@ namespace firesteel {
         void load(const char* t_mat_file) {
             std::ifstream f(t_mat_file);
             json data = json::parse(f);
-            shader = Shader(data.at("shaders").value("vertex", "").c_str(),
-                data.at("shaders").value("fragment", "").c_str());
+            std::string vert = data.at("shaders").value("vertex", "");
+            std::string frag = data.at("shaders").value("fragment", "");
+            shader = Shader(vert.c_str(), frag.c_str());
             //Compatability.
             name = data.value("name", "New Material");
             if(data.contains("variables")) {
@@ -29,7 +33,7 @@ namespace firesteel {
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[0]);
-                        else if (data.at("variables").at(i.key()).size() == 2)
+                        else if(data.at("variables").at(i.key()).size() == 2)
                             shader.set_2_floats("material." + i.key(),
                                 data.at("variables").at(i.key())[0],
                                 data.at("variables").at(i.key())[1]);
@@ -47,7 +51,7 @@ namespace firesteel {
                     } else {
                         if(data.at("variables").at(i.key()).is_number_float())
                             shader.set_float("material." + i.key(), data.at("variables").value(i.key(), 0.0f));
-                        else if(data.at("variables").at(i.key()).is_number_integer())
+                        else if(data.at("variables").at(i.key()).is_number_integer()) 
                             shader.set_int("material." + i.key(), data.at("variables").value(i.key(), 0));
                     }
                 }
