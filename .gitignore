@@ -21,7 +21,6 @@ out
 build/*
 !build/*/
 build/*/*
-!build/CMakeCache.txt
 testing
 packages
 

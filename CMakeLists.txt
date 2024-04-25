@@ -3,4 +3,3 @@ project(Firesteel)
 set(PROJECT_NAME Firesteel)
 
 add_subdirectory(firesteel)
-add_subdirectory(slide_game) 
