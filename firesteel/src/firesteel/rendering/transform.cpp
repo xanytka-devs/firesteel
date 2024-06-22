@@ -143,16 +143,30 @@ namespace firesteel {
 				t_mesh->mVertices[i].z
 			);
 			//Normals.
-			vertex.normal = glm::vec3(
-				t_mesh->mNormals[i].x,
-				t_mesh->mNormals[i].y,
-				t_mesh->mNormals[i].z
-			);
-			//Textures.
+			if(t_mesh->HasNormals()) {
+				vertex.normal = glm::vec3(
+					t_mesh->mNormals[i].x,
+					t_mesh->mNormals[i].y,
+					t_mesh->mNormals[i].z
+				);
+			}
 			if(t_mesh->mTextureCoords[0]) {
+				//Textures.
 				vertex.uv = glm::vec2(
 					t_mesh->mTextureCoords[0][i].x,
 					t_mesh->mTextureCoords[0][i].y
+				);
+				//Tangent.
+				vertex.tangent = glm::vec3(
+					t_mesh->mTangents[i].x,
+					t_mesh->mTangents[i].y,
+					t_mesh->mTangents[i].z
+				);
+				//Bitangent.
+				vertex.bitangent = glm::vec3(
+					t_mesh->mBitangents[i].x,
+					t_mesh->mBitangents[i].y,
+					t_mesh->mBitangents[i].z
 				);
 			} else vertex.uv = glm::vec2(0.f);
 			vertices.push_back(vertex);
@@ -174,14 +188,17 @@ namespace firesteel {
 				aiColor4D def(1.0f);
 				aiColor4D spec(1.0f);
 				aiColor4D emis(1.0f);
+				aiColor4D height(1.0f);
 				aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &def);
 				aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &spec);
 				aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emis);
+				aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &height);
 				//Output.
 				glm::vec4 def_v = glm::vec4(def.r, def.g, def.b, def.a);
 				glm::vec4 spec_v = glm::vec4(spec.r, spec.g, spec.b, spec.a);
 				glm::vec4 emis_v = glm::vec4(emis.r, emis.g, emis.b, emis.a);
-				return Mesh(vertices, indices, def_v, spec_v, emis_v);
+				glm::vec4 height_v = glm::vec4(height.r, height.g, height.b, height.a);
+				return Mesh(vertices, indices, def_v, spec_v, emis_v, height_v);
 			}
 			//Albedo.
 			std::vector<Texture> diff_maps = load_textures(material, aiTextureType_DIFFUSE);
@@ -189,6 +206,12 @@ namespace firesteel {
 			//Specular.
 			std::vector<Texture> spec_maps = load_textures(material, aiTextureType_SPECULAR);
 			textures.insert(textures.end(), spec_maps.begin(), spec_maps.end());
+			//Normal.
+			std::vector<Texture> norm_maps = load_textures(material, aiTextureType_HEIGHT);
+			textures.insert(textures.end(), norm_maps.begin(), norm_maps.end());
+			//Height.
+			std::vector<Texture> height_maps = load_textures(material, aiTextureType_AMBIENT);
+			textures.insert(textures.end(), height_maps.begin(), height_maps.end());
 		}
 		//Output.
 		return Mesh(vertices, indices, textures);
@@ -254,6 +277,8 @@ namespace firesteel {
 		if(m_is_instance) return;
 		//Rener all instances.
 		m_material.shader.enable();
+		m_material.shader.set_float("time", Renderer::get_time());
+		m_material.shader.set_float("delta_time", Enviroment::delta_time);
 		if(Enviroment::get_current_scene()->get_camera() != nullptr) {
 			m_material.shader.set_mat4("projection", Enviroment::get_current_scene()->get_camera()->get_projection_matrix());
 			m_material.shader.set_mat4("view", Enviroment::get_current_scene()->get_camera()->get_view_matrix());

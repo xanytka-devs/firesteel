@@ -14,14 +14,17 @@ namespace firesteel {
     struct Material {
         Shader shader;
         std::string name = "New Material";
+        bool usable = true;
 
         void load(const char* t_mat_file) {
+            if(!std::filesystem::exists(t_mat_file)) { usable = false; return; }
             std::ifstream f(t_mat_file);
             json data = json::parse(f);
             std::string vert = data.at("shaders").value("vertex", "");
             std::string frag = data.at("shaders").value("fragment", "");
-            shader = Shader(vert.c_str(), frag.c_str());
-            //Compatability.
+            std::string geom = data.at("shaders").value("geometry", "");
+            if(geom != "") shader = Shader(vert.c_str(), frag.c_str(), geom.c_str());
+            else shader = Shader(vert.c_str(), frag.c_str());
             name = data.value("name", "New Material");
             if(data.contains("variables")) {
                 shader.enable();

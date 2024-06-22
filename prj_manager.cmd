@@ -1,6 +1,6 @@
 @echo off
 rem Get project info.
-echo XEngine project generator
+echo Firesteel project generator
 set /p prj_name=Project name (without spaces): 
 rem Ask for CMake usage.
 set /p use_cmake=Use CMake (y/n): 
@@ -15,9 +15,9 @@ mkdir "%cd%\%prj_name%\src"
 rem Generate main.cpp file.
 set cpp_file="%cd%\%prj_name%\src\main.cpp"
 echo #include ^<memory^>>>%cpp_file%
-echo #include ^<xengine/app.hpp^>>>%cpp_file%
+echo #include ^<firesteel/app.hpp^>>>%cpp_file%
 echo.>>%cpp_file%
-echo using namespace XEngine;>>%cpp_file%
+echo using namespace firesteel;>>%cpp_file%
 echo class %prj_name% : public App { };>>%cpp_file%
 echo.>>%cpp_file%
 echo int main() { >>%cpp_file%
@@ -46,11 +46,11 @@ echo add_executable(${%prj_name%_PROJECT_NAME}>>%cmake_file%
 echo 	${%prj_name%_SOURCES}>>%cmake_file%
 echo )>>%cmake_file%
 echo.>>%cmake_file%
-echo target_link_libraries(${%prj_name%_PROJECT_NAME} xengine)>>%cmake_file%
+echo target_link_libraries(${%prj_name%_PROJECT_NAME} firesteel)>>%cmake_file%
 echo target_compile_features(${%prj_name%_PROJECT_NAME} PUBLIC cxx_std_17)>>%cmake_file%
 echo target_include_directories(${%prj_name%_PROJECT_NAME} PRIVATE src)>>%cmake_file%
 echo.>>%cmake_file%
-echo set_target_properties(%prj_name% PROPERTIES FOLDER "XEngine")>>%cmake_file%
+echo set_target_properties(%prj_name% PROPERTIES FOLDER "Firesteel")>>%cmake_file%
 rem Add new project to general CMakeLists.txt file.
 echo add_subdirectory(%prj_name%) >> CMakeLists.txt
 rem Build with CMake.

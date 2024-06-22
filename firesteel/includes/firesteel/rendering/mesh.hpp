@@ -9,6 +9,7 @@
 
 namespace firesteel {
 	struct Vertex {
+#define MAX_BONE_INFLUENCE 4
 		/// <summary>
 		/// Generates list of vertexes from floats.
 		/// </summary>
@@ -25,6 +26,9 @@ namespace firesteel {
 		glm::vec3 normal;
 		glm::vec2 uv;
 		glm::vec3 tangent;
+		glm::vec3 bitangent;
+		int bone_ids[MAX_BONE_INFLUENCE];
+		float bone_weights[MAX_BONE_INFLUENCE];
 	};
 	typedef struct Vertex Vertex;
 
@@ -33,7 +37,7 @@ namespace firesteel {
 		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices,
 			std::vector<Texture> t_textures = {});
 		Mesh(std::vector<Vertex> t_vertices, std::vector<unsigned int> t_indices,
-			glm::vec4 t_diffuse, glm::vec4 t_specular, glm::vec4 t_emis);
+			glm::vec4 t_diffuse, glm::vec4 t_specular, glm::vec4 t_emis, glm::vec4 t_height);
 
 		/// <summary>
 		/// Render mesh.
@@ -57,6 +61,7 @@ namespace firesteel {
 		glm::vec4 diffuse{ 1.f };
 		glm::vec4 specular{ 0.f };
 		glm::vec4 emission{ 0.f };
+		glm::vec4 height{ 0.f };
 	private:
 		bool m_no_textures = false;
 		unsigned int vbo, ebo;

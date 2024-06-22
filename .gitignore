@@ -21,8 +21,9 @@ out
 build/*
 !build/*/
 build/*/*
-testing
-packages
+packages/*
+!packages/INFO
+!packages/CMakeLists.txt
 
 # Prerequisites
 *.d

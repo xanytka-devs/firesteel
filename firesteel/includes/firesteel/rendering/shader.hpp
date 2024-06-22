@@ -20,6 +20,14 @@ namespace firesteel {
 		/// <param name="t_load">Load shader as it's initialized.</param>
 		Shader(const char* t_vert_shader_path, const char* t_frag_shader_path, bool t_load = true);
 		/// <summary>
+		/// Creates new program.
+		/// </summary>
+		/// <param name="t_vert_shader_path">Vertex shader path.</param>
+		/// <param name="t_frag_shader_path">Fragment shader path.</param>
+		/// <param name="t_geom_shader_path">Geometry shader path.</param>
+		/// <param name="t_load">Load shader as it's initialized.</param>
+		Shader(const char* t_vert_shader_path, const char* t_frag_shader_path, const char* t_geom_shader_path, bool t_load = true);
+		/// <summary>
 		/// Set program as current.
 		/// </summary>
 		void enable();
@@ -32,7 +40,8 @@ namespace firesteel {
 		/// </summary>
 		/// <param name="t_vert_shader_path">Vertex shader path.</param>
 		/// <param name="t_frag_shader_path">Fragment shader path.</param>
-		void generate(const char* t_vert_shader_path, const char* t_frag_shader_path);
+		/// <param name="t_geom_shader_path">Geometry shader path.</param>
+		void generate(const char* t_vert_shader_path, const char* t_frag_shader_path, const char* t_geom_shader_path=nullptr);
 		/// <summary>
 		/// Compilies shader.
 		/// </summary>
