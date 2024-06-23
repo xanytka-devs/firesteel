@@ -50,7 +50,7 @@ jobs:
       name: Manual CMake build
       run: |
         cd .github
-        cmake -G %1 -DFS_GITHUB_BUILD=ON ..
+        cmake -DFS_GITHUB_BUILD=ON ..
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
