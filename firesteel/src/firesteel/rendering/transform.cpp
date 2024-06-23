@@ -72,8 +72,8 @@ namespace firesteel {
 		remove_model();
 		//Initialize importer.
 		Assimp::Importer import;
-		const aiScene* scene = import.ReadFile(t_path, aiProcess_CalcTangentSpace |
-			aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+		const aiScene* scene = import.ReadFile(t_path, aiProcess_Triangulate
+			| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 		//Check if scene isn't corrupted.
 		if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 			LOG_ERRR("Couldn't load model at: '", t_path.c_str(), "'.");
@@ -277,7 +277,7 @@ namespace firesteel {
 		if(m_is_instance) return;
 		//Rener all instances.
 		m_material.shader.enable();
-		m_material.shader.set_float("time", Renderer::get_time());
+		m_material.shader.set_float("time", static_cast<float>(Renderer::get_time()));
 		m_material.shader.set_float("delta_time", Enviroment::delta_time);
 		if(Enviroment::get_current_scene()->get_camera() != nullptr) {
 			m_material.shader.set_mat4("projection", Enviroment::get_current_scene()->get_camera()->get_projection_matrix());

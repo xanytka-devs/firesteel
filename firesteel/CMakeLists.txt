@@ -29,7 +29,7 @@ target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
 target_compile_features(${ENGINE_PROJECT_NAME} PUBLIC cxx_std_17)
 
 #GitHub Build safe switch.
-if(!FS_GITHUB_BUILD)
+if(NOT FS_GITHUB_BUILD)
 	get_filename_component(VULKAN_LIB_PATH ../packages/fs.rendering.vulkan/lib/ ABSOLUTE)
 	set(CMAKE_VS_SDK_LIBRARY_DIRECTORIES ${VULKAN_LIB_PATH};$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64))
 	get_filename_component(VULKAN_LIB_PATH ../packages/fs.rendering.vulkan/lib/vulkan-1.lib ABSOLUTE)

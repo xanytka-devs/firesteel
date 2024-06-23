@@ -1,12 +1,16 @@
 #ifndef OG_TRANSFORM_H
 #define OG_TRANSFORM_H
 
+#include <bitset>
 #include "firesteel/log.hpp"
 #include "firesteel/component.hpp"
 #include "firesteel/rendering/mesh.hpp"
 #include "firesteel/rendering/material.hpp"
 
 constexpr auto MAX_INSTANCES = 128;
+typedef unsigned long long TransformID;
+const int MAX_COMPONENTS = 32;
+typedef std::bitset<MAX_COMPONENTS> ComponentMask;
 
 struct aiNode;
 struct aiMesh;
@@ -78,7 +82,7 @@ namespace firesteel {
 		int instances_amount();
 		bool is_instance() const { return m_is_instance; }
 
-		Transform operator =(Transform t) {
+		Transform operator=(Transform t) {
 			position = t.position;
 			rotation = t.rotation;
 			size = t.size;
