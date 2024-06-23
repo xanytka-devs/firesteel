@@ -1,2 +1,2 @@
-Sphinx>=5,<6
+Sphinx>=7.2,<7.4
 sphinxawesome-theme
