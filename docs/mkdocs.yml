@@ -1,5 +1,5 @@
 site_name: Firesteel
-docs_dir: 'docs/source/'
+docs_dir: 'source/'
 theme:
   name: null
   custom_dir: 'mkdocs_windmill_dark/'
@@ -14,10 +14,10 @@ plugins:
             docstring_style: sphinx
 nav:
   - Туториалы:
-    - Основа: 'tutorials/home.md'
-    - Пакеты: 'tutorials/packets.md'
-    - Первый треугольник: 'tutorials/triangle.md'
+    - Основа: 'source/tutorials/home.md'
+    - Пакеты: 'source/tutorials/packets.md'
+    - Первый треугольник: 'source/tutorials/triangle.md'
 markdown_extensions:
   - markdown_include.include:
-      base_path: 'docs/source/'
+      base_path: 'source/'
   - admonition
