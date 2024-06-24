@@ -94,7 +94,7 @@ class HelloWorldApp : public App {
 ## Завершим всё это тем, что добавим шейдер для треугольника.
 Построим проект (не запустим). В папке с построенным проектом создадим папку **res** и добавим в неё файлы **core.vert** и **core.frag**.
 ### Содержимое core.vert:
-``` glsl
+``` c
 #version 330 core
 in vec3 aPos;
 out vec3 pos;
@@ -105,7 +105,7 @@ void main() {
 }
 ```
 ### Содержимое core.frag:
-``` glsl
+``` c
 #version 330 core
 out vec4 FragColor;
 in vec3 pos;
@@ -118,5 +118,5 @@ void main() {
 
 # Заключение
 После всех этих действий вы будете иметь окно с треугольником, какой обычно создают как "Hello World" на OpenGL или других графических библиотеках.  
-Итоговый код: https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo  
+Итоговый код: [https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo](https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo)  
 [<- Создание первого проекта](https://firesteel.readthedocs.io/ru/latest/tutorials/home.html) | [Продолжение... ->](https://firesteel.readthedocs.io/ru/latest/tutorials/home.html)
