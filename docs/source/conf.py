@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "Firesteel Docs"
+project = "Firesteel"
 copyright = "2023, Xanytka Devs"
 author = "Xanytka Devs"
 
