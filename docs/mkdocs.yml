@@ -1,4 +1,5 @@
 site_name: Firesteel
+docs_dir: 'docs/source/'
 theme:
   name: null
   custom_dir: 'mkdocs_windmill_dark/'
