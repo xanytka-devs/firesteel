@@ -25,7 +25,7 @@ namespace firesteel {
             };
             //Indicies.
             std::vector<unsigned int> indicies(6);
-            for (unsigned int i = 0; i < 6; i++)
+            for(unsigned int i = 0; i < 6; i++)
                 indicies[i] = i;
             return firesteel::Mesh(firesteel::Vertex::generate_list(vertices, 6), indicies);
         }
@@ -82,7 +82,7 @@ namespace firesteel {
             };
             //Indicies.
             std::vector<unsigned int> indicies(36);
-            for (unsigned int i = 0; i < 36; i++)
+            for(unsigned int i = 0; i < 36; i++)
                 indicies[i] = i;
             return firesteel::Mesh(firesteel::Vertex::generate_list(vertices, 36), indicies);
 		}

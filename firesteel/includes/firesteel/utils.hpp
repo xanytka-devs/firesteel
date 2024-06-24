@@ -20,7 +20,7 @@ namespace firesteel {
 		std::string output = "";
 		//Try to read file.
 		file.open(t_path);
-		if (file.is_open()) {
+		if(file.is_open()) {
 			buffer << file.rdbuf();
 			output = buffer.str();
 		}

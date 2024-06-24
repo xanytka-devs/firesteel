@@ -1,10 +1,10 @@
-#include <vector>
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <vector>
 
-#include "firesteel/rendering/transform.hpp"
 #include "firesteel/enviroment.hpp"
+#include "firesteel/rendering/transform.hpp"
 
 namespace firesteel {
 	Component::Component() : m_transform(nullptr) { }
@@ -19,7 +19,7 @@ namespace firesteel {
 
 	std::shared_ptr<Component> ComponentRegistry::component_by_type(const Component& original) {
 		auto it = creators_.find(typeid(original));
-		if (it != creators_.end()) {
+		if(it != creators_.end()) {
 			return it->second(original);
 		}
 		return nullptr;
@@ -63,10 +63,6 @@ namespace firesteel {
 		return inst;
 	}
 
-	int Transform::instances_amount() {
-		return static_cast<int>(m_instances.size());
-	}
-
 	void Transform::load(std::string t_path) {
 		//Clear old model (if present).
 		remove_model();
@@ -85,36 +81,16 @@ namespace firesteel {
 		process_node(scene->mRootNode, scene);
 	}
 
-	void Transform::set_material(Material* t_mat) {
-		m_material = *t_mat;
-	}
-
 	void Transform::set_cubemap(unsigned int t_id) {
 		m_material.shader.enable();
 		m_material.shader.set_int("use_skybox", (t_id == -1) ? 0 : 1);
-		for(size_t i = 0; i < m_meshes.size(); i++)
-			m_meshes[i].set_cubemap(t_id);
-	}
-
-	Material Transform::get_material() const {
-		return m_material;
+		m_meshes[0].set_cubemap(t_id);
 	}
 
 	void Transform::add_component(std::shared_ptr<Component> t_comp, bool t_init) {
 		t_comp->set_transform(this);
 		m_components.push_back(t_comp);
 		if(t_init) t_comp->initialize();
-	}
-
-	int Transform::components_amount() {
-		return static_cast<int>(m_components.size());
-	}
-
-	Component Transform::get_component(int t_id) {
-		//Checks if ID is valid.
-		if(t_id < static_cast<int>(m_components.size())) return *(m_components[t_id].get());
-		//If it's not - return empty component.
-		return Component();
 	}
 
 	void Transform::process_node(aiNode* t_node, const aiScene* t_scene) {
@@ -201,17 +177,21 @@ namespace firesteel {
 				return Mesh(vertices, indices, def_v, spec_v, emis_v, height_v);
 			}
 			//Albedo.
-			std::vector<Texture> diff_maps = load_textures(material, aiTextureType_DIFFUSE);
-			textures.insert(textures.end(), diff_maps.begin(), diff_maps.end());
+			std::vector<Texture> texs = load_textures(material, aiTextureType_DIFFUSE);
+			textures.insert(textures.end(), texs.begin(), texs.end());
+			texs.clear();
 			//Specular.
-			std::vector<Texture> spec_maps = load_textures(material, aiTextureType_SPECULAR);
-			textures.insert(textures.end(), spec_maps.begin(), spec_maps.end());
+			texs = load_textures(material, aiTextureType_SPECULAR);
+			textures.insert(textures.end(), texs.begin(), texs.end());
+			texs.clear();
 			//Normal.
-			std::vector<Texture> norm_maps = load_textures(material, aiTextureType_HEIGHT);
-			textures.insert(textures.end(), norm_maps.begin(), norm_maps.end());
+			texs = load_textures(material, aiTextureType_HEIGHT);
+			textures.insert(textures.end(), texs.begin(), texs.end());
+			texs.clear();
 			//Height.
-			std::vector<Texture> height_maps = load_textures(material, aiTextureType_AMBIENT);
-			textures.insert(textures.end(), height_maps.begin(), height_maps.end());
+			texs = load_textures(material, aiTextureType_AMBIENT);
+			textures.insert(textures.end(), texs.begin(), texs.end());
+			texs.clear();
 		}
 		//Output.
 		return Mesh(vertices, indices, textures);
@@ -220,13 +200,13 @@ namespace firesteel {
 	std::vector<Texture> Transform::load_textures(aiMaterial* t_mat, aiTextureType t_type) {
 		std::vector<Texture> output;
 		//Check each texture.
-		for (unsigned int i = 0; i < t_mat->GetTextureCount(t_type); i++) {
+		for(unsigned int i = 0; i < t_mat->GetTextureCount(t_type); i++) {
 			aiString str;
 			t_mat->GetTexture(t_type, i, &str);
 			//Prevent duplicates.
 			bool skip = false;
-			for (unsigned int j = 0; j < m_textures.size(); j++) {
-				if (std::strcmp(m_textures[j].path, str.C_Str()) == 0) {
+			for(unsigned int j = 0; j < m_textures.size(); j++) {
+				if(std::strcmp(m_textures[j].path, str.C_Str()) == 0) {
 					output.push_back(m_textures[j]);
 					skip = true;
 					break;

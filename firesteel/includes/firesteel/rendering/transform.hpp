@@ -1,11 +1,11 @@
 #ifndef OG_TRANSFORM_H
 #define OG_TRANSFORM_H
 
-#include <bitset>
-#include "firesteel/log.hpp"
 #include "firesteel/component.hpp"
-#include "firesteel/rendering/mesh.hpp"
+#include "firesteel/log.hpp"
 #include "firesteel/rendering/material.hpp"
+#include "firesteel/rendering/mesh.hpp"
+#include <bitset>
 
 constexpr auto MAX_INSTANCES = 128;
 typedef unsigned long long TransformID;
@@ -20,67 +20,13 @@ struct aiMaterial;
 namespace firesteel {
 
 	class Transform {
+
+		/* Basic functions */
 	public:
 		Transform(glm::vec3 t_pos = glm::vec3(0.f),
 			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
 			glm::vec3 t_size = glm::vec3(1.f), const char* t_name = "New Object",
 			bool is_instance = false, Transform* source_instance = nullptr);
-
-		/// <summary>
-		/// Initializes transform.
-		/// </summary>
-		/// <param name="t_add_to_scene">Add to scene?</param>
-		void initialize(bool t_add_to_scene = true);
-		bool is_initialized() const { return m_is_initialized; }
-		/// <summary>
-		/// Loads transform.
-		/// </summary>
-		/// <param name="t_path">Path to model.</param>
-		void load(std::string t_path);
-		/// <summary>
-		/// Add mesh to model.
-		/// </summary>
-		/// <param name="t_mesh">Additional mesh.</param>
-		void add_mesh(Mesh t_mesh) { m_meshes.push_back(t_mesh); }
-		/// <summary>
-		/// Removes current model (if present).
-		/// </summary>
-		void remove_model();
-		/// <summary>
-		/// Returns full path to model.
-		/// </summary>
-		/// <returns>Absolute path to model.</returns>
-		std::string get_model_path() const { return m_model_path + m_model_file; }
-		/// <summary>
-		/// Function, that runs before general render.
-		/// </summary>
-		void prerender();
-		/// <summary>
-		/// Render transform.
-		/// </summary>
-		/// <param name="t_update_components">Update components?</param>
-		void render(bool t_update_components = true);
-		/// <summary>
-		/// Deletes transform (cleanup).
-		/// </summary>
-		void remove();
-
-		/// <summary>
-		/// Creates instance of this object.
-		/// </summary>
-		/// <param name="t_pos">New position.</param>
-		/// <param name="t_rot">New rotation.</param>
-		/// <param name="t_size">New size.</param>
-		/// <returns>Instances transform.</returns>
-		Transform create_instance(glm::vec3 t_pos = glm::vec3(0.f),
-			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
-			glm::vec3 t_size = glm::vec3(1.f));
-		/// <summary>
-		/// Returns amount of instances.
-		/// </summary>
-		/// <returns>Amount of instances.</returns>
-		int instances_amount();
-		bool is_instance() const { return m_is_instance; }
 
 		Transform operator=(Transform t) {
 			position = t.position;
@@ -101,11 +47,57 @@ namespace firesteel {
 			return *this;
 		}
 
+		/* Callback functions (for meshes) */
+	public:
+		/// <summary>
+		/// Initializes transform.
+		/// </summary>
+		/// <param name="t_add_to_scene">Add to scene?</param>
+		void initialize(bool t_add_to_scene = true);
+		bool is_initialized() const { return m_is_initialized; }
+		/// <summary>
+		/// Function, that runs before general render.
+		/// </summary>
+		void prerender();
+		/// <summary>
+		/// Render transform.
+		/// </summary>
+		/// <param name="t_update_components">Update components?</param>
+		void render(bool t_update_components = true);
+		/// <summary>
+		/// Deletes transform (cleanup).
+		/// </summary>
+		void remove();
+
+		/* Model & Mesh manipulations */
+	public:
+		/// <summary>
+		/// Loads transform.
+		/// </summary>
+		/// <param name="t_path">Path to model.</param>
+		void load(std::string t_path);
+		/// <summary>
+		/// Add mesh to model.
+		/// </summary>
+		/// <param name="t_mesh">Additional mesh.</param>
+		void add_mesh(Mesh t_mesh) { m_meshes.push_back(t_mesh); }
+		/// <summary>
+		/// Removes current model (if present).
+		/// </summary>
+		void remove_model();
+		/// <summary>
+		/// Returns full path to model.
+		/// </summary>
+		/// <returns>Absolute path to model.</returns>
+		std::string get_model_path() const { return m_model_path + m_model_file; }
+
+		/* Material & cubemap manipulations */
+	public:
 		/// <summary>
 		/// Set material.
 		/// </summary>
 		/// <param name="t_mat">New material.</param>
-		void set_material(Material* t_mat);
+		void set_material(Material* t_mat) { m_material = *t_mat; }
 		/// <summary>
 		/// Set material's cubemap ID.
 		/// </summary>
@@ -115,8 +107,29 @@ namespace firesteel {
 		/// Gets material.
 		/// </summary>
 		/// <returns>Material.</returns>
-		Material get_material() const;
+		Material get_material() const { return m_material; }
 
+		/* Instancing */
+	public:
+		/// <summary>
+		/// Creates instance of this object.
+		/// </summary>
+		/// <param name="t_pos">New position.</param>
+		/// <param name="t_rot">New rotation.</param>
+		/// <param name="t_size">New size.</param>
+		/// <returns>Instances transform.</returns>
+		Transform create_instance(glm::vec3 t_pos = glm::vec3(0.f),
+			glm::vec4 t_rot = glm::vec4(glm::vec3(0.f), 1.f),
+			glm::vec3 t_size = glm::vec3(1.f));
+		/// <summary>
+		/// Returns amount of instances.
+		/// </summary>
+		/// <returns>Amount of instances.</returns>
+		int instances_amount() { return static_cast<int>(m_instances.size()); }
+		bool is_instance() const { return m_is_instance; }
+
+		/* Component functions */
+	public:
 		/// <summary>
 		/// Add new component by class.
 		/// </summary>
@@ -127,7 +140,7 @@ namespace firesteel {
 		template <typename T, typename... Args>
 		std::shared_ptr<T> add_component(Args&&... args) {
 			//Check if valid.
-			if (!std::is_base_of<Component, T>::value) {
+			if(!std::is_base_of<Component, T>::value) {
 				LOG_WARN("T must be derived from Component.");
 				return std::make_shared<T>();
 			}
@@ -147,13 +160,18 @@ namespace firesteel {
 		/// Gets components amount.
 		/// </summary>
 		/// <returns>Components amount.</returns>
-		int components_amount();
+		int components_amount() { return static_cast<int>(m_components.size()); }
 		/// <summary>
 		/// Gets component by local ID (index).
 		/// </summary>
 		/// <param name="t_id">Index of component.</param>
 		/// <returns>Component (if present).</returns>
-		Component get_component(int t_id);
+		Component get_component(int t_id) {
+			//Checks if ID is valid.
+			if(t_id < static_cast<int>(m_components.size())) return *(m_components[t_id].get());
+			//If it's not - return empty component.
+			return Component();
+		}
 		/// <summary>
 		/// Get component by class.
 		/// </summary>
@@ -163,13 +181,13 @@ namespace firesteel {
 		T& get_component() const {
 			static T default_component;
 			//Check if valid.
-			if (!std::is_base_of<Component, T>::value) {
+			if(!std::is_base_of<Component, T>::value) {
 				LOG_WARN("T must be derived from Component.");
 				return default_component;
 			}
 			//Search for component.
-			for (const auto& component : m_components)
-				if (typeid(*component) == typeid(T))
+			for(const auto& component : m_components)
+				if(typeid(*component) == typeid(T))
 					return dynamic_cast<T&>(*(component.get()));
 			//If component not found - return empty constructor.
 			return default_component;
@@ -180,25 +198,32 @@ namespace firesteel {
 		/// <returns>List of components.</returns>
 		std::vector<std::shared_ptr<Component>>* get_component_list() { return &m_components; }
 
+		/* Built-in orientation component */
+	public:
 		glm::vec3 position;
 		glm::vec4 rotation;
 		glm::vec3 size;
 		std::string name;
+
+		/* Instance and component related */
 	protected:
-		//Global attributes.
 		std::vector<Transform> m_instances;
-		std::vector<std::shared_ptr<Component>> m_components;
-		//Local attributes.
-		bool m_is_initialized = false;
-		bool m_is_instance;
 		Transform* m_source_instance;
+		std::vector<std::shared_ptr<Component>> m_components;
+		bool m_is_instance;
+		bool m_is_initialized = false;
+
+		/* Mesh and texture related */
+	protected:
 		bool m_no_textures = false;
 		Material m_material;
 		std::vector<Mesh> m_meshes;
 		std::string m_model_path;
 		std::string m_model_file;
 		std::vector<Texture> m_textures;
-		//Functions.
+
+		/* Mesh functions */
+	protected:
 		/// <summary>
 		/// Processes model node.
 		/// </summary>

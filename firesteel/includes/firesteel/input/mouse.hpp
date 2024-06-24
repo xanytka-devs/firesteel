@@ -15,7 +15,7 @@ public:
 		m_x = t_x;
 		m_y = t_y;
 		//Check if first mouse button.
-		if (m_first_move) {
+		if(m_first_move) {
 			m_old_x = t_x;
 			m_old_y = t_y;
 			m_first_move = false;
@@ -36,8 +36,8 @@ public:
 	/// <param name="t_mods">Modifiers.</param>
 	static void button_callback(GLFWwindow* t_window, int t_button, int t_action, int t_mods) {
 		//Check action.
-		if (t_action != GLFW_RELEASE) {
-			if (!m_buttons[t_button]) m_buttons[t_button] = true;
+		if(t_action != GLFW_RELEASE) {
+			if(!m_buttons[t_button]) m_buttons[t_button] = true;
 		}
 		else m_buttons[t_button] = false;
 		//Detect if button is pressed continuously.

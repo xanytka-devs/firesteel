@@ -1,8 +1,8 @@
 #ifndef OG_MESH_H
 #define OG_MESH_H
 
-#include <vector>
 #include "firesteel/math.hpp"
+#include <vector>
 
 #include "firesteel/rendering/shader.hpp"
 #include "firesteel/rendering/texture.hpp"

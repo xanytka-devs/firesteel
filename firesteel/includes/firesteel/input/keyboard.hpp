@@ -142,9 +142,9 @@ public:
 	/// <param name="t_mods">Modifier.</param>
 	static void key_callback(GLFWwindow* t_window, int t_key, int t_scan_code, int t_action, int t_mods) {
 		//Check action.
-		if (t_key == -1) return;
-		if (t_action != GLFW_RELEASE) {
-			if (!m_keys[t_key]) m_keys[t_key] = true;
+		if(t_key == -1) return;
+		if(t_action != GLFW_RELEASE) {
+			if(!m_keys[t_key]) m_keys[t_key] = true;
 		}
 		else m_keys[t_key] = false;
 		//Detect if key is pressed continuously.
