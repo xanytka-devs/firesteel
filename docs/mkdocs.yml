@@ -1,6 +1,7 @@
 site_name: Firesteel
 theme:
-  name: sphinxawesome-theme
+  name: null
+  custom_dir: 'mkdocs_windmill_dark/'
   highlightjs: true
 plugins:
   - search
@@ -11,10 +12,10 @@ plugins:
           options:
             docstring_style: sphinx
 nav:
-    - Туториалы:
-        - Основа: tutorials/home.md
-        - Пакеты: tutorials/packets.md
-        - Первый треугольник: tutorials/triangle.md
+  - Туториалы:
+    - Основа: tutorials/home.md
+    - Пакеты: tutorials/packets.md
+    - Первый треугольник: tutorials/triangle.md
 markdown_extensions:
   - markdown_include.include:
       base_path: .
