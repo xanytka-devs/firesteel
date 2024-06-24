@@ -1,19 +1,17 @@
-# Предусловие
+# 🔼 Предусловие
 Начнём с простого - "Hello World!" на **Firesteel**.
 
 # Отрисовка окна
-Для создания простого окна нужно [скачать пакет](https://firesteel.readthedocs.io/ru/latest/tutorials/packets.html) "fs.rendering.opengl" (или любой другой для отображения) в файл **main.cpp** добавить несколько простых строчек кода:
+Для создания простого окна нужно [скачать пакет](https://firesteel.readthedocs.io/ru/latest/#tutorials/packets/) "fs.rendering.opengl" (или любой другой для отображения) в файл **main.cpp** добавить несколько простых строчек кода:
 ``` cpp
-#include <memory>
 #include <firesteel/app.hpp>
 using namespace firesteel;
 class HelloWorldApp : public App { };
 
 int main() {
     //Create instance of app.
-    auto app = std::make_unique<HelloWorldApp>();
-    int returnC = app->start(800, 600, "Hello World!");
-    return 0;
+    auto app = new HelloWorldApp();
+    return app->start(800, 600, "Hello World!");
 }
 ```
 
@@ -119,4 +117,4 @@ void main() {
 # Заключение
 После всех этих действий вы будете иметь окно с треугольником, какой обычно создают как "Hello World" на OpenGL или других графических библиотеках.  
 Итоговый код: [https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo](https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo)  
-[<- Создание первого проекта](https://firesteel.readthedocs.io/ru/latest/tutorials/home.html) | [Продолжение... ->](https://firesteel.readthedocs.io/ru/latest/tutorials/home.html)
+[<- Пакеты](https://firesteel.readthedocs.io/ru/latest/#tutorials/packages/) | [Продолжение... ->](https://firesteel.readthedocs.io/ru/latest/#tutorials/home/)

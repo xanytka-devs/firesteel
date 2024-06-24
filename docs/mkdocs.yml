@@ -14,9 +14,9 @@ plugins:
             docstring_style: sphinx
 nav:
   - Туториалы:
-    - Основа: 'source/tutorials/home/'
-    - Пакеты: 'source/tutorials/packets/'
-    - Первый треугольник: 'source/tutorials/triangle/'
+    - Создание проекта: 'tutorials/home/'
+    - Пакеты: 'tutorials/packages/'
+    - Первый треугольник: 'tutorials/triangle/'
 markdown_extensions:
   - markdown_include.include:
       base_path: 'source/'
