@@ -18,5 +18,5 @@ nav:
     - Первый треугольник: tutorials/triangle.md
 markdown_extensions:
   - markdown_include.include:
-      base_path: .
+      base_path: 'docs/source/'
   - admonition
