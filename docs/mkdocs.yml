@@ -1,0 +1,21 @@
+site_name: Firesteel
+theme:
+  name: sphinxawesome-theme
+  highlightjs: true
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        # See: https://mkdocstrings.github.io/python/usage/
+        python:
+          options:
+            docstring_style: sphinx
+nav:
+    - Туториалы:
+        - Основа: tutorials/home.md
+        - Пакеты: tutorials/packets.md
+        - Первый треугольник: tutorials/triangle.md
+markdown_extensions:
+  - markdown_include.include:
+      base_path: .
+  - admonition
