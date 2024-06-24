@@ -11,7 +11,7 @@
 2. В папке проекта создаём файл **main.cpp**
 3. Если вы используете **CMake**  
 Создайте в папке вашего проекта файл **CMakeLists.txt** с содержимым:
-``` 
+```
 cmake_minimum_required(VERSION 3.12)
 project(название_проекта)
 set(PROJECT_NAME название_проекта)
@@ -30,7 +30,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE src)
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 ```
 После этого сохраните файл. Теперь перейдите в корневую папку Firesteel и в лежащий там **CMakeLists.txt** добавьте в конец файла:
-``` 
+```
 add_subdirectory(название_проекта)
 ```
 Сохраните файл и сконфигурируйте обстановку используя **CMake (cmake-gui)** или **AutoCMake.cmd** в той же папке.  
