@@ -1,8 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-
-xengine/includes/stb/* linguist-vendored
-external/freetype/* linguist-vendored
-external/ft2build.h linguist-vendored
-external/vulkan/* linguist-vendored
-external/vk_video/* linguist-vendored

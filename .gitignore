@@ -12,48 +12,23 @@ CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
 
-# Visual Studio garbage
-/.vs
-
-# Other folders
-bin
-out
+# Build resources
 build/*
-!build/*/
-build/*/*
-packages/*
-!packages/INFO
-!packages/CMakeLists.txt
+!build/OpenAL32.dll
+!build/OpenAL32d.dll
+!build/lua54.lib
+build/engine/*
+!build/engine/
 
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# Build libs
+build/engine/bullet3/*
+!build/engine/bullet3/
+!build/engine/bullet3/BulletCollision.lib
+!build/engine/bullet3/BulletDynamics.lib
+!build/engine/bullet3/BulletInverseDynamics.lib
+!build/engine/bullet3/BulletSoftBody.lib
+!build/engine/bullet3/LinearMath.lib
+build/engine/freetype/*
+!build/engine/freetype/
+!build/engine/freetype/freetype.lib
+!build/engine/freetype/freetype32.lib
