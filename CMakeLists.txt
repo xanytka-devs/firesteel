@@ -55,10 +55,6 @@ option(FS_GITHUB_BUILD "Build for CodeQL (Doesn't build modules)" OFF)
 file(GLOB_RECURSE ENGINE_INCLUDES "include/*.hpp")
 file(GLOB_RECURSE ENGINE_SOURCES "include/*.cpp")
 if(NOT FS_GITHUB_BUILD)
-	if(FS_INCLUDE_PKGS)
-		file(GLOB_RECURSE PKG_INCLUDES "../pkgs/*.hpp")
-		file(GLOB_RECURSE PKG_SOURCES "../pkgs/*.cpp")
-	endif()
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
 	endif()
@@ -75,8 +71,6 @@ endif()
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
-	${PKG_INCLUDES}
-	${PKG_SOURCES}
 	${FT_INCLUDES}
 	${OCULUS_INCLUDES}
 	${LUA_INCLUDES}
@@ -94,6 +88,9 @@ target_include_directories(${PRJ_NAME} PUBLIC includes)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
+if(FS_INCLUDE_PKGS)
+	target_include_directories(${PRJ_NAME} PUBLIC "../pkgs")
+endif()
 
 if(NOT FS_GITHUB_BUILD)
 	add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
