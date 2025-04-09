@@ -49,11 +49,16 @@ option(FS_INCLUDE_OAL "Include OpenAL library (SOUND)" ON)
 option(FS_INCLUDE_LUA "Include LuaBridge library (WRAPPER)" ON)
 option(FS_INCLUDE_BULLET "Include Bullet3 library (PHYSICS)" ON)
 option(FS_INCLUDE_BOX2D "Include Box2D library (PHYSICS)" ON)
+option(FS_INCLUDE_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_GITHUB_BUILD "Build for CodeQL (Doesn't build modules)" OFF)
 
 file(GLOB_RECURSE ENGINE_INCLUDES "include/*.hpp")
 file(GLOB_RECURSE ENGINE_SOURCES "include/*.cpp")
 if(!FS_GITHUB_BUILD)
+	if(FS_INCLUDE_PKGS)
+		file(GLOB_RECURSE PCKG_INCLUDES "../pkgs/*.hpp ../pkgs/*.h ../pkg/*.hpp ../pkg/*.h ../packges/*.hpp ../packges/*.h")
+		file(GLOB_RECURSE PCKG_SOURCES "../pkgs/*.cpp ../pkg/*.cpp ../packges/*.cpp")
+	endif()
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
 	endif()
@@ -68,6 +73,8 @@ endif()
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
+	${PCKG_INCLUDES}
+	${PCKG_SOURCES}
 	${FT_INCLUDES}
 	${OCULUS_INCLUDES}
 	${LUA_INCLUDES}
@@ -87,14 +94,14 @@ target_include_directories(${PRJ_NAME} PRIVATE src)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
 
 if(!FS_GITHUB_BUILD)
-	if(FS_INCLUDE_OGL)
-		add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
-		target_link_libraries(${PRJ_NAME} PRIVATE glfw)
-		set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
-		set_target_properties(uninstall PROPERTIES FOLDER "External/GLFW3")
-		set_target_properties(update_mappings PROPERTIES FOLDER "External/GLFW3")
-		target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
+	add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+	target_link_libraries(${PRJ_NAME} PRIVATE glfw)
+	set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
+	set_target_properties(uninstall PROPERTIES FOLDER "External/GLFW3")
+	set_target_properties(update_mappings PROPERTIES FOLDER "External/GLFW3")
+	target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
 
+	if(FS_INCLUDE_OGL)
 		add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 		target_link_libraries(${PRJ_NAME} PRIVATE glad)
 		set_target_properties(glad PROPERTIES FOLDER "External")
