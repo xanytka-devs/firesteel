@@ -54,10 +54,10 @@ option(FS_GITHUB_BUILD "Build for CodeQL (Doesn't build modules)" OFF)
 
 file(GLOB_RECURSE ENGINE_INCLUDES "include/*.hpp")
 file(GLOB_RECURSE ENGINE_SOURCES "include/*.cpp")
-if(!FS_GITHUB_BUILD)
+if(NOT FS_GITHUB_BUILD)
 	if(FS_INCLUDE_PKGS)
-		file(GLOB_RECURSE PCKG_INCLUDES "../pkgs/*.hpp ../pkgs/*.h ../pkg/*.hpp ../pkg/*.h ../packges/*.hpp ../packges/*.h")
-		file(GLOB_RECURSE PCKG_SOURCES "../pkgs/*.cpp ../pkg/*.cpp ../packges/*.cpp")
+		file(GLOB_RECURSE PKG_INCLUDES "../pkgs/*.hpp")
+		file(GLOB_RECURSE PKG_SOURCES "../pkgs/*.cpp")
 	endif()
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
@@ -68,13 +68,15 @@ if(!FS_GITHUB_BUILD)
 	if(FS_INCLUDE_LUA)
 		file(GLOB_RECURSE LUA_INCLUDES "external/lua/include/*.hpp external/lua/include/*.h")
 	endif()
+else()
+	message("Currently the CodeQL option is enabled. This means library won't be built properly, so please disable it.")
 endif()
 
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
-	${PCKG_INCLUDES}
-	${PCKG_SOURCES}
+	${PKG_INCLUDES}
+	${PKG_SOURCES}
 	${FT_INCLUDES}
 	${OCULUS_INCLUDES}
 	${LUA_INCLUDES}
@@ -93,7 +95,7 @@ target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
 
-if(!FS_GITHUB_BUILD)
+if(NOT FS_GITHUB_BUILD)
 	add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
 	target_link_libraries(${PRJ_NAME} PRIVATE glfw)
 	set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
