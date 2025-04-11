@@ -1,11 +1,11 @@
-![Banner](docs/banner.png "Firesteel banner")
-# Firesteel
-[![Discord](https://img.shields.io/discord/635140721908908049?style=flat&logo=discord&logoColor=fff)](https://discord.gg/jw6YSwTFrU)
-[![Static Badge](https://img.shields.io/badge/chat-Telegram-blue?logo=telegram&logoColor=white)](https://t.me/xanytka)
+![Banner](docs/banner.png "Firesteel banner")  
 [![Build status](https://ci.appveyor.com/api/projects/status/9pq8id42s9mgxfoi?svg=true)](https://ci.appveyor.com/project/sanyaalabai/firesteel)
 [![Documentation Status](https://readthedocs.org/projects/Firesteel/badge/?version=latest)](https://firesteel.readthedocs.io/ru/latest/?badge=latest)
-[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)  
-Понятный, кроссплатформенный и полностью настраиваемый движок для создания игр и программ.
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+[![Discord](https://img.shields.io/discord/635140721908908049?style=flat&logo=discord&logoColor=fff)](https://discord.gg/jw6YSwTFrU)
+[![Static Badge](https://img.shields.io/badge/chat-Telegram-blue?logo=telegram&logoColor=white)](https://t.me/xanytka)  
+# Firesteel
+Понятный, кроссплатформенный\* и полностью настраиваемый движок для создания игр и программ.
 
 ## Возмодности создания игр
 На данный момент движок работает как програмный слой (имеет редактор с конфигурацией).
@@ -25,15 +25,20 @@
 * [GLM](https://github.com/g-truc/glm)
 * [ImGUI](https://github.com/ocornut/imgui)
 * [Nlohmann JSON](https://github.com/nlohmann/json)
-* [OpenAL Soft](https://github.com/kcat/openal-soft)
 * [STB](https://github.com/nothings/stb)
 
 # Установка
-## Windows
-* Запустить команду `git clone --recursive https://github.com/xanytka-devs/firesteel.git engine`
-* Установить [CMake](https://cmake.org/)
-* Создать файл `main.cpp`, в котором вы будете писать код приложения
-* Создать файл `CMakeLists.txt` с содержимым:
+
+<!--## Упрощённая
+* Запустите команду `git clone --recursive https://github.com/xanytka-devs/fs-example-app.git`
+* Установите [CMake](https://cmake.org/)
+* Запустите `AutoCMakeBuild.cmd`-->
+
+## Обычная
+* Запустите команду `git clone --recursive https://github.com/xanytka-devs/firesteel.git engine`
+* Установите [CMake](https://cmake.org/)
+* Создайте файл `main.cpp`, в котором вы будете писать код приложения
+* Создайте файл `CMakeLists.txt` с содержимым:
 ```cmake
 cmake_minimum_required(VERSION 3.12)
 project(example)
