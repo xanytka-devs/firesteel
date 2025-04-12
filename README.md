@@ -29,10 +29,10 @@
 
 # Установка
 
-<!--## Упрощённая
-* Запустите команду `git clone --recursive https://github.com/xanytka-devs/fs-example-app.git`
+## Упрощённая
+* Запустите команду `git clone --recursive https://github.com/xanytka-devs/firesteel-example.git`
 * Установите [CMake](https://cmake.org/)
-* Запустите `AutoCMakeBuild.cmd`-->
+* Запустите `auto_cmake.cmd`
 
 ## Обычная
 * Запустите команду `git clone --recursive https://github.com/xanytka-devs/firesteel.git engine`
