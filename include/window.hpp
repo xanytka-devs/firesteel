@@ -1,7 +1,8 @@
 #ifndef FS_WINDOW_H
 #define FS_WINDOW_H
-#include "common.hpp"
 #include <filesystem>
+
+#include "common.hpp"
 #include "input/keyboard.hpp"
 #include "input/mouse.hpp"
 #include "utils/stbi_global.hpp"
@@ -22,9 +23,10 @@ namespace Firesteel {
 		Window(const unsigned int& tWidth = 800, const unsigned int& tHeight = 600, const bool& tVsync = false) :
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
 
+        // Creates new window from given parametrs.
 		bool initialize(const char* tTitle = "Firesteel App", const WindowState& tState = WS_NORMAL,
             size_t tContextMajor = 3, size_t tContextMinor = 3) {
-            // Initialize and configure.
+            //Initialize and configure.
             LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
             if(glfwInit() == GLFW_FALSE) return false;
 #if _DEBUG
@@ -43,7 +45,7 @@ namespace Firesteel {
 #ifdef __APPLE__
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-            // Window creation.
+            //Window creation.
             GLFWmonitor* mon = NULL;
             if(tState==WS_FULLSCREEN || tState == WS_BORDERLESS) mon = glfwGetPrimaryMonitor();
             if(tState==WS_BORDERLESS) {
@@ -59,12 +61,12 @@ namespace Firesteel {
                 return false;
             }
             glfwMakeContextCurrent(mPtr);
-            // Setup vsync.
+            //Setup vsync.
             if(mVSync) glfwSwapInterval(1);
             else glfwSwapInterval(0);
-            // Setup parametrs.
+            //Setup parametrs.
             glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
-            // Setup callbacks.
+            //Setup callbacks.
             glfwSetFramebufferSizeCallback(mPtr, framebufferSizeCallback);
             glfwSetCursorPosCallback(mPtr, Mouse::cursorCallback);
             glfwSetMouseButtonCallback(mPtr, Mouse::buttonCallback);
@@ -159,7 +161,7 @@ namespace Firesteel {
 		bool mVSync, mClosed;
 		glm::vec3 mClearColor;
     private:
-        //Resize viewport.
+        // Resize viewport.
         static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
             glViewport(0, 0, width, height);
         }

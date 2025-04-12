@@ -131,35 +131,35 @@ namespace Firesteel {
 
 	class Keyboard {
 	public:
-		/// Happens on every input callback.
-		static void keyCallback(GLFWwindow* t_window, int t_key, int t_scan_code, int t_action, int t_mods) {
+		// Happens on every input callback.
+		static void keyCallback(GLFWwindow* tWindow, int tKey, int tScanCode, int tAction, int tMods) {
 			//Check action.
-			if (t_key == -1) return;
-			if (t_action != GLFW_RELEASE) {
-				if (!mKeys[t_key]) mKeys[t_key] = true;
+			if (tKey == -1) return;
+			if (tAction != GLFW_RELEASE) {
+				if (!mKeys[tKey]) mKeys[tKey] = true;
 			}
-			else mKeys[t_key] = false;
+			else mKeys[tKey] = false;
 			//Detect if key is pressed continuously.
-			mKeysChanged[t_key] = t_action != GLFW_REPEAT;
+			mKeysChanged[tKey] = tAction != GLFW_REPEAT;
 		}
 
-		/// Gets current state of given key.
-		static bool getKey(int t_key) {
-			return mKeys[t_key];
+		// Gets current state of given key.
+		static bool getKey(int tKey) {
+			return mKeys[tKey];
 		}
-		/// Has key changed?
-		static bool keyChanged(int t_key) {
-			bool output = mKeysChanged[t_key];
-			mKeysChanged[t_key] = false;
+		// Has key changed?
+		static bool keyChanged(int tKey) {
+			bool output = mKeysChanged[tKey];
+			mKeysChanged[tKey] = false;
 			return output;
 		}
-		/// Is key up?
-		static bool keyUp(int t_key) {
-			return !mKeys[t_key] && keyChanged(t_key);
+		// Is key up?
+		static bool keyUp(int tKey) {
+			return !mKeys[tKey] && keyChanged(tKey);
 		}
-		/// Is key down?
-		static bool keyDown(int t_key) {
-			return mKeys[t_key] && keyChanged(t_key);
+		// Is key down?
+		static bool keyDown(int tKey) {
+			return mKeys[tKey] && keyChanged(tKey);
 		}
 	private:
 		static bool mKeys[];

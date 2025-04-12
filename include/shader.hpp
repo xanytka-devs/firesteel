@@ -1,11 +1,11 @@
 #ifndef FS_SHADER_H
 #define FS_SHADER_H
-
-#include "common.hpp"
-
 #include <string>
 #include <fstream>
 #include <sstream>
+
+#include "common.hpp"
+
 namespace Firesteel {
     struct Shader {
     public:
@@ -17,40 +17,53 @@ namespace Firesteel {
             ID = 0;
         }
 
-        /// Constructor generates the shader on the fly.
-        Shader(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr) {
+        // Constructor generates shaders on the fly.
+        Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
             remove();
-            // 1. retrieve the vertex/fragment source code from filePath
+            //Retrieve the vertex/fragment source code from file path.
             std::string vertexCode;
             std::string fragmentCode;
             std::string geometryCode;
             std::ifstream vShaderFile;
             std::ifstream fShaderFile;
             std::ifstream gShaderFile;
-            bool hasGeomShader = (geometryPath != nullptr);
-            int loadPhase = 0;
-            // ensure ifstream objects can throw exceptions:
+            //Check if given paths even exist.
+            bool hasGeomShader = (tGeometryPath != nullptr);
+            if(!std::filesystem::exists(tVertexPath)) {
+                LOG_INFO(std::string("Didn't find vertex shader at \"") + tVertexPath + "\"");;
+                return;
+            }
+            if(!std::filesystem::exists(tFragmentPath)) {
+                LOG_INFO(std::string("Didn't find fragment shader at \"") + tFragmentPath + "\"");;
+                return;
+            }
+            if(hasGeomShader) if(!std::filesystem::exists(tGeometryPath)) {
+                LOG_INFO(std::string("Didn't find geometry shader at \"") + tGeometryPath + "\"");;
+                return;
+            }
+            //Ensure ifstream objects can throw exceptions:.
             vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
             fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            if (hasGeomShader) gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            if(hasGeomShader) gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
             try {
-                // open files
-                vShaderFile.open(vertexPath);
-                fShaderFile.open(fragmentPath);
-                if (hasGeomShader) gShaderFile.open(fragmentPath);
+                //Open files.
+                vShaderFile.open(tVertexPath);
+                fShaderFile.open(tFragmentPath);
+                if(hasGeomShader) gShaderFile.open(tFragmentPath);
                 std::stringstream vShaderStream, fShaderStream, gShaderStream;
-                // read file's buffer contents into streams
+                //Read file's buffer contents into streams.
                 vShaderStream << vShaderFile.rdbuf();
                 fShaderStream << fShaderFile.rdbuf();
-                if (hasGeomShader) gShaderStream << gShaderFile.rdbuf();
-                // close file handlers
+                if(hasGeomShader) gShaderStream << gShaderFile.rdbuf();
+                //Close file handlers.
                 vShaderFile.close();
                 fShaderFile.close();
-                if (hasGeomShader) gShaderFile.close();
-                // convert stream into string
+                if(hasGeomShader) gShaderFile.close();
+                //Convert stream into string.
                 vertexCode = vShaderStream.str();
                 fragmentCode = fShaderStream.str();
-                if (hasGeomShader) geometryCode = gShaderStream.str();
+                if(hasGeomShader) geometryCode = gShaderStream.str();
+                //Generate the program itself.
                 generate(vertexCode.c_str(), fragmentCode.c_str(), hasGeomShader, geometryCode.c_str());
             }
             catch (std::ifstream::failure& e) {
@@ -58,9 +71,10 @@ namespace Firesteel {
             }
         }
         
-        Shader(const char* vertexCode, const char* fragmentCode, const bool& hasGeomShader, const char* geometryCode) {
+        // Constructor generates shaders on the fly.
+        Shader(const char* tVertexCode, const char* tFragmentCode, const bool& tHasGeomShader, const char* tGeometryCode) {
             remove();
-            generate(vertexCode, fragmentCode, hasGeomShader, geometryCode);
+            generate(tVertexCode, tFragmentCode, tHasGeomShader, tGeometryCode);
         }
 
         /// Activate the shader.
@@ -74,85 +88,86 @@ namespace Firesteel {
 
         // Utilities //
 
-        void setBool(const std::string& name, bool value) const {
-            glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+        void setBool(const std::string& tName, bool tValue) const {
+            glUniform1i(glGetUniformLocation(ID, tName.c_str()), (int)tValue);
         }
 
-        void setInt(const std::string& name, int value) const {
-            glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+        void setInt(const std::string& tName, int tValue) const {
+            glUniform1i(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
-        void setFloat(const std::string& name, float value) const {
-            glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
-        }
-
-        void setVec2(const std::string& name, const glm::vec2& value) const {
-            glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
-        }
-        void setVec2(const std::string& name, float x, float y) const {
-            glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
+        void setFloat(const std::string& tName, float tValue) const {
+            glUniform1f(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
 
-        void setVec3(const std::string& name, const glm::vec3& value) const {
-            glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
+        void setVec2(const std::string& tName, const glm::vec2& tValue) const {
+            glUniform2fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
-        void setVec3(const std::string& name, float x, float y, float z) const {
-            glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
-        }
-
-        void setVec4(const std::string& name, const glm::vec4& value) const {
-            glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
-        }
-        void setVec4(const std::string& name, float x, float y, float z, float w) const {
-            glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
+        void setVec2(const std::string& tName, float tX, float tY) const {
+            glUniform2f(glGetUniformLocation(ID, tName.c_str()), tX, tY);
         }
 
-        void setMat2(const std::string& name, const glm::mat2& mat) const {
-            glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+        void setVec3(const std::string& tName, const glm::vec3& tValue) const {
+            glUniform3fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
-        void setMat3(const std::string& name, const glm::mat3& mat) const {
-            glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+        void setVec3(const std::string& tName, float tX, float tY, float tZ) const {
+            glUniform3f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ);
         }
-        void setMat4(const std::string& name, const glm::mat4& mat) const {
-            glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+
+        void setVec4(const std::string& tName, const glm::vec4& tValue) const {
+            glUniform4fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
+        }
+        void setVec4(const std::string& tName, float tX, float tY, float tZ, float tW) const {
+            glUniform4f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ, tW);
+        }
+
+        void setMat2(const std::string& tName, const glm::mat2& tMat) const {
+            glUniformMatrix2fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+        }
+        void setMat3(const std::string& tName, const glm::mat3& tMat) const {
+            glUniformMatrix3fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+        }
+        void setMat4(const std::string& tName, const glm::mat4& tMat) const {
+            glUniformMatrix4fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
         }
 
     private:
-        /// Get OpenGL errors.
-        bool getErrors(GLuint shader, size_t type = 0) {
+        // Get OpenGL errors.
+        bool getErrors(GLuint tShader, size_t tType = 0) {
             GLint success;
             GLchar infoLog[1024];
-            if (type != 1) {
-                glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+            if (tType != 1) {
+                glGetShaderiv(tShader, GL_COMPILE_STATUS, &success);
                 if (!success) {
-                    glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+                    glGetShaderInfoLog(tShader, 1024, NULL, infoLog);
                     LOG_ERRR(std::string("Shader compilation error:\n") + infoLog);
                 }
             }
             else {
-                glGetProgramiv(shader, GL_LINK_STATUS, &success);
+                glGetProgramiv(tShader, GL_LINK_STATUS, &success);
                 if (!success) {
-                    glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+                    glGetProgramInfoLog(tShader, 1024, NULL, infoLog);
                     LOG_ERRR(std::string("Program compilation error:\n") + infoLog);
                 }
             }
             return success;
         }
-        void generate(const char* vShaderCode, const char* fShaderCode, const bool& hasGeomShader, const char* gShaderCode) {
+        // Creates shader program.
+        void generate(const char* tVShaderCode, const char* tFShaderCode, const bool& tHasGeomShader, const char* tGShaderCode) {
             unsigned int vertex, fragment, geometry;
             //Vertex shader.
             vertex = glCreateShader(GL_VERTEX_SHADER);
-            glShaderSource(vertex, 1, &vShaderCode, NULL);
+            glShaderSource(vertex, 1, &tVShaderCode, NULL);
             glCompileShader(vertex);
             if(!getErrors(vertex)) return;
             //Fragment Shader.
             fragment = glCreateShader(GL_FRAGMENT_SHADER);
-            glShaderSource(fragment, 1, &fShaderCode, NULL);
+            glShaderSource(fragment, 1, &tFShaderCode, NULL);
             glCompileShader(fragment);
             if (!getErrors(fragment)) return;
             //Geometry Shader.
-            if (hasGeomShader) {
+            if (tHasGeomShader) {
                 geometry = glCreateShader(GL_GEOMETRY_SHADER);
-                glShaderSource(geometry, 1, &gShaderCode, NULL);
+                glShaderSource(geometry, 1, &tGShaderCode, NULL);
                 glCompileShader(geometry);
                 if (!getErrors(geometry)) return;
             }
@@ -160,13 +175,13 @@ namespace Firesteel {
             ID = glCreateProgram();
             glAttachShader(ID, vertex);
             glAttachShader(ID, fragment);
-            if (hasGeomShader) glAttachShader(ID, geometry);
+            if (tHasGeomShader) glAttachShader(ID, geometry);
             glLinkProgram(ID);
             getErrors(ID, 1);
             //Delete unnecessary shaders.
             glDeleteShader(vertex);
             glDeleteShader(fragment);
-            if (hasGeomShader) glDeleteShader(geometry);
+            if (tHasGeomShader) glDeleteShader(geometry);
             loaded = true;
         }
     };

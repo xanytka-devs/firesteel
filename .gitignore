@@ -11,6 +11,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
+.vs
+out
 
 # Build resources
 build/*

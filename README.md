@@ -53,7 +53,6 @@ target_link_libraries(example
 	imgui
 	glm
 	assimp
-	OpenAL
 )
 target_compile_features(example PUBLIC cxx_std_17)
 target_include_directories(example PUBLIC includes)

@@ -5,8 +5,8 @@
 
 namespace Firesteel {
 	enum JoystickControls {
-		//From: https://pastebin.com/6rusNyxR
-		//Analog input button values.   //      PS      |       XBOX
+		// From: https://pastebin.com/6rusNyxR
+		// Analog input button values.   //      PS      |       XBOX
 		BTN_LEFT = 0,					//  Square      |   X
 		BTN_DOWN = 1,					//  X           |   A
 		BTN_RIGHT = 2,					//  Circle      |   B
@@ -25,7 +25,7 @@ namespace Firesteel {
 		DPAD_RIGHT = 15,				//  Dpad right  |   Dpad right
 		DPAD_DOWN = 16,					//  Dpad down   |   Dpad down
 		DPAD_LEFT = 17,					//  Dpad left   |   Dpad left
-		//Axes.
+		// Axes.
 		AXIS_LEFT_STICK_X = 0,
 		AXIS_LEFT_STICK_Y = 1,
 		AXIS_RIGHT_STICK_X = 2,
@@ -36,15 +36,15 @@ namespace Firesteel {
 
 	class Joystick {
 	public:
-		/// Sets up joystick input.
+		// Sets up joystick input.
 		Joystick() {
 			initialize(0);
 		}
-		/// Sets up joystick input.
+		// Sets up joystick input.
 		Joystick(int tID) {
 			initialize(tID);
 		}
-		/// General info about controller.
+		// General info about controller.
 		void printInfo() {
 			if(!mPresence) {
 				LOG_INFO("Joystick: None");
@@ -54,13 +54,13 @@ namespace Firesteel {
 			LOG_INFO("Axes: " + std::to_string(mAxesCount));
 			LOG_INFO("Buttons: " + std::to_string(mButtonCount));
 		}
-
+		// Initializes controller.
 		void initialize(int tID) {
 			mID = getGID(tID);
 			update();
 		}
 
-		/// Updates variables of joystick.
+		// Updates variables of joystick.
 		void update() {
 			mPresence = glfwJoystickPresent(mID);
 			if(!mPresence) return;
@@ -69,41 +69,25 @@ namespace Firesteel {
 			mButtons = glfwGetJoystickButtons(mID, &mButtonCount);
 		}
 
-		/// Get state of axis.
-		float getAxis(int t_axis) {
+		float getAxis(int tAxis) {
 			if(mPresence)
-				return mAxes[t_axis];
+				return mAxes[tAxis];
 			return 0.0f;
 		}
-		/// Get state of button.
-		unsigned char getButton(int t_button) {
+		unsigned char getButton(int tButton) {
 			if(mPresence)
-				return mButtons[t_button];
+				return mButtons[tButton];
 			return GLFW_RELEASE;
 		}
+		int getAxesCount() const { return mAxesCount; }
+		int getButtonCount() const { return mButtonCount; }
 
-		/// Get axes count.
-		int getAxesCount() const {
-			return mAxesCount;
-		}
-		/// Get buttons count.
-		int getButtonCount() const {
-			return mButtonCount;
-		}
-
-		/// Get current joystick state.
-		bool isPresent() const {
-			return mPresence;
-		}
-		/// Get joystick name.
-		const char* getName() {
-			return mName;
-		}
-		/// Get input ID of joystick.
-		static int getGID(int t_i) {
-			return GLFW_JOYSTICK_1 + t_i;
-		}
+		bool isPresent() const { return mPresence; }
+		const char* getName() { return mName; }
 		int getID() const { return mID; }
+
+		// Get global ID of joystick.
+		static int getGID(int tID) { return GLFW_JOYSTICK_1 + tID; }
 	private:
 		int mPresence;
 		int mID;

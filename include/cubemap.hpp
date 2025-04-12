@@ -1,9 +1,7 @@
 #ifndef FS_CUBEMAP_H
 #define FS_CUBEMAP_H
-
 #include "common.hpp"
 #include "shader.hpp"
-
 #include "utils/json.hpp"
 #include "utils/utils.hpp"
 #include "utils/stbi_global.hpp"
@@ -13,7 +11,7 @@ namespace Firesteel {
     public:
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}
-
+        // Create cubemap from given files.
         void load(std::string tD,
             std::string tR,
             std::string tL,
@@ -23,7 +21,7 @@ namespace Firesteel {
             std::string tBack) {
             load(tD.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
-
+        // Create cubemap from files that are in json.
         void load(std::string tCubemapJson) {
             if(!std::filesystem::exists(tCubemapJson)) return;
             mCfgFile = tCubemapJson;
@@ -31,18 +29,18 @@ namespace Firesteel {
             nlohmann::json txt = nlohmann::json::parse(ifs);
             load(txt["dir"], txt["posZ"], txt["negZ"], txt["posY"], txt["negY"], txt["posX"], txt["negX"]);
         }
-
-        void load(const char* t_dir,
-            const char* t_right = "right.png",
-            const char* t_left = "left.png",
-            const char* t_top = "top.png",
-            const char* t_bottom = "bottom.png",
-            const char* t_front = "front.png",
-            const char* t_back = "back.png") {
+        // Create cubemap from given files.
+        void load(const char* tDir,
+            const char* tRight = "right.png",
+            const char* tLeft = "left.png",
+            const char* tTop = "top.png",
+            const char* tBottom = "bottom.png",
+            const char* tFront = "front.png",
+            const char* tBack = "back.png") {
             //Setup.
-            mDir = t_dir;
+            mDir = tDir;
             mInitialized = true;
-            mFaces = { t_front, t_back, t_top, t_bottom, t_right, t_left };
+            mFaces = { tFront, tBack, tTop, tBottom, tRight, tLeft };
             glActiveTexture(GL_TEXTURE11);
             glGenTextures(1, &mID);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
@@ -77,70 +75,60 @@ namespace Firesteel {
 
             glActiveTexture(GL_TEXTURE0);
         }
-
-        void bind() const {
+        // Binds this cubemap
+        void enable() const {
             if(!mInitialized) return;
             glActiveTexture(GL_TEXTURE11);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
         }
 
-        unsigned int getID() const { return mID; }
-
-        //void load(const char* t_cb_file_path) {
-        //    clear();
-        //    std::vector<std::string> files = split_str(&read_from_file(t_cb_file_path), '\n');
-        //    if (files.size() != 7) return;
-        //    //Readress function.
-        //    load_m(files[0].c_str(), files[1].c_str(), files[2].c_str(),
-        //        files[3].c_str(), files[4].c_str(), files[5].c_str(), files[6].c_str());
-        //}
-
-        void initialize(const float& t_size) {
-            // set up vertices
-            mSize = t_size;
+        // Create mesh for cubemap.
+        void initialize(const float& tSize) {
+            //Set up vertices.
+            mSize = tSize;
             float skybox_vert[] = {
                 // positions          
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
 
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
 
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
 
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
 
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size,  1.0f * t_size,
-                -1.0f * t_size,  1.0f * t_size, -1.0f * t_size,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize,  1.0f * tSize,
+                -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
 
-                -1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size, -1.0f * t_size,
-                -1.0f * t_size, -1.0f * t_size,  1.0f * t_size,
-                 1.0f * t_size, -1.0f * t_size,  1.0f * t_size
+                -1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
+                -1.0f * tSize, -1.0f * tSize,  1.0f * tSize,
+                 1.0f * tSize, -1.0f * tSize,  1.0f * tSize
             };
             //Create buffers and arrays.
             glGenVertexArrays(1, &mVAO);
@@ -152,10 +140,11 @@ namespace Firesteel {
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
         }
 
-        void draw(const Shader* t_shader) const {
+        // Render cubemap.
+        void draw(const Shader* tShader) const {
             if(!mInitialized) return;
             glDepthFunc(GL_LEQUAL);
-            t_shader->enable();
+            tShader->enable();
             //Skybox cube.
             glBindVertexArray(mVAO);
             glActiveTexture(GL_TEXTURE0);
@@ -164,12 +153,12 @@ namespace Firesteel {
             glBindVertexArray(0);
             glDepthFunc(GL_LESS);
         }
-
+        // Clear meshes.
         void clear() {
             glDeleteTextures(1, &mID);
             mFaces.clear();
         }
-
+        // Remove meshes and textures.
         void remove() {
             if(!mInitialized) return;
             glDeleteVertexArrays(1, &mVAO);
@@ -177,6 +166,7 @@ namespace Firesteel {
             clear();
         }
 
+        unsigned int getID() const { return mID; }
         std::string getDirectory() const { return mDir; }
         std::string getCfgFile() const { return mCfgFile; }
         float getSize() const { return mSize; }

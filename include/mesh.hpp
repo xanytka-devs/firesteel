@@ -1,33 +1,26 @@
 #ifndef FS_MESH_H
 #define FS_MESH_H
-
-#include "common.hpp"
 #include <glm/gtc/matrix_transform.hpp>
-
-#include "shader.hpp"
-#include "texture.hpp"
-
 #include <string>
 #include <vector>
+
+#include "common.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
 
 namespace Firesteel {
 #define MAX_BONE_INFLUENCE 4
 
     struct Vertex {
-        // position
-        glm::vec3 Position;
-        // normal
-        glm::vec3 Normal;
-        // texCoords
-        glm::vec2 UVs;
-        // tangent
-        glm::vec3 Tangent;
-        // bitangent
-        glm::vec3 Bitangent;
-        // Bone indexes which will influence this vertex.
-        int BoneIDs[MAX_BONE_INFLUENCE];
-        // Weights from each bone.
-        float Weights[MAX_BONE_INFLUENCE];
+        glm::vec3 position;
+        glm::vec3 normal;
+        glm::vec2 uv;
+        glm::vec3 tangent;
+        glm::vec3 bitangent;
+        //Bone indexes which will influence this vertex.
+        int boneIDs[MAX_BONE_INFLUENCE];
+        //Weights from each bone.
+        float boneWeights[MAX_BONE_INFLUENCE];
     };
 
     class Mesh {
@@ -42,41 +35,42 @@ namespace Firesteel {
         glm::vec3 emission{ 0.f };
         glm::vec3 height{ 0.f };
 
-        /// Constructor with textures.
+        // Constructor with textures.
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures)
             : vertices(tVertices), indices(tIndices), textures(tTextures) {
-            mNoTextures = (tTextures.size()==0);
             setupMesh();
         }
 
-        /// Constructor without textures.
-        Mesh(const std::vector<Vertex>& t_vertices, const std::vector<unsigned int>& t_indices,
-            glm::vec3 t_diffuse, glm::vec3 t_specular, glm::vec3 t_emis, glm::vec3 t_height)
-            : vertices(t_vertices), indices(t_indices),
-            diffuse(t_diffuse), specular(t_specular), emission(t_emis), height(t_height) {
-            mNoTextures = true;
+        // Constructor without textures.
+        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices,
+            glm::vec3 tDiffuse, glm::vec3 tSpecular, glm::vec3 tEmission, glm::vec3 tHeight)
+            : vertices(tVertices), indices(tIndices),
+            diffuse(tDiffuse), specular(tSpecular), emission(tEmission), height(tHeight) {
             setupMesh();
         }
 
-        /// Render the mesh.
-        void draw(const Shader* shader) {
-            // Bind appropriate textures.
+        // Render the mesh.
+        // Shader must be enabled before this.
+        void draw(const Shader* tShader) {
+            //Bind appropriate textures.
             size_t diffuseNr = 0;
             size_t specularNr = 0;
             size_t normalNr = 0;
             size_t heightNr = 0;
             size_t emisNr = 0;
             size_t opacNr = 0;
-            shader->setVec4("material.ambient", glm::vec4(ambient, 1));
-            shader->setVec4("material.diffuse", glm::vec4(diffuse, 1));
-            shader->setVec4("material.specular", glm::vec4(specular, 1));
-            shader->setVec4("material.emission", glm::vec4(emission, 1));
-            shader->setBool("noTextures", true);
-            if(!mNoTextures) {
-                shader->setBool("noTextures", false);
+            //Set material values.
+            tShader->setVec4("material.ambient", glm::vec4(ambient, 1));
+            tShader->setVec4("material.diffuse", glm::vec4(diffuse, 1));
+            tShader->setVec4("material.specular", glm::vec4(specular, 1));
+            tShader->setVec4("material.emission", glm::vec4(emission, 1));
+            tShader->setBool("noTextures", true);
+            //Do textures.
+            if(textures.size()>0) {
+                tShader->setBool("noTextures", false);
                 Texture::unbind();
                 for (unsigned int i = 0; i < textures.size(); i++) {
-                    // Retrieve texture number.
+                    //Retrieve texture number.
                     size_t number = 0;
                     std::string name = textures[i].type;
                     if(name == "diffuse")
@@ -91,27 +85,28 @@ namespace Firesteel {
                         number = heightNr++;
                     else if(name == "opacity")
                         number = opacNr++;
-                    // Now set the sampler to the correct texture unit.
-                    textures[i].bind(i);
-                    shader->setInt("material." + name + std::to_string(number), i);
-                    shader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
+                    //Now set the sampler to the correct texture unit.
+                    textures[i].enable(i);
+                    tShader->setInt("material." + name + std::to_string(number), i);
+                    tShader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
                 }
-                shader->setBool("material.opacityMask", opacNr > 0);
+                tShader->setBool("material.opacityMask", opacNr > 0);
             }
 
-            // Draw mesh.
+            //Draw mesh.
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
-            // Always good practice to set everything back to defaults once configured.
+            //Always good practice to set everything back to defaults once configured.
             Texture::unbind();
         }
 
+        // Clears mesh data.
         void remove() {
             glDeleteBuffers(1, &EBO);
             glDeleteBuffers(1, &VBO);
             glDeleteVertexArrays(1, &VAO);
-
+            //Clear mesh data.
             vertices.clear();
             indices.clear();
             for (size_t i = 0; i < textures.size(); i++)
@@ -119,47 +114,49 @@ namespace Firesteel {
             textures.clear();
         }
 
-    private:
-        /// Render data.
-        unsigned int VAO, VBO, EBO;
-        bool mNoTextures = false;
+        // Checks if mesh has any textures.
+        bool hasTextures() const { return textures.size() > 0; }
 
-        /// Initializes all the buffer objects/arrays.
+    private:
+        // Render data.
+        unsigned int VAO, VBO, EBO;
+
+        // Initializes all the buffer objects/arrays.
         void setupMesh() {
-            // Create buffers/arrays.
+            //Create buffers/arrays.
             glGenVertexArrays(1, &VAO);
             glGenBuffers(1, &VBO);
             glGenBuffers(1, &EBO);
             glBindVertexArray(VAO);
-            // Load data into vertex buffers.
+            //Load data into vertex buffers.
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-            // Load data into entity buffers.
+            //Load data into entity buffers.
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-            // Set the vertex attribute pointers.
-            // vertex Positions.
+            //Set the vertex attribute pointers.
+            //Positions.
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-            // vertex Normals.
+            //Normals.
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-            // vertex UVs.
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+            //UVs.
             glEnableVertexAttribArray(2);
-            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UVs));
-            // vertex Tangent.
+            glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+            //Tangent.
             glEnableVertexAttribArray(3);
-            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-            // vertex Bitangent.
+            glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+            //Bitangent.
             glEnableVertexAttribArray(4);
-            glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
-            // vertex Bones.
+            glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
+            //Bones.
             glEnableVertexAttribArray(5);
-            glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, BoneIDs));
-            // vertex Bone weights.
+            glVertexAttribIPointer(5, 4, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+            //Bone weights.
             glEnableVertexAttribArray(6);
-            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Weights));
+            glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
             glBindVertexArray(0);
         }
     };

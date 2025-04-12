@@ -51,14 +51,14 @@ void StrToFile(std::string tPath, std::string tIn) {
     file.close();
 }
 
-int StrEndsWith(const char* tStr, const char* tsuffix) {
-    if (!tStr || !tsuffix)
+int StrEndsWith(const char* tStr, const char* tSuffix) {
+    if (!tStr || !tSuffix)
         return 0;
     size_t lenstr = strlen(tStr);
-    size_t lensuffix = strlen(tsuffix);
+    size_t lensuffix = strlen(tSuffix);
     if (lensuffix > lenstr)
         return 0;
-    return strncmp(tStr + lenstr - lensuffix, tsuffix, lensuffix) == 0;
+    return strncmp(tStr + lenstr - lensuffix, tSuffix, lensuffix) == 0;
 }
 
 // !!! NOT UTF8 !!!

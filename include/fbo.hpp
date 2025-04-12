@@ -1,6 +1,5 @@
 #ifndef FS_FBO
 #define FS_FBO
-
 #include "common.hpp"
 #include "shader.hpp"
 
@@ -9,41 +8,50 @@ namespace Firesteel {
     public:
         Framebuffer() { }
 
-        Framebuffer(const int& tWidth, const int& tHeight, const size_t& tFBOTextures = 1) {
+        Framebuffer(const int& tWidth, const int& tHeight, const size_t& tTextures = 1) {
             mSize = glm::vec2(tWidth, tHeight);
-            createBuffers(tFBOTextures);
+            createBuffers(tTextures);
         }
-        Framebuffer(const glm::vec2& tSize, const size_t& tFBOTextures = 1) {
+        Framebuffer(const glm::vec2& tSize, const size_t& tTextures = 1) {
             mSize = tSize;
-            createBuffers(tFBOTextures);
+            createBuffers(tTextures);
         }
 
+        // Scales framebuffer to given size.
         void scale(const int& tWidth, const int& tHeight) {
             mSize = glm::vec2(tWidth, tHeight);
             scaleBuffers();
         }
 
+        // Scales framebuffer to given size.
         void scale(const glm::vec2& tSize) {
             mSize = tSize;
             scaleBuffers();
         }
 
+        // Checks if framebuffer is complete.
         bool isComplete() const {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             bool result = (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             return result;
         }
-        void bind() const {
+
+        // Binds this framebuffer.
+        void enable() const {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             glEnable(GL_DEPTH_TEST);
         }
-        void unbind() {
+        // Unbinds current framebuffer.
+        static void unbind() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glDisable(GL_DEPTH_TEST);
         }
 
-        void quad() {
+        // Creates quad to render this framebuffer to.
+        void makeMesh() {
+            if(madeMesh) return;
+            madeMesh = true;
             float quadVertices[] = {
                 // positions       UVs
                 -1.0f,  1.0f,  0.0f, 1.0f,
@@ -65,15 +73,31 @@ namespace Firesteel {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
         }
-        void bindTexture() const {
+        // Binds this framebuffer as texture unit.
+        void bindAsTexture() const {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, FBOtextures[0]);
         }
+        // Draws texture to quad (if it was generated from makeMesh().
         void drawQuad(const Shader* tShader) const {
+            if(!madeMesh) return;
             tShader->enable();
             glBindVertexArray(quadVAO);
-            bindTexture();
+            bindAsTexture();
             glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
+        // Clears quad draw data.
+        void removeMesh() {
+            if(!madeMesh) return;
+            madeMesh = false;
+            glDeleteVertexArrays(1, &quadVAO);
+            glDeleteBuffers(1, &quadVBO);
+        }
+        // Clear framebuffer's data.
+        void remove() const {
+            glDeleteFramebuffers(1, &FBO);
+            glDeleteRenderbuffers(1, &RBO);
+            for(int i = 0; i < FBOsSize;i++) glDeleteTextures(1, &FBOtextures[i]);
         }
 
         unsigned int getID(const size_t& tID = 0) const { return FBOtextures[tID]; }
@@ -83,13 +107,14 @@ namespace Firesteel {
         float aspect() const { return (mSize.x / mSize.y); }
     private:
         glm::vec2 mSize = glm::vec2(0);
+        bool madeMesh = false;
         unsigned int quadVAO = 0, quadVBO = 0;
         unsigned int FBO = 0, RBO = 0;
         unsigned int FBOtextures[11]{};
         size_t FBOsSize = 1;
 
-        void createBuffers(const size_t& tFBOTexs) {
-            FBOsSize = tFBOTexs;
+        void createBuffers(const size_t& tTexs) {
+            FBOsSize = tTexs;
             glActiveTexture(GL_TEXTURE0);
             //FBO creation.
             glGenFramebuffers(1, &FBO);
@@ -97,7 +122,7 @@ namespace Firesteel {
             //Framebuffer's textures.
             glGenTextures(static_cast<GLsizei>(FBOsSize), FBOtextures);
             unsigned int attachments[11]{};
-            for (size_t i = 0; i < FBOsSize; i++) {
+            for(size_t i = 0; i < FBOsSize; i++) {
                 glBindTexture(GL_TEXTURE_2D, FBOtextures[i]);
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<GLsizei>(mSize.x), static_cast<GLsizei>(mSize.y), 0, GL_RGB, GL_FLOAT, NULL);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

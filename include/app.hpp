@@ -33,7 +33,7 @@ namespace Firesteel {
             bool isVulkan = (glfwVulkanSupported() == 1);
             LOG_INFO(isVulkan ? "Vulkan is supported on current machine."
                 : "Vulkan isn't supported on current machine.");
-            //GLAD (OpenGL) init.
+            //Renderer init.
             Renderer r = Renderer();
             if (!r.initialize()) return -1;
             r.loadExtencions();
@@ -55,6 +55,7 @@ namespace Firesteel {
                     mFrameCount = 0;
                     mLastFrameFPS = currentFrame;
                 }
+                window.clearBuffers();
                 onUpdate();
                 window.swapBuffers();
             }
@@ -66,9 +67,17 @@ namespace Firesteel {
             LOG_STATE("QUIT");
             return 0;
 		}
+        // (overridable)
+        // Runs before any initialization.
 		virtual void onPreInitialize() { }
+        // (overridable)
+        // Runs after window and renderer initialization.
 		virtual void onInitialize() { }
+        // (overridable)
+        // Runs every frame.
 		virtual void onUpdate() { }
+        // (overridable)
+        // Runs after the window is closed or on window.close()/app.shutdown().
 		virtual void onShutdown() { }
 
 		Window window;

@@ -1,4 +1,4 @@
-#include <../include/input/input.hpp>
+#include "input/input.hpp"
 using namespace Firesteel;
 
 bool Keyboard::mKeys[GLFW_KEY_LAST] = { 0 };
@@ -21,7 +21,7 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST] = { 0 };
 
 
 
-#include <../include/utils/log.hpp>
+#include "utils/log.hpp"
 
 #ifdef WIN32
 #include <windows.h>

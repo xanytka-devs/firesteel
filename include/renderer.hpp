@@ -1,6 +1,5 @@
 #ifndef FS_RENDERER_H
 #define FS_RENDERER_H
-
 #include "common.hpp"
 
 namespace Firesteel {
@@ -13,11 +12,13 @@ namespace Firesteel {
         Renderer() {
 
         }
+        // Basic renderer initialization.
 		bool initialize() {
-            // GLAD (OpenGL) init.
+            //GLAD (OpenGL) init.
             mInitialized = (gladLoadGL(glfwGetProcAddress) != 0);
             return mInitialized;
 		}
+        // Sets runtime parameters for renderer.
         void initializeParams() {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_STENCIL_TEST);
@@ -27,21 +28,23 @@ namespace Firesteel {
             glCullFace(GL_BACK);
             glEnable(GL_FRAMEBUFFER_SRGB);
         }
+        // Prints info about renderer installation.
         void printInfo() {
-            // OpenGL info.
+            //OpenGL info.
             LOG_INFO("OpenGL context:");
             LOG_INFO(std::string("	Vendor: ") + reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
             LOG_INFO(std::string("	Renderer: ") + reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
             LOG_INFO(std::string("	Version: ") + reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         }
+        // Loads needed renderer extencions.
 		void loadExtencions() {
-            if (!glfwExtensionSupported("GL_ARB_debug_output")) LOG_WARN("General debug output isn't supported.");
-            if (!glfwExtensionSupported("GL_AMD_debug_output")) LOG_WARN("AMD debug output isn't supported.");
-            if (!glfwExtensionSupported("GL_ARB_direct_state_access")) LOG_WARN("Official DSA isn't supported.");
-            if (!glfwExtensionSupported("GL_EXT_direct_state_access")) LOG_WARN("Unofficial DSA isn't supported.");
+            if(!glfwExtensionSupported("GL_ARB_debug_output")) LOG_WARN("General debug output isn't supported.");
+            if(!glfwExtensionSupported("GL_AMD_debug_output")) LOG_WARN("AMD debug output isn't supported.");
+            if(!glfwExtensionSupported("GL_ARB_direct_state_access")) LOG_WARN("Official DSA isn't supported.");
+            if(!glfwExtensionSupported("GL_EXT_direct_state_access")) LOG_WARN("Unofficial DSA isn't supported.");
             int flags; glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-            if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                // initialize debug output 
+            if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+                //Initialize debug output.
                 glEnable(GL_DEBUG_OUTPUT);
                 glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
                 if (BOUND_GL_VERSION_MAJOR >= 4) {
@@ -53,21 +56,20 @@ namespace Firesteel {
     private:
         bool mInitialized = false;
 
-        static void APIENTRY glDebugOutput(GLenum source,
-            GLenum type,
-            unsigned int id,
-            GLenum severity,
-            GLsizei length,
-            const char* message,
-            const void* userParam)
-        {
-            // ignore non-significant error/warning codes
-            if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+        static void APIENTRY glDebugOutput(GLenum tSource,
+            GLenum tType,
+            unsigned int tID,
+            GLenum tSeverity,
+            GLsizei tLength,
+            const char* tMsg,
+            const void* tParam) {
+            //Ignore non-significant error/warning codes.
+            if (tID == 131169 || tID == 131185 || tID == 131218 || tID == 131204) return;
 
             LOG("---------------");
-            LOG("Debug message (" + std::to_string(id) + "): " + message);
+            LOG("Debug message (" + std::to_string(tID) + "): " + tMsg);
 
-            switch (source) {
+            switch (tSource) {
             case GL_DEBUG_SOURCE_API:             LOG("Source: API"); break;
             case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   LOG("Source: Window System"); break;
             case GL_DEBUG_SOURCE_SHADER_COMPILER: LOG("Source: Shader Compiler"); break;
@@ -75,7 +77,8 @@ namespace Firesteel {
             case GL_DEBUG_SOURCE_APPLICATION:     LOG("Source: Application"); break;
             case GL_DEBUG_SOURCE_OTHER:           LOG("Source: Other"); break;
             }
-            switch (type) {
+
+            switch (tType) {
             case GL_DEBUG_TYPE_ERROR:               LOG("Type: Error"); break;
             case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: LOG("Type: Deprecated Behaviour"); break;
             case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  LOG("Type: Undefined Behaviour"); break;
@@ -87,8 +90,7 @@ namespace Firesteel {
             case GL_DEBUG_TYPE_OTHER:               LOG("Type: Other"); break;
             }
 
-            switch (severity)
-            {
+            switch (tSeverity) {
             case GL_DEBUG_SEVERITY_HIGH:         LOG("Severity: high"); break;
             case GL_DEBUG_SEVERITY_MEDIUM:       LOG("Severity: medium"); break;
             case GL_DEBUG_SEVERITY_LOW:          LOG("Severity: low"); break;

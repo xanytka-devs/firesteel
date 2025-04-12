@@ -1,10 +1,10 @@
 #ifndef FS_PARTICLES_H
 #define FS_PARTICLES_H
+#include <glm/ext/matrix_transform.hpp>
 
 #include "common.hpp"
 #include "utils/utils.hpp"
 #include "shader.hpp"
-#include <glm/ext/matrix_transform.hpp>
 
 namespace Firesteel {
 
@@ -21,6 +21,8 @@ namespace Firesteel {
         return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
     }
 
+    // ! WARNING
+    // This system is unstable and will be reworkec in near future.
     class ParticleSystem {
     public:
         std::vector<Particle> particles;

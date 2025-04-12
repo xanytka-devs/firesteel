@@ -47,8 +47,8 @@
 #define CMD_BG_LPURPLE 208
 #define CMD_BG_LYELLOW 224
 #define CMD_BG_WHITE 240
-	static void log_c(const std::string& tMsg, const int t_mod = CMD_F_WHITE, const char* tEndLine = "\n") {
-		log(tMsg + tEndLine, t_mod);
+	static void log_c(const std::string& tMsg, const int tMod = CMD_F_WHITE, const char* tEndLine = "\n") {
+		log(tMsg + tEndLine, tMod);
 	}
 	static void log_ntag(const std::string& tMsg, const char* tEndLine = "\n") {
 		log(tMsg + tEndLine);
@@ -74,7 +74,7 @@
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
 	/// Logs message to console with specified color and prompt.
-	static void log(const std::string& tMsg, const int t_mod = CMD_F_WHITE, const bool tAddTimestamp = true);
+	static void log(const std::string& tMsg, const int tMod = CMD_F_WHITE, const bool tAddTimestamp = true);
 	// Clears console log window.
 	static void clear();
 	// Logs something only to file.
