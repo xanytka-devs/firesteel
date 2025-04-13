@@ -142,6 +142,7 @@ namespace Firesteel {
 				mAnyKeyPressed = false;
 				mKeys[tKey] = false;
 			}
+			if(tAction == GLFW_REPEAT) mAnyKeyPressed = false;
 			//Detect if key is pressed continuously.
 			mKeysChanged[tKey] = tAction != GLFW_REPEAT;
 		}
