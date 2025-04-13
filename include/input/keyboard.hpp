@@ -134,11 +134,14 @@ namespace Firesteel {
 		// Happens on every input callback.
 		static void keyCallback(GLFWwindow* tWindow, int tKey, int tScanCode, int tAction, int tMods) {
 			//Check action.
-			if (tKey == -1) return;
-			if (tAction != GLFW_RELEASE) {
-				if (!mKeys[tKey]) mKeys[tKey] = true;
+			if(tKey == -1) return;
+			if(tAction != GLFW_RELEASE) {
+				mAnyKeyPressed = true;
+				if(!mKeys[tKey]) mKeys[tKey] = true;
+			} else {
+				mAnyKeyPressed = false;
+				mKeys[tKey] = false;
 			}
-			else mKeys[tKey] = false;
 			//Detect if key is pressed continuously.
 			mKeysChanged[tKey] = tAction != GLFW_REPEAT;
 		}
@@ -161,9 +164,13 @@ namespace Firesteel {
 		static bool keyDown(int tKey) {
 			return mKeys[tKey] && keyChanged(tKey);
 		}
+		// Checks if any key is currently pressed.
+		static bool isAnyKeyDown() { return mAnyKeyPressed; }
 	private:
 		static bool mKeys[];
 		static bool mKeysChanged[];
+
+		static bool mAnyKeyPressed;
 	};
 }
 

@@ -3,6 +3,7 @@ using namespace Firesteel;
 
 bool Keyboard::mKeys[GLFW_KEY_LAST] = { 0 };
 bool Keyboard::mKeysChanged[GLFW_KEY_LAST] = { 0 };
+bool Keyboard::mAnyKeyPressed = false;
 
 float Mouse::mX = 0;
 float Mouse::mY = 0;
