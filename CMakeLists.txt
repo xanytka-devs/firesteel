@@ -76,7 +76,7 @@ target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
 get_filename_component(PKGS_DIR
                        "${CMAKE_CURRENT_LIST_DIR}/../pkgs"
                        ABSOLUTE)
-if(FS_INCLUDE_PKGS AND EXISTS ${PKGS_DIR} AND IS_DIRECTORY ${PKGS_DIR})
+if(FS_PKGS AND EXISTS ${PKGS_DIR} AND IS_DIRECTORY ${PKGS_DIR})
 	message(CHECK_START "Firesteel: Packages are enabled. Enumerating...")
 	target_include_directories(${PRJ_NAME} PUBLIC ${PKGS_DIR})
 	if(FS_PKGS_ALLOW_OVERRIDES)
