@@ -5,6 +5,47 @@ float lerp(float a, float b, float f) {
     return a * (1.f - f) + (b * f);
 }
 
+#include <glm/vec3.hpp>
+
+glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
+    return glm::vec3(tR / 255, tG / 255, tB / 255);
+}
+
+glm::vec3 HexToRGB(const char* tHex) {
+    if (tHex[0] == '#') {
+        return glm::vec3(
+            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4)
+        );
+    }
+}
+
+glm::vec3 CMYKToRGB(unsigned int tC, unsigned int tM, unsigned int tY, unsigned int tK) {
+    return glm::vec3(
+        (unsigned char)(255 * (1 - tC) * (1 - tK)),
+        (unsigned char)(255 * (1 - tM) * (1 - tK)),
+        (unsigned char)(255 * (1 - tY) * (1 - tK))
+    );
+}
+
+#include <glm/vec4.hpp>
+
+glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned int tA) {
+    return glm::vec4(tR / 255, tG / 255, tB / 255, tA / 255);
+}
+
+glm::vec4 HexToRGBA(const char* tHex) {
+    if(tHex[0] == '#') {
+        return glm::vec4(
+            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[7] + tHex[8]), nullptr, 4)
+        );
+    }
+}
+
 #include <iostream>
 #include <fstream>
 #include <filesystem>
