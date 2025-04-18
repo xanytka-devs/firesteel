@@ -18,6 +18,12 @@ glm::vec3 HexToRGB(const char* tHex) {
             std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
             std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4)
         );
+    } else {
+        return glm::vec3(
+            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4)
+        );
     }
 }
 
@@ -42,6 +48,13 @@ glm::vec4 HexToRGBA(const char* tHex) {
             std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
             std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4),
             std::stoul(std::string("0x" + tHex[7] + tHex[8]), nullptr, 4)
+        );
+    } else {
+        return glm::vec4(
+            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4),
+            std::stoul(std::string("0x" + tHex[6] + tHex[7]), nullptr, 4)
         );
     }
 }

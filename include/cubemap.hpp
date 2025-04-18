@@ -161,6 +161,7 @@ namespace Firesteel {
         // Remove meshes and textures.
         void remove() {
             if(!mInitialized) return;
+            mInitialized = false;
             glDeleteVertexArrays(1, &mVAO);
             glDeleteBuffers(1, &mVBO);
             clear();
