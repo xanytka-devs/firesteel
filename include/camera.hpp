@@ -4,6 +4,7 @@
 
 #include "common.hpp"
 #include "transform.hpp"
+#include <glm/gtc/quaternion.hpp>
 
 namespace Firesteel {
     class Camera {
@@ -57,6 +58,17 @@ namespace Firesteel {
             right = glm::normalize(glm::cross(forward, worldUp));
             up = glm::mat3(glm::rotate(glm::mat4(1.0f), roll, forward))
                 * glm::normalize(glm::cross(right, forward));
+        }
+
+        // Turns camera to face given position.
+        void lookAt(const glm::vec3& tTarget) {
+            const auto quat = glm::quat_cast(glm::transpose(glm::lookAt(transform.position, tTarget, up)));
+            transform.rotation = glm::vec3(quat.x, quat.y, quat.z);
+        }
+
+        // Turns camera to face given position.
+        void lookAt(const Transform& tTarget) {
+            lookAt(tTarget.position);
         }
     };
 }
