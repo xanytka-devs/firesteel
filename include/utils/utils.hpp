@@ -183,6 +183,12 @@ struct FileDialog {
     std::string save() const;
 };
 
+#include <cstdio>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
+
 #ifdef WIN32
 #include <windows.h>
 static void openURL(const char* tUrl) {
@@ -241,6 +247,36 @@ std::string FileDialog::save() const {
     }
     return default_file;
 }
+std::string executeInCmd(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 #endif // !WIN32
+#ifdef __linux__
+static void openURL(const char* tUrl) {
+    system("http://google.com");
+}
+std::string executeInCmd(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
+#endif // !__linux__
+
 
 #endif // !FS_UTILS_H
