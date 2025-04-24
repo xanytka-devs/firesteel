@@ -20,8 +20,6 @@
 
 # Сторонние библиотеки
 * [Assimp](https://github.com/assimp/assimp)
-* [Box2D](https://github.com/erincatto/box2d)
-* [Bullet3](https://github.com/bulletphysics/bullet3.git)
 * [GLM](https://github.com/g-truc/glm)
 * [ImGUI](https://github.com/ocornut/imgui)
 * [Nlohmann JSON](https://github.com/nlohmann/json)
