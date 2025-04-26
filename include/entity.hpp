@@ -24,6 +24,9 @@ namespace Firesteel {
         std::vector<Texture> textures;
         std::vector<Mesh> meshes;
         std::string path;
+        std::string getDirectory() const {
+            return path.substr(0, path.find_last_of('\\')));
+        }
         Model(const std::string& tPath = "") {
             textures.clear();
             meshes.clear();
@@ -234,7 +237,7 @@ namespace Firesteel {
                 if(skip) continue;
                 //If texture hasn't been loaded already, load it.
                 Texture texture;
-                texture.ID = TextureFromFile(model.path.substr(0, model.path.find_last_of('\\')) + "/" + str.C_Str(), &texture.isMonochrome, true);
+                texture.ID = TextureFromFile(model.getDirectory() + "/" + str.C_Str(), &texture.isMonochrome, true);
                 texture.type = tTypeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);
