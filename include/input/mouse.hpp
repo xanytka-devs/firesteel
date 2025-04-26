@@ -37,7 +37,7 @@ namespace Firesteel {
 
 		static float getCursorX() { return mX; }
 		static float getCursorY() { return mY; }
-		glm::vec2 getCursorPosition() { return glm::vec2(mX, mY); }
+		static glm::vec2 getCursorPosition() { return glm::vec2(mX, mY); }
 
 		// Get cursor x delta.
 		static float getCursorDX() {
