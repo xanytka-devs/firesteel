@@ -3,10 +3,6 @@
 #include "common.hpp"
 
 namespace Firesteel {
-
-#define BOUND_GL_VERSION_MAJOR 4
-#define BOUND_GL_VERSION_MINOR 3
-
 	class Renderer {
     public:
         Renderer() {

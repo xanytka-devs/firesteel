@@ -89,35 +89,35 @@ namespace Firesteel {
 
         // Utilities //
 
-        void setBool(const std::string& tName, bool tValue) const {
+        void setBool(const std::string& tName, const bool tValue) const {
             glUniform1i(glGetUniformLocation(ID, tName.c_str()), (int)tValue);
         }
 
-        void setInt(const std::string& tName, int tValue) const {
+        void setInt(const std::string& tName, const int tValue) const {
             glUniform1i(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
-        void setFloat(const std::string& tName, float tValue) const {
+        void setFloat(const std::string& tName, const float tValue) const {
             glUniform1f(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
 
         void setVec2(const std::string& tName, const glm::vec2& tValue) const {
             glUniform2fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
-        void setVec2(const std::string& tName, float tX, float tY) const {
+        void setVec2(const std::string& tName, const float tX, const float tY) const {
             glUniform2f(glGetUniformLocation(ID, tName.c_str()), tX, tY);
         }
 
         void setVec3(const std::string& tName, const glm::vec3& tValue) const {
             glUniform3fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
-        void setVec3(const std::string& tName, float tX, float tY, float tZ) const {
+        void setVec3(const std::string& tName, const float tX, const float tY, const float tZ) const {
             glUniform3f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ);
         }
 
         void setVec4(const std::string& tName, const glm::vec4& tValue) const {
             glUniform4fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
-        void setVec4(const std::string& tName, float tX, float tY, float tZ, float tW) const {
+        void setVec4(const std::string& tName, const float tX, const float tY, const float tZ, const float tW) const {
             glUniform4f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ, tW);
         }
 

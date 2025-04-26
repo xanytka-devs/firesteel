@@ -55,7 +55,7 @@ namespace Firesteel {
 			LOG_INFO("Buttons: " + std::to_string(mButtonCount));
 		}
 		// Initializes controller.
-		void initialize(int tID) {
+		void initialize(const int tID) {
 			mID = getGID(tID);
 			update();
 		}
@@ -69,12 +69,12 @@ namespace Firesteel {
 			mButtons = glfwGetJoystickButtons(mID, &mButtonCount);
 		}
 
-		float getAxis(int tAxis) {
+		float getAxis(const int tAxis) {
 			if(mPresence)
 				return mAxes[tAxis];
 			return 0.0f;
 		}
-		unsigned char getButton(int tButton) {
+		unsigned char getButton(const int tButton) {
 			if(mPresence)
 				return mButtons[tButton];
 			return GLFW_RELEASE;
@@ -87,7 +87,7 @@ namespace Firesteel {
 		int getID() const { return mID; }
 
 		// Get global ID of joystick.
-		static int getGID(int tID) { return GLFW_JOYSTICK_1 + tID; }
+		static int getGID(const int tID) { return GLFW_JOYSTICK_1 + tID; }
 	private:
 		int mPresence;
 		int mID;

@@ -24,12 +24,10 @@ namespace Firesteel {
         std::vector<Texture> textures;
         std::vector<Mesh> meshes;
         std::string path;
-        std::string directory;
         Model(const std::string& tPath = "") {
             textures.clear();
             meshes.clear();
             path = tPath;
-            directory = path.substr(0, path.find_last_of('\\'));
         }
     };
 
@@ -39,19 +37,19 @@ namespace Firesteel {
         Model model;
 
         // Simplified constructor.
-        Entity(glm::vec3 tPos = glm::vec3(0), glm::vec3 tRot = glm::vec3(0), glm::vec3 tSize = glm::vec3(1)) {
+        Entity(const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
             transform = Transform(tPos, tRot, tSize);
         }
 
         // Constructor, expects a filepath to a 3D model.
         Entity(const std::string& tPath,
-            glm::vec3 tPos = glm::vec3(0), glm::vec3 tRot = glm::vec3(0), glm::vec3 tSize = glm::vec3(1)) {
+            const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
             transform = Transform(tPos, tRot, tSize);
             load(tPath);
         }
 
         // Renders the model.
-        void draw(Shader* tShader) {
+        void draw(const Shader* tShader) {
             if(!mHasMeshes) return;
             tShader->enable();
             tShader->setMat4("model", getMatrix());
@@ -176,22 +174,17 @@ namespace Firesteel {
             //Does the model even have textures?
             if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0
                 && material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
-                LOG_INFO("No general textures found. Using bound color data.");
+                LOG_INFO("No assigned textures found. Using bound color data.");
                 //Diffuse and specular color.
-                aiColor4D def(1.0f);
-                aiColor4D spec(1.0f);
-                aiColor4D emis(1.0f);
-                aiColor4D height(1.0f);
-                aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &def);
+                aiColor4D dif(1.0f), spec(1.0f), emis(1.0f);
+                aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &dif);
                 aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &spec);
                 aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emis);
-                aiGetMaterialColor(material, AI_MATKEY_COLOR_AMBIENT, &height);
                 //Output.
-                glm::vec4 def_v = glm::vec4(def.r, def.g, def.b, def.a);
-                glm::vec4 spec_v = glm::vec4(spec.r, spec.g, spec.b, spec.a);
-                glm::vec4 emis_v = glm::vec4(emis.r, emis.g, emis.b, emis.a);
-                glm::vec4 height_v = glm::vec4(height.r, height.g, height.b, height.a);
-                return Mesh(vertices, indices, def_v, spec_v, emis_v, height_v);
+                glm::vec4 difVec = glm::vec4(dif.r, dif.g, dif.b, dif.a);
+                glm::vec4 specVec = glm::vec4(spec.r, spec.g, spec.b, spec.a);
+                glm::vec4 emisVec = glm::vec4(emis.r, emis.g, emis.b, emis.a);
+                return Mesh(vertices, indices, difVec, specVec, emisVec);
             }
             std::vector<Texture> texs;
             //Diffuse maps.
@@ -242,7 +235,7 @@ namespace Firesteel {
                 if(skip) continue;
                 //If texture hasn't been loaded already, load it.
                 Texture texture;
-                texture.ID = TextureFromFile(this->model.directory + "/" + str.C_Str(), &texture.isMonochrome, true);
+                texture.ID = TextureFromFile(model.path.substr(0, model.path.find_last_of('\\')) + "/" + str.C_Str(), &texture.isMonochrome, true);
                 texture.type = tTypeName;
                 texture.path = str.C_Str();
                 textures.push_back(texture);

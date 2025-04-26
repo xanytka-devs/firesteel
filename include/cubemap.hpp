@@ -12,17 +12,17 @@ namespace Firesteel {
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}
         // Create cubemap from given files.
-        void load(std::string tD,
-            std::string tR,
-            std::string tL,
-            std::string tT,
-            std::string tBot,
-            std::string tF,
-            std::string tBack) {
-            load(tD.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
+        void load(const std::string tDir,
+                  const std::string tR,
+                  const std::string tL,
+                  const std::string tT,
+                  const std::string tBot,
+                  const std::string tF,
+                  const std::string tBack) {
+            load(tDir.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
         // Create cubemap from files that are in json.
-        void load(std::string tCubemapJson) {
+        void load(const std::string tCubemapJson) {
             if(!std::filesystem::exists(tCubemapJson)) return;
             mCfgFile = tCubemapJson;
             std::ifstream ifs(tCubemapJson);
@@ -31,12 +31,12 @@ namespace Firesteel {
         }
         // Create cubemap from given files.
         void load(const char* tDir,
-            const char* tRight = "right.png",
-            const char* tLeft = "left.png",
-            const char* tTop = "top.png",
-            const char* tBottom = "bottom.png",
-            const char* tFront = "front.png",
-            const char* tBack = "back.png") {
+                  const char* tRight = "right.png",
+                  const char* tLeft = "left.png",
+                  const char* tTop = "top.png",
+                  const char* tBottom = "bottom.png",
+                  const char* tFront = "front.png",
+                  const char* tBack = "back.png") {
             //Setup.
             mDir = tDir;
             mInitialized = true;

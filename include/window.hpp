@@ -24,8 +24,7 @@ namespace Firesteel {
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
 
         // Creates new window from given parametrs.
-		bool initialize(const char* tTitle = "Firesteel App", const WindowState& tState = WS_NORMAL,
-            size_t tContextMajor = 3, size_t tContextMinor = 3) {
+		bool initialize(const char* tTitle = "Firesteel App", const WindowState& tState = WS_NORMAL) {
             //Initialize and configure.
             LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
             if(glfwInit() == GLFW_FALSE) return false;
@@ -35,8 +34,8 @@ namespace Firesteel {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, false);
 #endif // _DEBUG
             glfwWindowHint(GL_FRAMEBUFFER_SRGB, GL_TRUE);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(tContextMajor));
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(tContextMinor));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
             if(tState==WS_BORDERLESS) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -104,7 +103,7 @@ namespace Firesteel {
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
         }
-        void setIconFromMemory(unsigned char* tIconData, const size_t tIconDataSize) {
+        void setIconFromMemory(const unsigned char* tIconData, const size_t tIconDataSize) {
             GLFWimage images[1]{};
             images[0].pixels = stbi_load_from_memory(tIconData, (int)tIconDataSize, &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);

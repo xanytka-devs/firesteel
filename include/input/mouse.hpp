@@ -35,10 +35,9 @@ namespace Firesteel {
 			mWheelDY = static_cast<float>(tDy);
 		}
 
-		// Get cursor x.
 		static float getCursorX() { return mX; }
-		// Get cursor y.
 		static float getCursorY() { return mY; }
+		glm::vec2 getCursorPosition() { return glm::vec2(mX, mY); }
 
 		// Get cursor x delta.
 		static float getCursorDX() {
@@ -67,21 +66,21 @@ namespace Firesteel {
 		}
 
 		// Gets current state of given mouse button.
-		static bool getButton(int tButton) {
+		static bool getButton(const int tButton) {
 			return mButtons[tButton];
 		}
 		// Has mouse button changed?
-		static bool buttonChanged(int tButton) {
+		static bool buttonChanged(const int tButton) {
 			bool output = mButtons[tButton];
 			mButtons[tButton] = false;
 			return output;
 		}
 		// Is mouse button up?
-		static bool buttonUp(int tButton) {
+		static bool buttonUp(const int tButton) {
 			return !mButtons[tButton] && buttonChanged(tButton);
 		}
 		// Is mouse button down?
-		static bool buttonDown(int tButton) {
+		static bool buttonDown(const int tButton) {
 			return mButtons[tButton] && buttonChanged(tButton);
 		}
 	private:

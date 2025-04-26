@@ -20,14 +20,14 @@ namespace Firesteel {
 			window.close();
 		}
 		virtual int start(const char* tTitle = "Firesteel App",
-            unsigned int tWinWidth = 800, unsigned int tWinHeight = 600, WindowState tWinState = WS_NORMAL) {
+            const unsigned int tWinWidth = 800, const unsigned int tWinHeight = 600, const WindowState tWinState = WS_NORMAL) {
             LOG("Firesteel 0.2.0.6");
             LOG_C("[-   Dev branch  -]", CMD_F_PURPLE);
             LOG_STATE("STARTUP");
 			onPreInitialize();
             //Create window.
             window = Window(tWinWidth, tWinHeight);
-            if(!window.initialize(tTitle, tWinState, BOUND_GL_VERSION_MAJOR, BOUND_GL_VERSION_MINOR))
+            if(!window.initialize(tTitle, tWinState))
                 return 1;
             //Check for Vulkan.
             bool isVulkan = (glfwVulkanSupported() == 1);

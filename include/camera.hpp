@@ -24,7 +24,7 @@ namespace Firesteel {
         bool isPerspective = true;
 
         // Constructor with vectors.
-        Camera(glm::vec3 tPos = glm::vec3(0.f, 0.f, 0.f), glm::vec3 tRot = glm::vec3(0.f, 0.f, 0.f)) {
+        Camera(const glm::vec3 tPos = glm::vec3(0.f, 0.f, 0.f), const glm::vec3 tRot = glm::vec3(0.f, 0.f, 0.f)) {
             transform.position = tPos;
             transform.rotation = tRot;
             worldUp = glm::vec3(0.f, 1.f, 0.f);
@@ -37,7 +37,7 @@ namespace Firesteel {
             return glm::lookAt(transform.position, transform.position + forward, up);
         }
         // Returns viewport matrix.
-        glm::mat4 getProjection(float tClipSize = 1) const {
+        glm::mat4 getProjection(const float tClipSize = 1) const {
             if(isPerspective) return glm::perspective(glm::radians(fov), tClipSize * aspect, nearPlane, farPlane);
             else return glm::ortho(-tClipSize, tClipSize,
                 -tClipSize/aspect, tClipSize/aspect, nearPlane, farPlane);

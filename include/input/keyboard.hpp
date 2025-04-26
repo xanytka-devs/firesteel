@@ -148,21 +148,21 @@ namespace Firesteel {
 		}
 
 		// Gets current state of given key.
-		static bool getKey(int tKey) {
+		static bool getKey(const int tKey) {
 			return mKeys[tKey];
 		}
 		// Has key changed?
-		static bool keyChanged(int tKey) {
+		static bool keyChanged(const int tKey) {
 			bool output = mKeysChanged[tKey];
 			mKeysChanged[tKey] = false;
 			return output;
 		}
 		// Is key up?
-		static bool keyUp(int tKey) {
+		static bool keyUp(const int tKey) {
 			return !mKeys[tKey] && keyChanged(tKey);
 		}
 		// Is key down?
-		static bool keyDown(int tKey) {
+		static bool keyDown(const int tKey) {
 			return mKeys[tKey] && keyChanged(tKey);
 		}
 		// Checks if any key is currently pressed.

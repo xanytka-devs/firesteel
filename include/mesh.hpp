@@ -29,24 +29,20 @@ namespace Firesteel {
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
         std::vector<Texture> textures;
-        glm::vec3 ambient{ 0.2f };
-        glm::vec3 diffuse{ 1.f };
-        glm::vec3 specular{ 0.5f };
-        glm::vec3 emission{ 0.f };
-        glm::vec3 height{ 0.f };
+        glm::vec3 ambient{0.2f}, diffuse{1.f}, specular{0.5f}, emission{0.f};
 
         // Constructor with textures.
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures)
             : vertices(tVertices), indices(tIndices), textures(tTextures) {
-            setupMesh();
+            makeMesh();
         }
 
         // Constructor without textures.
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices,
-            glm::vec3 tDiffuse, glm::vec3 tSpecular, glm::vec3 tEmission, glm::vec3 tHeight)
+            const glm::vec3 tDiffuse, const glm::vec3 tSpecular, const glm::vec3 tEmission)
             : vertices(tVertices), indices(tIndices),
-            diffuse(tDiffuse), specular(tSpecular), emission(tEmission), height(tHeight) {
-            setupMesh();
+            diffuse(tDiffuse), specular(tSpecular), emission(tEmission) {
+            makeMesh();
         }
 
         // Render the mesh.
@@ -94,7 +90,7 @@ namespace Firesteel {
             }
 
             //Draw mesh.
-            glBindVertexArray(VAO);
+            glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
             //Always good practice to set everything back to defaults once configured.
@@ -103,9 +99,9 @@ namespace Firesteel {
 
         // Clears mesh data.
         void remove() {
-            glDeleteBuffers(1, &EBO);
-            glDeleteBuffers(1, &VBO);
-            glDeleteVertexArrays(1, &VAO);
+            glDeleteBuffers(1, &mEBO);
+            glDeleteBuffers(1, &mVBO);
+            glDeleteVertexArrays(1, &mVAO);
             //Clear mesh data.
             vertices.clear();
             indices.clear();
@@ -119,20 +115,20 @@ namespace Firesteel {
 
     private:
         // Render data.
-        unsigned int VAO, VBO, EBO;
+        unsigned int mVAO, mVBO, mEBO;
 
         // Initializes all the buffer objects/arrays.
-        void setupMesh() {
+        void makeMesh() {
             //Create buffers/arrays.
-            glGenVertexArrays(1, &VAO);
-            glGenBuffers(1, &VBO);
-            glGenBuffers(1, &EBO);
-            glBindVertexArray(VAO);
+            glGenVertexArrays(1, &mVAO);
+            glGenBuffers(1, &mVBO);
+            glGenBuffers(1, &mEBO);
+            glBindVertexArray(mVAO);
             //Load data into vertex buffers.
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBindBuffer(GL_ARRAY_BUFFER, mVBO);
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
             //Load data into entity buffers.
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
             //Set the vertex attribute pointers.
