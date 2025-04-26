@@ -43,10 +43,9 @@ namespace Firesteel {
                 //Initialize debug output.
                 glEnable(GL_DEBUG_OUTPUT);
                 glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                if (BOUND_GL_VERSION_MAJOR >= 4) {
-                    glDebugMessageCallback(glDebugOutput, nullptr);
-                    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-                }
+                //For OpenGL 4.x.
+                glDebugMessageCallback(glDebugOutput, nullptr);
+                glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
             }
 		}
     private:

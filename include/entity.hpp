@@ -77,7 +77,6 @@ namespace Firesteel {
                 model.meshes[i].remove();
             for(size_t i = 0; i < model.textures.size(); i++)
                 model.textures[i].remove();
-            model.directory = "";
             mHasMeshes = false;
         }
 
