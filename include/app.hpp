@@ -59,7 +59,7 @@ namespace Firesteel {
                 }
                 if(window.isMinimized()) continue;
                 window.clearBuffers();
-                if((Keyboard::keyDown(KeyCode::LEFT_CONTROL) || Keyboard::keyDown(KeyCode::RIGHT_CONTROL))
+                if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::drawDevView = true;
                 r.newFrameImGui();
                 onUpdate();
