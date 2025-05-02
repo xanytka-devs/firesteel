@@ -4,7 +4,7 @@
 #include "shader.hpp"
 
 namespace Firesteel {
-    class Framebuffer {
+    struct Framebuffer {
     public:
         Framebuffer() { }
 

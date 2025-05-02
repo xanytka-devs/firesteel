@@ -18,7 +18,7 @@ namespace Firesteel {
         WS_BORDERLESS = 0x2
     };
 
-	class Window {
+	struct Window {
 	public:
 		Window(const unsigned int& tWidth = 800, const unsigned int& tHeight = 600, const bool& tVsync = false) :
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
@@ -86,8 +86,6 @@ namespace Firesteel {
         }
         void close() {
             mClosed = true;
-        }
-        void terminate() const {
             glfwTerminate();
         }
         void setTitle(const std::string& tTitle) {
@@ -112,6 +110,7 @@ namespace Firesteel {
         void setClearColor(const glm::vec3& tColor) {
             mClearColor = tColor;
         }
+
         void setVSync(const bool& tVSync) {
             mVSync = tVSync;
             if (mVSync) glfwSwapInterval(1);
@@ -121,10 +120,19 @@ namespace Firesteel {
         bool getVSync() const { return mVSync; }
 
         bool isOpen() const { return (!mClosed && !glfwWindowShouldClose(mPtr)); }
+        bool isMinimized() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
+        bool isIconified() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
+        bool isMaximized() const { return glfwGetWindowAttrib(mPtr, GLFW_MAXIMIZED); }
+        bool isFocused() const { return glfwGetWindowAttrib(mPtr, GLFW_FOCUSED); }
+
+        void setOpacity(float tOpac=1.f) const { glfwSetWindowOpacity(mPtr, tOpac); }
+        float getOpacity() const { return glfwGetWindowOpacity(mPtr); }
+
         int getHeight() { getSizeInternal(); return mHeight; }
         int getWidth() { getSizeInternal(); return mWidth; }
         glm::vec2 getSize() { getSizeInternal(); return glm::vec2(mWidth, mHeight); }
         float aspect() const { return static_cast<float>(mWidth) / static_cast<float>(mHeight); }
+
         GLFWwindow* ptr() const { return mPtr; }
 
         enum Cursor {
@@ -154,13 +162,15 @@ namespace Firesteel {
                 break;
             }
         }
+        void setResizeablitiy(bool tVal) {
+            glfwSetWindowAttrib(mPtr, GLFW_RESIZABLE, tVal?GLFW_TRUE:GLFW_FALSE);
+        }
 	private:
 		GLFWwindow* mPtr;
 		int mWidth, mHeight;
 		bool mVSync, mClosed;
 		glm::vec3 mClearColor;
     private:
-        // Resize viewport.
         static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
             glViewport(0, 0, width, height);
         }

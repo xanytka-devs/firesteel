@@ -23,7 +23,7 @@ namespace Firesteel {
         float boneWeights[MAX_BONE_INFLUENCE];
     };
 
-    class Mesh {
+    struct Mesh {
     public:
         /// Mesh Data.
         std::vector<Vertex> vertices;

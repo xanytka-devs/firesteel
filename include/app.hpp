@@ -4,6 +4,8 @@
 #include "common.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
+#include "internal/config.hpp"
+#include "internal/devview.hpp"
 
 namespace Firesteel {
 
@@ -21,24 +23,24 @@ namespace Firesteel {
 		}
 		virtual int start(const char* tTitle = "Firesteel App",
             const unsigned int tWinWidth = 800, const unsigned int tWinHeight = 600, const WindowState tWinState = WS_NORMAL) {
-            LOG("Firesteel 0.2.0.6");
-            LOG_C("[-   Dev branch  -]", CMD_F_PURPLE);
+            LOG("Firesteel 0.2.1");
             LOG_STATE("STARTUP");
 			onPreInitialize();
-            //Create window.
+            //Create a window.
             window = Window(tWinWidth, tWinHeight);
             if(!window.initialize(tTitle, tWinState))
                 return 1;
             //Check for Vulkan.
             bool isVulkan = (glfwVulkanSupported() == 1);
-            LOG_INFO(isVulkan ? "Vulkan is supported on current machine."
-                : "Vulkan isn't supported on current machine.");
+            LOG_INFO(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
             //Renderer init.
             Renderer r = Renderer();
             if (!r.initialize()) return -1;
             r.loadExtencions();
             r.printInfo();
             r.initializeParams();
+            r.initializeImGui(window.ptr());
+            CONFIG::checkGlobalFile();
             onInitialize();
 
             //Update loop.
@@ -55,14 +57,20 @@ namespace Firesteel {
                     mFrameCount = 0;
                     mLastFrameFPS = currentFrame;
                 }
+                if(window.isMinimized()) continue;
                 window.clearBuffers();
+                r.newFrameImGui();
                 onUpdate();
+                DEVVIEW::draw(deltaTime, fps);
+                r.renderImGui(window.ptr());
                 window.swapBuffers();
             }
+            //Shutdown.
             LOG_STATE("SHUTDOWN");
             onShutdown();
+            r.shutdownImGui();
             //Quitting.
-            window.terminate();
+            window.close();
             LOG_INFO("Window terminated");
             LOG_STATE("QUIT");
             return 0;

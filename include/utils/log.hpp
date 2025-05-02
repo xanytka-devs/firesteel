@@ -11,6 +11,7 @@
 #define LOG_STATE(...) Log::log_state(__VA_ARGS__);
 #define LOG_WARN(...) Log::log_warn(__VA_ARGS__);
 #define LOG_ERRR(...) Log::log_error(__VA_ARGS__);
+#define LOG_ERROR(...) Log::log_error(__VA_ARGS__);
 #define LOG_CRIT(...) Log::log_critical(__VA_ARGS__);
 	class Log {
 	public:

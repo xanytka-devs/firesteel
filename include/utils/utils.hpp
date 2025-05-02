@@ -262,7 +262,7 @@ std::string executeInCmd(const char* cmd) {
 #endif // !WIN32
 #ifdef __linux__
 static void openURL(const char* tUrl) {
-    system("http://google.com");
+    system(tUrl);
 }
 std::string executeInCmd(const char* cmd) {
     std::array<char, 128> buffer;

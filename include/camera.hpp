@@ -7,8 +7,7 @@
 #include <glm/gtc/quaternion.hpp>
 
 namespace Firesteel {
-    class Camera {
-    public:
+    struct Camera {
         // Rotation: X=Roll,Y=Yaw,Z=Pitch
         Transform transform;
         // Orientation.

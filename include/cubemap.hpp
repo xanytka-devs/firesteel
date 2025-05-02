@@ -7,7 +7,7 @@
 #include "utils/stbi_global.hpp"
 
 namespace Firesteel {
-    class Cubemap {
+    struct Cubemap {
     public:
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}

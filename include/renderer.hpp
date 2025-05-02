@@ -1,6 +1,9 @@
 #ifndef FS_RENDERER_H
 #define FS_RENDERER_H
 #include "common.hpp"
+#include <imgui.h>
+#include <backends/imgui_impl_opengl3.h>
+#include <backends/imgui_impl_glfw.h>
 
 namespace Firesteel {
 	class Renderer {
@@ -48,6 +51,44 @@ namespace Firesteel {
                 glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
             }
 		}
+        // Initializes ImGui.
+        void initializeImGui(GLFWwindow* tWin) {
+            IMGUI_CHECKVERSION();
+            ImGui::CreateContext();
+            ImGuiIO& io = ImGui::GetIO();
+            io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableKeyboard
+                | ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
+            // Setup Dear ImGui style
+            ImGui::StyleColorsDark(); // you can also use ImGui::StyleColorsClassic();
+            // Choose backend
+            ImGui_ImplGlfw_InitForOpenGL(tWin, true);
+            ImGui_ImplOpenGL3_Init();
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
+        }
+        // Creates new frame for ImGui (before any Begin-s).
+        void newFrameImGui() {
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+        }
+        // Draws all ImGui data.
+        void renderImGui(GLFWwindow* tWin) {
+            ImGui::Render();
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+                glfwMakeContextCurrent(tWin);
+            }
+        }
+        // Destroys ImGui context.
+        void shutdownImGui() {
+            ImGui_ImplOpenGL3_Shutdown();
+            ImGui_ImplGlfw_Shutdown();
+            ImGui::DestroyContext();
+        }
     private:
         bool mInitialized = false;
 
@@ -61,8 +102,8 @@ namespace Firesteel {
             //Ignore non-significant error/warning codes.
             if (tID == 131169 || tID == 131185 || tID == 131218 || tID == 131204) return;
 
-            LOG("---------------");
-            LOG("Debug message (" + std::to_string(tID) + "): " + tMsg);
+            LOG_C("OpenGL Error(" + std::to_string(tID) + "): ", CMD_F_RED, "");
+            LOG_C(tMsg);
 
             switch (tSource) {
             case GL_DEBUG_SOURCE_API:             LOG("Source: API"); break;
@@ -91,7 +132,7 @@ namespace Firesteel {
             case GL_DEBUG_SEVERITY_LOW:          LOG("Severity: low"); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: LOG("Severity: notification"); break;
             }
-            LOG("---------------");
+            LOG_C("-----", CMD_F_RED);
         }
 	};
 
