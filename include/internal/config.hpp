@@ -22,7 +22,7 @@ namespace Firesteel {
 
                 CPUInfo cpu = getCPUInfo();
                 LOG_INFO(" - CPU");
-                if(cpu.output == "") {
+                if(std::string(cpu.output).size() <= 1) {
                     LOG_INFO("   Vendor: " + cpu.vendor);
                     LOG_INFO("   Model: " + cpu.model);
                     LOG_INFO("   Cores: " + std::to_string(cpu.cores));
@@ -31,20 +31,20 @@ namespace Firesteel {
 
                 GPUInfo gpu = getGPUInfo();
                 LOG_INFO(" - GPU");
-                if(gpu.output == "") {
+                if(std::string(gpu.output).size() <= 1) {
                     LOG_INFO("   Model: " + gpu.model);
                     LOG_INFO("   Memory: " + std::to_string(gpu.memoryGB) + " GB");
                 } else LOG_WARN(gpu.output);
 
                 RAMInfo ram = getRAMInfo();
                 LOG_INFO(" - RAM");
-                if(ram.output == "") {
+                if(std::string(ram.output).size() <= 1) {
                     LOG_INFO("   Memory: " + std::to_string(ram.memoryGB) + " GB");
                 } else LOG_WARN(ram.output);
 
                 MotherboardInfo motherboard = getMotherboardInfo();
                 LOG_INFO(" - Motherboard");
-                if(motherboard.output == "") {
+                if(std::string(motherboard.output).size() <= 1) {
                     LOG_INFO("   Model: " + motherboard.model);
                     LOG_INFO("   Vendor: " + motherboard.vendor);
                 } else LOG_WARN(motherboard.output);
