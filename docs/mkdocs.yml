@@ -54,8 +54,8 @@ extra:
     - icon: fontawesome/brands/vk
       link: https://vk.com/xanytka
 nav:
-  - Домой: index.md
+  - Домой: 'index/'
   - Туториалы:
-    - Пакеты: tutorials/packages.md
-    - Своё окно: tutorials/your_own_window.md
-    - Первый треугольник: tutorials/first_triangle.md
+    - Пакеты: 'tutorials/packages/'
+    - Своё окно: 'tutorials/your_own_window/'
+    - Первый треугольник: 'tutorials/first_triangle/'
