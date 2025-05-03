@@ -73,6 +73,7 @@ namespace Firesteel {
             r.shutdownImGui();
             //Quitting.
             window.close();
+            glfwTerminate();
             LOG_INFO("Window terminated");
             LOG_STATE("QUIT");
             return 0;

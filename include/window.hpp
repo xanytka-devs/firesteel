@@ -86,7 +86,6 @@ namespace Firesteel {
         }
         void close() {
             mClosed = true;
-            glfwTerminate();
         }
         void setTitle(const std::string& tTitle) {
             glfwSetWindowTitle(mPtr, tTitle.c_str());
