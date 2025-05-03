@@ -1,9 +1,7 @@
 site_name: Firesteel
 site_author: Xanytka Devs
-
 repo_name: xanytka-devs/firesteel
 repo_url: https://github.com/xanytka-devs/firesteel
-
 docs_dir: 'source/'
 theme:
   name: material
@@ -16,12 +14,10 @@ theme:
   palette:
     # General config
     font:
-        text: Inter
-        code: Ubuntu Mono
-    language: ru
+      text: Inter
+      code: Ubuntu Mono
     logo: assets/logo.png
     favicon: assets/favicon.png
-
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
       toggle:
@@ -29,20 +25,23 @@ theme:
         name: Switch to light mode
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
+      scheme: default
       primary: deep orange
       accent: orange
-      scheme: default
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: deep orange
       accent: orange
-      scheme: slate
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+plugins:
+  - search:
+      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -54,8 +53,8 @@ extra:
     - icon: fontawesome/brands/vk
       link: https://vk.com/xanytka
 nav:
-  - Домой: 'index/'
+  - Домой: index.md
   - Туториалы:
-    - Пакеты: 'tutorials/packages/'
-    - Своё окно: 'tutorials/your_own_window/'
-    - Первый треугольник: 'tutorials/first_triangle/'
+    - Пакеты: tutorials/packages.md
+    - Своё окно: tutorials/your_own_window.md
+    - Первый треугольник: tutorials/first_triangle.md
