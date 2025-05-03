@@ -7,9 +7,6 @@ theme:
   name: material
   features:
     - navigation.footer
-    - search.highlight
-    - search.share
-    - search.suggest
     - content.code.copy
   palette:
     # General config
@@ -39,9 +36,6 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-plugins:
-  - search:
-      separator: '[\s\u200b\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
 extra:
   social:
     - icon: fontawesome/brands/github
