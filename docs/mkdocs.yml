@@ -7,7 +7,3 @@ nav:
     - Пакеты: 'tutorials/packages/'
     - Своё окно: 'tutorials/your_own_window/'
     - Первый треугольник: 'tutorials/first_triangle/'
-markdown_extensions:
-  - markdown_include.include:
-      base_path: 'source/'
-  - admonition
