@@ -1,19 +1,8 @@
-# 🔼 Предусловие
-Начнём с простого - "Hello World!" на **Firesteel**.
+> [!WARNING]
+> Данная статья находится в этапе переписания.
 
-# Отрисовка окна
-Для создания простого окна нужно [скачать пакет](https://firesteel.readthedocs.io/ru/latest/#tutorials/packets/) "fs.rendering.opengl" (или любой другой для отображения) в файл **main.cpp** добавить несколько простых строчек кода:
-``` cpp
-#include <firesteel/app.hpp>
-using namespace firesteel;
-class HelloWorldApp : public App { };
-
-int main() {
-    //Create instance of app.
-    auto app = new HelloWorldApp();
-    return app->start(800, 600, "Hello World!");
-}
-```
+# Предисловие
+Сделаем немного нестандартное, но полезное упражнение.
 
 # Рисуем треугольник
 Теперь, так как у нас окно, то давайте добавим в него простой треугольник.
@@ -92,7 +81,7 @@ class HelloWorldApp : public App {
 ## Завершим всё это тем, что добавим шейдер для треугольника.
 Построим проект (не запустим). В папке с построенным проектом создадим папку **res** и добавим в неё файлы **core.vert** и **core.frag**.
 ### Содержимое core.vert:
-``` c
+``` glsl
 #version 330 core
 in vec3 aPos;
 out vec3 pos;
@@ -103,7 +92,7 @@ void main() {
 }
 ```
 ### Содержимое core.frag:
-``` c
+``` glsl
 #version 330 core
 out vec4 FragColor;
 in vec3 pos;
@@ -115,6 +104,5 @@ void main() {
 Теперь треугольник будет иметь градиент из красного, синего и зелёного.
 
 # Заключение
-После всех этих действий вы будете иметь окно с треугольником, какой обычно создают как "Hello World" на OpenGL или других графических библиотеках.  
-Итоговый код: [https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo](https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo)  
-[<- Пакеты](https://firesteel.readthedocs.io/ru/latest/#tutorials/packages/) | [Продолжение... ->](https://firesteel.readthedocs.io/ru/latest/#tutorials/home/)
+Итоговый код: https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo  
+[<- Своё окно](https://firesteel.readthedocs.io/ru/latest/#tutorials/your-own-window/) | [Продолжение... ->](https://github.com/xanytka-devs/firesteel/wiki)
