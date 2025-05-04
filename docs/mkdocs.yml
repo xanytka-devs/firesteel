@@ -12,8 +12,6 @@ theme:
   font:
     text: Inter
     code: Ubuntu Mono
-  icon:
-    logo: assets/logo
   favicon: assets/favicon.png
   palette:
     # Palette toggle for automatic mode
