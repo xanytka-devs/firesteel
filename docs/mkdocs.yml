@@ -8,14 +8,14 @@ theme:
   features:
     - navigation.footer
     - content.code.copy
+  # General config
+  font:
+    text: Inter
+    code: Ubuntu Mono
+  icon:
+    logo: assets/logo.png
+  favicon: assets/favicon.png
   palette:
-    # General config
-    font:
-      text: Inter
-      code: Ubuntu Mono
-    icon:
-      logo: assets/logo.png
-    favicon: assets/favicon.png
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
       toggle:
