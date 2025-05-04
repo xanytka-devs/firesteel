@@ -13,7 +13,8 @@ theme:
     font:
       text: Inter
       code: Ubuntu Mono
-    logo: assets/logo.png
+    icon:
+      logo: assets/logo.png
     favicon: assets/favicon.png
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
