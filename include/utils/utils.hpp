@@ -191,10 +191,47 @@ struct FileDialog {
 
 #ifdef WIN32
 #include <windows.h>
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#endif // !WIN32
+std::string executeInCmd(const char* cmd) {
+    std::array<char, 128> buffer;
+    std::string result;
+    std::unique_ptr<FILE, decltype(
+#ifdef WIN32
+        &_pclose
+#elif __linux__
+        &pclose
+#endif // !WIN32
+        )> pipe(
+#ifdef WIN32
+            _popen(cmd, "r"),
+#elif __linux__
+            popen(cmd, "r"),
+#endif // !WIN32
+#ifdef WIN32
+            &_pclose
+#elif __linux__
+            &pclose
+#endif // !WIN32
+        );
+    if (!pipe) {
+        throw std::runtime_error("popen() failed!");
+    }
+    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
+        result += buffer.data();
+    }
+    return result;
+}
 static void openURL(const char* tUrl) {
+#ifdef WIN32
     ShellExecuteA(NULL, "open", tUrl, NULL, NULL, SW_SHOWNORMAL);
+#elif __linux__
+    system(tUrl);
+#endif // !WIN32
 }
 std::string FileDialog::open() const {
+#ifdef WIN32
     OPENFILENAME ofn;       //Common dialog box structure.
     char szFile[MAX_PATH]{};     //Buffer for file name.
     HWND hwnd = nullptr;    //Owner window.
@@ -219,8 +256,12 @@ std::string FileDialog::open() const {
     if (GetOpenFileName(&ofn) == TRUE)
         return szFile;
     return default_file;
+#elif __linux__
+    return "";
+#endif // !WIN32
 }
 std::string FileDialog::save() const {
+#ifdef WIN32
     OPENFILENAME ofn;       //Common dialog box structure.
     char szFile[MAX_PATH]{};     //Buffer for file name.
     HWND hwnd = nullptr;    //Owner window.
@@ -246,37 +287,17 @@ std::string FileDialog::save() const {
         return szFile;
     }
     return default_file;
-}
-std::string executeInCmd(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&_pclose)> pipe(_popen(cmd, "r"), _pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-    return result;
-}
+#elif __linux__
+    return "";
 #endif // !WIN32
-#ifdef __linux__
-static void openURL(const char* tUrl) {
-    system(tUrl);
 }
-std::string executeInCmd(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) {
-        throw std::runtime_error("popen() failed!");
-    }
-    while (fgets(buffer.data(), static_cast<int>(buffer.size()), pipe.get()) != nullptr) {
-        result += buffer.data();
-    }
-    return result;
+static void showMessageBox(GLFWwindow* tWin, std::string tMsg, std::string tTitle = "Firesteel Message Box") {
+#ifdef WIN32
+    MessageBox(glfwGetWin32Window(tWin), tMsg.c_str(), tTitle.c_str(), MB_OK | MB_ICONQUESTION);
+#elif __linux__
+    // Of course there's SDL2s message box API, but it needs SDL2 so I won't implement it for now.
+    LOG_INFO("Currently Message Boxes are not implemented for the Linux OS.");
+#endif // !WIN32
 }
-#endif // !__linux__
-
 
 #endif // !FS_UTILS_H
