@@ -200,20 +200,23 @@ std::string executeInCmd(const char* cmd) {
     std::unique_ptr<FILE, decltype(
 #ifdef WIN32
         &_pclose
-#elif __linux__
-        &pclose
 #endif // !WIN32
+#ifdef __linux__
+        &pclose
+#endif // !__linux__
         )> pipe(
 #ifdef WIN32
             _popen(cmd, "r"),
-#elif __linux__
-            popen(cmd, "r"),
 #endif // !WIN32
+#ifdef __linux__
+            popen(cmd, "r"),
+#endif // !__linux__
 #ifdef WIN32
             &_pclose
-#elif __linux__
-            &pclose
 #endif // !WIN32
+#ifdef __linux__
+            &pclose
+#endif // !__linux__
         );
     if (!pipe) {
         throw std::runtime_error("popen() failed!");
@@ -226,9 +229,10 @@ std::string executeInCmd(const char* cmd) {
 static void openURL(const char* tUrl) {
 #ifdef WIN32
     ShellExecuteA(NULL, "open", tUrl, NULL, NULL, SW_SHOWNORMAL);
-#elif __linux__
-    system(tUrl);
 #endif // !WIN32
+#ifdef __linux__
+    system(tUrl);
+#endif // !__linux__
 }
 std::string FileDialog::open() const {
 #ifdef WIN32
@@ -256,9 +260,10 @@ std::string FileDialog::open() const {
     if (GetOpenFileName(&ofn) == TRUE)
         return szFile;
     return default_file;
-#elif __linux__
-    return "";
 #endif // !WIN32
+#ifdef __linux__
+    return "";
+#endif // !__linux__
 }
 std::string FileDialog::save() const {
 #ifdef WIN32
@@ -287,17 +292,19 @@ std::string FileDialog::save() const {
         return szFile;
     }
     return default_file;
-#elif __linux__
-    return "";
 #endif // !WIN32
+#ifdef __linux__
+    return "";
+#endif // !__linux__
 }
 static void showMessageBox(GLFWwindow* tWin, std::string tMsg, std::string tTitle = "Firesteel Message Box") {
 #ifdef WIN32
     MessageBox(glfwGetWin32Window(tWin), tMsg.c_str(), tTitle.c_str(), MB_OK | MB_ICONQUESTION);
-#elif __linux__
+#endif // !WIN32
+#ifdef __linux__
     // Of course there's SDL2s message box API, but it needs SDL2 so I won't implement it for now.
     LOG_INFO("Currently Message Boxes are not implemented for the Linux OS.");
-#endif // !WIN32
+#endif // !__linux__
 }
 
 #endif // !FS_UTILS_H
