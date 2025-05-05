@@ -191,8 +191,6 @@ struct FileDialog {
 
 #ifdef WIN32
 #include <windows.h>
-#define GLFW_EXPOSE_NATIVE_WIN32
-#include "../external/glfw/include/GLFW/glfw3native.h"
 #endif // !WIN32
 std::string executeInCmd(const char* cmd) {
     std::array<char, 128> buffer;
