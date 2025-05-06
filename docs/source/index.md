@@ -1,4 +1,4 @@
-![Banner](../banner.png "Firesteel banner")
+![Banner](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/banner.png?raw=true "Firesteel banner")
 
 # Добро пожаловать в Firesteel!
 Данная Wiki поможет вам преодолеть все трудности, которые могут возникнуть при разработке на программном слое firesteel.  
