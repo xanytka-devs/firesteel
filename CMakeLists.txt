@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 project(firesteel)
 set(PRJ_NAME firesteel)
 
-message(CHECK_START "Firesteel: Version 0.2.1")
+set(FiresteelVersion "0.2.1")
+message(CHECK_START "Firesteel: ${FiresteelVersion}")
 
 # Fixing library-depndend windows stuff.
 set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /DNDEBUG" CACHE STRING "" FORCE)
@@ -62,7 +63,8 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 	${PRJ_ALL}
 )
 
-target_include_directories(${PRJ_NAME} PUBLIC includes)
+add_compile_definitions(FiresteelVersion="${FiresteelVersion}")
+target_include_directories(${PRJ_NAME} PUBLIC include)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
