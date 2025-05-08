@@ -14,7 +14,10 @@
 #include "shader.hpp"
 #include "utils/stbi_global.hpp"
 #include "transform.hpp"
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "../../external/tiny_obj_loader.h"
+
+#include "utils/stbi_global.hpp"
 
 namespace Firesteel {
 
@@ -81,27 +84,27 @@ namespace Firesteel {
             mHasMeshes = false;
         }
 
-        // Loads a model with ASSIMP.
+        // Loads a model (if it exists).
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
                 LOG_INFO("Model at: \"" + tPath + "\" doesn't exist");
                 return;
             }
-            ////Read file via ASSIMP.
-            //Assimp::Importer importer;
-            //const aiScene* scene = importer.ReadFile(tPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-            ////Check for errors.
-            //if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            //    LOG_ERRR(std::string("Error while importing model: ") + importer.GetErrorString());
-            //    return;
-            //}
-            //model = Model(tPath);
-//
-            //LOG_INFO("Loading model at: \"" + tPath + "\"");
-            //processNode(scene->mRootNode, scene);
-            //LOG_INFO("Model has been successfully loaded");
-            //mHasMeshes = true;
-            LOG_INFO("Mesh loading is in progress. Update soon.");
+            LOG_INFO("Loading model at: \"" + tPath + "\"");
+            model = Model(tPath);
+            tinyobj::attrib_t inattrib;
+            std::vector<tinyobj::shape_t> inshapes;
+            std::vector<tinyobj::material_t> materials;
+            std::string warn, err;
+            bool ret = tinyobj::LoadObj(&inattrib, &inshapes, &materials, &warn, &err, tPath.c_str(), model.getDirectory().c_str());
+            if(!warn.empty()) LOG_WARN("Got warning \"" + warn + "\" while loading model at \"" + tPath + "\"");
+            if(!err.empty()) LOG_ERRR("Got error \"" + err + "\" while loading model at \"" + tPath + "\"");
+            printf("# of vertices  = %d\n", (int)(inattrib.vertices.size()) / 3);
+            printf("# of normals   = %d\n", (int)(inattrib.normals.size()) / 3);
+            printf("# of texcoords = %d\n", (int)(inattrib.texcoords.size()) / 2);
+            printf("# of materials = %d\n", (int)materials.size());
+            printf("# of shapes    = %d\n", (int)inshapes.size());
+            mHasMeshes = true;
         }
 
     private:
