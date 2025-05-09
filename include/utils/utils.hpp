@@ -1,30 +1,57 @@
 #ifndef FS_UTILS_H
 #define FS_UTILS_H
 
+#include <cstdlib>
+
+// Randomizes current rand() seed.
+void genRandom() {
+    __time64_t long_time;
+	_time64(&long_time);
+	srand(static_cast<unsigned int>(long_time));
+}
+
+// Returns random number.
+bool getRandom() {
+    genRandom();
+    return rand()%1;
+}
+// Returns random number.
+int getRandom(int tMax) {
+    genRandom();
+    return rand()%tMax;
+}
+// Returns random number.
+float getRandom(float tMax) {
+    genRandom();
+    return static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/tMax));
+}
+// Returns random number.
+int getRandom(int tMin, int tMax) {
+    genRandom();
+    return (rand()%tMax)+tMin;
+}
+// Returns random number.
+float getRandom(float tMin, float tMax) {
+    genRandom();
+    return tMin+static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/(tMax-tMin)));
+}
+
 float lerp(float a, float b, float f) {
     return a * (1.f - f) + (b * f);
 }
 
 #include <glm/vec3.hpp>
+#include <string>
 
 glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
-    return glm::vec3(tR / 255, tG / 255, tB / 255);
+    return glm::vec3(tR, tG, tB) / 255.f;
 }
 
-glm::vec3 HexToRGB(const char* tHex) {
-    if (tHex[0] == '#') {
-        return glm::vec3(
-            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4)
-        );
-    } else {
-        return glm::vec3(
-            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4)
-        );
-    }
+glm::vec3 HexToRGB(std::string tHex) {
+    if(tHex[0] == '#') tHex.erase(0, 1);
+    int r, g, b;
+    sscanf(tHex.c_str(), "%02x%02x%02x", &r, &g, &b);
+    return glm::vec3(r, g, b)/ 255.f;
 }
 
 glm::vec3 CMYKToRGB(unsigned int tC, unsigned int tM, unsigned int tY, unsigned int tK) {
@@ -38,30 +65,20 @@ glm::vec3 CMYKToRGB(unsigned int tC, unsigned int tM, unsigned int tY, unsigned 
 #include <glm/vec4.hpp>
 
 glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned int tA) {
-    return glm::vec4(tR / 255, tG / 255, tB / 255, tA / 255);
+    return glm::vec4(tR / 255.f, tG / 255.f, tB / 255.f, tA / 255.f);
 }
 
-glm::vec4 HexToRGBA(const char* tHex) {
-    if(tHex[0] == '#') {
-        return glm::vec4(
-            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[7] + tHex[8]), nullptr, 4)
-        );
-    } else {
-        return glm::vec4(
-            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[6] + tHex[7]), nullptr, 4)
-        );
-    }
+glm::vec4 HexToRGBA(std::string tHex) {
+    if(tHex[0] == '#') tHex.erase(0, 1);
+    int r, g, b, a;
+    sscanf(tHex.c_str(), "%02x%02x%02x%02x", &r, &g, &b, &a);
+    return glm::vec4(r, g, b, a)/ 255.f;
 }
 
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include "../common.hpp"
 
 std::vector<std::string> StrSplit(const std::string& tS, char tDelim) {
     std::stringstream ss(tS);
@@ -164,8 +181,6 @@ std::string StrToLower(std::string tStr) {
 std::string StrToUpper(std::string tStr) {
     return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
 }
-
-#include "../common.hpp"
 
 /// Dialog for file (open/save).
 struct FileDialog {

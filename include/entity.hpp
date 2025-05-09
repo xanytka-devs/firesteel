@@ -13,28 +13,10 @@
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "utils/stbi_global.hpp"
+#include "model_loading/obj.hpp"
 #include "transform.hpp"
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "../../external/tiny_obj_loader.h"
-
-#include "utils/stbi_global.hpp"
 
 namespace Firesteel {
-
-    struct Model {
-        std::vector<Texture> textures;
-        std::vector<Mesh> meshes;
-        std::string path;
-        std::string getDirectory() const {
-            return path.substr(0, path.find_last_of('\\'));
-        }
-        Model(const std::string& tPath = "") {
-            textures.clear();
-            meshes.clear();
-            path = tPath;
-        }
-    };
-
     class Entity {
     public:
         Transform transform;
@@ -91,19 +73,7 @@ namespace Firesteel {
                 return;
             }
             LOG_INFO("Loading model at: \"" + tPath + "\"");
-            model = Model(tPath);
-            tinyobj::attrib_t inattrib;
-            std::vector<tinyobj::shape_t> inshapes;
-            std::vector<tinyobj::material_t> materials;
-            std::string warn, err;
-            bool ret = tinyobj::LoadObj(&inattrib, &inshapes, &materials, &warn, &err, tPath.c_str(), model.getDirectory().c_str());
-            if(!warn.empty()) LOG_WARN("Got warning \"" + warn + "\" while loading model at \"" + tPath + "\"");
-            if(!err.empty()) LOG_ERRR("Got error \"" + err + "\" while loading model at \"" + tPath + "\"");
-            printf("# of vertices  = %d\n", (int)(inattrib.vertices.size()) / 3);
-            printf("# of normals   = %d\n", (int)(inattrib.normals.size()) / 3);
-            printf("# of texcoords = %d\n", (int)(inattrib.texcoords.size()) / 2);
-            printf("# of materials = %d\n", (int)materials.size());
-            printf("# of shapes    = %d\n", (int)inshapes.size());
+            model = Loaders::OBJ::load(tPath);
             mHasMeshes = true;
         }
 

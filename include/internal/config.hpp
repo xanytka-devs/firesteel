@@ -9,14 +9,18 @@ namespace Firesteel {
     namespace CONFIG {
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
-            std::string firesteelConfigFile = std::string(getenv("APPDATA")) + "\\firesteel\\global.cfg.json";
             bool canGetSystemInfo = true;
-            if (std::filesystem::exists(firesteelConfigFile)) {
-                LOG_INFO("Found global Firesteel config. Retrieving...");
-                std::ifstream ifs(firesteelConfigFile);
-                nlohmann::json cfg = nlohmann::json::parse(ifs);
-                if (!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo = cfg["AllowHardwareEnumeration"];
-            }
+            char* buf = nullptr;
+            size_t sz = 0;
+            if(_dupenv_s(&buf, &sz, "APPDATA")==0 && buf != nullptr) {
+                std::string firesteelConfigFile = std::string(buf) + "\\firesteel\\global.cfg.json";
+                if (std::filesystem::exists(firesteelConfigFile)) {
+                    LOG_INFO("Found global Firesteel config. Retrieving...");
+                    std::ifstream ifs(firesteelConfigFile);
+                    nlohmann::json cfg = nlohmann::json::parse(ifs);
+                    if (!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo = cfg["AllowHardwareEnumeration"];
+                }
+            } else LOG_WARN("Couldn't get APPDATA path");
             if(canGetSystemInfo) {
                 LOG_INFO("Hardware Information:");
 

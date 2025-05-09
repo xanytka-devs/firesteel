@@ -3,12 +3,37 @@ site_author: Xanytka Devs
 repo_name: xanytka-devs/firesteel
 repo_url: https://github.com/xanytka-devs/firesteel
 docs_dir: 'source/'
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 theme:
   name: material
   features:
     - navigation.footer
     - content.code.copy
-  # General config
   font:
     text: Inter
     code: Ubuntu Mono
@@ -46,7 +71,7 @@ extra:
     - icon: fontawesome/brands/vk
       link: https://vk.com/xanytka
 nav:
-  - Домой: index.md
+  - Главная: index.md
   - Туториалы:
     - Пакеты: tutorials/packages.md
     - Своё окно: tutorials/your_own_window.md

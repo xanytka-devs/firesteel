@@ -13,6 +13,7 @@
 #include <comdef.h>
 #include <Wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
+#pragma comment(lib, "version.lib" )
 #else
 #include <unistd.h>
 #include <sys/utsname.h>
@@ -433,7 +434,7 @@ OSInfo getOSInfo() {
     case PROCESSOR_ARCHITECTURE_AMD64: out.architecture = "x64"; break;
     case PROCESSOR_ARCHITECTURE_ARM: out.architecture = "ARM"; break;
     case PROCESSOR_ARCHITECTURE_IA64: out.architecture = "IA-64"; break;
-    case PROCESSOR_ARCHITECTURE_INTEL: out.architecture += "x86"; break;
+    case PROCESSOR_ARCHITECTURE_INTEL: out.architecture = "x86"; break;
     default: out.architecture = "Unknown";
     }
 #else
@@ -445,7 +446,7 @@ OSInfo getOSInfo() {
         out.architecture = std::string(unameData.machine);
     }
 
-    // Попробуем получить дистрибутив
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     std::ifstream os_release("/etc/os-release");
     if (os_release.is_open()) {
         std::string line;

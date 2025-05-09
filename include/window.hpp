@@ -40,7 +40,7 @@ namespace Firesteel {
             glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
             if(tState==WS_BORDERLESS) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
             else glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-            glfwSetErrorCallback(errorCallback);
+            glfwSetErrorCallback(_errorCallback);
 #ifdef __APPLE__
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -66,30 +66,23 @@ namespace Firesteel {
             //Setup parametrs.
             glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
             //Setup callbacks.
-            glfwSetFramebufferSizeCallback(mPtr, framebufferSizeCallback);
+            glfwSetFramebufferSizeCallback(mPtr, _framebufferSizeCallback);
             glfwSetCursorPosCallback(mPtr, Mouse::cursorCallback);
             glfwSetMouseButtonCallback(mPtr, Mouse::buttonCallback);
             glfwSetScrollCallback(mPtr, Mouse::scrollCallback);
             glfwSetKeyCallback(mPtr, Keyboard::keyCallback);
             return true;
 		}
-        void swapBuffers() const {
-            glfwSwapBuffers(mPtr);
-        }
-        void pollEvents() const {
-            glfwPollEvents();
-        }
+        void swapBuffers() const { glfwSwapBuffers(mPtr); }
+        void pollEvents() const { glfwPollEvents(); }
         void clearBuffers() const {
             glClearColor(static_cast<GLfloat>(mClearColor[0]), static_cast<GLfloat>(mClearColor[1]),
                 static_cast<GLfloat>(mClearColor[2]), static_cast<GLfloat>(1.0f));
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
-        void close() {
-            mClosed = true;
-        }
-        void setTitle(const std::string& tTitle) {
-            glfwSetWindowTitle(mPtr, tTitle.c_str());
-        }
+        void close() { mClosed = true; }
+
+        void setTitle(const std::string& tTitle) { glfwSetWindowTitle(mPtr, tTitle.c_str()); }
         void setIcon(const std::string& tIcon) {
             GLFWimage images[1]{};
             if(!std::filesystem::exists(tIcon)) {
@@ -106,30 +99,58 @@ namespace Firesteel {
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
         }
-        void setClearColor(const glm::vec3& tColor) {
-            mClearColor = tColor;
+        void setClearColor(const glm::vec3& tColor) { mClearColor = tColor; }
+        
+        // Set custom swap interval for buffer.
+        // (0 for no VSyns, 1 for VSync, other will (probably) limit the framerate)
+        void setSwapInterval(const int& tInterval) {
+            if(tInterval==0) mVSync=false;
+            if(tInterval==1) mVSync=true;
+            glfwSwapInterval(tInterval);
         }
-
-        void setVSync(const bool& tVSync) {
-            mVSync = tVSync;
-            if (mVSync) glfwSwapInterval(1);
-            else glfwSwapInterval(0);
-        }
+        void setVSync(const bool& tVSync) { setSwapInterval(tVSync); }
         void toggleVSync() { setVSync(!mVSync); }
         bool getVSync() const { return mVSync; }
 
-        bool isOpen() const { return (!mClosed && !glfwWindowShouldClose(mPtr)); }
-        bool isMinimized() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
+        // aka window.isMinimized()
         bool isIconified() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
+        bool isMinimized() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
         bool isMaximized() const { return glfwGetWindowAttrib(mPtr, GLFW_MAXIMIZED); }
         bool isFocused() const { return glfwGetWindowAttrib(mPtr, GLFW_FOCUSED); }
+        bool isOpen() const { return (!mClosed && !glfwWindowShouldClose(mPtr)); }
 
         void setOpacity(float tOpac=1.f) const { glfwSetWindowOpacity(mPtr, tOpac); }
         float getOpacity() const { return glfwGetWindowOpacity(mPtr); }
 
-        int getHeight() { getSizeInternal(); return mHeight; }
-        int getWidth() { getSizeInternal(); return mWidth; }
-        glm::vec2 getSize() { getSizeInternal(); return glm::vec2(mWidth, mHeight); }
+        // Sets limits on window size.
+        void setSizeConstrains(unsigned int tMinW=GLFW_DONT_CARE, unsigned int tMinH=GLFW_DONT_CARE,
+            unsigned int tMaxW=GLFW_DONT_CARE, unsigned int tMaxH=GLFW_DONT_CARE) {
+            glfwSetWindowSizeLimits(mPtr, tMinW, tMinH, tMaxW, tMaxH);
+        }
+        // Sets limits on window size.
+        void setSizeConstrains(glm::vec2 tMinSize, glm::vec2 tMaxSize) {
+            setSizeConstrains(tMinSize.x, tMinSize.y, tMaxSize.x, tMaxSize.y);
+        }
+        // Sets minimal window size, but removes it's maximum.
+        void setMinimalSize(unsigned int tW, unsigned int tH) {
+            setSizeConstrains(tW, tH);
+        }
+        // Sets minimal window size, but removes it's maximum.
+        void setMinimalSize(glm::vec2 tSize) {
+            setSizeConstrains(tSize.x, tSize.y);
+        }
+        // Sets maximal window size, but removes it's minimum.
+        void setMaximalSize(unsigned int tW, unsigned int tH) {
+            setSizeConstrains(GLFW_DONT_CARE, GLFW_DONT_CARE, tW, tH);
+        }
+        // Sets maximal window size, but removes it's minimum.
+        void setMaximalSize(glm::vec2 tSize) {
+            setSizeConstrains(GLFW_DONT_CARE, GLFW_DONT_CARE, tSize.x, tSize.y);
+        }
+
+        int getHeight() { _getSize(); return mHeight; }
+        int getWidth() { _getSize(); return mWidth; }
+        glm::vec2 getSize() { _getSize(); return glm::vec2(mWidth, mHeight); }
         float aspect() const { return static_cast<float>(mWidth) / static_cast<float>(mHeight); }
 
         GLFWwindow* ptr() const { return mPtr; }
@@ -141,7 +162,6 @@ namespace Firesteel {
             CUR_DISABLED = 0x3,
             CUR_UNAVAILABLE = 0x4
         };
-
         void setCursorMode(const Cursor& tMode) {
             switch (tMode) {
             case Window::CUR_CAPTURED:
@@ -170,13 +190,13 @@ namespace Firesteel {
 		bool mVSync, mClosed;
 		glm::vec3 mClearColor;
     private:
-        static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+        static void _framebufferSizeCallback(GLFWwindow* window, int width, int height) {
             glViewport(0, 0, width, height);
         }
-        static void errorCallback(int tEC, const char* tDescription) {
+        static void _errorCallback(int tEC, const char* tDescription) {
             LOG_ERRR("GLFW Error(" + std::to_string(tEC) + "): " + tDescription);
         }
-        void getSizeInternal() {
+        void _getSize() {
             glfwGetWindowSize(mPtr, &mWidth, &mHeight);
         }
 	};

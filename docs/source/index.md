@@ -41,8 +41,3 @@ set_target_properties(example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY
 6. Постройте проект через CMake
 	* Создайте папку `build`
 	* Откройте командую строку в этой новой папке и введите в неё `cmake ..`
-
-
-# Заключение
-На этом данная статья закончена. Для вашего удобства в конце каждой статьи приводится две кнопки (певая переводит на статью назад, другая - вперёд).  
-[<- На страницу firesteel](https://github.com/xanytka-devs/firesteel) | [Пакеты ->](https://firesteel.readthedocs.io/ru/latest/#tutorials/packages/)

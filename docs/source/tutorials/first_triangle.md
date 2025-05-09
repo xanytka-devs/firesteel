@@ -102,7 +102,3 @@ void main() {
 }
 ```
 Теперь треугольник будет иметь градиент из красного, синего и зелёного.
-
-# Заключение
-Итоговый код: https://github.com/xanytka-devs/fs-examples/tree/main/triangle_demo  
-[<- Своё окно](https://firesteel.readthedocs.io/ru/latest/#tutorials/your-own-window/) | [Продолжение... ->](https://github.com/xanytka-devs/firesteel/wiki)
