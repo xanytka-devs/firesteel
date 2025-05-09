@@ -12,6 +12,7 @@ CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
 .vs
+.vscode
 out
 
 # Build resources
