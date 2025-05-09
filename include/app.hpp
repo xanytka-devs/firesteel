@@ -23,8 +23,14 @@ namespace Firesteel {
 		}
 		virtual int start(const char* tTitle = "Firesteel App",
             const unsigned int tWinWidth = 800, const unsigned int tWinHeight = 600, const WindowState tWinState = WS_NORMAL) {
+            //Versioning.
             LOG("Firesteel 0.2.1");
             LOG_STATE("STARTUP");
+            //Do some randomization.
+            __time64_t long_time;
+	        _time64(&long_time);
+	        srand(static_cast<unsigned int>(long_time));
+            //Preinitialize.
 			onPreInitialize();
             //Create a window.
             window = Window(tWinWidth, tWinHeight);
@@ -40,9 +46,9 @@ namespace Firesteel {
             r.printInfo();
             r.initializeParams();
             r.initializeImGui(window.ptr());
+            //Final prep before update loop.
             CONFIG::checkGlobalFile();
             onInitialize();
-
             //Update loop.
             LOG_STATE("UPDATE LOOP");
             while (window.isOpen()) {
@@ -59,10 +65,13 @@ namespace Firesteel {
                 }
                 if(window.isMinimized()) continue;
                 window.clearBuffers();
+                //ImGui & DevView window.
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::drawDevView = true;
                 r.newFrameImGui();
+                //Call virtual update.
                 onUpdate();
+                //Draw DevView and finalize update.
                 DEVVIEW::draw(deltaTime, fps);
                 r.renderImGui(window.ptr());
                 window.swapBuffers();
@@ -76,6 +85,9 @@ namespace Firesteel {
             glfwTerminate();
             LOG_INFO("Window terminated");
             LOG_STATE("QUIT");
+#ifdef FS_DUMP_LOGS
+            Log::destroyFileLogger();
+#endif //!FS_DUMP_LOGS
             return 0;
 		}
         // (overridable)

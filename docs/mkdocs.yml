@@ -8,7 +8,6 @@ theme:
   features:
     - navigation.footer
     - content.code.copy
-  # General config
   font:
     text: Inter
     code: Ubuntu Mono
@@ -45,8 +44,37 @@ extra:
       link: https://t.me/xanytka
     - icon: fontawesome/brands/vk
       link: https://vk.com/xanytka
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+    permalink: true
+    pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+    smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+    emoji_index: !!python/name:material.extensions.emoji.twemoji
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+    alternate_style: true
+  - pymdownx.tasklist:
+    custom_checkbox: true
+  - pymdownx.tilde
 nav:
-  - Домой: index.md
+  - Главная: index.md
   - Туториалы:
     - Пакеты: tutorials/packages.md
     - Своё окно: tutorials/your_own_window.md

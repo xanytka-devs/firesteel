@@ -1,6 +1,41 @@
 #ifndef FS_UTILS_H
 #define FS_UTILS_H
 
+#include <cstdlib>
+
+// Randomizes current rand() seed.
+void genRandom() {
+    __time64_t long_time;
+	_time64(&long_time);
+	srand(static_cast<unsigned int>(long_time));
+}
+
+// Returns random number.
+bool getRandom() {
+    genRandom();
+    return rand()%1;
+}
+// Returns random number.
+int getRandom(int tMax) {
+    genRandom();
+    return rand()%tMax;
+}
+// Returns random number.
+float getRandom(float tMax) {
+    genRandom();
+    return static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/tMax));
+}
+// Returns random number.
+int getRandom(int tMin, int tMax) {
+    genRandom();
+    return (rand()%tMax)+tMin;
+}
+// Returns random number.
+float getRandom(float tMin, float tMax) {
+    genRandom();
+    return tMin+static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/(tMax-tMin)));
+}
+
 float lerp(float a, float b, float f) {
     return a * (1.f - f) + (b * f);
 }
@@ -43,7 +78,7 @@ glm::vec4 HexToRGBA(std::string tHex) {
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include "log.hpp"
+#include "../common.hpp"
 
 std::vector<std::string> StrSplit(const std::string& tS, char tDelim) {
     std::stringstream ss(tS);
@@ -146,8 +181,6 @@ std::string StrToLower(std::string tStr) {
 std::string StrToUpper(std::string tStr) {
     return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
 }
-
-#include "../common.hpp"
 
 /// Dialog for file (open/save).
 struct FileDialog {
