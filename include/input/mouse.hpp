@@ -25,9 +25,13 @@ namespace Firesteel {
 		}
 		// Set mouse buttons statuses.
 		static void buttonCallback(GLFWwindow* tWindow, int tButton, int tAction, int tMods) {
-			mButtons[tButton] = tAction != GLFW_RELEASE
-				&& !mButtons[tButton]
-				&& tAction != GLFW_REPEAT;
+			//Check action.
+			if(tButton == -1) return;
+			if(tAction != GLFW_RELEASE) {
+				if(!mButtons[tButton]) mButtons[tButton] = true;
+			} else  mButtons[tButton] = false;
+			//Detect if key is pressed continuously.
+			mButtonsChanged[tButton] = tAction != GLFW_REPEAT;
 		}
 		// Set mouse wheel deltas.
 		static void scrollCallback(GLFWwindow* tWindow, double tDx, double tDy) {
