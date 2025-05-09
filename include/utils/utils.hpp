@@ -12,7 +12,7 @@ glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
     return glm::vec3(tR, tG, tB) / 255.f;
 }
 
-glm::vec3 HexToRGB(std::string& tHex) {
+glm::vec3 HexToRGB(std::string tHex) {
     if(tHex[0] == '#') tHex.erase(0, 1);
     int r, g, b;
     sscanf(tHex.c_str(), "%02x%02x%02x", &r, &g, &b);
