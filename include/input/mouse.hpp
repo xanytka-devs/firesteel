@@ -28,7 +28,8 @@ namespace Firesteel {
 			if(tButton == -1) return;
 			if(tAction != GLFW_RELEASE) {
 				if(!mButtons[tButton]) mButtons[tButton] = true;
-			} else  mButtons[tButton] = false;
+			} else mButtons[tButton] = false;
+			mButtonsChanged[tButton] = true;
 		}
 		// Set mouse wheel deltas.
 		static void scrollCallback(GLFWwindow* tWindow, double tDx, double tDy) {
@@ -72,8 +73,8 @@ namespace Firesteel {
 		}
 		// Has mouse button changed?
 		static bool buttonChanged(const int tButton) {
-			bool output = mButtons[tButton];
-			mButtons[tButton] = false;
+			bool output = mButtonsChanged[tButton];
+			mButtonsChanged[tButton] = false;
 			return output;
 		}
 		// Is mouse button up?

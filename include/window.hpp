@@ -71,9 +71,6 @@ namespace Firesteel {
             glfwSetMouseButtonCallback(mPtr, Mouse::buttonCallback);
             glfwSetScrollCallback(mPtr, Mouse::scrollCallback);
             glfwSetKeyCallback(mPtr, Keyboard::keyCallback);
-#ifdef FS_STICKY_MOUSE_BUTTONS
-            glfwSetInputMode(mPtr, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
-#endif // !FS_STICKY_MOUSE_BUTTONS
             return true;
 		}
         void swapBuffers() const { glfwSwapBuffers(mPtr); }
