@@ -34,3 +34,4 @@ build/engine/freetype/*
 !build/engine/freetype/
 !build/engine/freetype/freetype.lib
 !build/engine/freetype/freetype32.lib
+/.vscode
