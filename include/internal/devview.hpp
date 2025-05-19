@@ -28,7 +28,11 @@ namespace Firesteel {
 			frameTimes.push_back(tDeltaTime);
 			if(frameTimes.size() > 128) frameTimes.erase(frameTimes.begin());
 			ImGui::PlotLines("##frame_times_plot", frameTimes.data(), static_cast<int>(frameTimes.size()));
-			ImGui::Text(("Delta time: " + std::to_string(tDeltaTime)).c_str());
+			if(ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::Text(("Delta time: " + std::to_string(tDeltaTime)).c_str());
+				ImGui::EndTooltip();
+			}
 			ImGui::Separator();
 			if(ImGui::MenuItem("Made with Firesteel")) INTERNAL::openURL("https://github.com/xanytka-devs/firesteel");
 			ImGui::End();
