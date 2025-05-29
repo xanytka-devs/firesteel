@@ -7,15 +7,25 @@
 
 namespace Firesteel {
     namespace CONFIG {
+        static bool AllowDevView;
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
-            std::string firesteelConfigFile = std::string(getenv("APPDATA")) + "\\firesteel\\global.cfg.json";
+            std::string firesteelConfigFile = "";
+#ifdef _WIN32
+            char* buf = nullptr;
+            size_t sz = 0;
+            if (_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {
+                firesteelConfigFile = std::string(buf) + "\\firesteel\\global.cfg.json";
+                free(buf);
+            }
+#endif
             bool canGetSystemInfo = true;
             if (std::filesystem::exists(firesteelConfigFile)) {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);
                 nlohmann::json cfg = nlohmann::json::parse(ifs);
-                if (!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo = cfg["AllowHardwareEnumeration"];
+                if(!cfg["AllowDevView"].is_null()) AllowDevView = cfg["AllowDevView"];
+                if(!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo = cfg["AllowHardwareEnumeration"];
             }
             if(canGetSystemInfo) {
                 LOG_INFO("Hardware Information:");

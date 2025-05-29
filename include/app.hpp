@@ -4,7 +4,6 @@
 #include "common.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
-#include "internal/config.hpp"
 #include "internal/devview.hpp"
 
 namespace Firesteel {

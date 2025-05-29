@@ -445,7 +445,7 @@ OSInfo getOSInfo() {
         out.architecture = std::string(unameData.machine);
     }
 
-    // Попробуем получить дистрибутив
+    //Get version for Linux.
     std::ifstream os_release("/etc/os-release");
     if (os_release.is_open()) {
         std::string line;

@@ -1,6 +1,8 @@
 #ifndef FS_INTERNAL_DEVVIEW
 #define FS_INTERNAL_DEVVIEW
 
+#include "config.hpp"
+
 #include <imgui.h>
 
 namespace INTERNAL {
@@ -21,18 +23,14 @@ namespace Firesteel {
 	namespace DEVVIEW {
 		static bool drawDevView;
 		static void draw(const float tDeltaTime, const unsigned int tFPS) {
-			if(!drawDevView) return;
+			if(!drawDevView || !CONFIG::AllowDevView) return;
 			ImGui::Begin("Dev View", &drawDevView);
 			ImGui::Text(("FPS: " + std::to_string(tFPS)).c_str());
 			static std::vector<float> frameTimes;
 			frameTimes.push_back(tDeltaTime);
 			if(frameTimes.size() > 128) frameTimes.erase(frameTimes.begin());
 			ImGui::PlotLines("##frame_times_plot", frameTimes.data(), static_cast<int>(frameTimes.size()));
-			if(ImGui::IsItemHovered()) {
-				ImGui::BeginTooltip();
-				ImGui::Text(("Delta time: " + std::to_string(tDeltaTime)).c_str());
-				ImGui::EndTooltip();
-			}
+			ImGui::Text(("Delta time: " + std::to_string(tDeltaTime)).c_str());
 			ImGui::Separator();
 			if(ImGui::MenuItem("Made with Firesteel")) INTERNAL::openURL("https://github.com/xanytka-devs/firesteel");
 			ImGui::End();
