@@ -58,11 +58,13 @@ namespace Firesteel {
                     break;
                 }
                 //Bind data.
-                if (t.data)
+                if(t.data) {
+#ifdef FS_PRINT_DEBUG_MSGS
+                    LOG_DBG("Loaded cubemap texture \"" + mDir + "/" + mFaces[i] + "\"");
+#endif // FS_PRINT_DEBUG_MSGS
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         0, color_mode, t.width, t.height, 0, color_mode, GL_UNSIGNED_BYTE, t.data);
-                else
-                    LOG_ERRR(std::string("Failed to load texture at \"") + (const char*)mFaces[i] + "\".");
+                } else LOG_ERRR(std::string("Failed to load texture at \"") + (const char*)mFaces[i] + "\".");
                 //Free data.
                 free(t.data);
             }
@@ -165,6 +167,9 @@ namespace Firesteel {
             glDeleteVertexArrays(1, &mVAO);
             glDeleteBuffers(1, &mVBO);
             clear();
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed cubemap");
+#endif // FS_PRINT_DEBUG_MSGS
         }
 
         unsigned int getID() const { return mID; }

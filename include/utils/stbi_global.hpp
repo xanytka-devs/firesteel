@@ -16,14 +16,12 @@ unsigned int TextureFromFile(const std::string& tPath, bool* tIsMonochromeOut = 
     unsigned char* data = stbi_load(tPath.c_str(), &width, &height, &nrComponents, 0);
     if (data) {
         GLenum format = 0;
-        if (nrComponents == 1) {
+        if(nrComponents == 1) {
             format = GL_RED;
             *tIsMonochromeOut = true;
         }
-        else if (nrComponents == 3)
-            tGamma ? format = GL_RGB : format = GL_SRGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
+        else if(nrComponents == 3) tGamma ? format = GL_RGB : format = GL_SRGB;
+        else if(nrComponents == 4) format = GL_RGBA;
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);

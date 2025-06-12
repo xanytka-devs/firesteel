@@ -72,6 +72,9 @@ namespace Firesteel {
             glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Created Framebuffer quad #" + std::to_string(quadVAO));
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Binds this framebuffer as texture unit.
         void bindAsTexture() const {
@@ -89,12 +92,18 @@ namespace Firesteel {
         // Clears quad draw data.
         void removeMesh() {
             if(!madeMesh) return;
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed Framebuffer quad #" + std::to_string(quadVAO));
+#endif // FS_PRINT_DEBUG_MSGS
             madeMesh = false;
             glDeleteVertexArrays(1, &quadVAO);
             glDeleteBuffers(1, &quadVBO);
         }
         // Clear framebuffer's data.
         void remove() const {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed Framebuffer #" + std::to_string(FBO));
+#endif // FS_PRINT_DEBUG_MSGS
             glDeleteFramebuffers(1, &FBO);
             glDeleteRenderbuffers(1, &RBO);
             for(int i = 0; i < FBOsSize;i++) glDeleteTextures(1, &FBOtextures[i]);
@@ -138,6 +147,9 @@ namespace Firesteel {
             // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
             glDrawBuffers(static_cast<GLsizei>(FBOsSize), attachments);
             glActiveTexture(GL_TEXTURE0);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Created Framebuffer #" + std::to_string(FBO));
+#endif // FS_PRINT_DEBUG_MSGS
         }
         void scaleBuffers() const {
             glActiveTexture(GL_TEXTURE0);

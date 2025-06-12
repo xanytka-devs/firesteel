@@ -15,6 +15,10 @@ namespace Firesteel {
 		bool initialize() {
             //GLAD (OpenGL) init.
             mInitialized = (gladLoadGL(glfwGetProcAddress) != 0);
+#ifdef FS_PRINT_DEBUG_MSGS
+            if(mInitialized) { LOG_DBG("OpenGL initialized successfully"); }
+            else LOG_DBG("Failed to initialize OpenGL");
+#endif // FS_PRINT_DEBUG_MSGS
             return mInitialized;
 		}
         // Sets runtime parameters for renderer.
@@ -26,6 +30,9 @@ namespace Firesteel {
             glEnable(GL_CULL_FACE);
             glCullFace(GL_BACK);
             glEnable(GL_FRAMEBUFFER_SRGB);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Set OpenGL variables");
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Prints info about renderer installation.
         void printInfo() {
@@ -39,8 +46,6 @@ namespace Firesteel {
 		void loadExtencions() {
             if(!glfwExtensionSupported("GL_ARB_debug_output")) LOG_WARN("General debug output isn't supported.");
             if(!glfwExtensionSupported("GL_AMD_debug_output")) LOG_WARN("AMD debug output isn't supported.");
-            if(!glfwExtensionSupported("GL_ARB_direct_state_access")) LOG_WARN("Official DSA isn't supported.");
-            if(!glfwExtensionSupported("GL_EXT_direct_state_access")) LOG_WARN("Unofficial DSA isn't supported.");
             int flags; glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
                 //Initialize debug output.
@@ -50,6 +55,9 @@ namespace Firesteel {
                 glDebugMessageCallback(glDebugOutput, nullptr);
                 glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
             }
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Loaded OpenGL extensions");
+#endif // FS_PRINT_DEBUG_MSGS
 		}
         // Initializes ImGui.
         void initializeImGui(GLFWwindow* tWin) {
@@ -66,6 +74,9 @@ namespace Firesteel {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Initialized ImGui");
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Creates new frame for ImGui (before any Begin-s).
         void newFrameImGui() {
@@ -88,6 +99,9 @@ namespace Firesteel {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
             ImGui::DestroyContext();
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Shutdown ImGui");
+#endif // FS_PRINT_DEBUG_MSGS
         }
     private:
         bool mInitialized = false;

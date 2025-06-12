@@ -63,10 +63,13 @@ namespace Firesteel {
 
         // Clears all meshes.
         void remove() {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed entity");
+#endif // FS_PRINT_DEBUG_MSGS
             for(size_t i = 0; i < model.meshes.size(); i++)
                 model.meshes[i].remove();
-            for(size_t i = 0; i < model.textures.size(); i++)
-                model.textures[i].remove();
+            for(size_t i = 0; i < model.materials.size(); i++)
+                model.materials[i].remove();
             mHasMeshes = false;
         }
 
@@ -82,150 +85,14 @@ namespace Firesteel {
             std::string ext = extBig[extBig.size()-1];
             if(ext=="obj") model = OBJ::load(tPath);
             else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf or fbx.");
-            
+
+            LOG_INFO("Successfully loaded model at: \"" + tPath + "\"");
             mHasMeshes = true;
         }
 
     private:
         static glm::mat4 modelMatrix;
         bool mHasMeshes = false;
-
-        //// Processes a node in a recursive fashion.
-        //void processNode(const aiNode* tNode, const aiScene* tScene) {
-        //    //Process each mesh located at the current node.
-        //    for (unsigned int i = 0; i < tNode->mNumMeshes; i++) {
-        //        aiMesh* mesh = tScene->mMeshes[tNode->mMeshes[i]];
-        //        model.meshes.push_back(processMesh(mesh, tScene));
-        //    }
-        //    // Process each of the children nodes.
-        //    for (unsigned int i = 0; i < tNode->mNumChildren; i++)
-        //        processNode(tNode->mChildren[i], tScene);
-        //}
-//
-        //// Processes all vertex data to a Mesh.
-        //Mesh processMesh(const aiMesh* tMesh, const aiScene* tScene) {
-        //    //Data to fill.
-        //    std::vector<Vertex> vertices;
-        //    std::vector<unsigned int> indices;
-        //    std::vector<Texture> textures;
-//
-        //    //Walk through each of the mesh's vertices.
-        //    for (unsigned int i = 0; i < tMesh->mNumVertices; i++) {
-        //        Vertex vertex{};
-        //        glm::vec3 vector{};
-        //        //Positions.
-        //        vector.x = tMesh->mVertices[i].x;
-        //        vector.y = tMesh->mVertices[i].y;
-        //        vector.z = tMesh->mVertices[i].z;
-        //        vertex.position = vector;
-        //        //Normals.
-        //        if(tMesh->HasNormals()) {
-        //            vector.x = tMesh->mNormals[i].x;
-        //            vector.y = tMesh->mNormals[i].y;
-        //            vector.z = tMesh->mNormals[i].z;
-        //            vertex.normal = vector;
-        //        }
-        //        //UVs.
-        //        if(tMesh->mTextureCoords[0]) {
-        //            glm::vec2 vec{};
-        //            //UVs.
-        //            vec.x = tMesh->mTextureCoords[0][i].x;
-        //            vec.y = tMesh->mTextureCoords[0][i].y;
-        //            vertex.uv = vec;
-        //            //Tangent.
-        //            vector.x = tMesh->mTangents[i].x;
-        //            vector.y = tMesh->mTangents[i].y;
-        //            vector.z = tMesh->mTangents[i].z;
-        //            vertex.tangent = vector;
-        //            //Bitangent.
-        //            vector.x = tMesh->mBitangents[i].x;
-        //            vector.y = tMesh->mBitangents[i].y;
-        //            vector.z = tMesh->mBitangents[i].z;
-        //            vertex.bitangent = vector;
-        //        } else vertex.uv = glm::vec2(0.0f, 0.0f);
-//
-        //        vertices.push_back(vertex);
-        //    }
-        //    //Retrieve indicies.
-        //    for(unsigned int i = 0; i < tMesh->mNumFaces; i++) {
-        //        aiFace face = tMesh->mFaces[i];
-        //        for(unsigned int j = 0; j < face.mNumIndices; j++)
-        //            indices.push_back(face.mIndices[j]);
-        //    }
-        //    //Process materials.
-        //    aiMaterial* material = tScene->mMaterials[tMesh->mMaterialIndex];
-        //    //Does the model even have textures?
-        //    if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0
-        //        && material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
-        //        LOG_INFO("No assigned textures found. Using bound color data.");
-        //        //Diffuse and specular color.
-        //        aiColor4D dif(1.0f), spec(1.0f), emis(1.0f);
-        //        aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &dif);
-        //        aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &spec);
-        //        aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emis);
-        //        //Output.
-        //        glm::vec4 difVec = glm::vec4(dif.r, dif.g, dif.b, dif.a);
-        //        glm::vec4 specVec = glm::vec4(spec.r, spec.g, spec.b, spec.a);
-        //        glm::vec4 emisVec = glm::vec4(emis.r, emis.g, emis.b, emis.a);
-        //        return Mesh(vertices, indices, difVec, specVec, emisVec);
-        //    }
-        //    std::vector<Texture> texs;
-        //    //Diffuse maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-        //    //Specular maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-        //    //Normal maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_HEIGHT, "normal");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-        //    //Emission maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_EMISSIVE, "emission");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-        //    //Height maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_AMBIENT, "height");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-        //    //Opacity maps.
-        //    texs = loadMaterialTextures(material, aiTextureType_OPACITY, "opacity");
-        //    textures.insert(textures.end(), texs.begin(), texs.end());
-        //    texs.clear();
-//
-        //    if(textures.size()==0) LOG_WARN("Model somehow didn't load any textures");
-//
-        //    return Mesh(vertices, indices, textures);
-        //}
-//
-        //// Checks all material textures of a given type and loads the textures if they're not loaded yet.
-        //std::vector<Texture> loadMaterialTextures(const aiMaterial* tMat, const aiTextureType& tType, const std::string& tTypeName) {
-        //    std::vector<Texture> textures;
-        //    for(unsigned int i = 0; i < tMat->GetTextureCount(tType); i++) {
-        //        aiString str;
-        //        tMat->GetTexture(tType, i, &str);
-        //        //Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        //        bool skip = false;
-        //        for(unsigned int j = 0; j < model.textures.size(); j++) {
-        //            if(std::strcmp(model.textures[j].path.data(), str.C_Str()) != 0) continue;
-        //            //Optimization to disable multiple loads for texture.
-        //            textures.push_back(model.textures[j]);
-        //            skip = true;
-        //            break;
-        //        }
-        //        if(skip) continue;
-        //        //If texture hasn't been loaded already, load it.
-        //        Texture texture;
-        //        texture.ID = TextureFromFile(model.getDirectory() + "/" + str.C_Str(), &texture.isMonochrome, true);
-        //        texture.type = tTypeName;
-        //        texture.path = str.C_Str();
-        //        textures.push_back(texture);
-        //        model.textures.push_back(texture);
-        //    }
-        //    return textures;
-        //}
     };
 
 }

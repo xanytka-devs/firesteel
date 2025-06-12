@@ -43,13 +43,15 @@ namespace Firesteel {
                 LOG_INFO(" - GPU");
                 if(std::string(gpu.output).size() <= 1) {
                     LOG_INFO("   Model: " + gpu.model);
-                    LOG_INFO("   Memory: " + std::to_string(gpu.memoryGB) + " GB");
+                    LOG_INFO("", "");
+                    printf("   Memory: %.2f GB\n", gpu.memoryGB);
                 } else LOG_WARN(gpu.output);
 
                 RAMInfo ram = getRAMInfo();
                 LOG_INFO(" - RAM");
                 if(std::string(ram.output).size() <= 1) {
-                    LOG_INFO("   Memory: " + std::to_string(ram.memoryGB) + " GB");
+                    LOG_INFO("", "");
+                    printf("   Memory: %.2f GB\n", ram.memoryGB);
                 } else LOG_WARN(ram.output);
 
                 MotherboardInfo motherboard = getMotherboardInfo();

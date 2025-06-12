@@ -25,6 +25,9 @@ namespace Firesteel {
             LOG(std::string("Firesteel ") + FiresteelVersion);
             LOG_STATE("STARTUP");
 			onPreInitialize();
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Run preinitialize");
+#endif // FS_PRINT_DEBUG_MSGS
             //Create a window.
             window = Window(tWinWidth, tWinHeight);
             if(!window.initialize(tTitle, tWinState))
@@ -41,7 +44,9 @@ namespace Firesteel {
             r.initializeImGui(window.ptr());
             CONFIG::checkGlobalFile();
             onInitialize();
-
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Run initialize");
+#endif // FS_PRINT_DEBUG_MSGS
             //Update loop.
             LOG_STATE("UPDATE LOOP");
             while (window.isOpen()) {

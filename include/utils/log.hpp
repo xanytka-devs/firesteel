@@ -13,6 +13,8 @@
 #define LOG_ERRR(...) Log::log_error(__VA_ARGS__);
 #define LOG_ERROR(...) Log::log_error(__VA_ARGS__);
 #define LOG_CRIT(...) Log::log_critical(__VA_ARGS__);
+#define LOG_DEBUG(...) Log::log_debug(__VA_ARGS__);
+#define LOG_DBG(...) Log::log_debug(__VA_ARGS__);
 	class Log {
 	public:
 #define CMD_F_BLACK 0
@@ -71,7 +73,11 @@
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
 	static void log_critical(const std::string& tMsg, const char* tEndLine = "\n") {
-		log("[CRIT]", CMD_BG_RED + CMD_F_WHITE);
+		log("[CRIT] ", CMD_BG_RED + CMD_F_WHITE);
+		log(tMsg + tEndLine, CMD_F_WHITE, false);
+	}
+	static void log_debug(const std::string& tMsg, const char* tEndLine = "\n") {
+		log("[DBG] ", CMD_F_PURPLE);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
 	/// Logs message to console with specified color and prompt.
