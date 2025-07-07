@@ -16,8 +16,7 @@
 #include "transform.hpp"
 #include "model.hpp"
 #include "loaders/obj.hpp"
-
-#include "utils/stbi_global.hpp"
+#include "loaders/gltf.hpp"
 
 namespace Firesteel {
 
@@ -84,9 +83,10 @@ namespace Firesteel {
             auto extBig = StrSplit(tPath, '.');
             std::string ext = extBig[extBig.size()-1];
             if(ext=="obj") model = OBJ::load(tPath);
-            else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf or fbx.");
+            else if(ext=="gltf"||ext=="glb") model = GLTF::load(tPath,ext=="glb");
+            else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
 
-            LOG_INFO("Successfully loaded model at: \"" + tPath + "\"");
+            LOG_INFO("Loaded model at: \"" + tPath + "\"");
             mHasMeshes = true;
         }
 

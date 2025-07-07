@@ -13,6 +13,7 @@
 #include <comdef.h>
 #include <Wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
+#pragma warning(disable : 4996)
 #else
 #include <unistd.h>
 #include <sys/utsname.h>
@@ -433,7 +434,7 @@ OSInfo getOSInfo() {
     case PROCESSOR_ARCHITECTURE_AMD64: out.architecture = "x64"; break;
     case PROCESSOR_ARCHITECTURE_ARM: out.architecture = "ARM"; break;
     case PROCESSOR_ARCHITECTURE_IA64: out.architecture = "IA-64"; break;
-    case PROCESSOR_ARCHITECTURE_INTEL: out.architecture += "x86"; break;
+    case PROCESSOR_ARCHITECTURE_INTEL: out.architecture = "x86"; break;
     default: out.architecture = "Unknown";
     }
 #else

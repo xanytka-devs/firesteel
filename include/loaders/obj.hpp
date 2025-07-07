@@ -133,16 +133,14 @@ namespace Firesteel {
             }
             //Report errors (if found).
             if(!reader.Warning().empty())
-              LOG_WARN("Got warning while loading model: " + reader.Warning() + "(at \"" + tPath + "\")");
+                LOG_WARN("Got warning while loading model: " + reader.Warning() + "(at \"" + tPath + "\")");
             //Initialize variables.
             auto& attrib = reader.GetAttrib();
             auto& shapes = reader.GetShapes();
             auto& materials = reader.GetMaterials();
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("", "");
-            printf("Materials: %d\n", (int)materials.size());
-            LOG_DBG("", "");
-            printf("Shapes: %d\n", (int)shapes.size());
+            LOG_DBG("Materials: "+std::to_string((int)materials.size()));
+            LOG_DBG("Meshes: "+std::to_string((int)shapes.size()));
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
@@ -172,20 +170,16 @@ namespace Firesteel {
                 const auto& shape = shapes[s];
                 int materialID = shape.mesh.material_ids[0];
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOG_DBG("", "");
-                printf("Processing shape %d/%d\n", (int)(s+1), (int)shapes.size());
+                LOG_DBG("Processing mesh "+std::to_string((int)(s+1))+"/"+std::to_string((int)shapes.size()));
                 model.meshes.push_back(processShape(&model, shape, attrib, materialID, vert, ind, norm, tex));
 #else
                 model.meshes.push_back(processShape(&model, shape, attrib, materialID));
 #endif // FS_PRINT_DEBUG_MSGS
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("", "");
-            printf("Vertices: %d\n", (int)(vert)/3);
-            LOG_DBG("", "");
-            printf("Normals: %d\n", (int)(norm)/3);
-            LOG_DBG("", "");
-            printf("UVs: %d\n", (int)(tex)/2);
+            LOG_DBG("Vertices: "+std::to_string((int)(vert) / 3));
+            LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
+            LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
 #endif // FS_PRINT_DEBUG_MSGS
 
             return model;

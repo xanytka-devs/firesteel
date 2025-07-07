@@ -8,7 +8,7 @@ Firesteel::Entity entity;
 class ModelLoadingTest : public Firesteel::App {
     virtual void onInitialize() override {
         shader=Firesteel::Shader("backpack\\.vs", "backpack\\.fs");
-        entity.load("backpack\\backpack.obj");
+        entity.load("backpack\\backpack.gltf");
         camera.update();
     }
     virtual void onUpdate() override {
