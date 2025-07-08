@@ -24,7 +24,6 @@ namespace Firesteel {
             //Check all materials for this texture.
             for (auto& material : tModel->materials) {
                 for (const auto& texture : material.textures) {
-                    LOG(texture.path+" "+texPath+" "+texture.type+" "+type);
                     if (texture.path == texPath && texture.type == type) {
                         //If texture is already loaded - return it's copy.
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -48,7 +47,14 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model& tModel, const tinygltf::Primitive& tPrimitive, const std::string tPath
+        std::string getTexPath(const tinygltf::Model* tModel, const int tId) {
+            if(tId>=0) return tModel->images[tModel->textures[tId].source].uri;
+            return "";
+        }
+
+        /// [!WARING]
+        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex) {
 #else
@@ -58,17 +64,17 @@ namespace Firesteel {
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
             //Positions.
-            const tinygltf::Accessor& posAcc=tModel.accessors[tPrimitive.attributes.at("POSITION")];
-            const tinygltf::BufferView& posView=tModel.bufferViews[posAcc.bufferView];
-            const float* positions=reinterpret_cast<const float*>(&tModel.buffers[posView.buffer].data[posView.byteOffset]);
+            const tinygltf::Accessor& posAcc=tModel->accessors[tPrimitive->attributes.at("POSITION")];
+            const tinygltf::BufferView& posView=tModel->bufferViews[posAcc.bufferView];
+            const float* positions=reinterpret_cast<const float*>(&tModel->buffers[posView.buffer].data[posView.byteOffset]);
             //Normals.
-            const tinygltf::Accessor& normAcc=tModel.accessors[tPrimitive.attributes.at("NORMAL")];
-            const tinygltf::BufferView& normView=tModel.bufferViews[normAcc.bufferView];
-            const float* normals=reinterpret_cast<const float*>(&tModel.buffers[normView.buffer].data[normView.byteOffset]);
+            const tinygltf::Accessor& normAcc=tModel->accessors[tPrimitive->attributes.at("NORMAL")];
+            const tinygltf::BufferView& normView=tModel->bufferViews[normAcc.bufferView];
+            const float* normals=reinterpret_cast<const float*>(&tModel->buffers[normView.buffer].data[normView.byteOffset]);
             //UVs.
-            const tinygltf::Accessor& uvAcc=tModel.accessors[tPrimitive.attributes.at("TEXCOORD_0")];
-            const tinygltf::BufferView& uvView=tModel.bufferViews[uvAcc.bufferView];
-            const float* uvs=reinterpret_cast<const float*>(&tModel.buffers[uvView.buffer].data[uvView.byteOffset]);
+            const tinygltf::Accessor& uvAcc=tModel->accessors[tPrimitive->attributes.at("TEXCOORD_0")];
+            const tinygltf::BufferView& uvView=tModel->bufferViews[uvAcc.bufferView];
+            const float* uvs=reinterpret_cast<const float*>(&tModel->buffers[uvView.buffer].data[uvView.byteOffset]);
             //Create vertexes.
             for(size_t i=0;i<posAcc.count;i++) {
                 Vertex vert{};
@@ -83,9 +89,9 @@ namespace Firesteel {
 #endif
             }
             //Create indicies.
-            const tinygltf::Accessor& indAcc=tModel.accessors[tPrimitive.indices];
-            const tinygltf::BufferView& indView=tModel.bufferViews[indAcc.bufferView];
-            const float* indData=reinterpret_cast<const float*>(&tModel.buffers[indView.buffer].data[indView.byteOffset]);
+            const tinygltf::Accessor& indAcc=tModel->accessors[tPrimitive->indices];
+            const tinygltf::BufferView& indView=tModel->bufferViews[indAcc.bufferView];
+            const float* indData=reinterpret_cast<const float*>(&tModel->buffers[indView.buffer].data[indView.byteOffset]);
             indices.resize(indAcc.count);
             switch (indAcc.componentType)
             {
@@ -112,12 +118,18 @@ namespace Firesteel {
             }
             //Get textures.
             std::vector<Texture> textures;
-            const tinygltf::Material& material=tModel.materials[tPrimitive.material];
-            if(material.pbrMetallicRoughness.baseColorTexture.index>=0) {
-                const tinygltf::Texture& tex=tModel.textures[material.pbrMetallicRoughness.baseColorTexture.index];
-                const tinygltf::Image& img=tModel.images[tex.source];
-                textures.push_back(loadMaterialTexture(tBaseModel,img.uri,"diffuse"));
-            }
+            const tinygltf::Material& mat=tModel->materials[tPrimitive->material];
+            Texture diffuseTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.baseColorTexture.index), "diffuse");
+            Texture normalTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.normalTexture.index), "normal");
+            Texture specularTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
+            Texture ambientTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.occlusionTexture.index), "ambient");
+            //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
+            //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
+            //Push back all textures.
+            if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
+            if(normalTex.ID!=0) textures.push_back(normalTex);
+            if(specularTex.ID!=0) textures.push_back(specularTex);
+            if(ambientTex.ID!=0) textures.push_back(ambientTex);
 
             return Mesh(vertices,indices,textures);
         }
@@ -146,6 +158,25 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
+            //Load all materials (textures).
+            for (const auto& mat : gltf.materials) {
+                Texture diffuseTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.baseColorTexture.index), "diffuse");
+                Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), "normal");
+                Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
+                Texture ambientTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.occlusionTexture.index), "ambient");
+                //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
+                //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
+                //Push back all textures.
+                std::vector<Texture> textures;
+                if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
+                if(normalTex.ID!=0) textures.push_back(normalTex);
+                if(specularTex.ID!=0) textures.push_back(specularTex);
+                if(ambientTex.ID!=0) textures.push_back(ambientTex);
+                //if(displacementTex.ID!=0) textures.push_back(displacementTex);
+                //if(opacityTex.ID!=0) textures.push_back(opacityTex);
+                model.materials.push_back({ textures });
+            }
+            //Load all meshes.
             for(size_t m=0;m<gltf.meshes.size();m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
                 LOG_DBG("Processing mesh "+std::to_string((int)(m+1))+"/"+std::to_string((int)gltf.meshes.size()));
@@ -153,7 +184,7 @@ namespace Firesteel {
                 for(size_t p=0;p<gltf.meshes[m].primitives.size();p++) {
 #ifdef FS_PRINT_DEBUG_MSGS
                     LOG_DBG("Processing premitive "+std::to_string((int)(p+1))+"/"+std::to_string((int)gltf.meshes[m].primitives.size()));
-                    model.meshes.push_back(processPrimitive(&model,gltf,gltf.meshes[m].primitives[p],model.getDirectory(),vert,ind,norm,tex));
+                    model.meshes.push_back(processPrimitive(&model,&gltf,&gltf.meshes[m].primitives[p],model.getDirectory(),vert,ind,norm,tex));
 #else
                     model.meshes.push_back(processPrimitive(&model,gltf,gltf.meshes[m].primitives[p],model.getDirectory()));
 #endif // FS_PRINT_DEBUG_MSGS
