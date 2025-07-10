@@ -1,10 +1,12 @@
 #ifndef FS_LOADERS_OBJ
 #define FS_LOADERS_OBJ
+#ifdef FS_LOADER_OBJ
+
+#include "../model.hpp"
+#include "../utils/stbi_global.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "../../external/tiny_obj_loader.h"
-
-#include "../model.hpp"
 
 namespace Firesteel {
     namespace OBJ {
@@ -13,7 +15,7 @@ namespace Firesteel {
         Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
             if(texPath.empty()) return {};
             //Get full path.
-            std::string fullPath = tModel->getDirectory() + "/" + texPath;
+            std::string fullPath=tModel->getDirectory() + "/" + texPath;
             //Check all materials for this texture.
             for (auto& material : tModel->materials) {
                 for (const auto& texture : material.textures) {
@@ -31,9 +33,9 @@ namespace Firesteel {
             LOG_DBG("Loading texture \"" + texPath + "\"");
 #endif
             Texture texture;
-            texture.type = type;
-            texture.path = texPath;
-            texture.ID = TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            texture.type=type;
+            texture.path=texPath;
+            texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
 
             return texture;
         }
@@ -42,37 +44,36 @@ namespace Firesteel {
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
         Mesh processShape(const Model* tModel, const tinyobj::shape_t& tShape, const tinyobj::attrib_t& tAttrib, int materialID
 #ifdef FS_PRINT_DEBUG_MSGS
-            , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex) {
-#else
-            ) {
+            , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
+            ) {
             //Initialize variables.
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
             //Indicies map.
             std::unordered_map<std::string, unsigned int> indexMap;
-            unsigned int index = 0;
+            unsigned int index=0;
             //Load de model.
-            for (size_t i = 0; i < tShape.mesh.num_face_vertices.size(); ++i) {
-                unsigned int num_face_verts = tShape.mesh.num_face_vertices[i];
-                for (unsigned int j = 0; j < num_face_verts; ++j) {
-                    tinyobj::index_t idx = tShape.mesh.indices[i * num_face_verts + j];
+            for (size_t i=0; i < tShape.mesh.num_face_vertices.size(); ++i) {
+                unsigned int num_face_verts=tShape.mesh.num_face_vertices[i];
+                for (unsigned int j=0; j < num_face_verts; ++j) {
+                    tinyobj::index_t idx=tShape.mesh.indices[i * num_face_verts + j];
                     //
                     std::ostringstream keyStream;
                     keyStream << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index;
-                    std::string key = keyStream.str();
+                    std::string key=keyStream.str();
 
                     if (indexMap.find(key) == indexMap.end()) {
                         Vertex vertex{};
                         //Position.
-                        vertex.position = {
+                        vertex.position={
                             tAttrib.vertices[3*idx.vertex_index+0],
                             tAttrib.vertices[3*idx.vertex_index+1],
                             tAttrib.vertices[3*idx.vertex_index+2]
                         };
                         //Normal.
                         if (idx.normal_index >= 0) {
-                            vertex.normal = {
+                            vertex.normal={
                                 tAttrib.normals[3*idx.normal_index+0],
                                 tAttrib.normals[3*idx.normal_index+1],
                                 tAttrib.normals[3*idx.normal_index+2]
@@ -83,7 +84,7 @@ namespace Firesteel {
                         }
                         //UV.
                         if (idx.texcoord_index >= 0) {
-                            vertex.uv = {
+                            vertex.uv={
                                 tAttrib.texcoords[2*idx.texcoord_index+0],
                                 1.f - tAttrib.texcoords[2 * idx.texcoord_index+1]
                             };
@@ -92,18 +93,18 @@ namespace Firesteel {
 #endif
                         }
                         //Tangent & bitangent.
-                        vertex.tangent = glm::vec3(0.0f);
-                        vertex.bitangent = glm::vec3(0.0f);
+                        vertex.tangent=glm::vec3(0.0f);
+                        vertex.bitangent=glm::vec3(0.0f);
                         //Bones & weights (obj doesn't support those, so just set them to zero).
-                        for (int k = 0; k < MAX_BONE_INFLUENCE; ++k) {
-                            vertex.boneIDs[k] = 0;
-                            vertex.boneWeights[k] = 0.0f;
+                        for (int k=0; k < MAX_BONE_INFLUENCE; ++k) {
+                            vertex.boneIDs[k]=0;
+                            vertex.boneWeights[k]=0.0f;
                         }
                         vertices.push_back(vertex);
 #ifdef FS_PRINT_DEBUG_MSGS
                         tVert += 1;
 #endif
-                        indexMap[key] = index++;
+                        indexMap[key]=index++;
                     }
                     indices.push_back(indexMap[key]);
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -114,7 +115,7 @@ namespace Firesteel {
             //Get textures.
             std::vector<Texture> textures;
             if (materialID >= 0 && materialID < static_cast<int>(tModel->materials.size()))
-                textures = tModel->materials[materialID].textures;
+                textures=tModel->materials[materialID].textures;
 
             return Mesh(vertices, indices, textures);
         }
@@ -123,11 +124,11 @@ namespace Firesteel {
             Model model{ tPath };
 
             tinyobj::ObjReaderConfig reader_config;
-            reader_config.mtl_search_path = ""; //Path to material files.
+            reader_config.mtl_search_path=""; //Path to material files.
             tinyobj::ObjReader reader;
             //Load model from given file.
             if(!reader.ParseFromFile(tPath, reader_config)) {
-                if (!reader.Error().empty())
+                if(!reader.Error().empty())
                     LOG_ERRR("Got error while loading model: " + reader.Error() + "(at \"" + tPath + "\")");
                 return model;
             }
@@ -135,9 +136,9 @@ namespace Firesteel {
             if(!reader.Warning().empty())
                 LOG_WARN("Got warning while loading model: " + reader.Warning() + "(at \"" + tPath + "\")");
             //Initialize variables.
-            auto& attrib = reader.GetAttrib();
-            auto& shapes = reader.GetShapes();
-            auto& materials = reader.GetMaterials();
+            auto& attrib=reader.GetAttrib();
+            auto& shapes=reader.GetShapes();
+            auto& materials=reader.GetMaterials();
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Materials: "+std::to_string((int)materials.size()));
             LOG_DBG("Meshes: "+std::to_string((int)shapes.size()));
@@ -146,7 +147,7 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            //Load all materials (textures).
+            //Process all materials (textures).
             for (const auto& mat : materials) {
                 Texture diffuseTex=loadMaterialTexture(&model, mat.diffuse_texname, "diffuse");
                 Texture normalTex=loadMaterialTexture(&model, mat.normal_texname, "normal");
@@ -164,11 +165,10 @@ namespace Firesteel {
                 if(opacityTex.ID!=0) textures.push_back(opacityTex);
                 model.materials.push_back({ textures });
             }
-
-            //Loop over shapes.
-            for(size_t s = 0; s < shapes.size(); s++) {
-                const auto& shape = shapes[s];
-                int materialID = shape.mesh.material_ids[0];
+            //Process all shapes.
+            for(size_t s=0; s < shapes.size(); s++) {
+                const auto& shape=shapes[s];
+                int materialID=shape.mesh.material_ids[0];
 #ifdef FS_PRINT_DEBUG_MSGS
                 LOG_DBG("Processing mesh "+std::to_string((int)(s+1))+"/"+std::to_string((int)shapes.size()));
                 model.meshes.push_back(processShape(&model, shape, attrib, materialID, vert, ind, norm, tex));
@@ -181,10 +181,10 @@ namespace Firesteel {
             LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
             LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
 #endif // FS_PRINT_DEBUG_MSGS
-
             return model;
         }
     }
 }
 
+#endif // FS_LOADER_OBJ
 #endif // !FS_LOADERS_OBJ

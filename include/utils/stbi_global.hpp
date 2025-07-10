@@ -8,20 +8,20 @@
 #include "../../external/stb_image_write.hpp"
 
 /// Loads texture from given file.
-unsigned int TextureFromFile(const std::string& tPath, bool* tIsMonochromeOut = nullptr, bool tGamma = false) {
+unsigned int TextureFromFile(const std::string& tPath, bool* tIsMonochromeOut=nullptr, bool tGamma=false) {
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-    unsigned char* data = stbi_load(tPath.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data=stbi_load(tPath.c_str(), &width, &height, &nrComponents, 0);
     if (data) {
-        GLenum format = 0;
+        GLenum format=0;
         if(nrComponents == 1) {
-            format = GL_RED;
-            *tIsMonochromeOut = true;
+            format=GL_RED;
+            *tIsMonochromeOut=true;
         }
-        else if(nrComponents == 3) tGamma ? format = GL_RGB : format = GL_SRGB;
-        else if(nrComponents == 4) format = GL_RGBA;
+        else if(nrComponents == 3) tGamma ? format=GL_RGB : format=GL_SRGB;
+        else if(nrComponents == 4) format=GL_RGBA;
 
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -42,7 +42,7 @@ struct TextureData {
 };
 
 TextureData TextureDataFromFile(const std::string& tPath) {
-    int width = 0, height = 0, nrComponents = 0;
+    int width=0, height=0, nrComponents=0;
     return TextureData{ stbi_load(tPath.c_str(), &width, &height, &nrComponents, 0), width, height, nrComponents };
 }
 

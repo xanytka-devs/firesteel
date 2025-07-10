@@ -10,8 +10,8 @@ namespace Firesteel {
 
 	class App {
     private:
-        double mLastFrameFPS = 0, mLastFrame = 0;
-        int mFrameCount = 0;
+        double mLastFrameFPS=0, mLastFrame=0;
+        int mFrameCount=0;
 	public:
 		App() {
 			LOG_INFO("Initializing Firesteel App.");
@@ -20,8 +20,8 @@ namespace Firesteel {
 		void shutdown() {
 			window.close();
 		}
-		virtual int start(const char* tTitle = "Firesteel App",
-            const unsigned int tWinWidth = 800, const unsigned int tWinHeight = 600, const WindowState tWinState = WS_NORMAL) {
+		virtual int start(const char* tTitle="Firesteel App",
+            const unsigned int tWinWidth=800, const unsigned int tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
             LOG(std::string("Firesteel ") + FiresteelVersion);
             LOG_STATE("STARTUP");
 			onPreInitialize();
@@ -29,14 +29,14 @@ namespace Firesteel {
             LOG_DBG("Run preinitialize");
 #endif // FS_PRINT_DEBUG_MSGS
             //Create a window.
-            window = Window(tWinWidth, tWinHeight);
+            window=Window(tWinWidth, tWinHeight);
             if(!window.initialize(tTitle, tWinState))
                 return 1;
             //Check for Vulkan.
-            bool isVulkan = (glfwVulkanSupported() == 1);
+            bool isVulkan=(glfwVulkanSupported() == 1);
             LOG_INFO(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
             //Renderer init.
-            Renderer r = Renderer();
+            Renderer r=Renderer();
             if (!r.initialize()) return -1;
             r.loadExtencions();
             r.printInfo();
@@ -52,19 +52,19 @@ namespace Firesteel {
             while (window.isOpen()) {
                 window.pollEvents();
                 //Per-frame time logic.
-                double currentFrame = glfwGetTime();
-                deltaTime = static_cast<float>(currentFrame - mLastFrame);
-                mLastFrame = currentFrame;
+                double currentFrame=glfwGetTime();
+                deltaTime=static_cast<float>(currentFrame - mLastFrame);
+                mLastFrame=currentFrame;
                 mFrameCount++;
                 if (currentFrame - mLastFrameFPS >= 1.0) {
-                    fps = mFrameCount;
-                    mFrameCount = 0;
-                    mLastFrameFPS = currentFrame;
+                    fps=mFrameCount;
+                    mFrameCount=0;
+                    mLastFrameFPS=currentFrame;
                 }
                 if(window.isMinimized()) continue;
                 window.clearBuffers();
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
-                    && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::drawDevView = true;
+                    && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
                 r.newFrameImGui();
                 onUpdate();
                 DEVVIEW::draw(deltaTime, fps);
@@ -80,6 +80,7 @@ namespace Firesteel {
             glfwTerminate();
             LOG_INFO("Window terminated");
             LOG_STATE("QUIT");
+            if(Log::sSaveLogs) Log::destroyFileLogger();
             return 0;
 		}
         // (overridable)
@@ -96,8 +97,8 @@ namespace Firesteel {
 		virtual void onShutdown() { }
 
 		Window window;
-		unsigned int fps = 0;
-        float deltaTime = 0.0f;
+		unsigned int fps=0;
+        float deltaTime=0.0f;
 	};
 
 }

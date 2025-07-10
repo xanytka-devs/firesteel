@@ -24,37 +24,37 @@ namespace Firesteel {
         // Create cubemap from files that are in json.
         void load(const std::string tCubemapJson) {
             if(!std::filesystem::exists(tCubemapJson)) return;
-            mCfgFile = tCubemapJson;
+            mCfgFile=tCubemapJson;
             std::ifstream ifs(tCubemapJson);
-            nlohmann::json txt = nlohmann::json::parse(ifs);
+            nlohmann::json txt=nlohmann::json::parse(ifs);
             load(txt["dir"], txt["posZ"], txt["negZ"], txt["posY"], txt["negY"], txt["posX"], txt["negX"]);
         }
         // Create cubemap from given files.
         void load(const char* tDir,
-                  const char* tRight = "right.png",
-                  const char* tLeft = "left.png",
-                  const char* tTop = "top.png",
-                  const char* tBottom = "bottom.png",
-                  const char* tFront = "front.png",
-                  const char* tBack = "back.png") {
+                  const char* tRight="right.png",
+                  const char* tLeft="left.png",
+                  const char* tTop="top.png",
+                  const char* tBottom="bottom.png",
+                  const char* tFront="front.png",
+                  const char* tBack="back.png") {
             //Setup.
-            mDir = tDir;
-            mInitialized = true;
-            mFaces = { tFront, tBack, tTop, tBottom, tRight, tLeft };
+            mDir=tDir;
+            mInitialized=true;
+            mFaces={ tFront, tBack, tTop, tBottom, tRight, tLeft };
             glActiveTexture(GL_TEXTURE11);
             glGenTextures(1, &mID);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
             //Load faces.
-            for (unsigned int i = 0; i < 6; i++) {
-                TextureData t = TextureDataFromFile(mDir + "/" + mFaces[i]);
+            for (unsigned int i=0; i < 6; i++) {
+                TextureData t=TextureDataFromFile(mDir + "/" + mFaces[i]);
                 //Get color mode.
-                GLenum color_mode = GL_RED;
+                GLenum color_mode=GL_RED;
                 switch (t.nrComponents) {
                 case 3:
-                    color_mode = GL_RGB;
+                    color_mode=GL_RGB;
                     break;
                 case 4:
-                    color_mode = GL_RGBA;
+                    color_mode=GL_RGBA;
                     break;
                 }
                 //Bind data.
@@ -87,8 +87,8 @@ namespace Firesteel {
         // Create mesh for cubemap.
         void initialize(const float& tSize) {
             //Set up vertices.
-            mSize = tSize;
-            float skybox_vert[] = {
+            mSize=tSize;
+            float skybox_vert[]={
                 // positions          
                 -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
                 -1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
@@ -163,7 +163,7 @@ namespace Firesteel {
         // Remove meshes and textures.
         void remove() {
             if(!mInitialized) return;
-            mInitialized = false;
+            mInitialized=false;
             glDeleteVertexArrays(1, &mVAO);
             glDeleteBuffers(1, &mVBO);
             clear();

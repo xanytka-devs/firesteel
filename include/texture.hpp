@@ -4,12 +4,12 @@
 
 namespace Firesteel {
     struct Texture {
-        unsigned int ID = 0;
+        unsigned int ID=0;
         std::string type;
         std::string path;
-        bool isMonochrome = false;
+        bool isMonochrome=false;
         // Binds this texture to given ID.
-        void enable(size_t tId = 0) const {
+        void enable(size_t tId=0) const {
             glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(tId));
             glBindTexture(GL_TEXTURE_2D, ID);
         }

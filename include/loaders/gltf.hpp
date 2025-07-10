@@ -1,9 +1,10 @@
 #ifndef FS_LOADERS_GLTF
 #define FS_LOADERS_GLTF
+#ifdef FS_LOADER_GLTF
 
 #include "../model.hpp"
-#include "../utils/json.hpp"
 #include "../utils/stbi_global.hpp"
+#include "../utils/json.hpp"
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NOEXCEPTION
@@ -20,7 +21,7 @@ namespace Firesteel {
         Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
             if(texPath.empty()) return {};
             //Get full path.
-            std::string fullPath = tModel->getDirectory() + "/" + texPath;
+            std::string fullPath=tModel->getDirectory() + "/" + texPath;
             //Check all materials for this texture.
             for (auto& material : tModel->materials) {
                 for (const auto& texture : material.textures) {
@@ -38,9 +39,9 @@ namespace Firesteel {
             LOG_DBG("Loading texture \"" + texPath + "\"");
 #endif
             Texture texture;
-            texture.type = type;
-            texture.path = texPath;
-            texture.ID = TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            texture.type=type;
+            texture.path=texPath;
+            texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
 
             return texture;
         }
@@ -54,12 +55,17 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        bool hasAttribute(const tinygltf::Primitive* tPrimitive, const char* tAttrib) {
+            return tPrimitive->attributes.find(tAttrib)!=tPrimitive->attributes.end();
+        }
+
+        /// [!WARING]
+        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
         Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
 #ifdef FS_PRINT_DEBUG_MSGS
-            , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex) {
-#else
-            ) {
+            , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
+            ) {
             //Initialize variables.
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
@@ -68,19 +74,109 @@ namespace Firesteel {
             const tinygltf::BufferView& posView=tModel->bufferViews[posAcc.bufferView];
             const float* positions=reinterpret_cast<const float*>(&tModel->buffers[posView.buffer].data[posView.byteOffset]);
             //Normals.
-            const tinygltf::Accessor& normAcc=tModel->accessors[tPrimitive->attributes.at("NORMAL")];
-            const tinygltf::BufferView& normView=tModel->bufferViews[normAcc.bufferView];
-            const float* normals=reinterpret_cast<const float*>(&tModel->buffers[normView.buffer].data[normView.byteOffset]);
+            bool hasNormals=hasAttribute(tPrimitive,"NORMAL");
+            const float* normals=nullptr;
+            if(hasNormals) {
+                const tinygltf::Accessor* normAcc=&tModel->accessors[tPrimitive->attributes.at("NORMAL")];
+                const tinygltf::BufferView* normView=&tModel->bufferViews[normAcc->bufferView];
+                normals=reinterpret_cast<const float*>(&tModel->buffers[normView->buffer].data[normView->byteOffset]);
+            }
             //UVs.
-            const tinygltf::Accessor& uvAcc=tModel->accessors[tPrimitive->attributes.at("TEXCOORD_0")];
-            const tinygltf::BufferView& uvView=tModel->bufferViews[uvAcc.bufferView];
-            const float* uvs=reinterpret_cast<const float*>(&tModel->buffers[uvView.buffer].data[uvView.byteOffset]);
+            bool hasUVs=hasAttribute(tPrimitive,"TEXCOORD_0");
+            const float* uvs=nullptr;
+            if(hasUVs) {
+                const tinygltf::Accessor* uvAcc=&tModel->accessors[tPrimitive->attributes.at("TEXCOORD_0")];
+                const tinygltf::BufferView* uvView=&tModel->bufferViews[uvAcc->bufferView];
+                uvs=reinterpret_cast<const float*>(&tModel->buffers[uvView->buffer].data[uvView->byteOffset]);
+            }
+            //Tangents.
+            bool hasTangents=hasAttribute(tPrimitive,"TANGENTS");
+            const float* tangents=nullptr;
+            if(hasTangents) {
+                const tinygltf::Accessor* tanAcc=&tModel->accessors[tPrimitive->attributes.at("TANGENTS")];
+                const tinygltf::BufferView* tanView=&tModel->bufferViews[tanAcc->bufferView];
+                tangents=reinterpret_cast<const float*>(&tModel->buffers[tanView->buffer].data[tanView->byteOffset]);
+            }
+            //Bones (joints and weights).
+            bool hasBones=hasAttribute(tPrimitive,"JOINTS_0")&&hasAttribute(tPrimitive,"WEIGHTS_0");
+            const uint16_t* joints=nullptr;
+            const float* weights=nullptr;
+            if(hasBones) {
+                const tinygltf::Accessor* jointAcc=&tModel->accessors[tPrimitive->attributes.at("JOINTS_0")];
+                const tinygltf::Accessor* weightAcc=&tModel->accessors[tPrimitive->attributes.at("WEIGHTS_0")];
+                const tinygltf::BufferView* jointView=&tModel->bufferViews[jointAcc->bufferView];
+                const tinygltf::BufferView* weightView=&tModel->bufferViews[weightAcc->bufferView];
+                joints=reinterpret_cast<const uint16_t*>(&tModel->buffers[jointView->buffer].data[jointView->byteOffset]);
+                weights=reinterpret_cast<const float*>(&tModel->buffers[weightView->buffer].data[weightView->byteOffset]);
+            }
             //Create vertexes.
             for(size_t i=0;i<posAcc.count;i++) {
                 Vertex vert{};
-                vert.position=glm::vec3(positions[0]+i*3,positions[1]+i*3,positions[2]+i*3);
-                vert.normal=glm::vec3(normals[0]+i*3,normals[1]+i*3,normals[2]+i*3);
-                vert.uv=glm::vec2(uvs[0]+i*2,uvs[1]+i*2);
+                //Positions with rotation correction (because of different coordinate system).
+                glm::mat4 rotCorr=glm::rotate(glm::mat4(1.f),glm::radians(90.f),glm::vec3(1.f,0.f,0.f));
+                vert.position=glm::vec3(
+                    rotCorr * glm::vec4(
+                        positions[i*3+0],
+                        positions[i*3+1],
+                        positions[i*3+2],
+                        1.f)
+                );
+                //Normals.
+                if(hasNormals)
+                    vert.normal=glm::vec3(
+                        normals[i*3+0],
+                        normals[i*3+1],
+                        normals[i*3+2]
+                    );
+                //Texture coords.
+                if(hasUVs)
+                    vert.uv=glm::vec2(
+                        uvs[i*2+0],
+                        uvs[i*2+1]
+                    );
+                //Tangents&bitangents.
+                if(hasTangents) {
+                    vert.tangent=glm::vec3(
+                        tangents[i*4+0],
+                        tangents[i*4+1],
+                        tangents[i*4+2]
+                    );
+                    const float handeness=(tangents[i*4+3]<0.f)?-1.f:1.f;
+                    vert.bitangent=glm::cross(vert.normal,vert.tangent)*handeness;
+                } else if(uvs&&normals) {
+                    //Index shifts.
+                    size_t i1=(i+1)%posAcc.count;
+                    size_t i2=(i+2)%posAcc.count;
+                    //Get nearest positions and texture coords.
+                    glm::vec3 pos1=glm::vec3(positions[i1*3+0],positions[i1*3+1],positions[i1*3+2]);
+                    glm::vec3 pos2=glm::vec3(positions[i2*3+0],positions[i2*3+1],positions[i2*3+2]);
+                    glm::vec2 uv1=glm::vec2(uvs[i1*2+0],uvs[i1*2+1]);
+                    glm::vec2 uv2=glm::vec2(uvs[i2*2+0],uvs[i2*2+1]);
+                    //Differences of positions and texture coords.
+                    glm::vec3 deltaPos1=pos1-vert.position;
+                    glm::vec3 deltaPos2=pos2-vert.position;
+                    glm::vec2 deltaUV1=uv1-vert.uv;
+                    glm::vec2 deltaUV2=uv2-vert.uv;
+                    //Calculate difference.
+                    float diff=1.f/(deltaUV1.x*deltaUV2.y-deltaUV1.y*deltaUV2.x);
+                    //Get tangent and bitangent.
+                    vert.tangent=glm::normalize(glm::vec3(
+                        diff*(deltaUV2.y*deltaPos1.x-deltaUV1.y*deltaPos2.x),
+                        diff*(deltaUV2.y*deltaPos1.y-deltaUV1.y*deltaPos2.y),
+                        diff*(deltaUV2.y*deltaPos1.z-deltaUV1.y*deltaPos2.z)
+                    ));
+                    vert.tangent=glm::normalize(glm::vec3(
+                        diff*(deltaUV1.x*deltaPos2.x-deltaUV2.x*deltaPos1.x),
+                        diff*(deltaUV1.x*deltaPos2.y-deltaUV2.x*deltaPos1.y),
+                        diff*(deltaUV1.x*deltaPos2.z-deltaUV2.x*deltaPos1.z)
+                    ));
+                }
+                //Bones.
+                if(hasBones)
+                    for(size_t b=0;b<MAX_BONE_INFLUENCE;b++) {
+                        vert.boneIDs[b]=joints?static_cast<int>(joints[i*4+b]):0;
+                        vert.boneWeights[b]=weights?weights[i*4+b]:0.f;
+                    }
                 vertices.push_back(vert);
 #ifdef FS_PRINT_DEBUG_MSGS
                 tVert += 3;
@@ -91,7 +187,7 @@ namespace Firesteel {
             //Create indicies.
             const tinygltf::Accessor& indAcc=tModel->accessors[tPrimitive->indices];
             const tinygltf::BufferView& indView=tModel->bufferViews[indAcc.bufferView];
-            const float* indData=reinterpret_cast<const float*>(&tModel->buffers[indView.buffer].data[indView.byteOffset]);
+            const void* indData=&tModel->buffers[indView.buffer].data[indView.byteOffset];
             indices.resize(indAcc.count);
             switch (indAcc.componentType)
             {
@@ -109,7 +205,8 @@ namespace Firesteel {
             }
             case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT: {
                 const uint32_t* data32=reinterpret_cast<const uint32_t*>(indData);
-                memcpy(indices.data(),data32,indAcc.count*sizeof(unsigned int));
+                for(size_t i=0;i<indAcc.count;i++)
+                    indices[i]=static_cast<unsigned int>(data32[i]);
                 break;
             }
             default:
@@ -141,7 +238,7 @@ namespace Firesteel {
             tinygltf::TinyGLTF loader;
             std::string error, warn;
 
-            bool res = tBinary?loader.LoadBinaryFromFile(&gltf,&error,&warn,tPath):loader.LoadASCIIFromFile(&gltf,&error,&warn,tPath);
+            bool res=tBinary?loader.LoadBinaryFromFile(&gltf,&error,&warn,tPath):loader.LoadASCIIFromFile(&gltf,&error,&warn,tPath);
             if(!error.empty())
                 LOG_ERRR("Got error while loading model: " + error + "(at \"" + tPath + "\")");
             if(!warn.empty())
@@ -158,8 +255,8 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            //Load all materials (textures).
-            for (const auto& mat : gltf.materials) {
+            //Process all materials (textures).
+            for(const auto& mat : gltf.materials) {
                 Texture diffuseTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.baseColorTexture.index), "diffuse");
                 Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), "normal");
                 Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
@@ -176,7 +273,7 @@ namespace Firesteel {
                 //if(opacityTex.ID!=0) textures.push_back(opacityTex);
                 model.materials.push_back({ textures });
             }
-            //Load all meshes.
+            //Process all meshes.
             for(size_t m=0;m<gltf.meshes.size();m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
                 LOG_DBG("Processing mesh "+std::to_string((int)(m+1))+"/"+std::to_string((int)gltf.meshes.size()));
@@ -186,7 +283,7 @@ namespace Firesteel {
                     LOG_DBG("Processing premitive "+std::to_string((int)(p+1))+"/"+std::to_string((int)gltf.meshes[m].primitives.size()));
                     model.meshes.push_back(processPrimitive(&model,&gltf,&gltf.meshes[m].primitives[p],model.getDirectory(),vert,ind,norm,tex));
 #else
-                    model.meshes.push_back(processPrimitive(&model,gltf,gltf.meshes[m].primitives[p],model.getDirectory()));
+                    model.meshes.push_back(processPrimitive(&model,&gltf,&gltf.meshes[m].primitives[p],model.getDirectory()));
 #endif // FS_PRINT_DEBUG_MSGS
                 }
             }
@@ -195,10 +292,10 @@ namespace Firesteel {
             LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
             LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
 #endif // FS_PRINT_DEBUG_MSGS
-            
             return model;
         }
     }
 }
 
+#endif // FS_LOADER_GLTF
 #endif // !FS_LOADERS_GLTF

@@ -8,33 +8,33 @@ namespace Firesteel {
 	public:
 		// Set mouse cursor position.
 		static void cursorCallback(GLFWwindow* tWindow, double tX, double tY) {
-			mX = static_cast<float>(tX);
-			mY = static_cast<float>(tY);
+			mX=static_cast<float>(tX);
+			mY=static_cast<float>(tY);
 			//Check if first mouse button.
 			if (mFirstMove) {
-				m_old_x = static_cast<float>(tX);
-				m_old_y = static_cast<float>(tY);
-				mFirstMove = false;
+				m_old_x=static_cast<float>(tX);
+				m_old_y=static_cast<float>(tY);
+				mFirstMove=false;
 			}
 			//Set deltas.
-			mDX = mX - m_old_x;
-			mDY = m_old_y - mY;
+			mDX=mX - m_old_x;
+			mDY=m_old_y - mY;
 			//Set old positions
-			m_old_x = mX;
-			m_old_y = mY;
+			m_old_x=mX;
+			m_old_y=mY;
 		}
 		// Set mouse buttons statuses.
 		static void buttonCallback(GLFWwindow* tWindow, int tButton, int tAction, int tMods) {
 			if(tButton == -1) return;
 			if(tAction != GLFW_RELEASE) {
-				if(!mButtons[tButton]) mButtons[tButton] = true;
-			} else mButtons[tButton] = false;
-			mButtonsChanged[tButton] = true;
+				if(!mButtons[tButton]) mButtons[tButton]=true;
+			} else mButtons[tButton]=false;
+			mButtonsChanged[tButton]=true;
 		}
 		// Set mouse wheel deltas.
 		static void scrollCallback(GLFWwindow* tWindow, double tDx, double tDy) {
-			mWheelDX = static_cast<float>(tDx);
-			mWheelDY = static_cast<float>(tDy);
+			mWheelDX=static_cast<float>(tDx);
+			mWheelDY=static_cast<float>(tDy);
 		}
 
 		static float getCursorX() { return mX; }
@@ -43,27 +43,27 @@ namespace Firesteel {
 
 		// Get cursor x delta.
 		static float getCursorDX() {
-			float _dx = mDX;
-			mDX = 0;
+			float _dx=mDX;
+			mDX=0;
 			return _dx;
 		}
 		// Get cursor y delta.
 		static float getCursorDY() {
-			float _dy = mDY;
-			mDY = 0;
+			float _dy=mDY;
+			mDY=0;
 			return _dy;
 		}
 
 		// Get mouse wheel x delta.
 		static float getWheelDX() {
-			float w_dx = mWheelDX;
-			mWheelDX = 0;
+			float w_dx=mWheelDX;
+			mWheelDX=0;
 			return w_dx;
 		}
 		// Get mouse wheel y delta.
 		static float getWheelDY() {
-			float w_dy = mWheelDY;
-			mWheelDY = 0;
+			float w_dy=mWheelDY;
+			mWheelDY=0;
 			return w_dy;
 		}
 
@@ -73,8 +73,8 @@ namespace Firesteel {
 		}
 		// Has mouse button changed?
 		static bool buttonChanged(const int tButton) {
-			bool output = mButtonsChanged[tButton];
-			mButtonsChanged[tButton] = false;
+			bool output=mButtonsChanged[tButton];
+			mButtonsChanged[tButton]=false;
 			return output;
 		}
 		// Is mouse button up?

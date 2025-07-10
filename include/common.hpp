@@ -1,5 +1,8 @@
 #ifndef FS_COMMON_H
 #define FS_COMMON_H
+/*
+* Generic internal includes
+*/
 #include <../external/glad/include/glad/gl.h>
 #include <../external/glfw/include/GLFW/glfw3.h>
 #ifdef WIN32

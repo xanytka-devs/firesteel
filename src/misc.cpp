@@ -1,24 +1,24 @@
 #include "input/input.hpp"
 using namespace Firesteel;
 
-bool Keyboard::mKeys[GLFW_KEY_LAST] = { 0 };
-bool Keyboard::mKeysChanged[GLFW_KEY_LAST] = { 0 };
-bool Keyboard::mAnyKeyPressed = false;
+bool Keyboard::mKeys[GLFW_KEY_LAST]={ 0 };
+bool Keyboard::mKeysChanged[GLFW_KEY_LAST]={ 0 };
+bool Keyboard::mAnyKeyPressed=false;
 
-float Mouse::mX = 0;
-float Mouse::mY = 0;
-float Mouse::m_old_x = 0;
-float Mouse::m_old_y = 0;
+float Mouse::mX=0;
+float Mouse::mY=0;
+float Mouse::m_old_x=0;
+float Mouse::m_old_y=0;
 
-float Mouse::mDX = 0;
-float Mouse::mDY = 0;
+float Mouse::mDX=0;
+float Mouse::mDY=0;
 
-float Mouse::mWheelDX = 0;
-float Mouse::mWheelDY = 0;
+float Mouse::mWheelDX=0;
+float Mouse::mWheelDY=0;
 
-bool Mouse::mFirstMove = true;
-bool Mouse::mButtons[GLFW_MOUSE_BUTTON_LAST] = { 0 };
-bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+bool Mouse::mFirstMove=true;
+bool Mouse::mButtons[GLFW_MOUSE_BUTTON_LAST]={ 0 };
+bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 
 
 
@@ -30,8 +30,8 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST] = { 0 };
 #include <sstream>
 #include <iostream>
 #include <filesystem>
-bool inited = false;
-std::ofstream logStream;
+bool gInited=false;
+std::ofstream gLogStream;
 
 static const std::string currentDateTime(const char* tFormat) {
 	struct tm newtime;
@@ -42,7 +42,7 @@ static const std::string currentDateTime(const char* tFormat) {
 	// Get time as 64-bit integer.
 	_time64(&long_time);
 	// Convert to local time.
-	err = _localtime64_s(&newtime, &long_time);
+	err=_localtime64_s(&newtime, &long_time);
 	if (err) {
 		LOG_WARN("Invalid argument to _localtime64_s.");
 		return "invalid";
@@ -51,30 +51,31 @@ static const std::string currentDateTime(const char* tFormat) {
 	return timebuf;
 }
 
+bool Log::sSaveLogs=true;
 void Log::logToFile(const char* tMsg, const bool tAddTimestamp) {
-	if (!inited) {
+	if (!gInited) {
 		if(!std::filesystem::exists("logs/"))
 			std::filesystem::create_directory("logs");
-		logStream.open("logs/latest.log", std::ofstream::out | std::ofstream::trunc);
-		logStream.close();
-		logStream.open("logs/latest.log", std::ios::app);
-		inited = true;
+		gLogStream.open("logs/latest.log", std::ofstream::out | std::ofstream::trunc);
+		gLogStream.close();
+		gLogStream.open("logs/latest.log", std::ios::app);
+		gInited=true;
 	}
 	std::ostringstream logEntry;
 	if(tAddTimestamp) logEntry << currentDateTime("%X") + " ";
 	logEntry << tMsg;
-	logStream << logEntry.str();
-	logStream.flush();
+	gLogStream << logEntry.str();
+	gLogStream.flush();
 }
 void Log::destroyFileLogger() {
-	logStream.close();
-	inited = false;
+	gLogStream.close();
+	gInited=false;
 	std::fstream src("logs/latest.log", std::ios::in | std::ios::binary);
 	if (!src.good()) {
 		LOG_ERRR("Couldn't open 'latest.log'");
 		return;
 	}
-	std::string destFileName = "logs/" + currentDateTime("%d-%m-%Y %X") + ".log";
+	std::string destFileName="logs/" + currentDateTime("%d-%m-%Y %X") + ".log";
 	std::replace(destFileName.begin(), destFileName.end(), ':', '.');
 	std::ofstream dest(destFileName, std::ios::trunc | std::ios::binary);
 	if (!dest.good()) {
@@ -90,7 +91,7 @@ void Log::log(const std::string& tMsg, const int tMod, const bool tAddTimestamp)
 #ifndef NDEBUG
 	ShowWindow(GetConsoleWindow(), SW_RESTORE); // Show cmd window.
 	SetConsoleTitleA("Firesteel Debug Output"); // Set cmd title.
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);// Get cmd handle.
+	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);// Get cmd handle.
 	SetConsoleTextAttribute(hConsole, tMod); // Set cmd text color.
 	printf(tMsg.c_str()); // Print msg.
 #else

@@ -7,30 +7,31 @@
 
 namespace Firesteel {
     namespace CONFIG {
-        static bool AllowDevView;
+        static bool sAllowDevView;
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
-            std::string firesteelConfigFile = "";
+            std::string firesteelConfigFile="";
 #ifdef _WIN32
-            char* buf = nullptr;
-            size_t sz = 0;
+            char* buf=nullptr;
+            size_t sz=0;
             if (_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {
-                firesteelConfigFile = std::string(buf) + "\\firesteel\\global.cfg.json";
+                firesteelConfigFile=std::string(buf) + "\\firesteel\\global.cfg.json";
                 free(buf);
             }
 #endif
-            bool canGetSystemInfo = true;
+            bool canGetSystemInfo=true;
             if (std::filesystem::exists(firesteelConfigFile)) {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);
-                nlohmann::json cfg = nlohmann::json::parse(ifs);
-                if(!cfg["AllowDevView"].is_null()) AllowDevView = cfg["AllowDevView"];
-                if(!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo = cfg["AllowHardwareEnumeration"];
+                nlohmann::json cfg=nlohmann::json::parse(ifs);
+                if(!cfg["AllowDevView"].is_null()) sAllowDevView=cfg["AllowDevView"];
+                if(!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo=cfg["AllowHardwareEnumeration"];
+                if(!cfg["SaveLogs"].is_null()) Log::sSaveLogs=cfg["SaveLogs"];
             }
             if(canGetSystemInfo) {
                 LOG_INFO("Hardware Information:");
 
-                CPUInfo cpu = getCPUInfo();
+                CPUInfo cpu=getCPUInfo();
                 LOG_INFO(" - CPU");
                 if(std::string(cpu.output).size() <= 1) {
                     LOG_INFO("   Vendor: " + cpu.vendor);
@@ -39,7 +40,7 @@ namespace Firesteel {
                     LOG_INFO("   Frequency: " + std::to_string(cpu.frequency));
                 } else LOG_WARN(cpu.output);
 
-                GPUInfo gpu = getGPUInfo();
+                GPUInfo gpu=getGPUInfo();
                 LOG_INFO(" - GPU");
                 if(std::string(gpu.output).size() <= 1) {
                     LOG_INFO("   Model: " + gpu.model);
@@ -47,21 +48,21 @@ namespace Firesteel {
                     printf("   Memory: %.2f GB\n", gpu.memoryGB);
                 } else LOG_WARN(gpu.output);
 
-                RAMInfo ram = getRAMInfo();
+                RAMInfo ram=getRAMInfo();
                 LOG_INFO(" - RAM");
                 if(std::string(ram.output).size() <= 1) {
                     LOG_INFO("", "");
                     printf("   Memory: %.2f GB\n", ram.memoryGB);
                 } else LOG_WARN(ram.output);
 
-                MotherboardInfo motherboard = getMotherboardInfo();
+                MotherboardInfo motherboard=getMotherboardInfo();
                 LOG_INFO(" - Motherboard");
                 if(std::string(motherboard.output).size() <= 1) {
                     LOG_INFO("   Model: " + motherboard.model);
                     LOG_INFO("   Vendor: " + motherboard.vendor);
                 } else LOG_WARN(motherboard.output);
 
-                OSInfo os = getOSInfo();
+                OSInfo os=getOSInfo();
                 LOG_INFO(" - OS");
                 LOG_INFO("   Name: " + os.name);
                 LOG_INFO("   Build/distro: " + os.distroBuild);

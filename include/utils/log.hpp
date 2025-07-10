@@ -5,18 +5,25 @@
 #include <string>
 #include <iostream>
 
-#define LOG_C(...) Log::log_c(__VA_ARGS__);
-#define LOG(...) Log::log_ntag(__VA_ARGS__);
-#define LOG_INFO(...) Log::log_info(__VA_ARGS__);
-#define LOG_STATE(...) Log::log_state(__VA_ARGS__);
-#define LOG_WARN(...) Log::log_warn(__VA_ARGS__);
-#define LOG_ERRR(...) Log::log_error(__VA_ARGS__);
-#define LOG_ERROR(...) Log::log_error(__VA_ARGS__);
-#define LOG_CRIT(...) Log::log_critical(__VA_ARGS__);
-#define LOG_DEBUG(...) Log::log_debug(__VA_ARGS__);
-#define LOG_DBG(...) Log::log_debug(__VA_ARGS__);
-	class Log {
-	public:
+#define LOG_C(...) Log::logCustom(__VA_ARGS__);
+#define LOG(...) Log::logNoTag(__VA_ARGS__);
+#define LOG_INFO(...) Log::logInfo(__VA_ARGS__);
+#define LOG_STATE(...) Log::logState(__VA_ARGS__);
+#define LOG_WARN(...) Log::logWarning(__VA_ARGS__);
+#define LOG_ERRR(...) Log::logError(__VA_ARGS__);
+#define LOG_ERROR(...) Log::logError(__VA_ARGS__);
+#define LOG_CRIT(...) Log::logCritical(__VA_ARGS__);
+#ifdef FS_PRINT_DEBUG_MSGS
+//[!WARNING]
+//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+//Please use LOG_C(...) instead.
+#define LOG_DEBUG(...) Log::logDebug(__VA_ARGS__);
+//[!WARNING]
+//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+//Please use LOG_C(...) instead.
+#define LOG_DBG(...) Log::logDebug(__VA_ARGS__);
+#endif // FS_PRINT_DEBUG_MSGS
+
 #define CMD_F_BLACK 0
 #define CMD_F_BLUE 1
 #define CMD_F_GREEN 2
@@ -50,40 +57,50 @@
 #define CMD_BG_LPURPLE 208
 #define CMD_BG_LYELLOW 224
 #define CMD_BG_WHITE 240
-	static void log_c(const std::string& tMsg, const int tMod = CMD_F_WHITE, const char* tEndLine = "\n") {
+	class Log {
+	public:
+	static void logCustom(const std::string& tMsg, const int tMod=CMD_F_WHITE, const char* tEndLine="\n") {
 		log(tMsg + tEndLine, tMod);
 	}
-	static void log_ntag(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logNoTag(const std::string& tMsg, const char* tEndLine="\n") {
 		log(tMsg + tEndLine);
 	}
-	static void log_info(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logInfo(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[INFO] ", CMD_F_GRAY);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
-	static void log_state(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logState(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[STATE] ", CMD_F_LBLUE);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
-	static void log_warn(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logWarning(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[WARN] ", CMD_F_YELLOW);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
-	static void log_error(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logError(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[ERRR] ", CMD_F_RED);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
-	static void log_critical(const std::string& tMsg, const char* tEndLine = "\n") {
+	static void logCritical(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[CRIT] ", CMD_BG_RED + CMD_F_WHITE);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
-	static void log_debug(const std::string& tMsg, const char* tEndLine = "\n") {
+#ifdef FS_PRINT_DEBUG_MSGS
+	//[!WARNING]
+	//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+	//Please use LOG_C(...) instead.
+	static void logDebug(const std::string& tMsg, const char* tEndLine="\n") {
 		log("[DBG] ", CMD_F_PURPLE);
 		log(tMsg + tEndLine, CMD_F_WHITE, false);
 	}
+#endif // FS_PRINT_DEBUG_MSGS
 	/// Logs message to console with specified color and prompt.
-	static void log(const std::string& tMsg, const int tMod = CMD_F_WHITE, const bool tAddTimestamp = true);
+	static void log(const std::string& tMsg, const int tMod=CMD_F_WHITE, const bool tAddTimestamp=true);
 	// Clears console log window.
 	static void clear();
+
+	// Allows/disallows file logging all together. Depends on global cfg file.
+	static bool sSaveLogs;
 	// Logs something only to file.
 	static void logToFile(const char* tMsg, const bool tAddTimestamp);
 	// [DANGEROUS]

@@ -74,9 +74,9 @@ std::vector<std::string> StrSplit(const std::string& tS, char tDelim) {
 }
 
 std::string StrReplace(std::string tOrig, char tChar, char tNewChar) {
-    std::vector<std::string> parts = StrSplit(tOrig, tChar);
-    std::string out = parts[0];
-    for (size_t i = 1; i < parts.size(); i++)
+    std::vector<std::string> parts=StrSplit(tOrig, tChar);
+    std::string out=parts[0];
+    for (size_t i=1; i < parts.size(); i++)
         out += tNewChar + parts[i];
     return out;
 }
@@ -90,7 +90,7 @@ std::string StrFromFile(std::string tPath) {
     // Open the stream to 'lock' the file.
     std::ifstream f(path, std::ios::in | std::ios::binary);
     // Obtain the size of the file.
-    const auto sz = std::filesystem::file_size(path);
+    const auto sz=std::filesystem::file_size(path);
     // Create a buffer.
     std::string result(sz, '\0');
     // Read the whole file into the buffer.
@@ -108,8 +108,8 @@ void StrToFile(std::string tPath, std::string tIn) {
 int StrEndsWith(const char* tStr, const char* tSuffix) {
     if (!tStr || !tSuffix)
         return 0;
-    size_t lenstr = strlen(tStr);
-    size_t lensuffix = strlen(tSuffix);
+    size_t lenstr=strlen(tStr);
+    size_t lensuffix=strlen(tSuffix);
     if (lensuffix > lenstr)
         return 0;
     return strncmp(tStr + lenstr - lensuffix, tSuffix, lensuffix) == 0;
@@ -138,7 +138,7 @@ glm::vec3 float3ToVec3(float* tF) {
     return glm::vec3(tF[0], tF[1], tF[2]);
 }
 
-static const std::string currentDateTime(const char* tFormat = "%d.%m.%Y %X") {
+static const std::string currentDateTime(const char* tFormat="%d.%m.%Y %X") {
     struct tm newtime;
     __time64_t long_time;
     char timebuf[26];
@@ -147,7 +147,7 @@ static const std::string currentDateTime(const char* tFormat = "%d.%m.%Y %X") {
     // Get time as 64-bit integer.
     _time64(&long_time);
     // Convert to local time.
-    err = _localtime64_s(&newtime, &long_time);
+    err=_localtime64_s(&newtime, &long_time);
     if (err) {
         LOG_WARN("Invalid argument to _localtime64_s.");
         return "invalid";
@@ -170,13 +170,13 @@ std::string StrToUpper(std::string tStr) {
 /// Dialog for file (open/save).
 struct FileDialog {
     // Deafult return value (if file isn't gotten).
-    std::string default_file = "";
+    std::string default_file="";
     // Path to start in.
-    const char* path = NULL;
+    const char* path=NULL;
     // Extension filter.
-    const char* filter = "All\0*.*\0";
+    const char* filter="All\0*.*\0";
     // Index of filter's item.
-    int filter_id = 0;
+    int filter_id=0;
     // Opens file dialog and gets file name. Otherwise returns set default.
     std::string open() const;
     // Opens file dialog and gets file name. Otherwise returns set default.
@@ -236,24 +236,24 @@ std::string FileDialog::open() const {
 #ifdef WIN32
     OPENFILENAME ofn;       //Common dialog box structure.
     char szFile[MAX_PATH]{};     //Buffer for file name.
-    HWND hwnd = nullptr;    //Owner window.
-    HANDLE hf = nullptr;    //File handle.
+    HWND hwnd=nullptr;    //Owner window.
+    HANDLE hf=nullptr;    //File handle.
     //Initialize OPENFILENAME.
     ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;
-    ofn.lpstrFile = szFile;
+    ofn.lStructSize=sizeof(ofn);
+    ofn.hwndOwner=hwnd;
+    ofn.lpstrFile=szFile;
     //Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
     // use the contents of szFile to initialize itself.
-    ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrDefExt = "rle";
-    ofn.lpstrFilter = filter;
-    ofn.nFilterIndex = filter_id;
-    ofn.lpstrFileTitle = NULL;
-    ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = path;
-    ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
+    ofn.lpstrFile[0]='\0';
+    ofn.nMaxFile=sizeof(szFile);
+    ofn.lpstrDefExt="rle";
+    ofn.lpstrFilter=filter;
+    ofn.nFilterIndex=filter_id;
+    ofn.lpstrFileTitle=NULL;
+    ofn.nMaxFileTitle=0;
+    ofn.lpstrInitialDir=path;
+    ofn.Flags=OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;
     //Display the Open dialog box. 
     if (GetOpenFileName(&ofn) == TRUE)
         return szFile;
@@ -267,24 +267,24 @@ std::string FileDialog::save() const {
 #ifdef WIN32
     OPENFILENAME ofn;       //Common dialog box structure.
     char szFile[MAX_PATH]{};     //Buffer for file name.
-    HWND hwnd = nullptr;    //Owner window.
-    HANDLE hf = nullptr;    //File handle.
+    HWND hwnd=nullptr;    //Owner window.
+    HANDLE hf=nullptr;    //File handle.
     //Initialize OPENFILENAME.
     ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;
-    ofn.lpstrFile = szFile;
+    ofn.lStructSize=sizeof(ofn);
+    ofn.hwndOwner=hwnd;
+    ofn.lpstrFile=szFile;
     //Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
     // use the contents of szFile to initialize itself.
-    ofn.lpstrFile[0] = '\0';
-    ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrDefExt = "rle";
-    ofn.lpstrFilter = filter;
-    ofn.nFilterIndex = filter_id;
-    ofn.lpstrFileTitle = NULL;
-    ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = path;
-    ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+    ofn.lpstrFile[0]='\0';
+    ofn.nMaxFile=sizeof(szFile);
+    ofn.lpstrDefExt="rle";
+    ofn.lpstrFilter=filter;
+    ofn.nFilterIndex=filter_id;
+    ofn.lpstrFileTitle=NULL;
+    ofn.nMaxFileTitle=0;
+    ofn.lpstrInitialDir=path;
+    ofn.Flags=OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
     //Display the Open dialog box. 
     if (GetSaveFileName(&ofn) == TRUE) {
         return szFile;
@@ -295,7 +295,7 @@ std::string FileDialog::save() const {
     return "";
 #endif // !__linux__
 }
-static void showMessageBox(GLFWwindow* tWin, std::string tMsg, std::string tTitle = "Firesteel Message Box") {
+static void showMessageBox(GLFWwindow* tWin, std::string tMsg, std::string tTitle="Firesteel Message Box") {
 #ifdef WIN32
     MessageBox(glfwGetWin32Window(tWin), tMsg.c_str(), tTitle.c_str(), MB_OK | MB_ICONQUESTION);
 #endif // !WIN32

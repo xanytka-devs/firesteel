@@ -9,7 +9,7 @@ namespace Firesteel {
     struct DrawData {
         std::vector<Texture> textures;
         void remove() {
-            for (size_t i = 0; i < textures.size(); i++)
+            for (size_t i=0; i < textures.size(); i++)
                 textures[i].remove();
         }
     };
@@ -20,10 +20,10 @@ namespace Firesteel {
         std::string getDirectory() const {
             return path.substr(0, path.find_last_of('\\'));
         }
-        Model(const std::string& tPath = "") {
+        Model(const std::string& tPath="") {
             materials.clear();
             meshes.clear();
-            path = tPath;
+            path=tPath;
         }
     };
 }

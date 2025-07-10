@@ -2,7 +2,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/9pq8id42s9mgxfoi?svg=true)](https://ci.appveyor.com/project/sanyaalabai/firesteel)
 [![Documentation Status](https://img.shields.io/readthedocs/firesteel?logo=readthedocs&logoColor=ccc)](https://firesteel.readthedocs.io/ru/latest/?badge=latest)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)  
-[![Discord](https://img.shields.io/discord/635140721908908049?logo=discord&logoColor=ccc&color=orange)](https://discord.gg/jw6YSwTFrU)
 [![Static Badge](https://img.shields.io/badge/chat-Telegram-orange?logo=telegram&logoColor=ccc)](https://t.me/xanytka)  
 # Firesteel
 Понятный, кроссплатформенный\* и полностью настраиваемый движок для создания игр и программ.
@@ -19,11 +18,13 @@
 При издании физических копий игры/программы необходимо [сделать запрос к Xanytka](https://support.xanytka.ru/publisher/phys_copies).
 
 # Сторонние библиотеки
-* [Assimp](https://github.com/assimp/assimp)
 * [GLM](https://github.com/g-truc/glm)
 * [ImGUI](https://github.com/ocornut/imgui)
 * [Nlohmann JSON](https://github.com/nlohmann/json)
 * [STB](https://github.com/nothings/stb)
+* [TinyGLTF](https://github.com/syoyo/tinygltf)
+* [TinyOBJLoader](https://github.com/tinyobjloader/tinyobjloader)
+* [UFBX](https://github.com/ufbx/ufbx)
 
 # Установка
 

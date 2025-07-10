@@ -11,15 +11,15 @@ namespace Firesteel {
     struct Shader {
     public:
         unsigned int ID;
-        bool loaded = false;
+        bool loaded=false;
 
         Shader() {
             remove();
-            ID = 0;
+            ID=0;
         }
 
         // Constructor generates shaders on the fly.
-        Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
+        Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath=nullptr) {
             remove();
             //Retrieve the vertex/fragment source code from file path.
             std::string vertexCode;
@@ -29,7 +29,7 @@ namespace Firesteel {
             std::ifstream fShaderFile;
             std::ifstream gShaderFile;
             //Check if given paths even exist.
-            bool hasGeomShader = (tGeometryPath != nullptr);
+            bool hasGeomShader=(tGeometryPath != nullptr);
             if(!std::filesystem::exists(tVertexPath)) {
                 LOG_INFO(std::string("Didn't find vertex shader at \"") + tVertexPath + "\"");;
                 return;
@@ -61,9 +61,9 @@ namespace Firesteel {
                 fShaderFile.close();
                 if(hasGeomShader) gShaderFile.close();
                 //Convert stream into string.
-                vertexCode = vShaderStream.str();
-                fragmentCode = fShaderStream.str();
-                if(hasGeomShader) geometryCode = gShaderStream.str();
+                vertexCode=vShaderStream.str();
+                fragmentCode=fShaderStream.str();
+                if(hasGeomShader) geometryCode=gShaderStream.str();
                 //Generate the program itself.
                 generate(vertexCode.c_str(), fragmentCode.c_str(), hasGeomShader, geometryCode.c_str());
             }
@@ -133,7 +133,7 @@ namespace Firesteel {
 
     private:
         // Get OpenGL errors.
-        bool getErrors(GLuint tShader, size_t tType = 0) {
+        bool getErrors(GLuint tShader, size_t tType=0) {
             GLint success;
             GLchar infoLog[1024];
             if (tType != 1) {
@@ -156,24 +156,24 @@ namespace Firesteel {
         void generate(const char* tVShaderCode, const char* tFShaderCode, const bool& tHasGeomShader, const char* tGShaderCode) {
             unsigned int vertex, fragment, geometry;
             //Vertex shader.
-            vertex = glCreateShader(GL_VERTEX_SHADER);
+            vertex=glCreateShader(GL_VERTEX_SHADER);
             glShaderSource(vertex, 1, &tVShaderCode, NULL);
             glCompileShader(vertex);
             if(!getErrors(vertex)) return;
             //Fragment Shader.
-            fragment = glCreateShader(GL_FRAGMENT_SHADER);
+            fragment=glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(fragment, 1, &tFShaderCode, NULL);
             glCompileShader(fragment);
             if (!getErrors(fragment)) return;
             //Geometry Shader.
             if (tHasGeomShader) {
-                geometry = glCreateShader(GL_GEOMETRY_SHADER);
+                geometry=glCreateShader(GL_GEOMETRY_SHADER);
                 glShaderSource(geometry, 1, &tGShaderCode, NULL);
                 glCompileShader(geometry);
                 if (!getErrors(geometry)) return;
             }
             //Link program.
-            ID = glCreateProgram();
+            ID=glCreateProgram();
             glAttachShader(ID, vertex);
             glAttachShader(ID, fragment);
             if (tHasGeomShader) glAttachShader(ID, geometry);
@@ -183,7 +183,7 @@ namespace Firesteel {
             glDeleteShader(vertex);
             glDeleteShader(fragment);
             if (tHasGeomShader) glDeleteShader(geometry);
-            loaded = true;
+            loaded=true;
         }
     };
 }

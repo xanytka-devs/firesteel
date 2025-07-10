@@ -15,25 +15,31 @@
 #include "utils/stbi_global.hpp"
 #include "transform.hpp"
 #include "model.hpp"
+#ifdef FS_LOADER_OBJ
 #include "loaders/obj.hpp"
+#endif // FS_LOADER_OBJ
+#ifdef FS_LOADER_GLTF
 #include "loaders/gltf.hpp"
+#endif // FS_LOADER_GLTF
+#ifdef FS_LOADER_FBX
+#include "loaders/fbx.hpp"
+#endif // FS_LOADER_FBX
 
 namespace Firesteel {
-
     class Entity {
     public:
         Transform transform;
         Model model;
 
         // Simplified constructor.
-        Entity(const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
-            transform = Transform(tPos, tRot, tSize);
+        Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
+            transform=Transform(tPos, tRot, tSize);
         }
 
         // Constructor, expects a filepath to a 3D model.
         Entity(const std::string& tPath,
-            const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
-            transform = Transform(tPos, tRot, tSize);
+            const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
+            transform=Transform(tPos, tRot, tSize);
             load(tPath);
         }
 
@@ -42,18 +48,18 @@ namespace Firesteel {
             if(!mHasMeshes) return;
             tShader->enable();
             tShader->setMat4("model", getMatrix());
-            for(unsigned int i = 0; i < model.meshes.size(); i++)
+            for(unsigned int i=0; i < model.meshes.size(); i++)
                 model.meshes[i].draw(tShader);
         }
 
         // Returns model matrix.
         glm::mat4 getMatrix() const {
-            modelMatrix = glm::mat4(1);
-            modelMatrix = glm::translate(modelMatrix, transform.position);
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.x)), glm::vec3(1, 0, 0));
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.y)), glm::vec3(0, 1, 0));
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.z)), glm::vec3(0, 0, 1));
-            modelMatrix = glm::scale(modelMatrix, transform.size);
+            modelMatrix=glm::mat4(1);
+            modelMatrix=glm::translate(modelMatrix, transform.position);
+            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.x)), glm::vec3(1, 0, 0));
+            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.y)), glm::vec3(0, 1, 0));
+            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.z)), glm::vec3(0, 0, 1));
+            modelMatrix=glm::scale(modelMatrix, transform.size);
             return modelMatrix;
         }
 
@@ -65,38 +71,45 @@ namespace Firesteel {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
 #endif // FS_PRINT_DEBUG_MSGS
-            for(size_t i = 0; i < model.meshes.size(); i++)
+            for(size_t i=0; i < model.meshes.size(); i++)
                 model.meshes[i].remove();
-            for(size_t i = 0; i < model.materials.size(); i++)
+            for(size_t i=0; i < model.materials.size(); i++)
                 model.materials[i].remove();
-            mHasMeshes = false;
+            mHasMeshes=false;
         }
 
         // Loads a model (if it exists).
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
-                LOG_INFO("Model at: \"" + tPath + "\" doesn't exist");
+                LOG_ERRR("Model at: \"" + tPath + "\" doesn't exist");
                 return;
             }
             LOG_INFO("Loading model at: \"" + tPath + "\"");
             
-            auto extBig = StrSplit(tPath, '.');
-            std::string ext = extBig[extBig.size()-1];
-            if(ext=="obj") model = OBJ::load(tPath);
-            else if(ext=="gltf"||ext=="glb") model = GLTF::load(tPath,ext=="glb");
+            auto extBig=StrSplit(tPath, '.');
+            std::string ext=extBig[extBig.size()-1];
+            if(ext.empty()) {LOG_ERRR("Looks like the extension of given model is invalid");}
+#ifdef FS_LOADER_OBJ
+            else if(ext=="obj") model=OBJ::load(tPath);
+#endif // FS_LOADER_OBJ
+#ifdef FS_LOADER_GLTF
+            else if(ext=="gltf"||ext=="glb") model=GLTF::load(tPath,ext=="glb");
+#endif // FS_LOADER_GLTF
+#ifdef FS_LOADER_FBX
+            else if(ext=="fbx") model=FBX::load(tPath);
+#endif // FS_LOADER_FBX
             else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
 
             LOG_INFO("Loaded model at: \"" + tPath + "\"");
-            mHasMeshes = true;
+            mHasMeshes=true;
         }
 
     private:
         static glm::mat4 modelMatrix;
-        bool mHasMeshes = false;
+        bool mHasMeshes=false;
     };
-
 }
 
-glm::mat4 Firesteel::Entity::modelMatrix = glm::mat4(1);
+glm::mat4 Firesteel::Entity::modelMatrix=glm::mat4(1);
 
 #endif // ! FS_MODEL_H

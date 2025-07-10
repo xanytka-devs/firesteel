@@ -8,23 +8,22 @@
 #include "utils/stbi_global.hpp"
 
 namespace Firesteel {
-
     enum WindowState {
         // Decorated window.
-        WS_NORMAL = 0x0,
+        WS_NORMAL=0x0,
         // Undecorated fullscreen window.
-        WS_FULLSCREEN = 0x1,
+        WS_FULLSCREEN=0x1,
         // Undecorated fullscreen-sized window.
-        WS_BORDERLESS = 0x2
+        WS_BORDERLESS=0x2
     };
 
 	struct Window {
 	public:
-		Window(const unsigned int& tWidth = 800, const unsigned int& tHeight = 600, const bool& tVsync = false) :
+		Window(const unsigned int& tWidth=800, const unsigned int& tHeight=600, const bool& tVsync=false) :
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
 
         // Creates new window from given parametrs.
-		bool initialize(const char* tTitle = "Firesteel App", const WindowState& tState = WS_NORMAL) {
+		bool initialize(const char* tTitle="Firesteel App", const WindowState& tState=WS_NORMAL) {
             //Initialize and configure.
             LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
             if(glfwInit() == GLFW_FALSE) return false;
@@ -45,15 +44,15 @@ namespace Firesteel {
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
             //Window creation.
-            GLFWmonitor* mon = NULL;
-            if(tState==WS_FULLSCREEN || tState == WS_BORDERLESS) mon = glfwGetPrimaryMonitor();
+            GLFWmonitor* mon=NULL;
+            if(tState==WS_FULLSCREEN || tState == WS_BORDERLESS) mon=glfwGetPrimaryMonitor();
             if(tState==WS_BORDERLESS) {
-                const GLFWvidmode* vidm = glfwGetVideoMode(mon);
-                mWidth = vidm->width;
-                mHeight = vidm->height;
-                mon = nullptr;
+                const GLFWvidmode* vidm=glfwGetVideoMode(mon);
+                mWidth=vidm->width;
+                mHeight=vidm->height;
+                mon=nullptr;
             }
-            mPtr = glfwCreateWindow(mWidth, mHeight, tTitle, mon, NULL);
+            mPtr=glfwCreateWindow(mWidth, mHeight, tTitle, mon, NULL);
             if (mPtr == NULL) {
                 LOG_ERRR("Failed to create GLFW window");
                 glfwTerminate();
@@ -85,7 +84,7 @@ namespace Firesteel {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
         void close() {
-            mClosed = true;
+            mClosed=true;
         }
         void setTitle(const std::string& tTitle) {
             glfwSetWindowTitle(mPtr, tTitle.c_str());
@@ -96,22 +95,22 @@ namespace Firesteel {
                 LOG_ERRR("File '" + tIcon + "' doesn't exist.");
                 return;
             }
-            images[0].pixels = stbi_load(tIcon.c_str(), &images[0].width, &images[0].height, 0, 4);
+            images[0].pixels=stbi_load(tIcon.c_str(), &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
         }
         void setIconFromMemory(const unsigned char* tIconData, const size_t tIconDataSize) {
             GLFWimage images[1]{};
-            images[0].pixels = stbi_load_from_memory(tIconData, (int)tIconDataSize, &images[0].width, &images[0].height, 0, 4);
+            images[0].pixels=stbi_load_from_memory(tIconData, (int)tIconDataSize, &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
         }
         void setClearColor(const glm::vec3& tColor) {
-            mClearColor = tColor;
+            mClearColor=tColor;
         }
 
         void setVSync(const bool& tVSync) {
-            mVSync = tVSync;
+            mVSync=tVSync;
             if (mVSync) glfwSwapInterval(1);
             else glfwSwapInterval(0);
         }
@@ -135,11 +134,11 @@ namespace Firesteel {
         GLFWwindow* ptr() const { return mPtr; }
 
         enum Cursor {
-            CUR_NORMAL = 0x0,
-            CUR_CAPTURED = 0x1,
-            CUR_HIDDEN = 0x2,
-            CUR_DISABLED = 0x3,
-            CUR_UNAVAILABLE = 0x4
+            CUR_NORMAL=0x0,
+            CUR_CAPTURED=0x1,
+            CUR_HIDDEN=0x2,
+            CUR_DISABLED=0x3,
+            CUR_UNAVAILABLE=0x4
         };
 
         void setCursorMode(const Cursor& tMode) {

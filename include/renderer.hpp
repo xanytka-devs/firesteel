@@ -8,13 +8,11 @@
 namespace Firesteel {
 	class Renderer {
     public:
-        Renderer() {
-
-        }
+        Renderer() { }
         // Basic renderer initialization.
 		bool initialize() {
             //GLAD (OpenGL) init.
-            mInitialized = (gladLoadGL(glfwGetProcAddress) != 0);
+            mInitialized=(gladLoadGL(glfwGetProcAddress) != 0);
 #ifdef FS_PRINT_DEBUG_MSGS
             if(mInitialized) { LOG_DBG("OpenGL initialized successfully"); }
             else LOG_DBG("Failed to initialize OpenGL");
@@ -63,7 +61,7 @@ namespace Firesteel {
         void initializeImGui(GLFWwindow* tWin) {
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
-            ImGuiIO& io = ImGui::GetIO();
+            ImGuiIO& io=ImGui::GetIO();
             io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableKeyboard
                 | ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
             // Setup Dear ImGui style
@@ -104,7 +102,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
         }
     private:
-        bool mInitialized = false;
+        bool mInitialized=false;
 
         static void APIENTRY glDebugOutput(GLenum tSource,
             GLenum tType,

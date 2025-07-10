@@ -10,7 +10,6 @@
 
 namespace Firesteel {
 #define MAX_BONE_INFLUENCE 4
-
     struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;
@@ -49,12 +48,12 @@ namespace Firesteel {
         // Shader must be enabled before this.
         void draw(const Shader* tShader) {
             //Bind appropriate textures.
-            size_t diffuseNr = 0;
-            size_t specularNr = 0;
-            size_t normalNr = 0;
-            size_t heightNr = 0;
-            size_t emisNr = 0;
-            size_t opacNr = 0;
+            size_t diffuseNr=0;
+            size_t specularNr=0;
+            size_t normalNr=0;
+            size_t heightNr=0;
+            size_t emisNr=0;
+            size_t opacNr=0;
             //Set material values.
             tShader->setVec4("material.ambient", glm::vec4(ambient, 1));
             tShader->setVec4("material.diffuse", glm::vec4(diffuse, 1));
@@ -65,22 +64,22 @@ namespace Firesteel {
             if(textures.size()>0) {
                 tShader->setBool("noTextures", false);
                 Texture::unbind();
-                for (unsigned int i = 0; i < textures.size(); i++) {
+                for (unsigned int i=0; i < textures.size(); i++) {
                     //Retrieve texture number.
-                    size_t number = 0;
-                    std::string name = textures[i].type;
+                    size_t number=0;
+                    std::string name=textures[i].type;
                     if(name == "diffuse")
-                        number = diffuseNr++;
+                        number=diffuseNr++;
                     else if(name == "specular")
-                        number = specularNr++;
+                        number=specularNr++;
                     else if(name == "normal")
-                        number = normalNr++;
+                        number=normalNr++;
                     else if(name == "emission")
-                        number = emisNr++;
+                        number=emisNr++;
                     else if(name == "height")
-                        number = heightNr++;
+                        number=heightNr++;
                     else if(name == "opacity")
-                        number = opacNr++;
+                        number=opacNr++;
                     //Now set the sampler to the correct texture unit.
                     textures[i].enable(i);
                     tShader->setInt("material." + name + std::to_string(number), i);
@@ -105,7 +104,7 @@ namespace Firesteel {
             //Clear mesh data.
             vertices.clear();
             indices.clear();
-            for (size_t i = 0; i < textures.size(); i++)
+            for (size_t i=0; i < textures.size(); i++)
                 textures[i].remove();
             textures.clear();
         }

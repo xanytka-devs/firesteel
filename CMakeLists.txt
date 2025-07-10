@@ -24,6 +24,10 @@ option(FS_INCLUDE_GLM "Include GLM library (UI)" ON)
 option(FS_INCLUDE_FT "Include FreeType library (UI)" OFF)
 option(FS_INCLUDE_IMGUI "Include ImGui library (UI)" ON)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
+option(FS_LOADER_FBX "Include UFBX library (MODELS)" ON)
+option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
+option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
+option(FS_LOADER_FBX "Include UFBX library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_PKGS_ALLOW_OVERRIDES "Allows packages to tinker with CMakeLists.txt \
 (Be cautious, this can be dangerous for integrity of the library!)" ON)
@@ -50,12 +54,35 @@ else()
 	message("Currently build of submodules is disabled. This means library won't be properly built.")
 endif()
 
+if(FS_LOADER_FBX)
+	add_compile_definitions("FS_LOADER_FBX")
+	set(FBX_LIB_FILES
+		"external/ufbx/ufbx.h"
+		"external/ufbx/ufbx.c"
+	)
+endif()
+if(FS_LOADER_GLTF)
+	add_compile_definitions("FS_LOADER_GLTF")
+	set(GLTF_LIB_FILES
+		"external/tiny_gltf.h"
+	)
+endif()
+if(FS_LOADER_OBJ)
+	add_compile_definitions("FS_LOADER_OBJ")
+	set(OBJ_LIB_FILES
+		"external/tiny_obj_loader.h"
+	)
+endif()
+
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
 	${FT_INCLUDES}
 	${OCULUS_INCLUDES}
 	${LUA_INCLUDES}
+	${FBX_LIB_FILES}
+	${GLTF_LIB_FILES}
+	${OBJ_LIB_FILES}
 )
 
 add_library(${PRJ_NAME}
