@@ -12,12 +12,12 @@
 #define TINYGLTF_NO_INCLUDE_STB_IMAGE_WRITE
 #define TINYGLTF_NO_INCLUDE_JSON
 #define JSON_NOEXCEPTION
-#include "../../external/tiny_gltf.h"
+#include "../../external/model_loaders/tiny_gltf.h"
 
 namespace Firesteel {
     namespace GLTF {
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
         Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
             if(texPath.empty()) return {};
             //Get full path.
@@ -47,20 +47,20 @@ namespace Firesteel {
         }
 
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
         std::string getTexPath(const tinygltf::Model* tModel, const int tId) {
             if(tId>=0) return tModel->images[tModel->textures[tId].source].uri;
             return "";
         }
 
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
         bool hasAttribute(const tinygltf::Primitive* tPrimitive, const char* tAttrib) {
             return tPrimitive->attributes.find(tAttrib)!=tPrimitive->attributes.end();
         }
 
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
+        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
         Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
@@ -220,6 +220,7 @@ namespace Firesteel {
             Texture normalTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.normalTexture.index), "normal");
             Texture specularTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
             Texture ambientTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.occlusionTexture.index), "ambient");
+            Texture emissiveTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.emissiveTexture.index), "emissive");
             //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
             //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
             //Push back all textures.
@@ -227,6 +228,7 @@ namespace Firesteel {
             if(normalTex.ID!=0) textures.push_back(normalTex);
             if(specularTex.ID!=0) textures.push_back(specularTex);
             if(ambientTex.ID!=0) textures.push_back(ambientTex);
+            if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
 
             return Mesh(vertices,indices,textures);
         }

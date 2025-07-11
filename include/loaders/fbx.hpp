@@ -5,14 +5,31 @@
 #include "../model.hpp"
 #include "../utils/stbi_global.hpp"
 
-#define UFBX_IMPL
-#include "../../external/ufbx/ufbx.h"
+#define OFBX_USE_CPP_ALLOCATOR
+#include "../../external/model_loaders/ofbx/ofbx.h"
 
 namespace Firesteel {
     namespace FBX {
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        std::vector<uint8_t> readFileBinary(const std::string& tPath) {
+            //Try to get file stream.
+            std::ifstream file(tPath,std::ios::binary|std::ios::ate);
+            if(!file.is_open()) {
+                LOG_ERRR("Failed to open model file (at " + tPath + ")");
+                return {};
+            }
+            //Read the file.
+            size_t size=file.tellg();
+            std::vector<uint8_t> buffer(size);
+            file.seekg(0);
+            file.read((char*)buffer.data(),size);
+            return buffer;
+        }
+
+        /// [!WARING]
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        Texture loadMaterialTexture(Model* tModel, const std::string& texPath, const std::string& type, const size_t& tMatId) {
             if(texPath.empty()) return {};
             //Get full path.
             std::string fullPath=texPath;
@@ -36,13 +53,14 @@ namespace Firesteel {
             texture.type=type;
             texture.path=texPath;
             texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            tModel->materials[tMatId].textures.emplace_back(texture);
 
             return texture;
         }
 
         /// [!WARING]
-        /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Mesh processMesh(Model* tModel, ufbx_mesh* tMesh
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        Mesh processMesh(Model* tModel, const ofbx::Mesh* tMesh, std::vector<ofbx::u64>* tMatIds
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
@@ -50,53 +68,58 @@ namespace Firesteel {
             //Initialize variables.
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
+            //Initialize getters.
+            const ofbx::GeometryData& geometry=tMesh->getGeometryData();
+            const ofbx::Vec3* positions=geometry.getPositions().values;
+            const int vertexCount=geometry.getPositions().values_count;
+            const ofbx::Vec3* normals=geometry.getNormals().values;
+            const ofbx::Vec3* tangents=geometry.getTangents().values;
+            const ofbx::Vec2* uvs=geometry.getUVs().values;
+            const int* indicies=geometry.getPositions().indices;
             //Create vertexes.
-            for(size_t i=0;i<tMesh->num_vertices;i++) {
+            for(size_t i=0;i<vertexCount;i++) {
                 Vertex vert{};
                 //Position.
                 vert.position=glm::vec3(
-                    tMesh->vertex_position[i].x,
-                    tMesh->vertex_position[i].y,
-                    tMesh->vertex_position[i].z
+                    positions[i].x,
+                    positions[i].y,
+                    positions[i].z
                 );
                 //Normal.
-                if(tMesh->vertex_normal.values.data)
+                if(normals)
                     vert.normal=glm::vec3(
-                        tMesh->vertex_normal[i].x,
-                        tMesh->vertex_normal[i].y,
-                        tMesh->vertex_normal[i].z
+                        normals[i].x,
+                        normals[i].y,
+                        normals[i].z
                     );
                 //Texture coords.
-                if(tMesh->uv_sets.data) {
-                    auto uvVec=tMesh->vertex_uv[i];
+                if(uvs)
                     vert.uv=glm::vec2(
-                        uvVec.x,
-                        1.f-uvVec.y
+                        uvs[i].x,
+                        uvs[i].y
                     );
-                }
                 //Tangents.
-                if(tMesh->vertex_tangent.exists)
+                if(tangents)
                     vert.tangent=glm::vec3(
-                        tMesh->vertex_tangent[i].x,
-                        tMesh->vertex_tangent[i].y,
-                        tMesh->vertex_tangent[i].z
+                        tangents[i].x,
+                        tangents[i].y,
+                        tangents[i].z
                     );
                 //Bitangents.
-                if(tMesh->vertex_bitangent.exists)
+                /*if(tMesh->vertex_bitangent.exists)
                     vert.bitangent=glm::vec3(
                         tMesh->vertex_bitangent[i].x,
                         tMesh->vertex_bitangent[i].y,
                         tMesh->vertex_bitangent[i].z
-                    );
+                    );*/
                 //Bones.
-                if(tMesh->skin_deformers.count>0) {
+                /*if(tMesh->getSkin().count>0) {
                     const ufbx_skin_deformer* skin=tMesh->skin_deformers.data[0];
                     for (size_t b=0;b<MAX_BONE_INFLUENCE;b++) {
-                        LOG("Bone: "+std::to_string(b));
                         vert.boneIDs[b]=skin->weights[b].cluster_index;
                         vert.boneWeights[b]=static_cast<float>(skin->weights[b].weight);
                     }
-                }
+                }*/
 #ifdef FS_PRINT_DEBUG_MSGS
                 tVert+=3;
                 tNorm+=3;
@@ -106,84 +129,112 @@ namespace Firesteel {
                 vertices.push_back(vert);
             }
             //Create indicies.
-            for(size_t i=0;i<tMesh->num_indices;i++) {
-                indices.push_back(tMesh->vertex_indices.data[i]);
+            for(size_t i=0;i<tMesh->getGeometryData().getPositions().count;i++) {
+                indices.push_back(indicies[i]);
 #ifdef FS_PRINT_DEBUG_MSGS
                 tInd+=1;
 #endif
             }
 
+            //Get material.
+            auto mat=tMesh->getMaterial(0);
+            size_t mId=0;
+            for(size_t j=0;j<tMatIds->size();j++)
+                if(tMatIds->at(j) == mat->id) {
+                    mId=j;
+                    break;
+                } else mId=tMatIds->size();
+            if(mId==tMatIds->size()) tModel->materials.push_back({{}});
             //Get textures.
-            Texture diffuseTex=loadMaterialTexture(tModel, tMesh->materials[0]->textures[0].texture->filename.data, "diffuse");
-            //Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), "normal");
-            //Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
-            //Texture ambientTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.occlusionTexture.index), "ambient");
+            char filename[127];
+            std::vector<Texture> textures;
+            if(mat->getTexture(ofbx::Texture::DIFFUSE)) {
+                mat->getTexture(ofbx::Texture::DIFFUSE)->getFileName().toString(filename);
+                textures.emplace_back(loadMaterialTexture(tModel, filename, "diffuse", mId));
+            }
+            if(mat->getTexture(ofbx::Texture::NORMAL)) {
+                mat->getTexture(ofbx::Texture::NORMAL)->getFileName().toString(filename);
+                textures.emplace_back(loadMaterialTexture(tModel, filename, "normal", mId));
+            }
+            if(mat->getTexture(ofbx::Texture::SPECULAR)) {
+                mat->getTexture(ofbx::Texture::SPECULAR)->getFileName().toString(filename);
+                textures.emplace_back(loadMaterialTexture(tModel, filename, "specular", mId));
+            }
+            if(mat->getTexture(ofbx::Texture::AMBIENT)) {
+                mat->getTexture(ofbx::Texture::AMBIENT)->getFileName().toString(filename);
+                textures.emplace_back(loadMaterialTexture(tModel, filename, "ambient", mId));
+            }
+            if(mat->getTexture(ofbx::Texture::EMISSIVE)) {
+                mat->getTexture(ofbx::Texture::EMISSIVE)->getFileName().toString(filename);
+                textures.emplace_back(loadMaterialTexture(tModel, filename, "emissive", mId));
+            }
             //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
             //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
-            //Push back all textures.
-            std::vector<Texture> textures;
-            if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
-            //if(normalTex.ID!=0) textures.push_back(normalTex);
-            //if(specularTex.ID!=0) textures.push_back(specularTex);
-            //if(ambientTex.ID!=0) textures.push_back(ambientTex);
-            //if(displacementTex.ID!=0) textures.push_back(displacementTex);
-            //if(opacityTex.ID!=0) textures.push_back(opacityTex);
+            //Check all textures.
+            for(size_t t=0;t<textures.size();t++) {
+                //Texture is valid.
+                if(textures[t].ID!=0) continue;
+                //Texture either doesn't exist or is corrupted.
+                textures.erase(textures.begin()+t);
+                t-=1;
+            }
 
             return Mesh(vertices,indices,textures);
         }
 
         Model load(std::string tPath) {
             Model model{ tPath };
-            
-            ufbx_load_opts opts={};
-            ufbx_error error;
-            ufbx_scene *scene=ufbx_load_file(tPath.c_str(), &opts, &error);
+
+            //Get file contents.
+            auto data=readFileBinary(tPath);
+            if(data.empty()) {
+                LOG_ERRR("Got empty file while loading model (at "+tPath+")");
+                return model;
+            }
+            auto flags =
+                ofbx::LoadFlags::IGNORE_BLEND_SHAPES
+                | ofbx::LoadFlags::IGNORE_CAMERAS
+                | ofbx::LoadFlags::IGNORE_LIGHTS
+                //| ofbx::LoadFlags::IGNORE_TEXTURES
+                //| ofbx::LoadFlags::IGNORE_SKIN
+                //| ofbx::LoadFlags::IGNORE_BONES
+                | ofbx::LoadFlags::IGNORE_PIVOTS
+                | ofbx::LoadFlags::IGNORE_ANIMATIONS
+                //| ofbx::LoadFlags::IGNORE_MATERIALS
+                | ofbx::LoadFlags::IGNORE_POSES
+                | ofbx::LoadFlags::IGNORE_VIDEOS
+                | ofbx::LoadFlags::IGNORE_LIMBS
+                //| ofbx::LoadFlags::IGNORE_MESHES
+                //| ofbx::LoadFlags::IGNORE_MODELS
+                ;
+            const ofbx::IScene* scene=ofbx::load(data.data(),data.size(),(ofbx::u16)flags);
             if(!scene) {
-                LOG_ERRR("Got error while loading model: " + std::string(error.description.data) + "(at \"" + tPath + "\")");
-                LOG_ERRR("Failed to load model");
+                LOG_ERRR("Failed to load model scene");
                 return model;
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Materials: "+std::to_string((int)scene->materials.count));
-            LOG_DBG("Meshes: "+std::to_string((int)scene->meshes.count));
+            LOG_DBG("Meshes: "+std::to_string(scene->getGeometryCount()));
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            //Process all materials (texture).
-            for(const auto& mat : scene->materials) {
-                Texture diffuseTex=loadMaterialTexture(&model, mat->textures[0].texture->filename.data, "diffuse");
-                //Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), "normal");
-                //Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
-                //Texture ambientTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.occlusionTexture.index), "ambient");
-                //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
-                //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
-                //Push back all textures.
-                std::vector<Texture> textures;
-                if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
-                //if(normalTex.ID!=0) textures.push_back(normalTex);
-                //if(specularTex.ID!=0) textures.push_back(specularTex);
-                //if(ambientTex.ID!=0) textures.push_back(ambientTex);
-                //if(displacementTex.ID!=0) textures.push_back(displacementTex);
-                //if(opacityTex.ID!=0) textures.push_back(opacityTex);
-                model.materials.push_back({ textures });
-            }
             //Process all meshes.
-            for(size_t m=0;m<scene->meshes.count;m++) {
+            std::vector<ofbx::u64> materialIds;
+            for(size_t m=0;m<scene->getMeshCount();m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOG_DBG("Processing mesh "+std::to_string((int)(m+1))+"/"+std::to_string((int)scene->meshes.count));
-                model.meshes.push_back(processMesh(&model,scene->meshes.data[m],vert,ind,norm,tex));
+                LOG_DBG("Processing mesh "+std::to_string((int)(m+1))+"/"+std::to_string((int)scene->getGeometryCount()));
+                model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds,vert,ind,norm,tex));
 #else
-                model.meshes.push_back(processMesh(&model,scene->meshes.data[m]));
+                model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds));
 #endif // FS_PRINT_DEBUG_MSGS
             }
 #ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Materials: "+std::to_string(model.materials.size()));
             LOG_DBG("Vertices: "+std::to_string((int)(vert) / 3));
             LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
             LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
 #endif // FS_PRINT_DEBUG_MSGS
-            ufbx_free_scene(scene);
             return model;
         }
     }

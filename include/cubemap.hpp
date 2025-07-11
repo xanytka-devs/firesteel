@@ -12,18 +12,21 @@ namespace Firesteel {
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}
         // Create cubemap from given files.
-        void load(const std::string tDir,
-                  const std::string tR,
-                  const std::string tL,
-                  const std::string tT,
-                  const std::string tBot,
-                  const std::string tF,
-                  const std::string tBack) {
+        void load(const std::string& tDir,
+                  const std::string& tR,
+                  const std::string& tL,
+                  const std::string& tT,
+                  const std::string& tBot,
+                  const std::string& tF,
+                  const std::string& tBack) {
             load(tDir.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
         // Create cubemap from files that are in json.
-        void load(const std::string tCubemapJson) {
-            if(!std::filesystem::exists(tCubemapJson)) return;
+        void load(const std::string& tCubemapJson) {
+            if(!std::filesystem::exists(tCubemapJson)) {
+                LOG_WARN("Cubemap at: \"" + tCubemapJson + "\" doesn't exist")
+                return;
+            }
             mCfgFile=tCubemapJson;
             std::ifstream ifs(tCubemapJson);
             nlohmann::json txt=nlohmann::json::parse(ifs);

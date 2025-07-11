@@ -31,17 +31,18 @@ namespace Firesteel {
             //Check if given paths even exist.
             bool hasGeomShader=(tGeometryPath != nullptr);
             if(!std::filesystem::exists(tVertexPath)) {
-                LOG_INFO(std::string("Didn't find vertex shader at \"") + tVertexPath + "\"");;
+                LOG_WARN(std::string("Vertex shader at \"") + tVertexPath + "\" doesn't exist");;
                 return;
             }
             if(!std::filesystem::exists(tFragmentPath)) {
-                LOG_INFO(std::string("Didn't find fragment shader at \"") + tFragmentPath + "\"");;
+                LOG_WARN(std::string("Fragment shader at \"") + tFragmentPath + "\" doesn't exist");;
                 return;
             }
-            if(hasGeomShader) if(!std::filesystem::exists(tGeometryPath)) {
-                LOG_INFO(std::string("Didn't find geometry shader at \"") + tGeometryPath + "\"");;
-                return;
-            }
+            if(hasGeomShader)
+                if(!std::filesystem::exists(tGeometryPath)) {
+                    LOG_WARN(std::string("Geometry shader at \"") + tGeometryPath + "\" doesn't exist");;
+                    hasGeomShader=false;
+                }
             //Ensure ifstream objects can throw exceptions:.
             vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
             fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);

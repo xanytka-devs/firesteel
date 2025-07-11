@@ -81,7 +81,7 @@ namespace Firesteel {
         // Loads a model (if it exists).
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
-                LOG_ERRR("Model at: \"" + tPath + "\" doesn't exist");
+                LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
                 return;
             }
             LOG_INFO("Loading model at: \"" + tPath + "\"");

@@ -12,6 +12,7 @@ CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
 .vs
+.vscode
 out
 
 # Build resources
@@ -34,4 +35,3 @@ build/engine/freetype/*
 !build/engine/freetype/
 !build/engine/freetype/freetype.lib
 !build/engine/freetype/freetype32.lib
-/.vscode

@@ -6,7 +6,7 @@
 #include "../utils/stbi_global.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "../../external/tiny_obj_loader.h"
+#include "../../external/model_loaders/tiny_obj_loader.h"
 
 namespace Firesteel {
     namespace OBJ {
@@ -56,14 +56,14 @@ namespace Firesteel {
             //Load de model.
             for (size_t i=0; i < tShape.mesh.num_face_vertices.size(); ++i) {
                 unsigned int num_face_verts=tShape.mesh.num_face_vertices[i];
-                for (unsigned int j=0; j < num_face_verts; ++j) {
+                for(unsigned int j=0; j < num_face_verts; ++j) {
                     tinyobj::index_t idx=tShape.mesh.indices[i * num_face_verts + j];
-                    //
+                    //Get valid key.
                     std::ostringstream keyStream;
                     keyStream << idx.vertex_index << "/" << idx.normal_index << "/" << idx.texcoord_index;
                     std::string key=keyStream.str();
 
-                    if (indexMap.find(key) == indexMap.end()) {
+                    if(indexMap.find(key) == indexMap.end()) {
                         Vertex vertex{};
                         //Position.
                         vertex.position={
@@ -72,7 +72,7 @@ namespace Firesteel {
                             tAttrib.vertices[3*idx.vertex_index+2]
                         };
                         //Normal.
-                        if (idx.normal_index >= 0) {
+                        if(idx.normal_index >= 0) {
                             vertex.normal={
                                 tAttrib.normals[3*idx.normal_index+0],
                                 tAttrib.normals[3*idx.normal_index+1],
@@ -83,7 +83,7 @@ namespace Firesteel {
 #endif
                         }
                         //UV.
-                        if (idx.texcoord_index >= 0) {
+                        if(idx.texcoord_index >= 0) {
                             vertex.uv={
                                 tAttrib.texcoords[2*idx.texcoord_index+0],
                                 1.f - tAttrib.texcoords[2 * idx.texcoord_index+1]
@@ -92,7 +92,7 @@ namespace Firesteel {
                             tTex += 1;
 #endif
                         }
-                        //Tangent & bitangent.
+                        //Tangent & bitangent (obj doesn't support those, so just set them to zero).
                         vertex.tangent=glm::vec3(0.0f);
                         vertex.bitangent=glm::vec3(0.0f);
                         //Bones & weights (obj doesn't support those, so just set them to zero).
@@ -155,6 +155,7 @@ namespace Firesteel {
                 Texture ambientTex=loadMaterialTexture(&model, mat.ambient_texname, "ambient");
                 Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
                 Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
+                Texture emissiveTex=loadMaterialTexture(&model, mat.emissive_texname, "emissive");
                 //Push back all textures.
                 std::vector<Texture> textures;
                 if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
@@ -163,6 +164,7 @@ namespace Firesteel {
                 if(ambientTex.ID!=0) textures.push_back(ambientTex);
                 if(displacementTex.ID!=0) textures.push_back(displacementTex);
                 if(opacityTex.ID!=0) textures.push_back(opacityTex);
+                if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
                 model.materials.push_back({ textures });
             }
             //Process all shapes.

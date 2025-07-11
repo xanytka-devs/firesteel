@@ -27,7 +27,7 @@ option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
 option(FS_LOADER_FBX "Include UFBX library (MODELS)" ON)
 option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
 option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
-option(FS_LOADER_FBX "Include UFBX library (MODELS)" ON)
+option(FS_LOADER_FBX "Include OFBX library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_PKGS_ALLOW_OVERRIDES "Allows packages to tinker with CMakeLists.txt \
 (Be cautious, this can be dangerous for integrity of the library!)" ON)
@@ -49,6 +49,43 @@ file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp")
 if(NOT FS_DISABLE_SUBMODULES)
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
+		#Download FreeType.dll distribution.
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+			message(CHECK_START "Downloading freetype.dll")
+			file(DOWNLOAD
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
+				"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+			)
+			#Fallback to Xanytka Website.
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+				file(DOWNLOAD
+					"https://xanytka.ru/shared/firesteel/freetype.dll"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+				)
+			endif()
+		endif()
+		#Copy the library to general binary folders to enable user to just run the app.
+		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+		    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug/freetype.dll")
+			file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release/freetype.dll")
+		endif()
+		#Download FreeType.lib distribution.
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+			message(CHECK_START "Downloading freetype.lib")
+			file(DOWNLOAD
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.lib"
+				"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
+			)
+			#Fallback to Xanytka Website.
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+				file(DOWNLOAD
+					"https://xanytka.ru/shared/firesteel/freetype.lib"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
+				)
+			endif()
+		endif()
 	endif()
 else()
 	message("Currently build of submodules is disabled. This means library won't be properly built.")
@@ -57,20 +94,22 @@ endif()
 if(FS_LOADER_FBX)
 	add_compile_definitions("FS_LOADER_FBX")
 	set(FBX_LIB_FILES
-		"external/ufbx/ufbx.h"
-		"external/ufbx/ufbx.c"
+		"external/model_loaders/ofbx/ofbx.h"
+		"external/model_loaders/ofbx/ofbx.cpp"
+		"external/model_loaders/ofbx/libdeflate.h"
+		"external/model_loaders/ofbx/libdeflate.c"
 	)
 endif()
 if(FS_LOADER_GLTF)
 	add_compile_definitions("FS_LOADER_GLTF")
 	set(GLTF_LIB_FILES
-		"external/tiny_gltf.h"
+		"external/model_loaders/tiny_gltf.h"
 	)
 endif()
 if(FS_LOADER_OBJ)
 	add_compile_definitions("FS_LOADER_OBJ")
 	set(OBJ_LIB_FILES
-		"external/tiny_obj_loader.h"
+		"external/model_loaders/tiny_obj_loader.h"
 	)
 endif()
 
@@ -143,7 +182,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 	
 	if(FS_INCLUDE_FT)
 		target_include_directories(${PRJ_NAME} PRIVATE "external\\freetype\\include" "external\\freetype\\")
-		target_link_libraries(${PRJ_NAME} PUBLIC "engine\\freetype\\freetype")
+		target_link_libraries(${PRJ_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}\\build\\engine\\freetype\\freetype.lib")
 	endif()
 	
 	if(FS_INCLUDE_IMGUI)
