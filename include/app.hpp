@@ -1,13 +1,13 @@
 #ifndef FS_APP_H
 #define FS_APP_H
 
+#include "embedded.hpp"
 #include "common.hpp"
 #include "window.hpp"
 #include "renderer.hpp"
 #include "internal/devview.hpp"
 
 namespace Firesteel {
-
 	class App {
     private:
         double mLastFrameFPS=0, mLastFrame=0;
@@ -34,14 +34,18 @@ namespace Firesteel {
                 return 1;
             //Check for Vulkan.
             bool isVulkan=(glfwVulkanSupported() == 1);
-            LOG_INFO(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
+#endif // FS_PRINT_DEBUG_MSGS
             //Renderer init.
-            Renderer r=Renderer();
-            if (!r.initialize()) return -1;
-            r.loadExtencions();
-            r.printInfo();
-            r.initializeParams();
-            r.initializeImGui(window.ptr());
+            renderer=Renderer();
+            if(!renderer.initialize()) return -1;
+            renderer.loadExtencions();
+            renderer.printInfo();
+            renderer.initializeParams();
+            renderer.imguiInitialize(window.ptr());
+            Shader::setDefaultShader(Embedded::defaultShaderVert,Embedded::defaultShaderFrag);
+            //Final steps.
             CONFIG::checkGlobalFile();
             onInitialize();
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -56,25 +60,26 @@ namespace Firesteel {
                 deltaTime=static_cast<float>(currentFrame - mLastFrame);
                 mLastFrame=currentFrame;
                 mFrameCount++;
-                if (currentFrame - mLastFrameFPS >= 1.0) {
+                if(currentFrame - mLastFrameFPS >= 1.0) {
                     fps=mFrameCount;
                     mFrameCount=0;
                     mLastFrameFPS=currentFrame;
                 }
                 if(window.isMinimized()) continue;
+                if(updateViewport) renderer.setViewportSize(window.getSize());
                 window.clearBuffers();
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
-                r.newFrameImGui();
+                renderer.imguiNewFrame();
                 onUpdate();
                 DEVVIEW::draw(deltaTime, fps);
-                r.renderImGui(window.ptr());
+                renderer.imguiRender(window.ptr());
                 window.swapBuffers();
             }
             //Shutdown.
             LOG_STATE("SHUTDOWN");
             onShutdown();
-            r.shutdownImGui();
+            renderer.imguiShutdown();
             //Quitting.
             window.close();
             glfwTerminate();
@@ -83,24 +88,25 @@ namespace Firesteel {
             if(Log::sSaveLogs) Log::destroyFileLogger();
             return 0;
 		}
-        // (overridable)
+        // [!OVERRIDABLE]
         // Runs before any initialization.
 		virtual void onPreInitialize() { }
-        // (overridable)
+        // [!OVERRIDABLE]
         // Runs after window and renderer initialization.
 		virtual void onInitialize() { }
-        // (overridable)
+        // [!OVERRIDABLE]
         // Runs every frame.
 		virtual void onUpdate() { }
-        // (overridable)
+        // [!OVERRIDABLE]
         // Runs after the window is closed or on window.close()/app.shutdown().
 		virtual void onShutdown() { }
 
+        Renderer renderer;
 		Window window;
+        bool updateViewport=true;
 		unsigned int fps=0;
         float deltaTime=0.0f;
 	};
-
 }
 
 #endif // !FS_APP_H

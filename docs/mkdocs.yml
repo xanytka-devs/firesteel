@@ -40,7 +40,7 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/xanytka-devs
     - icon: material/web
-      link: https://xntk.ru/
+      link: https://xanytka.ru/
     - icon: fontawesome/brands/telegram
       link: https://t.me/xanytka
     - icon: fontawesome/brands/vk
@@ -50,4 +50,5 @@ nav:
   - Туториалы:
     - Пакеты: tutorials/packages.md
     - Своё окно: tutorials/your_own_window.md
-    - Первый треугольник: tutorials/first_triangle.md
+    - Загрузка модели: tutorials/loading_models.md
+    - Модель без загрузки: tutorials/custom_mesh.md

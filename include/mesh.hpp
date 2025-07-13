@@ -84,6 +84,7 @@ namespace Firesteel {
                     textures[i].enable(i);
                     tShader->setInt("material." + name + std::to_string(number), i);
                     tShader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
+                    tShader->setBool("material." + name + "_present", true);
                 }
                 tShader->setBool("material.opacityMask", opacNr > 0);
             }

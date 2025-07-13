@@ -8,8 +8,11 @@
 namespace Firesteel {
 	class Renderer {
     public:
+        enum DrawMode {
+            DM_FILL=0,
+            DM_WIRE=1
+        };
         Renderer() { }
-        // Basic renderer initialization.
 		bool initialize() {
             //GLAD (OpenGL) init.
             mInitialized=(gladLoadGL(glfwGetProcAddress) != 0);
@@ -19,7 +22,6 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             return mInitialized;
 		}
-        // Sets runtime parameters for renderer.
         void initializeParams() {
             glEnable(GL_DEPTH_TEST);
             glEnable(GL_STENCIL_TEST);
@@ -32,7 +34,6 @@ namespace Firesteel {
             LOG_DBG("Set OpenGL variables");
 #endif // FS_PRINT_DEBUG_MSGS
         }
-        // Prints info about renderer installation.
         void printInfo() {
             //OpenGL info.
             LOG_INFO("OpenGL context:");
@@ -40,7 +41,6 @@ namespace Firesteel {
             LOG_INFO(std::string("	Renderer: ") + reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
             LOG_INFO(std::string("	Version: ") + reinterpret_cast<const char*>(glGetString(GL_VERSION)));
         }
-        // Loads needed renderer extencions.
 		void loadExtencions() {
             if(!glfwExtensionSupported("GL_ARB_debug_output")) LOG_WARN("General debug output isn't supported.");
             if(!glfwExtensionSupported("GL_AMD_debug_output")) LOG_WARN("AMD debug output isn't supported.");
@@ -57,16 +57,31 @@ namespace Firesteel {
             LOG_DBG("Loaded OpenGL extensions");
 #endif // FS_PRINT_DEBUG_MSGS
 		}
-        // Initializes ImGui.
-        void initializeImGui(GLFWwindow* tWin) {
+        void setViewportSize(const int& tX, const int& tY) {
+            glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
+        }
+        void setViewportSize(const glm::vec2& tSize) {
+            setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
+        }
+        void setDrawMode(const DrawMode& tDrawMode) {
+            switch (tDrawMode) {
+            case DrawMode::DM_WIRE:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                break;
+            default:
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                break;
+            }
+        }
+        void imguiInitialize(GLFWwindow* tWin) {
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();
             ImGuiIO& io=ImGui::GetIO();
             io.ConfigFlags |= ImGuiConfigFlags_::ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_NavEnableKeyboard
                 | ImGuiConfigFlags_ViewportsEnable | ImGuiConfigFlags_::ImGuiConfigFlags_ViewportsEnable;
-            // Setup Dear ImGui style
-            ImGui::StyleColorsDark(); // you can also use ImGui::StyleColorsClassic();
-            // Choose backend
+            //Setup Dear ImGui style.
+            ImGui::StyleColorsDark();
+            //Choose backend.
             ImGui_ImplGlfw_InitForOpenGL(tWin, true);
             ImGui_ImplOpenGL3_Init();
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -76,24 +91,22 @@ namespace Firesteel {
             LOG_DBG("Initialized ImGui");
 #endif // FS_PRINT_DEBUG_MSGS
         }
-        // Creates new frame for ImGui (before any Begin-s).
-        void newFrameImGui() {
+        void imguiNewFrame() {
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
         }
-        // Draws all ImGui data.
-        void renderImGui(GLFWwindow* tWin) {
+        void imguiRender(GLFWwindow* tWin) {
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            //Viewports need persistent context updates.
             if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
                 glfwMakeContextCurrent(tWin);
             }
         }
-        // Destroys ImGui context.
-        void shutdownImGui() {
+        void imguiShutdown() {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
             ImGui::DestroyContext();
@@ -114,8 +127,8 @@ namespace Firesteel {
             //Ignore non-significant error/warning codes.
             if (tID == 131169 || tID == 131185 || tID == 131218 || tID == 131204) return;
 
-            LOG_C("OpenGL Error(" + std::to_string(tID) + "): ", CMD_F_RED, "");
-            LOG_C(tMsg);
+            LOGF_C("OpenGL Error(%d): ", CMD_F_RED, CMD_BG_BLACK, std::to_string(tID));
+            LOG(tMsg);
 
             switch (tSource) {
             case GL_DEBUG_SOURCE_API:             LOG("Source: API"); break;
@@ -144,7 +157,7 @@ namespace Firesteel {
             case GL_DEBUG_SEVERITY_LOW:          LOG("Severity: low"); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: LOG("Severity: notification"); break;
             }
-            LOG_C("-----", CMD_F_RED);
+            LOG("-----", "\n", CMD_F_RED);
         }
 	};
 

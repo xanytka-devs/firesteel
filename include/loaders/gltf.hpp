@@ -141,8 +141,8 @@ namespace Firesteel {
                         tangents[i*4+1],
                         tangents[i*4+2]
                     );
-                    const float handeness=(tangents[i*4+3]<0.f)?-1.f:1.f;
-                    vert.bitangent=glm::cross(vert.normal,vert.tangent)*handeness;
+                    //const float handeness=(tangents[i*4+3]<0.f)?-1.f:1.f;
+                    vert.bitangent=glm::cross(vert.normal,vert.tangent);
                 } else if(uvs&&normals) {
                     //Index shifts.
                     size_t i1=(i+1)%posAcc.count;

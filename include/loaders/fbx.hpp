@@ -24,6 +24,7 @@ namespace Firesteel {
             std::vector<uint8_t> buffer(size);
             file.seekg(0);
             file.read((char*)buffer.data(),size);
+            file.close();
             return buffer;
         }
 
@@ -70,20 +71,21 @@ namespace Firesteel {
             std::vector<unsigned int> indices;
             //Initialize getters.
             const ofbx::GeometryData& geometry=tMesh->getGeometryData();
-            const ofbx::Vec3* positions=geometry.getPositions().values;
             const int vertexCount=geometry.getPositions().values_count;
+            const ofbx::Vec3* positions=geometry.getPositions().values;
+            const int* indicies=geometry.getPositions().indices;
             const ofbx::Vec3* normals=geometry.getNormals().values;
             const ofbx::Vec3* tangents=geometry.getTangents().values;
+            const int* uvInds=geometry.getUVs().indices;
             const ofbx::Vec2* uvs=geometry.getUVs().values;
-            const int* indicies=geometry.getPositions().indices;
             //Create vertexes.
             for(size_t i=0;i<vertexCount;i++) {
                 Vertex vert{};
                 //Position.
                 vert.position=glm::vec3(
-                    positions[i].x,
-                    positions[i].y,
-                    positions[i].z
+                    positions[indicies[i]].x,
+                    positions[indicies[i]].y,
+                    positions[indicies[i]].z
                 );
                 //Normal.
                 if(normals)
@@ -95,8 +97,8 @@ namespace Firesteel {
                 //Texture coords.
                 if(uvs)
                     vert.uv=glm::vec2(
-                        uvs[i].x,
-                        uvs[i].y
+                        uvs[uvInds[i]].x,
+                        1.f-uvs[uvInds[i]].y
                     );
                 //Tangents.
                 if(tangents)
@@ -106,12 +108,7 @@ namespace Firesteel {
                         tangents[i].z
                     );
                 //Bitangents.
-                /*if(tMesh->vertex_bitangent.exists)
-                    vert.bitangent=glm::vec3(
-                        tMesh->vertex_bitangent[i].x,
-                        tMesh->vertex_bitangent[i].y,
-                        tMesh->vertex_bitangent[i].z
-                    );*/
+                if(tangents&&normals) vert.bitangent=glm::cross(vert.tangent,vert.normal);
                 //Bones.
                 /*if(tMesh->getSkin().count>0) {
                     const ufbx_skin_deformer* skin=tMesh->skin_deformers.data[0];
@@ -129,14 +126,15 @@ namespace Firesteel {
                 vertices.push_back(vert);
             }
             //Create indicies.
-            for(size_t i=0;i<tMesh->getGeometryData().getPositions().count;i++) {
-                indices.push_back(indicies[i]);
+            for(unsigned int i=0;i<static_cast<unsigned int>(tMesh->getGeometryData().getPositions().count);i++) {
+                indices.push_back(i);
 #ifdef FS_PRINT_DEBUG_MSGS
                 tInd+=1;
 #endif
             }
 
             //Get material.
+            std::vector<Texture> textures;
             auto mat=tMesh->getMaterial(0);
             size_t mId=0;
             for(size_t j=0;j<tMatIds->size();j++)
@@ -144,39 +142,46 @@ namespace Firesteel {
                     mId=j;
                     break;
                 } else mId=tMatIds->size();
-            if(mId==tMatIds->size()) tModel->materials.push_back({{}});
-            //Get textures.
-            char filename[127];
-            std::vector<Texture> textures;
-            if(mat->getTexture(ofbx::Texture::DIFFUSE)) {
-                mat->getTexture(ofbx::Texture::DIFFUSE)->getFileName().toString(filename);
-                textures.emplace_back(loadMaterialTexture(tModel, filename, "diffuse", mId));
-            }
-            if(mat->getTexture(ofbx::Texture::NORMAL)) {
-                mat->getTexture(ofbx::Texture::NORMAL)->getFileName().toString(filename);
-                textures.emplace_back(loadMaterialTexture(tModel, filename, "normal", mId));
-            }
-            if(mat->getTexture(ofbx::Texture::SPECULAR)) {
-                mat->getTexture(ofbx::Texture::SPECULAR)->getFileName().toString(filename);
-                textures.emplace_back(loadMaterialTexture(tModel, filename, "specular", mId));
-            }
-            if(mat->getTexture(ofbx::Texture::AMBIENT)) {
-                mat->getTexture(ofbx::Texture::AMBIENT)->getFileName().toString(filename);
-                textures.emplace_back(loadMaterialTexture(tModel, filename, "ambient", mId));
-            }
-            if(mat->getTexture(ofbx::Texture::EMISSIVE)) {
-                mat->getTexture(ofbx::Texture::EMISSIVE)->getFileName().toString(filename);
-                textures.emplace_back(loadMaterialTexture(tModel, filename, "emissive", mId));
-            }
-            //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
-            //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
-            //Check all textures.
-            for(size_t t=0;t<textures.size();t++) {
-                //Texture is valid.
-                if(textures[t].ID!=0) continue;
-                //Texture either doesn't exist or is corrupted.
-                textures.erase(textures.begin()+t);
-                t-=1;
+            if(mId==tMatIds->size()) {
+                tMatIds->push_back(mat->id);
+                tModel->materials.push_back({{}});
+                //Get textures.
+                char filename[127];
+                if(mat->getTexture(ofbx::Texture::DIFFUSE)) {
+                    mat->getTexture(ofbx::Texture::DIFFUSE)->getFileName().toString(filename);
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, "diffuse", mId));
+                }
+                if(mat->getTexture(ofbx::Texture::NORMAL)) {
+                    mat->getTexture(ofbx::Texture::NORMAL)->getFileName().toString(filename);
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, "normal", mId));
+                }
+                if(mat->getTexture(ofbx::Texture::SPECULAR)) {
+                    mat->getTexture(ofbx::Texture::SPECULAR)->getFileName().toString(filename);
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, "specular", mId));
+                }
+                if(mat->getTexture(ofbx::Texture::AMBIENT)) {
+                    mat->getTexture(ofbx::Texture::AMBIENT)->getFileName().toString(filename);
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, "ambient", mId));
+                }
+                if(mat->getTexture(ofbx::Texture::EMISSIVE)) {
+                    mat->getTexture(ofbx::Texture::EMISSIVE)->getFileName().toString(filename);
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, "emissive", mId));
+                }
+                //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
+                //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
+                //Check all textures.
+                for(size_t t=0;t<textures.size();t++) {
+                    //Texture is valid.
+                    if(textures[t].ID!=0) continue;
+                    //Texture either doesn't exist or is corrupted.
+                    textures.erase(textures.begin()+t);
+                    t-=1;
+                }
+            } else {
+#ifdef FS_PRINT_DEBUG_MSGS
+                LOG_DBG("Given material's textures are already loaded");
+#endif
+                textures=tModel->materials[mId].textures;
             }
 
             return Mesh(vertices,indices,textures);
@@ -235,6 +240,9 @@ namespace Firesteel {
             LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
             LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
 #endif // FS_PRINT_DEBUG_MSGS
+            //Cleanup.
+            data.clear();
+            materialIds.clear();
             return model;
         }
     }

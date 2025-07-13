@@ -36,23 +36,21 @@ namespace Firesteel {
                 if(std::string(cpu.output).size() <= 1) {
                     LOG_INFO("   Vendor: " + cpu.vendor);
                     LOG_INFO("   Model: " + cpu.model);
-                    LOG_INFO("   Cores: " + std::to_string(cpu.cores));
-                    LOG_INFO("   Frequency: " + std::to_string(cpu.frequency));
+                    LOGF_INFO("   Cores: %d\n", cpu.cores);
+                    LOGF_INFO("   Frequency: %d\n", cpu.frequency);
                 } else LOG_WARN(cpu.output);
 
                 GPUInfo gpu=getGPUInfo();
                 LOG_INFO(" - GPU");
                 if(std::string(gpu.output).size() <= 1) {
                     LOG_INFO("   Model: " + gpu.model);
-                    LOG_INFO("", "");
-                    printf("   Memory: %.2f GB\n", gpu.memoryGB);
+                    LOGF_INFO("   Memory: %.2f GB\n", gpu.memoryGB);
                 } else LOG_WARN(gpu.output);
 
                 RAMInfo ram=getRAMInfo();
                 LOG_INFO(" - RAM");
                 if(std::string(ram.output).size() <= 1) {
-                    LOG_INFO("", "");
-                    printf("   Memory: %.2f GB\n", ram.memoryGB);
+                    LOGF_INFO("   Memory: %.2f GB\n", ram.memoryGB);
                 } else LOG_WARN(ram.output);
 
                 MotherboardInfo motherboard=getMotherboardInfo();

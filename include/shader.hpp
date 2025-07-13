@@ -9,6 +9,8 @@
 
 namespace Firesteel {
     struct Shader {
+    private:
+        static Shader sDefaultShader;
     public:
         unsigned int ID;
         bool loaded=false;
@@ -17,8 +19,6 @@ namespace Firesteel {
             remove();
             ID=0;
         }
-
-        // Constructor generates shaders on the fly.
         Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath=nullptr) {
             remove();
             //Retrieve the vertex/fragment source code from file path.
@@ -31,16 +31,18 @@ namespace Firesteel {
             //Check if given paths even exist.
             bool hasGeomShader=(tGeometryPath != nullptr);
             if(!std::filesystem::exists(tVertexPath)) {
-                LOG_WARN(std::string("Vertex shader at \"") + tVertexPath + "\" doesn't exist");;
+                LOG_WARN(std::string("Vertex shader at \"") + tVertexPath + "\" doesn't exist");
+                ID=sDefaultShader.ID;
                 return;
             }
             if(!std::filesystem::exists(tFragmentPath)) {
-                LOG_WARN(std::string("Fragment shader at \"") + tFragmentPath + "\" doesn't exist");;
+                LOG_WARN(std::string("Fragment shader at \"") + tFragmentPath + "\" doesn't exist");
+                ID=sDefaultShader.ID;
                 return;
             }
             if(hasGeomShader)
                 if(!std::filesystem::exists(tGeometryPath)) {
-                    LOG_WARN(std::string("Geometry shader at \"") + tGeometryPath + "\" doesn't exist");;
+                    LOG_WARN(std::string("Geometry shader at \"") + tGeometryPath + "\" doesn't exist");
                     hasGeomShader=false;
                 }
             //Ensure ifstream objects can throw exceptions:.
@@ -70,22 +72,29 @@ namespace Firesteel {
             }
             catch (std::ifstream::failure& e) {
                 LOG_WARN(std::string("Error while reading shader files: ") + e.what());
+                ID=sDefaultShader.ID;
+                return;
             }
         }
-        
-        // Constructor generates shaders on the fly.
         Shader(const char* tVertexCode, const char* tFragmentCode, const bool& tHasGeomShader, const char* tGeometryCode) {
             remove();
             generate(tVertexCode, tFragmentCode, tHasGeomShader, tGeometryCode);
         }
 
-        /// Activate the shader.
         void enable() const {
             glUseProgram(ID);
+            setFloat("time", static_cast<float>(glfwGetTime()));
         }
-        /// Clean up.
         void remove() const {
             if(loaded) glDeleteProgram(ID);
+        }
+
+        static void setDefaultShader(const char* tVertexCode, const char* tFragmentCode) {
+            sDefaultShader.remove();
+            sDefaultShader=Shader(tVertexCode,tFragmentCode,false,nullptr);
+        }
+        static Shader* getDefaultShader() {
+            return &sDefaultShader;
         }
 
         // Utilities //
@@ -133,7 +142,6 @@ namespace Firesteel {
         }
 
     private:
-        // Get OpenGL errors.
         bool getErrors(GLuint tShader, size_t tType=0) {
             GLint success;
             GLchar infoLog[1024];
@@ -153,7 +161,6 @@ namespace Firesteel {
             }
             return success;
         }
-        // Creates shader program.
         void generate(const char* tVShaderCode, const char* tFShaderCode, const bool& tHasGeomShader, const char* tGShaderCode) {
             unsigned int vertex, fragment, geometry;
             //Vertex shader.

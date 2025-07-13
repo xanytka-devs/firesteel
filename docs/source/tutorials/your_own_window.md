@@ -6,18 +6,23 @@
 ``` cpp
 #include "engine/include/app.hpp"
 using namespace Firesteel;
-class HelloWorldApp : public App { };
+
+class HelloWorldApp : public Firesteel::App {
+    virtual void onInitialize() override {
+        LOG_INFO("Hello World!");
+    }
+};
 
 int main() {
     return HelloWorldApp{}.start();
 }
 ```
+После постройки и запуска проекта у вас появится консоль, в которой где-то до `[STAT] UPDATE LOOP` будет `Hello World!`, а также окно:
+![Как выглядит окно](../../assets/your-own-window.png)
 
 # Объяснение
-Все приложения и игры, созданные не Firesteel наследуют от класса **App**. Там есть базовые данные и методы, такие как `onInitialize` (срабатывает после инициализации отрисовщика), `onUpdate` (запускается каждый тик/кадр) и `onShutdown` (срабатывает при завершении работы приложения), а также `deltaTime` (разница между временем этого и предыдущего кадра) и `fps` (количество кадров в секунду).
-И внутри функции `main()` создаётся и запускается приложение.
-Функция `start()` может принимать ещё название, размер и режим будущего окна, привязанного к приложению.
+Все приложения и игры, созданные не Firesteel наследуют от класса **App**. Там есть базовые методы, такие как `onInitialize()` (срабатывает после инициализации всех библиотек), `onUpdate()` (запускается каждый тик/кадр) и `onShutdown()` (срабатывает при завершении работы приложения). А также `deltaTime` (разница между временем этого и предыдущего кадра) и `fps` (количество кадров в секунду).  
+Функция `HelloWorldApp{}.start()` стартует само приложение и может ещё принимать название, размер и режим будущего окна приложения. Функция `LOG_INFO(...)` нужна для вывода текста в консоль.
 
 # Заключение
-На этом данная статья закончена. Для вашего удобства в конце каждой статьи приводится две кнопки (певая переводит на статью назад, другая - вперёд).  
-[<- Пакеты](https://firesteel.readthedocs.io/ru/latest/#tutorials/packages/) | [Первый треугольник ->](https://firesteel.readthedocs.io/ru/latest/#tutorials/first-triangle/)
+Итоговый, кхм, *код* вы можете найти [вот тут](https://github.com/xanytka-devs/firesteel/blob/model_loaders/examples/WindowTest/main.cpp).

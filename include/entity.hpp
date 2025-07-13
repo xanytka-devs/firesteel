@@ -46,11 +46,14 @@ namespace Firesteel {
         // Renders the model.
         void draw(const Shader* tShader) {
             if(!mHasMeshes) return;
+            if(tShader==nullptr||!tShader->loaded) tShader=Shader::getDefaultShader();
             tShader->enable();
             tShader->setMat4("model", getMatrix());
-            for(unsigned int i=0; i < model.meshes.size(); i++)
+            for(unsigned int i=0;i<model.meshes.size();i++)
                 model.meshes[i].draw(tShader);
         }
+        // Renders the model in the default shader.
+        void draw() {draw(nullptr);}
 
         // Returns model matrix.
         glm::mat4 getMatrix() const {
@@ -102,6 +105,24 @@ namespace Firesteel {
 
             LOG_INFO("Loaded model at: \"" + tPath + "\"");
             mHasMeshes=true;
+        }
+
+        void addMesh(const Mesh& tMesh) {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
+                tMesh.vertices.size(), tMesh.indices.size(), tMesh.textures.size());
+#endif // FS_PRINT_DEBUG_MSGS
+            mHasMeshes=true;
+            model.meshes.emplace_back(tMesh);
+        }
+        void addMesh(const std::vector<Vertex>& tVertices,
+            const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures) {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
+                tVertices.size(), tIndices.size(), tTextures.size());
+#endif // FS_PRINT_DEBUG_MSGS
+            mHasMeshes=true;
+            model.meshes.emplace_back(tVertices,tIndices,tTextures);
         }
 
     private:

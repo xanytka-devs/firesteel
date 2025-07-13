@@ -23,13 +23,9 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 
 
 #include "utils/log.hpp"
-
-#ifdef WIN32
-#include <windows.h>
 #include <fstream>
-#include <sstream>
-#include <iostream>
 #include <filesystem>
+
 bool gInited=false;
 std::ofstream gLogStream;
 
@@ -86,14 +82,17 @@ void Log::destroyFileLogger() {
 	src.close();
 	dest.close();
 }
-void Log::log(const std::string& tMsg, const int tMod, const bool tAddTimestamp) {
-	logToFile(tMsg.c_str(), tAddTimestamp); // File logging.
+
+#ifdef WIN32
+#include <windows.h>
+void Log::log(const std::string& tMsg, const int tModF, const int tModB, const bool tAddTimestamp) {
+	logToFile(tMsg.c_str(), tAddTimestamp);
 #ifndef NDEBUG
-	ShowWindow(GetConsoleWindow(), SW_RESTORE); // Show cmd window.
-	SetConsoleTitleA("Firesteel Debug Output"); // Set cmd title.
-	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);// Get cmd handle.
-	SetConsoleTextAttribute(hConsole, tMod); // Set cmd text color.
-	printf(tMsg.c_str()); // Print msg.
+	ShowWindow(GetConsoleWindow(), SW_RESTORE);
+	SetConsoleTitleA("Firesteel Debug Output");
+	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, tModF+tModB);
+	printf(tMsg.c_str());
 #else
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif // !NDEBUG
@@ -102,3 +101,24 @@ void Log::clear() {
 	system("cls");
 }
 #endif // WIN32
+#ifdef __linux__
+#include <cstdlib>
+
+void Log::log(const std::string& tMsg, const int tModF, const int tModB, const bool tAddTimestamp) {
+	logToFile(tMsg.c_str(), tAddTimestamp);
+#ifndef NDEBUG
+	std::cout << "\033]0;" << "Firesteel Debug Output" << "\007";
+	std::string colorFormat=formatStr("\033[%i;%im",tModF,tModB);
+	printf(colorFormat.c_str());
+	printf(tMsg.c_str());
+#else
+	system("ls -l > /dev/null 2>&1");
+#endif // !NDEBUG
+}
+void Log::clear() {
+	system("clear");
+}
+#endif // __linux__
+
+#include "shader.hpp"
+Shader Shader::sDefaultShader{};

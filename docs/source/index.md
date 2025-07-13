@@ -1,4 +1,4 @@
-![Banner](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/banner.png?raw=true "Firesteel banner")
+![Banner](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/banner.png?raw=true)
 
 # Добро пожаловать в Firesteel!
 Данная Wiki поможет вам преодолеть все трудности, которые могут возникнуть при разработке на программном слое firesteel.  
@@ -18,7 +18,7 @@
 3. Установите [CMake](https://cmake.org/)
 4. Создайте файл `main.cpp`, в котором вы будете писать код приложения
 5. Создайте файл `CMakeLists.txt` с содержимым:
-```cmake
+``` cmake
 cmake_minimum_required(VERSION 3.12)
 project(example)
 add_subdirectory(engine)
@@ -31,7 +31,6 @@ target_link_libraries(example
 	glad
 	imgui
 	glm
-	assimp
 )
 target_compile_features(example PUBLIC cxx_std_17)
 target_include_directories(example PUBLIC includes)
@@ -41,8 +40,3 @@ set_target_properties(example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY
 6. Постройте проект через CMake
 	* Создайте папку `build`
 	* Откройте командую строку в этой новой папке и введите в неё `cmake ..`
-
-
-# Заключение
-На этом данная статья закончена. Для вашего удобства в конце каждой статьи приводится две кнопки (певая переводит на статью назад, другая - вперёд).  
-[<- На страницу firesteel](https://github.com/xanytka-devs/firesteel) | [Пакеты ->](https://firesteel.readthedocs.io/ru/latest/#tutorials/packages/)
