@@ -1,5 +1,6 @@
 # Отрисовка модели
-Для начала загрузим и отрисуем модель. Напишите следующий код в `main.cpp`:
+Для начала загрузим и отрисуем модель. Если вы хотите идти рука-об-руку с туториалом, то модель рюкзака, а также текстуры к нему можно скачать [здесь](https://github.com/xanytka-devs/fs-examples/blob/main/res/ModelLoading/).
+Напишите следующий код в `main.cpp`:
 ``` cpp
 #include "engine/include/firesteel.hpp"
 using namespace Firesteel;
@@ -274,4 +275,4 @@ virtual void onUpdate() override {
 * Ну и `entity.transform.rotation` вращяет рюкзак в зависимости от нажатия кнопок.
 
 # Заключение
-Итоговый код вы можете найти [вот тут](https://github.com/xanytka-devs/firesteel/blob/model_loaders/examples/ModelLoadingTest/main.cpp).
+Итоговый код вы можете найти [вот тут](https://github.com/xanytka-devs/fs-examples/blob/main/ModelLoading/main.cpp).

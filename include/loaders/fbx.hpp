@@ -30,7 +30,7 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.
-        Texture loadMaterialTexture(Model* tModel, const std::string& texPath, const std::string& type, const size_t& tMatId) {
+        Texture loadMaterialTexture(Model* tModel, const std::string& texPath, const TextureType& type, const size_t& tMatId) {
             if(texPath.empty()) return {};
             //Get full path.
             std::string fullPath=texPath;
@@ -149,23 +149,23 @@ namespace Firesteel {
                 char filename[127];
                 if(mat->getTexture(ofbx::Texture::DIFFUSE)) {
                     mat->getTexture(ofbx::Texture::DIFFUSE)->getFileName().toString(filename);
-                    textures.emplace_back(loadMaterialTexture(tModel, filename, "diffuse", mId));
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, TT_DIFFUSE, mId));
                 }
                 if(mat->getTexture(ofbx::Texture::NORMAL)) {
                     mat->getTexture(ofbx::Texture::NORMAL)->getFileName().toString(filename);
-                    textures.emplace_back(loadMaterialTexture(tModel, filename, "normal", mId));
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, TT_NORMAL, mId));
                 }
                 if(mat->getTexture(ofbx::Texture::SPECULAR)) {
                     mat->getTexture(ofbx::Texture::SPECULAR)->getFileName().toString(filename);
-                    textures.emplace_back(loadMaterialTexture(tModel, filename, "specular", mId));
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, TT_SPECULAR, mId));
                 }
                 if(mat->getTexture(ofbx::Texture::AMBIENT)) {
                     mat->getTexture(ofbx::Texture::AMBIENT)->getFileName().toString(filename);
-                    textures.emplace_back(loadMaterialTexture(tModel, filename, "ambient", mId));
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, TT_AMBIENT, mId));
                 }
                 if(mat->getTexture(ofbx::Texture::EMISSIVE)) {
                     mat->getTexture(ofbx::Texture::EMISSIVE)->getFileName().toString(filename);
-                    textures.emplace_back(loadMaterialTexture(tModel, filename, "emissive", mId));
+                    textures.emplace_back(loadMaterialTexture(tModel, filename, TT_EMISSIVE, mId));
                 }
                 //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
                 //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
@@ -188,6 +188,9 @@ namespace Firesteel {
         }
 
         Model load(std::string tPath) {
+#ifdef FS_INCLUDE_NVTX
+            nvtx3::scoped_range r{"fbx model load"};
+#endif // FS_INCLUDE_NVTX
             Model model{ tPath };
 
             //Get file contents.

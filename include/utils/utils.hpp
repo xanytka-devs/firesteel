@@ -14,15 +14,15 @@ glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
 glm::vec3 HexToRGB(const char* tHex) {
     if (tHex[0] == '#') {
         return glm::vec3(
-            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4)
+            std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4)
         );
     } else {
         return glm::vec3(
-            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4)
+            std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4)
         );
     }
 }
@@ -44,17 +44,17 @@ glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned
 glm::vec4 HexToRGBA(const char* tHex) {
     if(tHex[0] == '#') {
         return glm::vec4(
-            std::stoul(std::string("0x" + tHex[1] + tHex[2]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[3] + tHex[4]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[5] + tHex[6]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[7] + tHex[8]), nullptr, 4)
+            std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[7] + tHex[8], nullptr, 4)
         );
     } else {
         return glm::vec4(
-            std::stoul(std::string("0x" + tHex[0] + tHex[1]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[2] + tHex[3]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[4] + tHex[5]), nullptr, 4),
-            std::stoul(std::string("0x" + tHex[6] + tHex[7]), nullptr, 4)
+            std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4),
+            std::stoul(std::string("0x") + tHex[6] + tHex[7], nullptr, 4)
         );
     }
 }

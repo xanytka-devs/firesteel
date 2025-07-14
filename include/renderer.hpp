@@ -97,10 +97,16 @@ namespace Firesteel {
             ImGui::NewFrame();
         }
         void imguiRender(GLFWwindow* tWin) {
+#ifdef FS_INCLUDE_NVTX
+                nvtx3::scoped_range d{"imgui draw"};
+#endif // FS_INCLUDE_NVTX
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             //Viewports need persistent context updates.
-            if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+#ifdef FS_INCLUDE_NVTX
+                nvtx3::mark("reset context");
+#endif // FS_INCLUDE_NVTX
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
                 glfwMakeContextCurrent(tWin);

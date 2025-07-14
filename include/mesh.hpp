@@ -67,7 +67,7 @@ namespace Firesteel {
                 for (unsigned int i=0; i < textures.size(); i++) {
                     //Retrieve texture number.
                     size_t number=0;
-                    std::string name=textures[i].type;
+                    std::string name=textures[i].typeToString();
                     if(name == "diffuse")
                         number=diffuseNr++;
                     else if(name == "specular")

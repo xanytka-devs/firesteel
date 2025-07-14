@@ -9,8 +9,8 @@ Entity entity;
 
 class ModelLoadingTest : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("backpack\\.vs", "backpack\\.fs");
-        entity.load("backpack\\backpack.fbx");
+        shader=Shader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+        entity.load("res\\ModelLoading\\backpack.obj");
         camera.update();
     }
     virtual void onUpdate() override {

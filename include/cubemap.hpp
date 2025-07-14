@@ -40,6 +40,9 @@ namespace Firesteel {
                   const char* tBottom="bottom.png",
                   const char* tFront="front.png",
                   const char* tBack="back.png") {
+#ifdef FS_INCLUDE_NVTX
+            nvtx3::scoped_range r{"cubemap load"};
+#endif // FS_INCLUDE_NVTX
             //Setup.
             mDir=tDir;
             mInitialized=true;

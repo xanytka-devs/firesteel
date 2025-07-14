@@ -47,6 +47,7 @@ extra:
       link: https://vk.com/xanytka
 nav:
   - Домой: index.md
+  - Конфигурация: flags.md
   - Туториалы:
     - Пакеты: tutorials/packages.md
     - Своё окно: tutorials/your_own_window.md

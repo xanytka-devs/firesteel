@@ -9,3 +9,6 @@
 	path = external/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "external/nvtx"]
+	path = external/nvtx
+	url = https://github.com/NVIDIA/NVTX.git

@@ -54,6 +54,9 @@ namespace Firesteel {
             //Update loop.
             LOG_STATE("UPDATE LOOP");
             while (window.isOpen()) {
+#ifdef FS_INCLUDE_NVTX
+                nvtx3::scoped_range u{"update"};
+#endif // FS_INCLUDE_NVTX
                 window.pollEvents();
                 //Per-frame time logic.
                 double currentFrame=glfwGetTime();
@@ -70,6 +73,9 @@ namespace Firesteel {
                 window.clearBuffers();
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
+#ifdef FS_INCLUDE_NVTX
+                nvtx3::scoped_range r{"app update & imgui"};
+#endif // FS_INCLUDE_NVTX
                 renderer.imguiNewFrame();
                 onUpdate();
                 DEVVIEW::draw(deltaTime, fps);

@@ -3,11 +3,12 @@
 using namespace Firesteel;
 
 Shader shader;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 
 class TriangleTest : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("triangle\\.vs", "triangle\\.fs");
+        shader=Shader("res\\CustomMesh\\shader.vs", "res\\CustomMesh\\shader.fs");
         //Setup mesh.
         const float setup[9]={
             -0.5f, -0.5f,  0.5f,
@@ -26,6 +27,13 @@ class TriangleTest : public Firesteel::App {
         entity.addMesh(verticies,indicies,std::vector<Texture>{});
     }
     virtual void onUpdate() override {
+        //Get variables, needed for a draw call.
+        glm::mat4 proj = camera.getProjection(), view = camera.getView();
+        camera.aspect = window.aspect();
+        //Draw the model.
+        shader.enable();
+        shader.setMat4("projection", proj);
+        shader.setMat4("view", view);
         entity.draw(&shader);
     }
     virtual void onShutdown() override {

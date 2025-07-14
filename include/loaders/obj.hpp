@@ -12,7 +12,7 @@ namespace Firesteel {
     namespace OBJ {
         /// [!WARING]
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
+        Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const TextureType& type) {
             if(texPath.empty()) return {};
             //Get full path.
             std::string fullPath=tModel->getDirectory() + "/" + texPath;
@@ -121,6 +121,9 @@ namespace Firesteel {
         }
 
         Model load(std::string tPath) {
+#ifdef FS_INCLUDE_NVTX
+            nvtx3::scoped_range r{"obj model load"};
+#endif // FS_INCLUDE_NVTX
             Model model{ tPath };
 
             tinyobj::ObjReaderConfig reader_config;
@@ -149,13 +152,13 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Process all materials (textures).
             for (const auto& mat : materials) {
-                Texture diffuseTex=loadMaterialTexture(&model, mat.diffuse_texname, "diffuse");
-                Texture normalTex=loadMaterialTexture(&model, mat.normal_texname, "normal");
-                Texture specularTex=loadMaterialTexture(&model, mat.specular_texname, "specular");
-                Texture ambientTex=loadMaterialTexture(&model, mat.ambient_texname, "ambient");
-                Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
-                Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
-                Texture emissiveTex=loadMaterialTexture(&model, mat.emissive_texname, "emissive");
+                Texture diffuseTex=loadMaterialTexture(&model, mat.diffuse_texname, TT_DIFFUSE);
+                Texture normalTex=loadMaterialTexture(&model, mat.normal_texname, TT_NORMAL);
+                Texture specularTex=loadMaterialTexture(&model, mat.specular_texname, TT_SPECULAR);
+                Texture ambientTex=loadMaterialTexture(&model, mat.ambient_texname, TT_AMBIENT);
+                Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, TT_DISPLACEMENT);
+                Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, TT_OPACITY);
+                Texture emissiveTex=loadMaterialTexture(&model, mat.emissive_texname, TT_EMISSIVE);
                 //Push back all textures.
                 std::vector<Texture> textures;
                 if(diffuseTex.ID!=0) textures.push_back(diffuseTex);

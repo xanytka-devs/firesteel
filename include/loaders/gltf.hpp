@@ -18,7 +18,7 @@ namespace Firesteel {
     namespace GLTF {
         /// [!WARING]
         /// This function is internal and only used for the GLTF loader. Use it at your own risk.
-        Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const std::string& type) {
+        Texture loadMaterialTexture(const Model* tModel, const std::string& texPath, const TextureType& type) {
             if(texPath.empty()) return {};
             //Get full path.
             std::string fullPath=tModel->getDirectory() + "/" + texPath;
@@ -216,11 +216,11 @@ namespace Firesteel {
             //Get textures.
             std::vector<Texture> textures;
             const tinygltf::Material& mat=tModel->materials[tPrimitive->material];
-            Texture diffuseTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.baseColorTexture.index), "diffuse");
-            Texture normalTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.normalTexture.index), "normal");
-            Texture specularTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
-            Texture ambientTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.occlusionTexture.index), "ambient");
-            Texture emissiveTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.emissiveTexture.index), "emissive");
+            Texture diffuseTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.baseColorTexture.index), TT_DIFFUSE);
+            Texture normalTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.normalTexture.index), TT_NORMAL);
+            Texture specularTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), TT_SPECULAR);
+            Texture ambientTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.occlusionTexture.index), TT_AMBIENT);
+            Texture emissiveTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.emissiveTexture.index), TT_EMISSIVE);
             //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
             //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
             //Push back all textures.
@@ -234,6 +234,9 @@ namespace Firesteel {
         }
 
         Model load(std::string tPath, bool tBinary) {
+#ifdef FS_INCLUDE_NVTX
+            nvtx3::scoped_range r{"gltf model load"};
+#endif // FS_INCLUDE_NVTX
             Model model{ tPath };
 
             tinygltf::Model gltf;
@@ -259,20 +262,20 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Process all materials (textures).
             for(const auto& mat : gltf.materials) {
-                Texture diffuseTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.baseColorTexture.index), "diffuse");
-                Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), "normal");
-                Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), "specular");
-                Texture ambientTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.occlusionTexture.index), "ambient");
+                std::vector<Texture> textures;
+                Texture diffuseTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.baseColorTexture.index), TT_DIFFUSE);
+                Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), TT_NORMAL);
+                Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), TT_SPECULAR);
+                Texture ambientTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.occlusionTexture.index), TT_AMBIENT);
+                Texture emissiveTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.emissiveTexture.index), TT_EMISSIVE);
                 //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
                 //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
                 //Push back all textures.
-                std::vector<Texture> textures;
                 if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
                 if(normalTex.ID!=0) textures.push_back(normalTex);
                 if(specularTex.ID!=0) textures.push_back(specularTex);
                 if(ambientTex.ID!=0) textures.push_back(ambientTex);
-                //if(displacementTex.ID!=0) textures.push_back(displacementTex);
-                //if(opacityTex.ID!=0) textures.push_back(opacityTex);
+                if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
                 model.materials.push_back({ textures });
             }
             //Process all meshes.

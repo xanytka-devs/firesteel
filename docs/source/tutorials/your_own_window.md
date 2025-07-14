@@ -25,4 +25,4 @@ int main() {
 Функция `HelloWorldApp{}.start()` стартует само приложение и может ещё принимать название, размер и режим будущего окна приложения. Функция `LOG_INFO(...)` нужна для вывода текста в консоль.
 
 # Заключение
-Итоговый, кхм, *код* вы можете найти [вот тут](https://github.com/xanytka-devs/firesteel/blob/model_loaders/examples/WindowTest/main.cpp).
+Итоговый, кхм, *код* вы можете найти [вот тут](https://github.com/xanytka-devs/fs-examples/blob/main/Window/main.cpp).
