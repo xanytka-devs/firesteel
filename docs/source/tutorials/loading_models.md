@@ -24,7 +24,7 @@ int main() {
 }
 ```
 После постройки и запуска проекта вы увидите модель рюкзака, но при этом она будет почти на весь экран и не будет иметь текстур:
-![Оранжевая модель на весь экран](../../assets/loading_models0.png)
+![Оранжевая модель на весь экран](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models0.png?raw=true)
 Почему так? Ну во-первых к модели не применяется никакой шейдерной программы, из-за этого она использует **fallback** (аварийный ресурс).
 
 # Своя шейдерная программа
@@ -117,7 +117,7 @@ int main() {
 
 # Промежуточный результат \#1
 После всех этих махинаций вы получите окно с следующим содержимым:
-![Зад рюкзака](../../assets/loading_models1.png)
+![Зад рюкзака](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models1.png?raw=true)
 Результат более вменяемый, но всё ещё далёк от истины. Давайте добавим камеру, чтобы хотя бы была преспектива.
 
 # Камера
@@ -181,7 +181,7 @@ void main() {
 
 # Промежуточный результат \#2
 Вот что вы должны увидеть в окне после запуска:
-![Широкий рюкзак](../../assets/loading_models2.png)
+![Широкий рюкзак](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models2.png?raw=true)
 Очень даже неплохо. Надо лишь исправть то, что он черезчур широкий.
 
 # "Сужение" рюкзака
@@ -201,7 +201,7 @@ virtual void onUpdate() override {
 ```
 
 # Промежуточный результат \#3
-![И всё было хорошо у рюкзака](../../assets/loading_models3.png)
+![И всё было хорошо у рюкзака](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models3.png?raw=true)
 В принципе это всё, но почему бы не поэкспериментировать ещё чуть-чуть?
 
 # Режимы отрисовки
@@ -217,7 +217,7 @@ virtual void onInitialize() override {
 ```
 
 # Промежуточный результат \#4
-![Треугольная сетка рюкзака](../../assets/loading_models4.png)
+![Треугольная сетка рюкзака](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models4.png?raw=true)
 Это конечно великолепно, но почему бы не сделать изменение режима по нажатию кнопок?
 
 # Смена режима кнопками
