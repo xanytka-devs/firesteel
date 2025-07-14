@@ -1,14 +1,1 @@
-# Requirements for core
-jinja2~=3.1
-markdown~=3.2
-mkdocs
 mkdocs-material
-mkdocs-material-extensions
-pygments
-pymdown-extensions
-# Requirements for plugins
-babel~=2.10
-colorama~=0.4
-paginate~=0.5
-backrefs~=5.7.post1
-requests~=2.26

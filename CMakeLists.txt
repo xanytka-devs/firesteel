@@ -44,6 +44,43 @@ file(GLOB_RECURSE ENGINE_SOURCES "include/*.cpp")
 if(NOT FS_DISABLE_SUBMODULES)
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
+		#Download FreeType.dll distribution.
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+			message(CHECK_START "Downloading freetype.dll")
+			file(DOWNLOAD
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
+				"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+			)
+			#Fallback to Xanytka Website.
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+				file(DOWNLOAD
+					"https://xanytka.ru/shared/firesteel/freetype.dll"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+				)
+			endif()
+		endif()
+		#Copy the library to general binary folders to enable user to just run the app.
+		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+		    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug/freetype.dll")
+			file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release/freetype.dll")
+		endif()
+		#Download FreeType.lib distribution.
+		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+			message(CHECK_START "Downloading freetype.lib")
+			file(DOWNLOAD
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.lib"
+				"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
+			)
+			#Fallback to Xanytka Website.
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+				file(DOWNLOAD
+					"https://xanytka.ru/shared/firesteel/freetype.lib"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
+				)
+			endif()
+		endif()
 	endif()
 else()
 	message("Currently build of submodules is disabled. This means library won't be properly built.")
@@ -53,8 +90,6 @@ set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
 	${FT_INCLUDES}
-	${OCULUS_INCLUDES}
-	${LUA_INCLUDES}
 )
 
 add_library(${PRJ_NAME}

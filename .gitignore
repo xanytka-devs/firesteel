@@ -11,27 +11,12 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 ZERO_CHECK.log
+
+# IDE garbage
+out
 .vs
 .vscode
-out
 
 # Build resources
 build/*
-!build/OpenAL32.dll
-!build/OpenAL32d.dll
-!build/lua54.lib
-build/engine/*
-!build/engine/
-
-# Build libs
-build/engine/bullet3/*
-!build/engine/bullet3/
-!build/engine/bullet3/BulletCollision.lib
-!build/engine/bullet3/BulletDynamics.lib
-!build/engine/bullet3/BulletInverseDynamics.lib
-!build/engine/bullet3/BulletSoftBody.lib
-!build/engine/bullet3/LinearMath.lib
-build/engine/freetype/*
-!build/engine/freetype/
-!build/engine/freetype/freetype.lib
-!build/engine/freetype/freetype32.lib
+engine
