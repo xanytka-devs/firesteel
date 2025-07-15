@@ -92,7 +92,7 @@ void Log::log(const std::string& tMsg, const int tModF, const int tModB, const b
 	SetConsoleTitleA("Firesteel Debug Output");
 	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, tModF+tModB);
-	printf(tMsg.c_str());
+	std::cout << tMsg;
 #else
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif // !NDEBUG

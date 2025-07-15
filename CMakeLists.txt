@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(firesteel VERSION 2.1.0)
+project(firesteel VERSION 0.2.1)
 set(PRJ_NAME firesteel)
 
 set(FiresteelVersion "0.2.1")

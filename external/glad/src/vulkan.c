@@ -605,7 +605,7 @@ static int glad_vk_find_extensions_vulkan( VkPhysicalDevice physical_device) {
     if (!glad_vk_get_extensions(physical_device, &extension_count, &extensions)) return 0;
 
 
-    GLAD_UNUSED(glad_vk_has_extension);
+    GLAD_UNUSED(&glad_vk_has_extension);
 
     glad_vk_free_extensions(extension_count, extensions);
 
