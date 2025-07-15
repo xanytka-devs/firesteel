@@ -20,3 +20,4 @@ out
 # Build resources
 build/*
 engine
+pkgs
