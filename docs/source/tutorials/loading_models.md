@@ -216,63 +216,9 @@ virtual void onInitialize() override {
 }
 ```
 
-# Промежуточный результат \#4
+# Итоговый результат \#4
 ![Треугольная сетка рюкзака](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models4.png?raw=true)
 Это конечно великолепно, но почему бы не сделать изменение режима по нажатию кнопок?
-
-# Смена режима кнопками
-Для начала включим в `main.cpp` ещё один файл:
-``` cpp
-#include "engine/include/input/input.hpp"
-```
-Теперь чуть поменяем `onInitialize()` и `onUpdate()`:
-``` cpp
-virtual void onInitialize() override {
-    shader=Shader("shader.vs", "shader.fs");
-    entity.load("backpack.obj");
-    camera.update();
-}
-virtual void onUpdate() override {
-    //Process input.
-    if(Keyboard::keyDown(KeyCode::KEY_1)) renderer.setDrawMode(Renderer::DM_FILL);
-    if(Keyboard::keyDown(KeyCode::KEY_2)) renderer.setDrawMode(Renderer::DM_WIRE);
-    //Get variables, needed for a draw call.
-    glm::mat4 proj = camera.getProjection(), view = camera.getView();
-    camera.aspect = window.aspect();
-    //Draw the model.
-    shader.enable();
-    shader.setMat4("projection", proj);
-    shader.setMat4("view", view);
-    entity.draw(&shader);
-}
-```
-После этого при нажатии клавиши `1` модель будет отображаться обычно, а при `2` - в виде сетки.  
-Почему ещё не научить камеру вращаться по вводу **WASD** или по стрелочкам?
-
-# Движение камеры
-Просто чуть изменим метод `onUpdate()`:
-``` cpp
-virtual void onUpdate() override {
-    //Process input.
-    if(Keyboard::keyDown(KeyCode::KEY_1)) renderer.setDrawMode(Renderer::DM_FILL);
-    if(Keyboard::keyDown(KeyCode::KEY_2)) renderer.setDrawMode(Renderer::DM_WIRE);
-    entity.transform.rotation+=glm::vec3(0,-10*deltaTime*Input::getHorizontalAxis(),0);
-    entity.transform.rotation+=glm::vec3(10*deltaTime*Input::getVerticalAxis(),0,0);
-    //Get variables, needed for a draw call.
-    glm::mat4 proj = camera.getProjection(), view = camera.getView();
-    camera.aspect = window.aspect();
-    //Draw the model.
-    shader.enable();
-    shader.setMat4("projection", proj);
-    shader.setMat4("view", view);
-    entity.draw(&shader);
-}
-```
-Немного объяснений:  
-* `Input::getHorizontalAxis()` возвращяет 1, -1 или 0 в зависимоти от нажатия D и A, стрелок вправо и влево или отсутсвия такого.
-* `Input::getVerticalAxis()` возвращяет 1, -1 или 0 в зависимоти от нажатия W и S, стрелок вверх и вниз или отсутсвия такого.
-* `deltaTime` - разница между временем этого и предыдущего кадра.
-* Ну и `entity.transform.rotation` вращяет рюкзак в зависимости от нажатия кнопок.
 
 # Заключение
 Итоговый код вы можете найти [вот тут](https://github.com/xanytka-devs/fs-examples/blob/main/ModelLoading/main.cpp).
