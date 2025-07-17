@@ -26,7 +26,8 @@ option(FS_INCLUDE_FT "Include FreeType library (UI)" OFF)
 option(FS_INCLUDE_IMGUI "Include ImGui library (UI)" ON)
 option(FS_INCLUDE_NVTX "Include NVTX library (DEBUG)" OFF)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
-option(FS_LOADER_FBX "Include OFBX library (MODELS)" ON)
+option(FS_LOADER_FBX "Include FBX library (MODELS)" ON)
+option(FS_LOADER_PREFER_OFBX "Include OFBX instead of UFBX (not recommended)" ON)
 option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
 option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
@@ -94,12 +95,20 @@ endif()
 
 if(FS_LOADER_FBX)
 	add_compile_definitions("FS_LOADER_FBX")
-	set(FBX_LIB_FILES
-		"external/model_loaders/ofbx/ofbx.h"
-		"external/model_loaders/ofbx/ofbx.cpp"
-		"external/model_loaders/ofbx/libdeflate.h"
-		"external/model_loaders/ofbx/libdeflate.c"
-	)
+	if(FS_LOADER_PREFER_OFBX)
+		add_compile_definitions("FS_LOADER_OFBX")
+		set(FBX_LIB_FILES
+			"external/model_loaders/ofbx/ofbx.h"
+			"external/model_loaders/ofbx/ofbx.cpp"
+			"external/model_loaders/ofbx/libdeflate.h"
+			"external/model_loaders/ofbx/libdeflate.c"
+		)
+	else()
+		set(FBX_LIB_FILES
+			"external/model_loaders/ofbx/ofbx.h"
+			"external/model_loaders/ofbx/ofbx.c"
+		)
+	endif()
 endif()
 if(FS_LOADER_GLTF)
 	add_compile_definitions("FS_LOADER_GLTF")

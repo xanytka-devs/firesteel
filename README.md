@@ -32,12 +32,18 @@
 # Установка
 
 ## Упрощённая
-* Запустите команду `git clone --recursive https://github.com/xanytka-devs/fs-example.git`
+* Запустите команду
+``` bash
+git clone --recursive https://github.com/xanytka-devs/fs-example.git
+```
 * Установите [CMake](https://cmake.org/)
 * Запустите `auto_cmake.cmd`
 
 ## Обычная
-* Запустите команду `git clone --recursive https://github.com/xanytka-devs/firesteel.git engine`
+* Запустите команду 
+``` bash
+git submodule add --recursive https://github.com/xanytka-devs/firesteel.git engine
+```
 * Установите [CMake](https://cmake.org/)
 * Создайте файл `main.cpp`, в котором вы будете писать код приложения
 * Создайте файл `CMakeLists.txt` с содержимым:

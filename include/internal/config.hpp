@@ -1,5 +1,5 @@
-#ifndef FS_INTERNAL_CONFIG
-#define FS_INTERNAL_CONFIG
+#ifndef FS_INTERNAL_CONFIG_H
+#define FS_INTERNAL_CONFIG_H
 
 #include "systemspecs.hpp"
 #include "../utils/log.hpp"
@@ -71,4 +71,4 @@ namespace Firesteel {
     }
 }
 
-#endif // !FS_INTERNAL_CONFIG
+#endif // !FS_INTERNAL_CONFIG_H

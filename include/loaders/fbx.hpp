@@ -1,6 +1,6 @@
+#ifdef FS_LOADER_OFBX
 #ifndef FS_LOADERS_FBX
 #define FS_LOADERS_FBX
-#ifdef FS_LOADER_FBX
 
 #include "../model.hpp"
 #include "../utils/stbi_global.hpp"
@@ -73,7 +73,7 @@ namespace Firesteel {
             const ofbx::GeometryData& geometry=tMesh->getGeometryData();
             const int vertexCount=geometry.getPositions().values_count;
             const ofbx::Vec3* positions=geometry.getPositions().values;
-            const int* indicies=geometry.getPositions().indices;
+            const int* fbxIndices=geometry.getPositions().indices;
             const ofbx::Vec3* normals=geometry.getNormals().values;
             const ofbx::Vec3* tangents=geometry.getTangents().values;
             const int* uvInds=geometry.getUVs().indices;
@@ -83,9 +83,9 @@ namespace Firesteel {
                 Vertex vert{};
                 //Position.
                 vert.position=glm::vec3(
-                    positions[indicies[i]].x,
-                    positions[indicies[i]].y,
-                    positions[indicies[i]].z
+                    positions[i].x,
+                    positions[i].y,
+                    positions[i].z
                 );
                 //Normal.
                 if(normals)
@@ -126,8 +126,8 @@ namespace Firesteel {
                 vertices.push_back(vert);
             }
             //Create indicies.
-            for(unsigned int i=0;i<static_cast<unsigned int>(tMesh->getGeometryData().getPositions().count);i++) {
-                indices.push_back(i);
+            for(size_t i=0;i<tMesh->getGeometryData().getPositions().count;i++) {
+                indices.push_back(fbxIndices[i]);
 #ifdef FS_PRINT_DEBUG_MSGS
                 tInd+=1;
 #endif
@@ -251,5 +251,5 @@ namespace Firesteel {
     }
 }
 
-#endif // FS_LOADER_FBX
 #endif // !FS_LOADERS_FBX
+#endif // FS_LOADER_OFBX

@@ -1,9 +1,7 @@
-#ifndef FS_MODEL
-#define FS_MODEL
+#ifndef FS_MODEL_H
+#define FS_MODEL_H
 
-#include <vector>
 #include "mesh.hpp"
-#include "texture.hpp"
 
 namespace Firesteel {
     struct DrawData {
@@ -28,4 +26,4 @@ namespace Firesteel {
     };
 }
 
-#endif // !FS_MODEL
+#endif // !FS_MODEL_H

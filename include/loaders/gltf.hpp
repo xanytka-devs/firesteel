@@ -1,6 +1,6 @@
-#ifndef FS_LOADERS_GLTF
-#define FS_LOADERS_GLTF
 #ifdef FS_LOADER_GLTF
+#ifndef FS_LOADERS_GLTF_H
+#define FS_LOADERS_GLTF_H
 
 #include "../model.hpp"
 #include "../utils/stbi_global.hpp"
@@ -302,5 +302,5 @@ namespace Firesteel {
     }
 }
 
+#endif // !FS_LOADERS_GLTF_H
 #endif // FS_LOADER_GLTF
-#endif // !FS_LOADERS_GLTF

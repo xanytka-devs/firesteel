@@ -1,5 +1,5 @@
-#ifndef FS_INTERNAL_DEVVIEW
-#define FS_INTERNAL_DEVVIEW
+#ifndef FS_INTERNAL_DEVVIEW_H
+#define FS_INTERNAL_DEVVIEW_H
 
 #include "config.hpp"
 
@@ -39,4 +39,4 @@ namespace Firesteel {
 	}
 }
 
-#endif // !FS_INTERNAL_DEVVIEW
+#endif // !FS_INTERNAL_DEVVIEW_H

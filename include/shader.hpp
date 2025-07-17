@@ -190,7 +190,7 @@ namespace Firesteel {
             //Delete unnecessary shaders.
             glDeleteShader(vertex);
             glDeleteShader(fragment);
-            if (tHasGeomShader) glDeleteShader(geometry);
+            if(tHasGeomShader) glDeleteShader(geometry);
             loaded=true;
         }
     };

@@ -1,6 +1,6 @@
-#ifndef FS_LOADERS_OBJ
-#define FS_LOADERS_OBJ
 #ifdef FS_LOADER_OBJ
+#ifndef FS_LOADERS_OBJ_H
+#define FS_LOADERS_OBJ_H
 
 #include "../model.hpp"
 #include "../utils/stbi_global.hpp"
@@ -191,5 +191,5 @@ namespace Firesteel {
     }
 }
 
+#endif // !FS_LOADERS_OBJ_H
 #endif // FS_LOADER_OBJ
-#endif // !FS_LOADERS_OBJ

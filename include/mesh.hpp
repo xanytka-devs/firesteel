@@ -30,13 +30,11 @@ namespace Firesteel {
         std::vector<Texture> textures;
         glm::vec3 ambient{0.2f}, diffuse{1.f}, specular{0.5f}, emission{0.f};
 
-        // Constructor with textures.
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures)
             : vertices(tVertices), indices(tIndices), textures(tTextures) {
             makeMesh();
         }
 
-        // Constructor without textures.
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices,
             const glm::vec3 tDiffuse, const glm::vec3 tSpecular, const glm::vec3 tEmission)
             : vertices(tVertices), indices(tIndices),
@@ -44,8 +42,7 @@ namespace Firesteel {
             makeMesh();
         }
 
-        // Render the mesh.
-        // Shader must be enabled before this.
+        // Shader must be enabled before running this.
         void draw(const Shader* tShader) {
             //Bind appropriate textures.
             size_t diffuseNr=0;
@@ -97,10 +94,7 @@ namespace Firesteel {
             Texture::unbind();
         }
 
-        // Clears mesh data.
         void remove() {
-            glDeleteBuffers(1, &mEBO);
-            glDeleteBuffers(1, &mVBO);
             glDeleteVertexArrays(1, &mVAO);
             //Clear mesh data.
             vertices.clear();
@@ -110,14 +104,11 @@ namespace Firesteel {
             textures.clear();
         }
 
-        // Checks if mesh has any textures.
         bool hasTextures() const { return textures.size() > 0; }
-
     private:
         // Render data.
         unsigned int mVAO, mVBO, mEBO;
 
-        // Initializes all the buffer objects/arrays.
         void makeMesh() {
             //Create buffers/arrays.
             glGenVertexArrays(1, &mVAO);
@@ -154,6 +145,9 @@ namespace Firesteel {
             glEnableVertexAttribArray(6);
             glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
             glBindVertexArray(0);
+            //Delete unnecessary buffers (they've been copied to VAO).
+            glDeleteBuffers(1, &mEBO);
+            glDeleteBuffers(1, &mVBO);
         }
     };
 }

@@ -1,5 +1,5 @@
-#ifndef FS_MODEL_H
-#define FS_MODEL_H
+#ifndef FS_ENTITY_H
+#define FS_ENTITY_H
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -22,7 +22,11 @@
 #include "loaders/gltf.hpp"
 #endif // FS_LOADER_GLTF
 #ifdef FS_LOADER_FBX
+#ifdef FS_LOADER_OFBX
 #include "loaders/fbx.hpp"
+#else
+#include "loaders/ufbx.hpp"
+#endif // FS_LOADER_OFBX
 #endif // FS_LOADER_FBX
 
 namespace Firesteel {
@@ -31,12 +35,9 @@ namespace Firesteel {
         Transform transform;
         Model model;
 
-        // Simplified constructor.
         Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
             transform=Transform(tPos, tRot, tSize);
         }
-
-        // Constructor, expects a filepath to a 3D model.
         Entity(const std::string& tPath,
             const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
             transform=Transform(tPos, tRot, tSize);
@@ -66,10 +67,7 @@ namespace Firesteel {
             return modelMatrix;
         }
 
-        // Checks if entity has any meshes.
         bool hasModel() const { return mHasMeshes; }
-
-        // Clears all meshes.
         void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
@@ -80,8 +78,6 @@ namespace Firesteel {
                 model.materials[i].remove();
             mHasMeshes=false;
         }
-
-        // Loads a model (if it exists).
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
                 LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
@@ -133,4 +129,4 @@ namespace Firesteel {
 
 glm::mat4 Firesteel::Entity::modelMatrix=glm::mat4(1);
 
-#endif // ! FS_MODEL_H
+#endif // ! FS_ENTITY_H

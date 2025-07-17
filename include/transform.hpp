@@ -1,5 +1,5 @@
-#ifndef FS_TRANSFORM
-#define FS_TRANSFORM
+#ifndef FS_TRANSFORM_H
+#define FS_TRANSFORM_H
 #include <glm/vec3.hpp>
 
 struct Transform {
@@ -13,4 +13,4 @@ struct Transform {
     }
 };
 
-#endif // !FS_TRANSFORM
+#endif // !FS_TRANSFORM_H

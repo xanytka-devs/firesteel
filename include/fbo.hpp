@@ -1,5 +1,5 @@
-#ifndef FS_FBO
-#define FS_FBO
+#ifndef FS_FBO_H
+#define FS_FBO_H
 #include "common.hpp"
 #include "shader.hpp"
 
@@ -17,38 +17,36 @@ namespace Firesteel {
             createBuffers(tTextures);
         }
 
-        // Scales framebuffer to given size.
         void scale(const int& tWidth, const int& tHeight) {
             mSize=glm::vec2(tWidth, tHeight);
             scaleBuffers();
         }
-
-        // Scales framebuffer to given size.
         void scale(const glm::vec2& tSize) {
             mSize=tSize;
             scaleBuffers();
         }
 
-        // Checks if framebuffer is complete.
         bool isComplete() const {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             bool result=(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             return result;
         }
-
-        // Binds this framebuffer.
-        void enable() const {
+        void bind() const {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             glEnable(GL_DEPTH_TEST);
         }
-        // Unbinds current framebuffer.
+        void enable() const {bind();}
         static void unbind() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glDisable(GL_DEPTH_TEST);
         }
-
-        // Creates quad to render this framebuffer to.
+        static void disable() {unbind();}
+        void bindAsTexture() const {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, FBOtextures[0]);
+        }
+        
         void makeMesh() {
             if(madeMesh) return;
             madeMesh=true;
@@ -76,12 +74,6 @@ namespace Firesteel {
             LOG_DBG("Created Framebuffer quad #" + std::to_string(quadVAO));
 #endif // FS_PRINT_DEBUG_MSGS
         }
-        // Binds this framebuffer as texture unit.
-        void bindAsTexture() const {
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, FBOtextures[0]);
-        }
-        // Draws texture to quad (if it was generated from makeMesh().
         void drawQuad(const Shader* tShader) const {
             if(!madeMesh) return;
             tShader->enable();
@@ -89,7 +81,6 @@ namespace Firesteel {
             bindAsTexture();
             glDrawArrays(GL_TRIANGLES, 0, 6);
         }
-        // Clears quad draw data.
         void removeMesh() {
             if(!madeMesh) return;
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -175,4 +166,4 @@ namespace Firesteel {
     };
 }
 
-#endif // !FS_FBO
+#endif // !FS_FBO_H

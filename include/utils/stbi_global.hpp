@@ -1,5 +1,5 @@
-#ifndef STBI_GLOBAL
-#define STBI_GLOBAL
+#ifndef STBI_GLOBAL_H
+#define STBI_GLOBAL_H
 
 #define __STDC_LIB_EXT1__
 #define STB_IMAGE_IMPLEMENTATION
@@ -46,4 +46,4 @@ TextureData TextureDataFromFile(const std::string& tPath) {
     return TextureData{ stbi_load(tPath.c_str(), &width, &height, &nrComponents, 0), width, height, nrComponents };
 }
 
-#endif // !STBI_GLOBAL
+#endif // !STBI_GLOBAL_H

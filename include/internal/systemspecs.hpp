@@ -1,5 +1,5 @@
-#ifndef FS_INTERNAL_SYSTEMSPECS
-#define FS_INTERNAL_SYSTEMSPECS
+#ifndef FS_INTERNAL_SYSTEMSPECS_H
+#define FS_INTERNAL_SYSTEMSPECS_H
 
 #include <iostream>
 #include <string>
@@ -539,4 +539,4 @@ OSInfo getOSInfo() {
     return out;
 }
 
-#endif // !FS_INTERNAL_SYSTEMSPECS
+#endif // !FS_INTERNAL_SYSTEMSPECS_H
