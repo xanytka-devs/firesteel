@@ -20,6 +20,14 @@ namespace Firesteel {
 		void shutdown() {
 			window.close();
 		}
+        // [!DANGEROUS]
+        // Immediately errors out of application no matter the cost.
+        // This means no `onShutdown()` will be run.
+        void critShutdown(const int& tErrorCode=-13,
+            const char* tError="Critical shutdown was called") {
+            LOG_CRIT(tError);
+            exit(tErrorCode);
+        }
 		virtual int start(const char* tTitle="Firesteel App",
             const unsigned int tWinWidth=800, const unsigned int tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
             LOG(std::string("Firesteel ") + FiresteelVersion);
@@ -30,8 +38,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Create a window.
             window=Window(tWinWidth, tWinHeight);
-            if(!window.initialize(tTitle, tWinState))
-                return 1;
+            if(!window.initialize(tTitle, tWinState)) return -1;
             //Check for Vulkan.
             bool isVulkan=(glfwVulkanSupported() == 1);
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -39,7 +46,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Renderer init.
             renderer=Renderer();
-            if(!renderer.initialize()) return -1;
+            if(!renderer.initialize()) return -2;
             renderer.loadExtencions();
             renderer.printInfo();
             renderer.initializeParams();
@@ -53,7 +60,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Update loop.
             LOG_STATE("UPDATE LOOP");
-            while (window.isOpen()) {
+            while(window.isOpen()) {
 #ifdef FS_INCLUDE_NVTX
                 nvtx3::scoped_range u{"update"};
 #endif // FS_INCLUDE_NVTX

@@ -37,7 +37,10 @@ namespace Firesteel {
 		bool initialize(const char* tTitle="Firesteel App", const WindowState& tState=WS_NORMAL) {
             //Initialize and configure.
             LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
-            if(glfwInit() == GLFW_FALSE) return false;
+            if(glfwInit() == GLFW_FALSE) {
+                LOG_CRIT("Failed to initialize GLFW");
+                return false;
+            }
 #if _DEBUG
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 #else
@@ -65,7 +68,7 @@ namespace Firesteel {
             }
             mPtr=glfwCreateWindow(mWidth, mHeight, tTitle, mon, NULL);
             if (mPtr == NULL) {
-                LOG_ERRR("Failed to create GLFW window");
+                LOG_CRIT("Failed to create GLFW window");
                 glfwTerminate();
                 return false;
             }

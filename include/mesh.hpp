@@ -57,26 +57,20 @@ namespace Firesteel {
             tShader->setVec4("material.specular", glm::vec4(specular, 1));
             tShader->setVec4("material.emission", glm::vec4(emission, 1));
             tShader->setBool("noTextures", true);
-            //Do textures.
+            //Bind textures.
             if(textures.size()>0) {
                 tShader->setBool("noTextures", false);
                 Texture::unbind();
-                for (unsigned int i=0; i < textures.size(); i++) {
+                for(unsigned int i=0; i < textures.size(); i++) {
                     //Retrieve texture number.
                     size_t number=0;
                     std::string name=textures[i].typeToString();
-                    if(name == "diffuse")
-                        number=diffuseNr++;
-                    else if(name == "specular")
-                        number=specularNr++;
-                    else if(name == "normal")
-                        number=normalNr++;
-                    else if(name == "emission")
-                        number=emisNr++;
-                    else if(name == "height")
-                        number=heightNr++;
-                    else if(name == "opacity")
-                        number=opacNr++;
+                    if(name == "diffuse") number=diffuseNr++;
+                    else if(name == "specular") number=specularNr++;
+                    else if(name == "normal") number=normalNr++;
+                    else if(name == "emission") number=emisNr++;
+                    else if(name == "height") number=heightNr++;
+                    else if(name == "opacity") number=opacNr++;
                     //Now set the sampler to the correct texture unit.
                     textures[i].enable(i);
                     tShader->setInt("material." + name + std::to_string(number), i);
@@ -85,7 +79,6 @@ namespace Firesteel {
                 }
                 tShader->setBool("material.opacityMask", opacNr > 0);
             }
-
             //Draw mesh.
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);

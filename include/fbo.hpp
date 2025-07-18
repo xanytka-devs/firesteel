@@ -36,11 +36,13 @@ namespace Firesteel {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             glEnable(GL_DEPTH_TEST);
         }
+        //Alias for `bind()`.
         void enable() const {bind();}
         static void unbind() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glDisable(GL_DEPTH_TEST);
         }
+        //Alias for `unbind()`.
         static void disable() {unbind();}
         void bindAsTexture() const {
             glActiveTexture(GL_TEXTURE0);
@@ -74,7 +76,7 @@ namespace Firesteel {
             LOG_DBG("Created Framebuffer quad #" + std::to_string(quadVAO));
 #endif // FS_PRINT_DEBUG_MSGS
         }
-        void drawQuad(const Shader* tShader) const {
+        void drawMesh(const Shader* tShader) const {
             if(!madeMesh) return;
             tShader->enable();
             glBindVertexArray(quadVAO);
@@ -90,7 +92,6 @@ namespace Firesteel {
             glDeleteVertexArrays(1, &quadVAO);
             glDeleteBuffers(1, &quadVBO);
         }
-        // Clear framebuffer's data.
         void remove() const {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed Framebuffer #" + std::to_string(FBO));

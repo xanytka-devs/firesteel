@@ -11,7 +11,6 @@ namespace Firesteel {
     public:
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}
-        // Create cubemap from given files.
         void load(const std::string& tDir,
                   const std::string& tR,
                   const std::string& tL,
@@ -21,7 +20,7 @@ namespace Firesteel {
                   const std::string& tBack) {
             load(tDir.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
-        // Create cubemap from files that are in json.
+        // Create cubemap from JSON defenitions.
         void load(const std::string& tCubemapJson) {
             if(!std::filesystem::exists(tCubemapJson)) {
                 LOG_WARN("Cubemap at: \"" + tCubemapJson + "\" doesn't exist")
@@ -32,7 +31,6 @@ namespace Firesteel {
             nlohmann::json txt=nlohmann::json::parse(ifs);
             load(txt["dir"], txt["posZ"], txt["negZ"], txt["posY"], txt["negY"], txt["posX"], txt["negX"]);
         }
-        // Create cubemap from given files.
         void load(const char* tDir,
                   const char* tRight="right.png",
                   const char* tLeft="left.png",
@@ -51,7 +49,7 @@ namespace Firesteel {
             glGenTextures(1, &mID);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
             //Load faces.
-            for (unsigned int i=0; i < 6; i++) {
+            for(unsigned int i=0; i < 6; i++) {
                 TextureData t=TextureDataFromFile(mDir + "/" + mFaces[i]);
                 //Get color mode.
                 GLenum color_mode=GL_RED;
@@ -83,15 +81,15 @@ namespace Firesteel {
 
             glActiveTexture(GL_TEXTURE0);
         }
-        // Binds this cubemap
-        void enable() const {
+        void bind() const {
             if(!mInitialized) return;
             glActiveTexture(GL_TEXTURE11);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
         }
+        //Alias for `bind()`.
+        void enable() const {bind();}
 
-        // Create mesh for cubemap.
-        void initialize(const float& tSize) {
+        void makeMesh(const float& tSize) {
             //Set up vertices.
             mSize=tSize;
             float skybox_vert[]={
@@ -161,17 +159,22 @@ namespace Firesteel {
             glBindVertexArray(0);
             glDepthFunc(GL_LESS);
         }
-        // Clear meshes.
+        // Remove only meshes.
         void clear() {
-            glDeleteTextures(1, &mID);
-            mFaces.clear();
+            glDeleteVertexArrays(1, &mVAO);
+            glDeleteBuffers(1, &mVBO);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed cubemap meshes");
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Remove meshes and textures.
         void remove() {
             if(!mInitialized) return;
+            //Remove textures.
             mInitialized=false;
-            glDeleteVertexArrays(1, &mVAO);
-            glDeleteBuffers(1, &mVBO);
+            glDeleteTextures(1, &mID);
+            mFaces.clear();
+            //Remove meshes.
             clear();
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed cubemap");

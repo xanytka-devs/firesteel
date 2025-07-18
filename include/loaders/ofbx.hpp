@@ -221,7 +221,7 @@ namespace Firesteel {
                 return model;
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Meshes: "+std::to_string(scene->getGeometryCount()));
+            LOGF_DBG("Meshes: %i\n",scene->getGeometryCount());
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
@@ -231,17 +231,17 @@ namespace Firesteel {
             std::vector<ofbx::u64> materialIds;
             for(size_t m=0;m<scene->getMeshCount();m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOG_DBG("Processing mesh "+std::to_string((int)(m+1))+"/"+std::to_string((int)scene->getGeometryCount()));
+                LOGF_DBG("Processing mesh %i/%i\n",m+1,scene->getGeometryCount());
                 model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds,vert,ind,norm,tex));
 #else
                 model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds));
 #endif // FS_PRINT_DEBUG_MSGS
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Materials: "+std::to_string(model.materials.size()));
-            LOG_DBG("Vertices: "+std::to_string((int)(vert) / 3));
-            LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
-            LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
+            LOGF_DBG("Materials: %i\n",model.materials.size());
+            LOGF_DBG("Vertices: %i\n",vert/3);
+            LOGF_DBG("Normals: %i\n",norm/3);
+            LOGF_DBG("UVs: %i\n",tex/2);
 #endif // FS_PRINT_DEBUG_MSGS
             //Cleanup.
             data.clear();

@@ -16,10 +16,8 @@ namespace Firesteel {
 		bool initialize() {
             //GLAD (OpenGL) init.
             mInitialized=(gladLoadGL(glfwGetProcAddress) != 0);
-#ifdef FS_PRINT_DEBUG_MSGS
-            if(mInitialized) { LOG_DBG("OpenGL initialized successfully"); }
-            else LOG_DBG("Failed to initialize OpenGL");
-#endif // FS_PRINT_DEBUG_MSGS
+            if(mInitialized) { LOG_INFO("OpenGL initialized successfully"); }
+            else LOG_CRIT("Failed to initialize OpenGL");
             return mInitialized;
 		}
         void initializeParams() {

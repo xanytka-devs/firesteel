@@ -21,12 +21,18 @@
 При издании физических копий игры/программы необходимо [сделать запрос к Xanytka](https://support.xanytka.ru/publisher/phys_copies).
 
 # Сторонние библиотеки
+## Изначально включены
 * [GLM](https://github.com/g-truc/glm)
 * [ImGUI](https://github.com/ocornut/imgui)
 * [Nlohmann JSON](https://github.com/nlohmann/json)
-* [STB](https://github.com/nothings/stb)
+* [STB Image Read/Write](https://github.com/nothings/stb)
+* [Portable File Dialogs](https://github.com/samhocevar/portable-file-dialogs)
 * [TinyGLTF](https://github.com/syoyo/tinygltf)
-* [TinyOBJLoader](https://github.com/tinyobjloader/tinyobjloader)
+* [TinyOBJ Loader](https://github.com/tinyobjloader/tinyobjloader)
+* [UFBX](https://github.com/ufbx/ufbx)
+## Дополнительно доступны
+Для доступа к ним измените [флаги в CMake](https://firesteel.readthedocs.io/ru/latest/flags/#cmake).
+* [NVTX](https://github.com/NVIDIA/NVTX)
 * [OpenFBX](https://github.com/nem0/OpenFBX)
 
 # Установка

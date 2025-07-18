@@ -17,17 +17,20 @@ option(GLM_ENABLE_CXX_11 "" ON)
 option(GLM_ENABLE_CXX_14 "" ON)
 option(GLM_ENABLE_CXX_17 "" ON)
 
+option(FS_ONLINE "Allow CMake to download files" ON)
 option(FS_BUILD_EXAMPLES "Enable example building" ON)
-option(FS_BUILD_EXAMPLE_WINDOW "Build window example" ON)
+option(FS_BUILD_EXAMPLE_CUSTOM_MESH "Build custom mesh example" ON)
 option(FS_BUILD_EXAMPLE_MODEL_LOADING "Build model loading example" ON)
-option(FS_BUILD_EXAMPLE_TRIANGLE "Build custom mesh example" ON)
+option(FS_BUILD_EXAMPLE_MODEL_VIEWER "Build model viewer example" ON)
+option(FS_BUILD_EXAMPLE_WINDOW "Build window example" ON)
 option(FS_INCLUDE_GLM "Include GLM library (UI)" ON)
 option(FS_INCLUDE_FT "Include FreeType library (UI)" OFF)
 option(FS_INCLUDE_IMGUI "Include ImGui library (UI)" ON)
 option(FS_INCLUDE_NVTX "Include NVTX library (DEBUG)" OFF)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
+option(FS_INCLUDE_OS "Include PortableFileDialogs library (OS)" ON)
 option(FS_LOADER_FBX "Include FBX library (MODELS)" ON)
-option(FS_LOADER_PREFER_OFBX "Include OFBX instead of UFBX (not recommended)" ON)
+option(FS_LOADER_PREFER_OFBX "Include OFBX instead of UFBX (not recommended)" OFF)
 option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
 option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
@@ -52,7 +55,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
 		#Download FreeType.dll distribution.
-		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
 			message(CHECK_START "Downloading freetype.dll")
 			file(DOWNLOAD
 				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
@@ -74,7 +77,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release/freetype.dll")
 		endif()
 		#Download FreeType.lib distribution.
-		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
 			message(CHECK_START "Downloading freetype.lib")
 			file(DOWNLOAD
 				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.lib"
@@ -97,41 +100,43 @@ if(FS_LOADER_FBX)
 	add_compile_definitions("FS_LOADER_FBX")
 	if(FS_LOADER_PREFER_OFBX)
 		add_compile_definitions("FS_LOADER_OFBX")
-		set(FBX_LIB_FILES
+		set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 			"external/model_loaders/ofbx/ofbx.h"
 			"external/model_loaders/ofbx/ofbx.cpp"
 			"external/model_loaders/ofbx/libdeflate.h"
 			"external/model_loaders/ofbx/libdeflate.c"
 		)
 	else()
-		set(FBX_LIB_FILES
-			"external/model_loaders/ofbx/ofbx.h"
-			"external/model_loaders/ofbx/ofbx.c"
+		set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+			"external/model_loaders/ufbx/ufbx.h"
+			"external/model_loaders/ufbx/ufbx.c"
 		)
 	endif()
 endif()
 if(FS_LOADER_GLTF)
 	add_compile_definitions("FS_LOADER_GLTF")
-	set(GLTF_LIB_FILES
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/model_loaders/tiny_gltf.h"
 	)
 endif()
 if(FS_LOADER_OBJ)
 	add_compile_definitions("FS_LOADER_OBJ")
-	set(OBJ_LIB_FILES
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/model_loaders/tiny_obj_loader.h"
+	)
+endif()
+if(FS_INCLUDE_OS)
+	add_compile_definitions("FS_PFD")
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/portable-file-dialogs.hpp"
 	)
 endif()
 
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
+	${ENGINE_ADDITIONAL}
 	${FT_INCLUDES}
-	${OCULUS_INCLUDES}
-	${LUA_INCLUDES}
-	${FBX_LIB_FILES}
-	${GLTF_LIB_FILES}
-	${OBJ_LIB_FILES}
 )
 
 add_library(${PRJ_NAME}
@@ -212,13 +217,20 @@ if(NOT FS_DISABLE_SUBMODULES)
 endif()
 
 if(FS_BUILD_EXAMPLES)
-	if(FS_BUILD_EXAMPLE_WINDOW)
-		add_subdirectory(examples/Window)
+	if(FS_BUILD_EXAMPLE_CUSTOM_MESH)
+		add_subdirectory(examples/CustomMesh)
+		set_target_properties(CustomMesh PROPERTIES FOLDER "Examples")
 	endif()
 	if(FS_BUILD_EXAMPLE_MODEL_LOADING)
 		add_subdirectory(examples/ModelLoading)
+		set_target_properties(ModelLoading PROPERTIES FOLDER "Examples")
 	endif()
-	if(FS_BUILD_EXAMPLE_TRIANGLE)
-		add_subdirectory(examples/CustomMesh)
+	if(FS_BUILD_EXAMPLE_MODEL_VIEWER)
+		add_subdirectory(examples/ModelViewer)
+		set_target_properties(ModelViewer PROPERTIES FOLDER "Examples")
+	endif()
+	if(FS_BUILD_EXAMPLE_WINDOW)
+		add_subdirectory(examples/Window)
+		set_target_properties(Window PROPERTIES FOLDER "Examples")
 	endif()
 endif()

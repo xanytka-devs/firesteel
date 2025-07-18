@@ -108,21 +108,21 @@
 #define LOGF_CRITICAL(format, ...)	{Log::log("[CRIT] ",CMD_F_WHITE,CMD_BG_RED);LOGF(format,__VA_ARGS__);}
 #define LOGF_CRIT(format, ...)		{LOGF_CRITICAL(format,__VA_ARGS__);}
 #ifdef FS_PRINT_DEBUG_MSGS
-//[!WARNING]
-//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
-//Please use LOG(...) or LOGF_C(format, color, ...) instead.
+// [!WARNING]
+// This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+// Please use LOG(...) or LOGF_C(format, color, ...) instead.
 #define LOG_DEBUG(...) {Log::log("[DBUG] ",CMD_F_PURPLE);TLOG(false,__VA_ARGS__);}
-//[!WARNING]
-//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
-//Please use LOG(...) or LOGF_C(format, color, ...) instead.
+// [!WARNING]
+// This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+// Please use LOG(...) or LOGF_C(format, color, ...) instead.
 #define LOG_DBG(...) {LOG_DEBUG(__VA_ARGS__);}
-//[!WARNING]
-//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
-//Please use LOGF(...) or LOGF_C(format, color, ...) instead.
+// [!WARNING]
+// This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+// Please use LOGF(...) or LOGF_C(format, color, ...) instead.
 #define LOGF_DEBUG(format, ...) {Log::log("[DBUG] ",CMD_F_PURPLE);LOGF(format,__VA_ARGS__);}
-//[!WARNING]
-//This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
-//Please use LOGF(...) or LOGF_C(format, color, ...) instead.
+// [!WARNING]
+// This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
+// Please use LOGF(...) or LOGF_C(format, color, ...) instead.
 #define LOGF_DBG(format, ...) {LOGF_DEBUG(format,__VA_ARGS__);}
 #endif // FS_PRINT_DEBUG_MSGS
 
@@ -139,7 +139,7 @@
 	static bool sSaveLogs;
 	// Logs something only to file.
 	static void logToFile(const char* tMsg, const bool tAddTimestamp);
-	// [DANGEROUS]
+	// [!DANGEROUS]
 	// Can cause deletion of 'latest.log'.
 	static void destroyFileLogger();
 

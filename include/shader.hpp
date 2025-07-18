@@ -81,10 +81,12 @@ namespace Firesteel {
             generate(tVertexCode, tFragmentCode, tHasGeomShader, tGeometryCode);
         }
 
-        void enable() const {
+        void bind() const {
             glUseProgram(ID);
             setFloat("time", static_cast<float>(glfwGetTime()));
         }
+        //Alias for `bind()`.
+        void enable() const {bind();}
         void remove() const {
             if(loaded) glDeleteProgram(ID);
         }

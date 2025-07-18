@@ -143,8 +143,8 @@ namespace Firesteel {
             auto& shapes=reader.GetShapes();
             auto& materials=reader.GetMaterials();
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Materials: "+std::to_string((int)materials.size()));
-            LOG_DBG("Meshes: "+std::to_string((int)shapes.size()));
+            LOGF_DBG("Materials: %i\n",materials.size());
+            LOGF_DBG("Meshes: %i\n",shapes.size());
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
@@ -175,16 +175,16 @@ namespace Firesteel {
                 const auto& shape=shapes[s];
                 int materialID=shape.mesh.material_ids[0];
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOG_DBG("Processing mesh "+std::to_string((int)(s+1))+"/"+std::to_string((int)shapes.size()));
+                LOGF_DBG("Processing mesh %i/%i\n",s+1,shapes.size());
                 model.meshes.push_back(processShape(&model, shape, attrib, materialID, vert, ind, norm, tex));
 #else
                 model.meshes.push_back(processShape(&model, shape, attrib, materialID));
 #endif // FS_PRINT_DEBUG_MSGS
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Vertices: "+std::to_string((int)(vert) / 3));
-            LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
-            LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
+            LOGF_DBG("Vertices: %i\n",vert/3);
+            LOGF_DBG("Normals: %i\n",norm/3);
+            LOGF_DBG("UVs: %i\n",tex/2);
 #endif // FS_PRINT_DEBUG_MSGS
             return model;
         }

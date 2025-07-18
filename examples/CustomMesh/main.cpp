@@ -5,7 +5,7 @@ using namespace Firesteel;
 Shader shader;
 Entity entity;
 
-class TriangleTest : public Firesteel::App {
+class CustomMesh : public Firesteel::App {
     virtual void onInitialize() override {
         shader=Shader("res\\CustomMesh\\shader.vs", "res\\CustomMesh\\shader.fs");
         //Setup mesh.
@@ -35,5 +35,5 @@ class TriangleTest : public Firesteel::App {
 };
 
 int main() {
-    return TriangleTest{}.start();
+    return CustomMesh{}.start();
 }

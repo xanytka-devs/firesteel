@@ -23,7 +23,7 @@
 #endif // FS_LOADER_GLTF
 #ifdef FS_LOADER_FBX
 #ifdef FS_LOADER_OFBX
-#include "loaders/fbx.hpp"
+#include "loaders/ofbx.hpp"
 #else
 #include "loaders/ufbx.hpp"
 #endif // FS_LOADER_OFBX
@@ -46,7 +46,7 @@ namespace Firesteel {
 
         // Renders the model.
         void draw(const Shader* tShader) {
-            if(!mHasMeshes) return;
+            if(model.meshes.size()==0) return;
             if(tShader==nullptr||!tShader->loaded) tShader=Shader::getDefaultShader();
             tShader->enable();
             tShader->setMat4("model", getMatrix());
@@ -67,7 +67,7 @@ namespace Firesteel {
             return modelMatrix;
         }
 
-        bool hasModel() const { return mHasMeshes; }
+        bool hasModel() const { return model.meshes.size()!=0; }
         void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
@@ -76,7 +76,6 @@ namespace Firesteel {
                 model.meshes[i].remove();
             for(size_t i=0; i < model.materials.size(); i++)
                 model.materials[i].remove();
-            mHasMeshes=false;
         }
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
@@ -85,7 +84,7 @@ namespace Firesteel {
             }
             LOG_INFO("Loading model at: \"" + tPath + "\"");
             
-            auto extBig=StrSplit(tPath, '.');
+            auto extBig=String::split(tPath, '.');
             std::string ext=extBig[extBig.size()-1];
             if(ext.empty()) {LOG_ERRR("Looks like the extension of given model is invalid");}
 #ifdef FS_LOADER_OBJ
@@ -100,7 +99,6 @@ namespace Firesteel {
             else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
 
             LOG_INFO("Loaded model at: \"" + tPath + "\"");
-            mHasMeshes=true;
         }
 
         void addMesh(const Mesh& tMesh) {
@@ -108,7 +106,6 @@ namespace Firesteel {
             LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
                 tMesh.vertices.size(), tMesh.indices.size(), tMesh.textures.size());
 #endif // FS_PRINT_DEBUG_MSGS
-            mHasMeshes=true;
             model.meshes.emplace_back(tMesh);
         }
         void addMesh(const std::vector<Vertex>& tVertices,
@@ -117,13 +114,11 @@ namespace Firesteel {
             LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
                 tVertices.size(), tIndices.size(), tTextures.size());
 #endif // FS_PRINT_DEBUG_MSGS
-            mHasMeshes=true;
             model.meshes.emplace_back(tVertices,tIndices,tTextures);
         }
 
     private:
         static glm::mat4 modelMatrix;
-        bool mHasMeshes=false;
     };
 }
 

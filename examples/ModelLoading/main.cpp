@@ -1,33 +1,19 @@
 #define FS_PRINT_DEBUG_MSGS
 #include <../include/firesteel.hpp>
-#include <../include/input/input.hpp>
 using namespace Firesteel;
 
 Shader shader;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 
-class ModelLoadingTest : public Firesteel::App {
+class ModelLoading : public Firesteel::App {
     virtual void onInitialize() override {
         shader=Shader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
-        entity.load("res\\ModelLoading\\backpack.fbx");
+        entity.load("res\\ModelLoading\\backpack.obj");
         camera.update();
     }
     virtual void onUpdate() override {
-        //Process input.
-        if(Keyboard::keyDown(KeyCode::KEY_1)) renderer.setDrawMode(Renderer::DM_FILL);
-        if(Keyboard::keyDown(KeyCode::KEY_2)) renderer.setDrawMode(Renderer::DM_WIRE);
-        if(Mouse::getButton(0)) window.setCursor(Window::Cursor::CUR_POINTING_HAND);
-        else window.setCursor(Window::Cursor::CUR_ARROW);
-        //Viewport movement.
-        float movement=-Input::getHorizontalAxis()+(Mouse::getButton(0)?Mouse::getCursorDX():0)*2;
-        entity.transform.rotation+=glm::vec3(0,10*deltaTime*movement,0);
-
-        movement=Input::getVerticalAxis()+(Mouse::getButton(0)?-Mouse::getCursorDY():0)*2;
-        entity.transform.rotation+=glm::vec3(10*deltaTime*movement,0,0);
-
-        camera.transform.position.z+=Mouse::getWheelDY()*deltaTime*10;
-        //Get variables, needed for a draw call.
+        //Get variables needed for a draw call.
         glm::mat4 proj = camera.getProjection(), view = camera.getView();
         camera.aspect = window.aspect();
         //Draw the model.
@@ -43,5 +29,5 @@ class ModelLoadingTest : public Firesteel::App {
 };
 
 int main() {
-    return ModelLoadingTest{}.start();
+    return ModelLoading{}.start();
 }

@@ -18,14 +18,18 @@ namespace Firesteel {
         std::string path;
         bool isMonochrome=false;
         
-        void enable(const size_t& tId=0) const {
+        void bind(const size_t& tId=0) const {
             glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(tId));
             glBindTexture(GL_TEXTURE_2D, ID);
         }
+        //Alias for `bind()`.
+        void enable(const size_t& tId=0) const {bind(tId);}
         static void unbind() {
             glBindTexture(GL_TEXTURE_2D, 0);
             glActiveTexture(GL_TEXTURE0);
         }
+        //Alias for `unbind()`.
+        static void disable() {unbind();}
         void remove() const {
             glDeleteTextures(1, &ID);
         }
