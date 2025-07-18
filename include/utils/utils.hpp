@@ -191,22 +191,6 @@ std::string StrToUpper(std::string tStr) {
     return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
 }
 
-/// Dialog for file (open/save).
-struct FileDialog {
-    // Deafult return value (if file isn't gotten).
-    std::string default_file = "";
-    // Path to start in.
-    const char* path = NULL;
-    // Extension filter.
-    const char* filter = "All\0*.*\0";
-    // Index of filter's item.
-    int filter_id = 0;
-    // Opens file dialog and gets file name. Otherwise returns set default.
-    std::string open() const;
-    // Opens file dialog and gets file name. Otherwise returns set default.
-    std::string save() const;
-};
-
 namespace OS {
     std::string executeInCmd(const char* cmd) {
         std::array<char, 128> buffer;
