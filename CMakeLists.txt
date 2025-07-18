@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
-project(firesteel)
+project(firesteel VERSION 0.2.0)
 set(PRJ_NAME firesteel)
 
-message(CHECK_START "Firesteel: Version 0.2.1")
+set(FiresteelVersion "0.2.0")
+message(CHECK_START "Firesteel: ${FiresteelVersion}")
 
 # Fixing library-depndend windows stuff.
 set(CMAKE_CXX_FLAGS_RELEASE "/MT /O2 /Ob2 /DNDEBUG" CACHE STRING "" FORCE)
@@ -18,6 +19,7 @@ option(GLM_ENABLE_CXX_17 "" ON)
 option(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
 option(ASSIMP_BUILD_TESTS OFF)
 
+option(FS_ONLINE "Allow CMake to download files" ON)
 option(FS_INCLUDE_ASSIMP "Include Assimp libraries (GRAPHICS)" ON)
 option(FS_INCLUDE_GLM "Include GLM library (UI)" ON)
 option(FS_INCLUDE_FT "Include FreeType library (UI)" ON)
@@ -46,7 +48,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
 		#Download FreeType.dll distribution.
-		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
 			message(CHECK_START "Downloading freetype.dll")
 			file(DOWNLOAD
 				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
@@ -68,7 +70,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release/freetype.dll")
 		endif()
 		#Download FreeType.lib distribution.
-		if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
 			message(CHECK_START "Downloading freetype.lib")
 			file(DOWNLOAD
 				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.lib"
@@ -109,6 +111,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 	${PRJ_ALL}
 )
 
+add_compile_definitions(FS_VERSION="${FiresteelVersion}")
 target_include_directories(${PRJ_NAME} PUBLIC includes)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
