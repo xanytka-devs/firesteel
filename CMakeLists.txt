@@ -147,7 +147,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 	${PRJ_ALL}
 )
 
-add_compile_definitions(FiresteelVersion="${FiresteelVersion}")
+add_compile_definitions(FS_VERSION="${FiresteelVersion}")
 target_include_directories(${PRJ_NAME} PUBLIC include)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)

@@ -30,7 +30,7 @@ namespace Firesteel {
         }
 		virtual int start(const char* tTitle="Firesteel App",
             const unsigned int tWinWidth=800, const unsigned int tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
-            LOG(std::string("Firesteel ") + FiresteelVersion);
+            LOG(std::string("Firesteel ") + FS_VERSION);
             LOG_STATE("STARTUP");
 			onPreInitialize();
 #ifdef FS_PRINT_DEBUG_MSGS
