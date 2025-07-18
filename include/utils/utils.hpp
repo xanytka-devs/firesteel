@@ -47,7 +47,7 @@ namespace Color {
         );
     }
     glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned int tA) {
-        return glm::vec4(tR / 255, tG / 255, tB / 255, tA / 255);
+        return glm::vec4(tR/255,tG/255,tB/255,tA/255);
     }
     glm::vec4 HexToRGBA(const char* tHex) {
         if(tHex[0] == '#') {
@@ -151,6 +151,20 @@ namespace Math {
         return glm::vec3(tF[0], tF[1], tF[2]);
     }
 }
+namespace Random {
+    void setSeed(unsigned int tSeed=0) {
+        if(tSeed==0) {
+            __time64_t long_time;
+	        _time64(&long_time);
+	        srand(static_cast<unsigned int>(long_time));
+        } else srand(static_cast<unsigned int>(tSeed));
+    }
+    bool get() {return rand()%1;}
+    int get(int tMax=INT_MAX) {return rand()%tMax;}
+    float get(float tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
+    int get(int tMin=INT_MIN, int tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
+    float get(float tMin, float tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
+}
 namespace DateTime {
     static const std::string formatted(const char* tFormat="%d.%m.%Y %X") {
         struct tm newtime;
@@ -233,12 +247,12 @@ namespace OS {
 #endif // !__linux__
     }
 #ifdef FS_PFD
-    // Calls system dialog to save or open files.
-    // @param `tSave` determines if dialog will require existing files to open or files to save to.
-    // @param `tAllowMultiselect` determines if OS allows user to multiselect files in file dialog (ONLY WORKS FOR NON-SAVE DIALOG).
-    // @param `tDefPath` determines dialog starting location.
-    // @param `tFilters` determines what files will be shown by files.
-    // @param `tTitle` determines title of file dialog.
+    /// Calls system dialog to save or open files.
+    /// @param `tSave` determines if dialog will require existing files to open or files to save to.
+    /// @param `tAllowMultiselect` determines if OS allows user to multiselect files in file dialog (ONLY WORKS FOR NON-SAVE DIALOG).
+    /// @param `tDefPath` determines dialog starting location.
+    /// @param `tFilters` determines what files will be shown by files.
+    /// @param `tTitle` determines title of file dialog.
     std::vector<std::string> fileDialog(const bool& tSave, const bool& tAllowMultiselect,
         std::string tDefPath="", std::vector<std::string>* tFilters=nullptr, const char* tTitle=nullptr) {
         //Get path.
@@ -259,9 +273,9 @@ namespace OS {
         auto f = pfd::open_file(tTitle, tDefPath, filters, tAllowMultiselect);
         return f.result();
     }
-    // Calls system dialog to save or open folder.
-    // * `tDefPath` determines dialog starting location.
-    // * `tTitle` determines title of folder dialog.
+    /// Calls system dialog to save or open folder.
+    /// @param `tDefPath` determines dialog starting location.
+    /// @param `tTitle` determines title of folder dialog.
     std::string folderDialog(std::string tDefPath="", const char* tTitle=nullptr) {
         //Get path.
         if(tDefPath=="") tDefPath=pfd::path::home().c_str();
@@ -294,12 +308,12 @@ namespace OS {
         ICON_ERROR,
         ICON_QUESTION
     };
-    // Calls system message box.
-    // * `tContent` determines the message.
-    // * `tChoice` determines choices that are given to user.
-    // * `tMethods` determines callbacks that will be run depending on user input.
-    // * `tIcon` determines icon in the message box.
-    // * `tTitle` determines title of message box.
+    /// Calls system message box.
+    /// @param `tContent` determines the message.
+    /// @param `tChoice` determines choices that are given to user.
+    /// @param `tMethods` determines callbacks that will be run depending on user input.
+    /// @param `tIcon` determines icon in the message box.
+    /// @param `tTitle` determines title of message box.
     void messageBox(const char* tContent,
         const MessageBoxChoice& tChoice=MBC_OK, const MessageBoxMethods& tMethods={}, const Icon& tIcon=ICON_INFO, const char* tTitle=nullptr) {
         //Do the operation.
@@ -329,10 +343,10 @@ namespace OS {
             break;
         }
     }
-    // Calls system notification box.
-    // * `tTitle` determines title of notification.
-    // * `tContent` determines the message.
-    // * `tIcon` determines icon in the notification.
+    /// Calls system notification box.
+    /// @param `tTitle` determines title of notification.
+    /// @param `tContent` determines the message.
+    /// @param `tIcon` determines icon in the notification.
     void notification(const char* tTitle, const char* tContent, const Icon& tIcon=ICON_INFO) {
         pfd::notify(tTitle, tContent, (pfd::icon)tIcon);
     }
