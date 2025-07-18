@@ -23,6 +23,7 @@ option(FS_INCLUDE_GLM "Include GLM library (UI)" ON)
 option(FS_INCLUDE_FT "Include FreeType library (UI)" ON)
 option(FS_INCLUDE_IMGUI "Include ImGui library (UI)" ON)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
+option(FS_INCLUDE_OS "Include PortableFileDialogs library (OS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_PKGS_ALLOW_OVERRIDES "Allows packages to tinker with CMakeLists.txt \
 (Be cautious, this can be dangerous for integrity of the library!)" ON)
@@ -86,9 +87,17 @@ else()
 	message("Currently build of submodules is disabled. This means library won't be properly built.")
 endif()
 
+if(FS_INCLUDE_OS)
+	add_compile_definitions("FS_PFD")
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/portable-file-dialogs.hpp"
+	)
+endif()
+
 set(PRJ_ALL
 	${ENGINE_INCLUDES}
 	${ENGINE_SOURCES}
+	${ENGINE_ADDITIONAL}
 	${FT_INCLUDES}
 )
 
