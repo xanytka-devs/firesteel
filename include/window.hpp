@@ -123,29 +123,30 @@ namespace Firesteel {
         float getOpacity() const { return glfwGetWindowOpacity(mPtr); }
 
         // Sets limits on window size.
-        void setSizeConstrains(unsigned int tMinW=GLFW_DONT_CARE, unsigned int tMinH=GLFW_DONT_CARE,
-            unsigned int tMaxW=GLFW_DONT_CARE, unsigned int tMaxH=GLFW_DONT_CARE) {
+        void setSizeConstrains(int tMinW=GLFW_DONT_CARE, int tMinH=GLFW_DONT_CARE,
+            int tMaxW=GLFW_DONT_CARE, int tMaxH=GLFW_DONT_CARE) {
             glfwSetWindowSizeLimits(mPtr, tMinW, tMinH, tMaxW, tMaxH);
         }
         // Sets limits on window size.
         void setSizeConstrains(glm::vec2 tMinSize, glm::vec2 tMaxSize) {
-            setSizeConstrains(tMinSize.x, tMinSize.y, tMaxSize.x, tMaxSize.y);
+            setSizeConstrains(static_cast<int>(tMinSize.x), static_cast<int>(tMinSize.y),
+                static_cast<int>(tMaxSize.x), static_cast<int>(tMaxSize.y));
         }
         // Sets minimal window size, but removes it's maximum.
-        void setMinimalSize(unsigned int tW, unsigned int tH) {
+        void setMinimalSize(int tW, int tH) {
             setSizeConstrains(tW, tH);
         }
         // Sets minimal window size, but removes it's maximum.
         void setMinimalSize(glm::vec2 tSize) {
-            setSizeConstrains(tSize.x, tSize.y);
+            setSizeConstrains(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
         }
         // Sets maximal window size, but removes it's minimum.
-        void setMaximalSize(unsigned int tW, unsigned int tH) {
+        void setMaximalSize(int tW, int tH) {
             setSizeConstrains(GLFW_DONT_CARE, GLFW_DONT_CARE, tW, tH);
         }
         // Sets maximal window size, but removes it's minimum.
         void setMaximalSize(glm::vec2 tSize) {
-            setSizeConstrains(GLFW_DONT_CARE, GLFW_DONT_CARE, tSize.x, tSize.y);
+            setSizeConstrains(GLFW_DONT_CARE, GLFW_DONT_CARE, static_cast<int>(tSize.x), static_cast<int>(tSize.y));
         }
 
         int getHeight() { _getSize(); return mHeight; }

@@ -12,6 +12,11 @@
 #include <windows.h>
 #include <comdef.h>
 #include <Wbemidl.h>
+#ifdef FS_WIN_NEW_VERSION_CHECK
+#include <VersionHelpers.h>
+#else
+#pragma warning(disable : 4996)
+#endif // FS_WIN_NEW_VERSION_CHECK
 #pragma comment(lib, "wbemuuid.lib")
 #else
 #include <unistd.h>
@@ -417,15 +422,84 @@ OSInfo getOSInfo() {
     OSInfo out;
 #ifdef _WIN32
     //For Windows.
+    #ifdef FS_WIN_NEW_VERSION_CHECK
+    //Stupid version check D:<
+    while(true) {
+        if(IsWindows10OrGreater()) {
+            out.version="10";
+            out.distroBuild="NT 10.0";
+            break;
+        }
+        if(IsWindows8Point1OrGreater()) {
+            out.version="8.1";
+            out.distroBuild="NT 6.3";
+            break;
+        }
+        if(IsWindows8OrGreater()) {
+            out.version="8";
+            out.distroBuild="NT 6.2";
+            break;
+        }
+        if(IsWindows7SP1OrGreater()) {
+            out.version="7 SP1";
+            out.distroBuild="NT 6.1.7601";
+            break;
+        }
+        if(IsWindows7OrGreater()) {
+            out.version="7";
+            out.distroBuild="NT 6.1";
+            break;
+        }
+        if(IsWindowsVistaSP2OrGreater()) {
+            out.version="Vista SP2";
+            out.distroBuild="NT 6.0.6002.18005";
+            break;
+        }
+        if(IsWindowsVistaSP1OrGreater()) {
+            out.version="Vista SP1";
+            out.distroBuild="NT 6.0";
+            break;
+        }
+        if(IsWindowsVistaOrGreater()) {
+            out.version="Vista";
+            out.distroBuild="NT 6.0";
+            break;
+        }
+        if(IsWindowsXPSP3OrGreater()) {
+            out.version="XP SP3";
+            out.distroBuild="NT 5.1";
+            break;
+        }
+        if(IsWindowsXPSP2OrGreater()) {
+            out.version="XP SP2";
+            out.distroBuild="NT 5.1";
+            break;
+        }
+        if(IsWindowsXPSP1OrGreater()) {
+            out.version="XP SP1";
+            out.distroBuild="NT 5.1";
+            break;
+        }
+        if(IsWindowsXPOrGreater()) {
+            out.version="XP";
+            out.distroBuild="NT 5.1";
+            break;
+        }
+        out.version="Unknown";
+        out.distroBuild="Unknown";
+        break;
+    }
+#else
+    //Cool and good working version check B)
     OSVERSIONINFOEX osvi;
     ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+    osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFOEX);
 
     if (GetVersionEx((OSVERSIONINFO*)&osvi)) {
-        out.name = "Windows";
-        out.distroBuild = std::to_string(osvi.dwMajorVersion) + "." + std::to_string(osvi.dwMinorVersion);
-        out.version = std::to_string(osvi.dwBuildNumber);
+        out.distroBuild=std::to_string(osvi.dwMajorVersion) + "." + std::to_string(osvi.dwMinorVersion);
+        out.version=std::to_string(osvi.dwBuildNumber);
     }
+#endif // FS_WIN_NEW_VERSION_CHECK
 
     SYSTEM_INFO si;
     GetNativeSystemInfo(&si);
@@ -445,7 +519,7 @@ OSInfo getOSInfo() {
         out.architecture = std::string(unameData.machine);
     }
 
-    // Попробуем получить дистрибутив
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     std::ifstream os_release("/etc/os-release");
     if (os_release.is_open()) {
         std::string line;

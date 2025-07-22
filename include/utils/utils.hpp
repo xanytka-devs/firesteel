@@ -236,11 +236,11 @@ namespace OS {
 #ifdef FS_PFD
     /// Calls system dialog to save or open files.
     /// @param `tSave` determines if dialog will require existing files to open or files to save to.
-    /// @param `tAllowMultiselect` determines if OS allows user to multiselect files in file dialog (ONLY WORKS FOR NON-SAVE DIALOG).
+    /// @param `tAllowForceful` determines if OS allows user to multiselect files in open file dialog or if it forces OS to overwrite files in save file dialog.
     /// @param `tDefPath` determines dialog starting location.
     /// @param `tFilters` determines what files will be shown by files.
     /// @param `tTitle` determines title of file dialog.
-    std::vector<std::string> fileDialog(const bool& tSave, const bool& tAllowMultiselect,
+    std::vector<std::string> fileDialog(const bool& tSave, const bool& tAllowForceful,
         std::string tDefPath="", std::vector<std::string>* tFilters=nullptr, const char* tTitle=nullptr) {
         //Get path.
         if(tDefPath=="") tDefPath=pfd::path::home().c_str();
@@ -254,10 +254,10 @@ namespace OS {
         }
         //Do the operation.
         if(tSave) {
-            auto f = pfd::save_file(tTitle, tDefPath, filters, tAllowMultiselect);
+            auto f = pfd::save_file(tTitle, tDefPath, filters, tAllowForceful?pfd::opt::force_overwrite:pfd::opt::none);
             return {f.result()};
         }
-        auto f = pfd::open_file(tTitle, tDefPath, filters, tAllowMultiselect);
+        auto f = pfd::open_file(tTitle, tDefPath, filters, tAllowForceful?pfd::opt::multiselect:pfd::opt::none);
         return f.result();
     }
     /// Calls system dialog to save or open folder.
