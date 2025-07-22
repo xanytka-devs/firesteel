@@ -424,7 +424,7 @@ OSInfo getOSInfo() {
     //For Windows.
     out.name="Windows";
 #ifdef FS_WIN_NEW_VERSION_CHECK
-    //Stupid version check. D:
+    //Stupid version check. D:<
     while(true) {
         if(IsWindows10OrGreater()) {
             out.version="10";
@@ -491,7 +491,7 @@ OSInfo getOSInfo() {
         break;
     }
 #else
-    //Cool and good working version check. B)
+    //Cool and good working version check B)
     OSVERSIONINFOEX osvi;
     ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
     osvi.dwOSVersionInfoSize=sizeof(OSVERSIONINFOEX);

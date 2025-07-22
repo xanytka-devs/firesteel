@@ -85,7 +85,7 @@ void Log::destroyFileLogger() {
 
 #ifdef WIN32
 #include <windows.h>
-void Log::log(const std::string& tMsg, const int tModF, const int tModB, const bool tAddTimestamp) {
+void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
 	logToFile(tMsg.c_str(), tAddTimestamp);
 #ifndef NDEBUG
 	ShowWindow(GetConsoleWindow(), SW_RESTORE);
@@ -93,6 +93,7 @@ void Log::log(const std::string& tMsg, const int tModF, const int tModB, const b
 	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, tModF+tModB);
 	std::cout << tMsg;
+	if(tEndLine) std::cout << std::endl;
 #else
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 #endif // !NDEBUG
@@ -104,13 +105,13 @@ void Log::clear() {
 #ifdef __linux__
 #include <cstdlib>
 
-void Log::log(const std::string& tMsg, const int tModF, const int tModB, const bool tAddTimestamp) {
+void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
 	logToFile(tMsg.c_str(), tAddTimestamp);
 #ifndef NDEBUG
 	std::cout << "\033]0;" << "Firesteel Debug Output" << "\007";
 	std::string colorFormat=formatStr("\033[%i;%im",tModF,tModB);
-	printf(colorFormat.c_str());
-	printf(tMsg.c_str());
+	std::cout << colorFormat << tMsg;
+	if(tEndLine) std::cout << std::endl;
 #else
 	system("ls -l > /dev/null 2>&1");
 #endif // !NDEBUG

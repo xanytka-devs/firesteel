@@ -96,8 +96,8 @@
 #define LOG_CRIT(...)		{LOG_CRITICAL(__VA_ARGS__);}
 /* FORMATTED FUNCTIONS */
 
-#define LOGF(format, ...)			{Log::log(Log::formatStr(format,__VA_ARGS__),CMD_F_WHITE,CMD_BG_BLACK,false);}
-#define LOGF_C(format, fnt, bg, ...){Log::log(Log::formatStr(format,__VA_ARGS__),fnt,bg,false);}
+#define LOGF(format, ...)			{Log::log(Log::formatStr(format,__VA_ARGS__),true,CMD_F_WHITE,CMD_BG_BLACK,false);}
+#define LOGF_C(format, fnt, bg, endl, ...){Log::log(Log::formatStr(format,__VA_ARGS__),endl,fnt,bg,false);}
 #define LOGF_INFO(format, ...)		{Log::log("[INFO] ",CMD_F_GRAY);LOGF(format,__VA_ARGS__);}
 #define LOGF_STATE(format, ...)		{Log::log("[STAT] ",CMD_F_LBLUE);LOGF(format,__VA_ARGS__);}
 #define LOGF_STAT(format, ...)		{LOGF_STATE(format,__VA_ARGS__);}
@@ -111,7 +111,7 @@
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOG(...) or LOGF_C(format, color, ...) instead.
-#define LOG_DEBUG(...) {Log::log("[DBUG] ",CMD_F_PURPLE);TLOG(false,__VA_ARGS__);}
+#define LOG_DEBUG(...) {Log::log("[DBUG] ",CMD_F_LGREEN);TLOG(false,__VA_ARGS__);}
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOG(...) or LOGF_C(format, color, ...) instead.
@@ -119,7 +119,7 @@
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOGF(...) or LOGF_C(format, color, ...) instead.
-#define LOGF_DEBUG(format, ...) {Log::log("[DBUG] ",CMD_F_PURPLE);LOGF(format,__VA_ARGS__);}
+#define LOGF_DEBUG(format, ...) {Log::log("[DBUG] ",CMD_F_LGREEN);LOGF(format,__VA_ARGS__);}
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOGF(...) or LOGF_C(format, color, ...) instead.
@@ -128,10 +128,10 @@
 
 	class Log {
 	public:
-	static void simple(const bool& tPlaceTime, const std::string& tMsg, const char* tEndLine="\n", const int tModF=CMD_F_WHITE, const int tModB=CMD_BG_BLACK) {
-		log(tMsg + tEndLine, tModF, tModB, tPlaceTime);
+	static void simple(const bool& tPlaceTime, const std::string& tMsg, const bool& tEndLine=true, const int tModF=CMD_F_WHITE, const int tModB=CMD_BG_BLACK) {
+		log(tMsg, tEndLine, tModF, tModB, tPlaceTime);
 	}
-	static void log(const std::string& tMsg, const int tModF=CMD_F_WHITE, const int tModB=CMD_BG_BLACK, const bool tAddTimestamp=true);
+	static void log(const std::string& tMsg, const bool& tEndLine=true, const int tModF=CMD_F_WHITE, const int tModB=CMD_BG_BLACK, const bool tAddTimestamp=true);
 
 	// Clears console log window. Does not affect the log file.
 	static void clear();
