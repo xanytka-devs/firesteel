@@ -113,6 +113,10 @@ std::string StrReplace(std::string tOrig, char tChar, char tNewChar) {
     return out;
 }
 
+std::string StrStrip(std::string tOrig, char tChar) {
+    return StrReplace(tOrig,tChar,'\0');
+}
+
 std::string StrFromFile(std::string tPath) {
     std::filesystem::path path(tPath);
     if(!std::filesystem::exists(path)) {
