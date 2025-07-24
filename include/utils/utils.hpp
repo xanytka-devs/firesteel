@@ -21,7 +21,7 @@
 #include "UtfConv.hpp"
 
 namespace Color {
-    glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
+    glm::vec3 UIntToRGB(const unsigned int& tR, const unsigned int& tG, const unsigned int& tB) {
         return glm::vec3(tR/255,tG/255,tB/255);
     }
     glm::vec3 HexToRGB(const char* tHex) {
@@ -39,14 +39,14 @@ namespace Color {
             );
         }
     }
-    glm::vec3 CMYKToRGB(unsigned int tC, unsigned int tM, unsigned int tY, unsigned int tK) {
+    glm::vec3 CMYKToRGB(const unsigned int& tC, const unsigned int& tM, const unsigned int& tY, const unsigned int& tK) {
         return glm::vec3(
             (unsigned char)(255 * (1 - tC) * (1 - tK)),
             (unsigned char)(255 * (1 - tM) * (1 - tK)),
             (unsigned char)(255 * (1 - tY) * (1 - tK))
         );
     }
-    glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned int tA) {
+    glm::vec4 UIntToRGBA(const unsigned int tR, const unsigned int& tG, const unsigned int& tB, const unsigned int& tA) {
         return glm::vec4(tR/255,tG/255,tB/255,tA/255);
     }
     glm::vec4 HexToRGBA(const char* tHex) {
@@ -68,17 +68,17 @@ namespace Color {
     }
 }
 namespace String {
-    std::vector<std::string> split(const std::string& tS, char tDelim) {
+    std::vector<std::string> split(const std::string& tS, const char& tDelim) {
         std::stringstream ss(tS);
         std::string item;
         std::vector<std::string> out;
         while(std::getline(ss, item, tDelim)) out.push_back(item);
         return out;
     }
-    std::string replace(std::string tOrig, char tChar, char tNewChar) {
+    std::string replace(const std::string& tOrig, const char& tChar, const char& tNewChar) {
         std::vector<std::string> parts=split(tOrig, tChar);
         if(parts.size()==1) {
-            LOGF_WARN("Couldn't replace '%c' in '%s'\n",tChar,tOrig.c_str());
+            LOGF_WARN("String::replace(): Couldn't replace '%c' in '%s'\n",tChar,tOrig.c_str());
             return tOrig;
         }
         std::string out=parts[0];
@@ -86,9 +86,12 @@ namespace String {
             out+=tNewChar+(i==parts.size())?"":parts[i];
         return out;
     }
-    std::string fromFile(std::string tPath) {
+    std::string strip(const std::string& tOrig, const char& tChar) {
+        return replace(tOrig,tChar,'\0');
+    }
+    std::string fromFile(const std::string& tPath) {
         if(!std::filesystem::exists(tPath)) {
-            LOG_WARN("File at \"" + tPath + "\" doesn't exist.");
+            LOG_WARN("String::fromFile(): File at \"" + tPath + "\" doesn't exist.");
             return "File at \"" + tPath + "\" doesn't exist.";
         }
         //Open the stream to the file.
@@ -99,7 +102,7 @@ namespace String {
         f.read(result.data(), sz);
         return result;
     }
-    void toFile(std::string tPath, std::string tIn) {
+    void toFile(const std::string& tPath, const std::string& tIn) {
         std::ofstream file;
         file.open(tPath);
         file << tIn << std::endl;
@@ -107,20 +110,20 @@ namespace String {
     }
     bool endsWith(const char* tStr, const char* tSuffix) {
         if(!tStr||!tSuffix) {
-            LOG_WARN("StrEndsWith() was given empty arguments");
+            LOG_WARN("String::endsWith() was given empty arguments");
             return false;
         }
         size_t lenstr=strlen(tStr);
         size_t lensuffix=strlen(tSuffix);
         if(lensuffix>lenstr) {
-            LOG_WARN("StrEndsWith() was given suffix, bigger than the given string to check");
+            LOG_WARN("String::endsWith() was given suffix, bigger than the given string to check");
             return false;
         }
         return strncmp(tStr+lenstr-lensuffix,tSuffix,lensuffix)==0;
     }
     // [!WARNING]
     // Doesn't support UTF8. Use `toLower()` instead.
-    std::string toLowerASCII(std::string tStr) {
+    std::string toLowerASCII(std::string& tStr) {
     std::transform(tStr.begin(), tStr.end(), tStr.begin(),
         [](unsigned char c) {
             return std::tolower(c);
@@ -129,30 +132,53 @@ namespace String {
     }
     // [!WARNING]
     // Doesn't support UTF8. Use `toUpper()` instead.
-    std::string toUpperASCII(std::string tStr) {
+    std::string toUpperASCII(std::string& tStr) {
     std::transform(tStr.begin(), tStr.end(), tStr.begin(),
         [](unsigned char c) {
             return std::toupper(c);
         });
         return tStr;
     }
-    std::string toLower(std::string tStr) {
+    std::string toLower(const std::string& tStr) {
         return reinterpret_cast<const char*>(Utf8StrMakeLwrUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
     }
-    std::string toUpper(std::string tStr) {
+    std::string toUpper(const std::string& tStr) {
         return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
     }
 }
 namespace Math {
-    float lerp(float a, float b, float f) {
-        return a * (1.f - f) + (b * f);
+    //Lineary interpolate between `tA` and `tB` by fraction of `tF`.
+    float lerp(const float& tA, const float& tB, const float& tF) {
+        return tA * (1.f - tF) + (tB * tF);
     }
-    glm::vec3 f3ToVec3(float* tF) {
+    glm::vec2 lerp(const glm::vec2& tA, const glm::vec2& tB, const float& tF) {
+        return glm::vec2(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF));
+    }
+    glm::vec3 lerp(const glm::vec3& tA, const glm::vec3& tB, const float& tF) {
+        return glm::vec3(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF),lerp(tA.z, tB.z, tF));
+    }
+    glm::vec4 lerp(const glm::vec4& tA, const glm::vec4& tB, const float& tF) {
+        return glm::vec4(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF),lerp(tA.z, tB.z, tF),lerp(tA.w, tB.w, tF));
+    }
+
+    //Cast float array to vector.
+    glm::vec2 fVec2(const float* tF) {
+        return glm::vec2(tF[0], tF[1]);
+    }
+    glm::vec3 fVec3(const float* tF) {
         return glm::vec3(tF[0], tF[1], tF[2]);
+    }
+    glm::vec4 fVec4(const float* tF) {
+        return glm::vec4(tF[0], tF[1], tF[2], tF[3]);
+    }
+
+    //Calculate position on theoretical circle from given radius and angle.
+    glm::vec2 posOnCircle(const float& tRad, const float& tAngle) {
+        return glm::vec2(tRad*cos(tAngle*(3.14f/180.f)),tRad*sin(tAngle*(3.14f/180.f)));
     }
 }
 namespace Random {
-    void setSeed(unsigned int tSeed=0) {
+    void setSeed(const unsigned int& tSeed=0) {
         if(tSeed==0) {
             __time64_t long_time;
 	        _time64(&long_time);
@@ -160,10 +186,10 @@ namespace Random {
         } else srand(static_cast<unsigned int>(tSeed));
     }
     bool get() {return rand()%1;}
-    int get(int tMax=INT_MAX) {return rand()%tMax;}
-    float get(float tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
-    int get(int tMin=INT_MIN, int tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
-    float get(float tMin, float tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
+    int get(const int& tMax=INT_MAX) {return rand()%tMax;}
+    float get(const float& tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
+    int get(const int& tMin=INT_MIN, const int& tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
+    float get(const float& tMin, const float& tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
 }
 namespace DateTime {
     static const std::string formatted(const char* tFormat="%d.%m.%Y %X") {
