@@ -131,7 +131,7 @@ namespace Firesteel {
             //Ignore non-significant error/warning codes.
             if (tID == 131169 || tID == 131185 || tID == 131218 || tID == 131204) return;
 
-            LOGF_C("OpenGL Error(%d): ", CMD_F_RED, CMD_BG_BLACK, std::to_string(tID));
+            LOGF_C("OpenGL Error(%d): ", true, CMD_F_RED, CMD_BG_BLACK, std::to_string(tID));
             LOG(tMsg);
 
             switch (tSource) {

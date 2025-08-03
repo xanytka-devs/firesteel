@@ -85,33 +85,33 @@
 
 #define TLOG(time, ...)		{Log::simple(time,__VA_ARGS__);}
 #define LOG(...)			{TLOG(true,__VA_ARGS__);}
-#define LOG_INFO(...)		{Log::log("[INFO] ",CMD_F_GRAY);TLOG(false,__VA_ARGS__);}
-#define LOG_STATE(...)		{Log::log("[STAT] ",CMD_F_LBLUE);TLOG(false,__VA_ARGS__);}
+#define LOG_INFO(...)		{Log::log("[INFO] ",false,CMD_F_GRAY);TLOG(false,__VA_ARGS__);}
+#define LOG_STATE(...)		{Log::log("[STAT] ",false,CMD_F_LBLUE);TLOG(false,__VA_ARGS__);}
 #define LOG_STAT(...)		{LOG_STATE(__VA_ARGS__);}
-#define LOG_WARNING(...)	{Log::log("[WARN] ",CMD_F_YELLOW);TLOG(false,__VA_ARGS__);}
+#define LOG_WARNING(...)	{Log::log("[WARN] ",false,CMD_F_YELLOW);TLOG(false,__VA_ARGS__);}
 #define LOG_WARN(...)		{LOG_WARNING(__VA_ARGS__);}
-#define LOG_ERROR(...)		{Log::log("[ERRR] ",CMD_F_RED);TLOG(false,__VA_ARGS__);}
+#define LOG_ERROR(...)		{Log::log("[ERRR] ",false,CMD_F_RED);TLOG(false,__VA_ARGS__);}
 #define LOG_ERRR(...)		{LOG_ERROR(__VA_ARGS__);}
-#define LOG_CRITICAL(...)	{Log::log("[CRIT] ",CMD_BG_RED+CMD_F_WHITE);TLOG(false,__VA_ARGS__);}
+#define LOG_CRITICAL(...)	{Log::log("[CRIT] ",false,CMD_BG_RED+CMD_F_WHITE);TLOG(false,__VA_ARGS__);}
 #define LOG_CRIT(...)		{LOG_CRITICAL(__VA_ARGS__);}
 /* FORMATTED FUNCTIONS */
 
 #define LOGF(format, ...)			{Log::log(Log::formatStr(format,__VA_ARGS__),true,CMD_F_WHITE,CMD_BG_BLACK,false);}
 #define LOGF_C(format, fnt, bg, endl, ...){Log::log(Log::formatStr(format,__VA_ARGS__),endl,fnt,bg,false);}
-#define LOGF_INFO(format, ...)		{Log::log("[INFO] ",CMD_F_GRAY);LOGF(format,__VA_ARGS__);}
-#define LOGF_STATE(format, ...)		{Log::log("[STAT] ",CMD_F_LBLUE);LOGF(format,__VA_ARGS__);}
+#define LOGF_INFO(format, ...)		{Log::log("[INFO] ",false,CMD_F_GRAY);LOGF(format,__VA_ARGS__);}
+#define LOGF_STATE(format, ...)		{Log::log("[STAT] ",false,CMD_F_LBLUE);LOGF(format,__VA_ARGS__);}
 #define LOGF_STAT(format, ...)		{LOGF_STATE(format,__VA_ARGS__);}
-#define LOGF_WARNING(format, ...)	{Log::log("[WARN] ",CMD_F_YELLOW);LOGF(format,__VA_ARGS__);}
+#define LOGF_WARNING(format, ...)	{Log::log("[WARN] ",false,CMD_F_YELLOW);LOGF(format,__VA_ARGS__);}
 #define LOGF_WARN(format, ...)		{LOGF_WARNING(format,__VA_ARGS__);}
-#define LOGF_ERROR(format, ...)		{Log::log("[ERRR] ",CMD_F_RED);LOGF(format,__VA_ARGS__);}
+#define LOGF_ERROR(format, ...)		{Log::log("[ERRR] ",false,CMD_F_RED);LOGF(format,__VA_ARGS__);}
 #define LOGF_ERRR(format, ...)		{LOGF_ERROR(format,__VA_ARGS__);}
-#define LOGF_CRITICAL(format, ...)	{Log::log("[CRIT] ",CMD_F_WHITE,CMD_BG_RED);LOGF(format,__VA_ARGS__);}
+#define LOGF_CRITICAL(format, ...)	{Log::log("[CRIT] ",false,CMD_F_WHITE,CMD_BG_RED);LOGF(format,__VA_ARGS__);}
 #define LOGF_CRIT(format, ...)		{LOGF_CRITICAL(format,__VA_ARGS__);}
 #ifdef FS_PRINT_DEBUG_MSGS
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOG(...) or LOGF_C(format, color, ...) instead.
-#define LOG_DEBUG(...) {Log::log("[DBUG] ",CMD_F_LGREEN);TLOG(false,__VA_ARGS__);}
+#define LOG_DEBUG(...) {Log::log("[DBUG] ",false,CMD_F_LGREEN);TLOG(false,__VA_ARGS__);}
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOG(...) or LOGF_C(format, color, ...) instead.
@@ -119,7 +119,7 @@
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOGF(...) or LOGF_C(format, color, ...) instead.
-#define LOGF_DEBUG(format, ...) {Log::log("[DBUG] ",CMD_F_LGREEN);LOGF(format,__VA_ARGS__);}
+#define LOGF_DEBUG(format, ...) {Log::log("[DBUG] ",false,CMD_F_LGREEN);LOGF(format,__VA_ARGS__);}
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.
 // Please use LOGF(...) or LOGF_C(format, color, ...) instead.
@@ -138,7 +138,7 @@
 	// Allows/disallows file logging all together. Depends on global cfg file.
 	static bool sSaveLogs;
 	// Logs something only to file.
-	static void logToFile(const char* tMsg, const bool tAddTimestamp);
+	static void logToFile(const char* tMsg, const bool tAddTimestamp, const bool& tEndLine);
 	// [!DANGEROUS]
 	// Can cause deletion of 'latest.log'.
 	static void destroyFileLogger();

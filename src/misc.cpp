@@ -48,7 +48,7 @@ static const std::string currentDateTime(const char* tFormat) {
 }
 
 bool Log::sSaveLogs=true;
-void Log::logToFile(const char* tMsg, const bool tAddTimestamp) {
+void Log::logToFile(const char* tMsg, const bool tAddTimestamp, const bool& tEndLine) {
 	if (!gInited) {
 		if(!std::filesystem::exists("logs/"))
 			std::filesystem::create_directory("logs");
@@ -60,6 +60,7 @@ void Log::logToFile(const char* tMsg, const bool tAddTimestamp) {
 	std::ostringstream logEntry;
 	if(tAddTimestamp) logEntry << currentDateTime("%X") + " ";
 	logEntry << tMsg;
+	if(tEndLine) logEntry << std::endl;
 	gLogStream << logEntry.str();
 	gLogStream.flush();
 }
@@ -86,7 +87,7 @@ void Log::destroyFileLogger() {
 #ifdef WIN32
 #include <windows.h>
 void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
-	logToFile(tMsg.c_str(), tAddTimestamp);
+	logToFile(tMsg.c_str(), tAddTimestamp, tEndLine);
 #ifndef NDEBUG
 	ShowWindow(GetConsoleWindow(), SW_RESTORE);
 	SetConsoleTitleA("Firesteel Debug Output");
@@ -106,7 +107,7 @@ void Log::clear() {
 #include <cstdlib>
 
 void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
-	logToFile(tMsg.c_str(), tAddTimestamp);
+	logToFile(tMsg.c_str(), tAddTimestamp, tEndLine);
 #ifndef NDEBUG
 	std::cout << "\033]0;" << "Firesteel Debug Output" << "\007";
 	std::string colorFormat=formatStr("\033[%i;%im",tModF,tModB);

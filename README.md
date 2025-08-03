@@ -37,44 +37,16 @@
 
 # Установка
 
-## Упрощённая
+## Обычная (рекомендуется)
+* Установите [Git](https://git-scm.com/) и [CMake](https://cmake.org/)
 * Запустите команду
-``` bash
-git clone --recursive https://github.com/xanytka-devs/fs-example.git
-```
-* Установите [CMake](https://cmake.org/)
-* Запустите `auto_cmake.cmd`
-
-## Обычная
-* Запустите команду 
-``` bash
+```bash
 git submodule add --recursive https://github.com/xanytka-devs/firesteel.git engine
 ```
-* Установите [CMake](https://cmake.org/)
-* Создайте файл `main.cpp`, в котором вы будете писать код приложения
-* Создайте файл `CMakeLists.txt` с содержимым:
-```cmake
-cmake_minimum_required(VERSION 3.12)
-project(example)
-add_subdirectory(engine)
+* Запустите `auto_cmake.cmd` внутри новой папки
 
-add_executable(example
-	"main.cpp"
-)
-target_link_libraries(example
-	firesteel
-	glad
-	imgui
-	glm
-)
-target_compile_features(example PUBLIC cxx_std_17)
-target_include_directories(example PUBLIC includes)
-target_include_directories(example PUBLIC engine/external/glfw)
-set_target_properties(example PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
-```
-* Постройте проект через CMake
-	* Создайте папку `build`
-	* Откройте командую строку в этой новой папке и введите в неё `cmake ..`
+## Упрощённая
+Инструкции по сборке можно найти [тут](https://github.com/xanytka-devs/fs-example).
 
 > [!NOTE]
 > Установка и работа на Linux и MacOS ещё не реализованы, однако некоторые компоненты уже могут работать с Linux.

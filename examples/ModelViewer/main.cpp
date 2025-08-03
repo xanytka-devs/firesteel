@@ -31,20 +31,15 @@ class ModelViewer : public Firesteel::App {
         else window.setCursor(Window::Cursor::CUR_ARROW);
         //Viewport movement.
         float movement=0;
-        if(!Keyboard::getKey(KeyCode::LEFT_SHIFT)&&!Keyboard::getKey(KeyCode::RIGHT_SHIFT)) {
-            //Horizontal.
-            movement=-Input::getHorizontalAxis()+(Mouse::getButton(2)?Mouse::getCursorDX():0)*2;
-            entity.transform.rotation+=glm::vec3(0,15*deltaTime*movement,0);
-            //Vertical.
-            movement=Input::getVerticalAxis()+(Mouse::getButton(2)?-Mouse::getCursorDY():0)*2;
-            entity.transform.rotation+=glm::vec3(15*deltaTime*movement,0,0);
-            //Rotate model.
-            entity.transform.size+=glm::vec3(Mouse::getWheelDY()*deltaTime*10);
-            if(entity.transform.size.x<0) entity.transform.size*=-1;
-        } else {
-            //Move camera.
-            camera.transform.position+=glm::vec3(Mouse::getCursorDX(),Mouse::getCursorDY(),0);
-        }
+        //Horizontal.
+        movement=-Input::getHorizontalAxis()+(Mouse::getButton(2)?Mouse::getCursorDX():0)*2;
+        entity.transform.rotation+=glm::vec3(0,15*deltaTime*movement,0);
+        //Vertical.
+        movement=Input::getVerticalAxis()+(Mouse::getButton(2)?-Mouse::getCursorDY():0)*2;
+        entity.transform.rotation+=glm::vec3(15*deltaTime*movement,0,0);
+        //Zoom.
+        entity.transform.size+=glm::vec3(Mouse::getWheelDY()*deltaTime*10);
+        if(entity.transform.size.x<0) entity.transform.size*=-1;
         //Get variables needed for a draw call.
         glm::mat4 proj = camera.getProjection(), view = camera.getView();
         camera.aspect = window.aspect();
