@@ -4,7 +4,10 @@
 #include "embedded.hpp"
 #include "common.hpp"
 #include "window.hpp"
-#include "renderer.hpp"
+#include "enviroment.hpp"
+#ifdef FS_RENDERER_OGL
+#include "opengl/renderer.hpp"
+#endif // FS_RENDERER_OGL
 #include "internal/devview.hpp"
 
 namespace Firesteel {
@@ -30,6 +33,7 @@ namespace Firesteel {
         }
 		virtual int start(const char* tTitle="Firesteel App",
             const unsigned int tWinWidth=800, const unsigned int tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
+            Enviroment::sInstance=&enviroment;
             LOG(std::string("Firesteel ") + FS_VERSION);
             LOG_STATE("STARTUP");
 			onPreInitialize();
@@ -39,18 +43,8 @@ namespace Firesteel {
             //Create a window.
             window=Window(tWinWidth, tWinHeight);
             if(!window.initialize(tTitle, tWinState)) return -1;
-            //Check for Vulkan.
-            bool isVulkan=(glfwVulkanSupported() == 1);
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
-#endif // FS_PRINT_DEBUG_MSGS
-            //Renderer init.
-            renderer=Renderer();
-            if(!renderer.initialize()) return -2;
-            renderer.loadExtencions();
-            renderer.printInfo();
-            renderer.initializeParams();
-            renderer.imguiInitialize(window.ptr());
+            //Select renderer.
+            if(!onRendererSelect()) return -2;
             Shader::setDefaultShader(Embedded::defaultShaderVert,Embedded::defaultShaderFrag);
             //Final steps.
             CONFIG::checkGlobalFile();
@@ -76,23 +70,23 @@ namespace Firesteel {
                     mLastFrameFPS=currentFrame;
                 }
                 if(window.isMinimized()) continue;
-                if(updateViewport) renderer.setViewportSize(window.getSize());
+                if(updateViewport) enviroment.renderer->setViewportSize(window.getSize());
                 window.clearBuffers();
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
 #ifdef FS_INCLUDE_NVTX
                 nvtx3::scoped_range r{"app update & imgui"};
 #endif // FS_INCLUDE_NVTX
-                renderer.imguiNewFrame();
+                enviroment.renderer->imguiNewFrame();
                 onUpdate();
                 DEVVIEW::draw(deltaTime, fps);
-                renderer.imguiRender(window.ptr());
+                enviroment.renderer->imguiRender(window.ptr());
                 window.swapBuffers();
             }
             //Shutdown.
             LOG_STATE("SHUTDOWN");
             onShutdown();
-            renderer.imguiShutdown();
+            enviroment.renderer->imguiShutdown();
             //Quitting.
             window.close();
             glfwTerminate();
@@ -105,6 +99,26 @@ namespace Firesteel {
         // Runs before any initialization.
 		virtual void onPreInitialize() { }
         // [!OVERRIDABLE]
+        // Runs after preinitialize. Used to select renderer.
+		virtual bool onRendererSelect() {
+            //Check for Vulkan.
+            bool isVulkan=(glfwVulkanSupported() == 1);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
+#endif // FS_PRINT_DEBUG_MSGS
+            //Renderer init.
+            enviroment.renderer=std::make_unique<Renderer>();
+#ifdef FS_RENDERER_OGL
+            enviroment.renderer=std::make_unique<OGLRenderer>();
+#endif // FS_RENDERER_OGL
+            if(!enviroment.renderer->initialize()) return false;
+            enviroment.renderer->loadExtencions();
+            enviroment.renderer->printInfo();
+            enviroment.renderer->initializeParams();
+            enviroment.renderer->imguiInitialize(window.ptr());
+            return true;
+        }
+        // [!OVERRIDABLE]
         // Runs after window and renderer initialization.
 		virtual void onInitialize() { }
         // [!OVERRIDABLE]
@@ -114,7 +128,7 @@ namespace Firesteel {
         // Runs after the window is closed or on window.close()/app.shutdown().
 		virtual void onShutdown() { }
 
-        Renderer renderer;
+        Enviroment enviroment;
 		Window window;
         bool updateViewport=true;
 		unsigned int fps=0;

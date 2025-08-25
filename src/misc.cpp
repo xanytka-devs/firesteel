@@ -88,7 +88,7 @@ void Log::destroyFileLogger() {
 #include <windows.h>
 void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
 	logToFile(tMsg.c_str(), tAddTimestamp, tEndLine);
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(FS_HEADLESS)
 	ShowWindow(GetConsoleWindow(), SW_RESTORE);
 	SetConsoleTitleA("Firesteel Debug Output");
 	HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
@@ -108,7 +108,7 @@ void Log::clear() {
 
 void Log::log(const std::string& tMsg, const bool& tEndLine, const int tModF, const int tModB, const bool tAddTimestamp) {
 	logToFile(tMsg.c_str(), tAddTimestamp, tEndLine);
-#ifndef NDEBUG
+#ifndef NDEBUG or FS_HEADLESS
 	std::cout << "\033]0;" << "Firesteel Debug Output" << "\007";
 	std::string colorFormat=formatStr("\033[%i;%im",tModF,tModB);
 	std::cout << colorFormat << tMsg;

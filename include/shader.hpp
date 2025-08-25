@@ -82,13 +82,17 @@ namespace Firesteel {
         }
 
         void bind() const {
+            if(!loaded) return;
             glUseProgram(ID);
             setFloat("time", static_cast<float>(glfwGetTime()));
         }
         //Alias for `bind()`.
         void enable() const {bind();}
-        void remove() const {
-            if(loaded) glDeleteProgram(ID);
+        void remove() {
+            if(loaded) {
+                glDeleteProgram(ID);
+                loaded=false;
+            }
         }
 
         static void setDefaultShader(const char* tVertexCode, const char* tFragmentCode) {
@@ -101,38 +105,21 @@ namespace Firesteel {
 
         // Utilities //
 
-        void setBool(const std::string& tName, const bool tValue) const {
-            glUniform1i(glGetUniformLocation(ID, tName.c_str()), (int)tValue);
-        }
-
         void setInt(const std::string& tName, const int tValue) const {
             glUniform1i(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
         void setFloat(const std::string& tName, const float tValue) const {
             glUniform1f(glGetUniformLocation(ID, tName.c_str()), tValue);
         }
-
-        void setVec2(const std::string& tName, const glm::vec2& tValue) const {
-            glUniform2fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
-        }
         void setVec2(const std::string& tName, const float tX, const float tY) const {
             glUniform2f(glGetUniformLocation(ID, tName.c_str()), tX, tY);
-        }
-
-        void setVec3(const std::string& tName, const glm::vec3& tValue) const {
-            glUniform3fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
         }
         void setVec3(const std::string& tName, const float tX, const float tY, const float tZ) const {
             glUniform3f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ);
         }
-
-        void setVec4(const std::string& tName, const glm::vec4& tValue) const {
-            glUniform4fv(glGetUniformLocation(ID, tName.c_str()), 1, &tValue[0]);
-        }
         void setVec4(const std::string& tName, const float tX, const float tY, const float tZ, const float tW) const {
             glUniform4f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ, tW);
         }
-
         void setMat2(const std::string& tName, const glm::mat2& tMat) const {
             glUniformMatrix2fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
         }
@@ -141,6 +128,19 @@ namespace Firesteel {
         }
         void setMat4(const std::string& tName, const glm::mat4& tMat) const {
             glUniformMatrix4fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+        }
+
+        void setBool(const std::string& tName, const bool tValue) const {
+            setInt(tName, (int)tValue);
+        }        
+        void setVec2(const std::string& tName, const glm::vec2& tValue) const {
+            setVec2(tName, tValue.x, tValue.y);
+        }        
+        void setVec3(const std::string& tName, const glm::vec3& tValue) const {
+            setVec3(tName, tValue.x, tValue.y, tValue.z);
+        }        
+        void setVec4(const std::string& tName, const glm::vec4& tValue) const {
+            setVec4(tName, tValue.x, tValue.y, tValue.z, tValue.w);
         }
 
     private:

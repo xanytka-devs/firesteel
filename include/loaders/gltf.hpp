@@ -253,8 +253,8 @@ namespace Firesteel {
                 return model;
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Materials: %i\n",gltf.materials.size());
-            LOGF_DBG("Meshes: %i\n",gltf.meshes.size());
+            LOGF_DBG("Materials: %i",gltf.materials.size());
+            LOGF_DBG("Meshes: %i",gltf.meshes.size());
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
@@ -281,11 +281,11 @@ namespace Firesteel {
             //Process all meshes.
             for(size_t m=0;m<gltf.meshes.size();m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOGF_DBG("Processing mesh %i/%i\n",m+1,gltf.meshes.size());
+                LOGF_DBG("Processing mesh %i/%i",m+1,gltf.meshes.size());
 #endif // FS_PRINT_DEBUG_MSGS
                 for(size_t p=0;p<gltf.meshes[m].primitives.size();p++) {
 #ifdef FS_PRINT_DEBUG_MSGS
-                    LOGF_DBG("Processing premitive %i/%i\n",p+1,gltf.meshes[m].primitives.size());
+                    LOGF_DBG("Processing premitive %i/%i",p+1,gltf.meshes[m].primitives.size());
                     model.meshes.push_back(processPrimitive(&model,&gltf,&gltf.meshes[m].primitives[p],model.getDirectory(),vert,ind,norm,tex));
 #else
                     model.meshes.push_back(processPrimitive(&model,&gltf,&gltf.meshes[m].primitives[p],model.getDirectory()));
@@ -293,9 +293,9 @@ namespace Firesteel {
                 }
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Vertices: %i\n",vert/3);
-            LOGF_DBG("Normals: %i\n",norm/3);
-            LOGF_DBG("UVs: %i\n",tex/2);
+            LOGF_DBG("Vertices: %i",vert/3);
+            LOGF_DBG("Normals: %i",norm/3);
+            LOGF_DBG("UVs: %i",tex/2);
 #endif // FS_PRINT_DEBUG_MSGS
             return model;
         }

@@ -1,3 +1,4 @@
+#define FS_PRINT_DEBUG_MSGS
 #include <../include/firesteel.hpp>
 #include <../include/input/input.hpp>
 using namespace Firesteel;
@@ -25,8 +26,8 @@ class ModelViewer : public Firesteel::App {
     }
     virtual void onUpdate() override {
         //Process input.
-        if(Keyboard::keyDown(KeyCode::KEY_1)) renderer.setDrawMode(Renderer::DM_FILL);
-        if(Keyboard::keyDown(KeyCode::KEY_2)) renderer.setDrawMode(Renderer::DM_WIRE);
+        if(Keyboard::keyDown(KeyCode::KEY_1)) enviroment.renderer->setDrawMode(Renderer::DM_FILL);
+        if(Keyboard::keyDown(KeyCode::KEY_2)) enviroment.renderer->setDrawMode(Renderer::DM_WIRE);
         if(Mouse::getButton(2)) window.setCursor(Window::Cursor::CUR_POINTING_HAND);
         else window.setCursor(Window::Cursor::CUR_ARROW);
         //Viewport movement.

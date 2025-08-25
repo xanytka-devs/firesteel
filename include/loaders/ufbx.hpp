@@ -10,15 +10,58 @@
 namespace Firesteel {
     namespace FBX {
         /// [!WARING]
-        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
-        Mesh processPrimitive(const Model* tBaseModel, const ufbx_mesh* tMesh, const ufbx_mesh_part* tPart
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        Mesh processMesh(const Model* tBaseModel, const ufbx_mesh* tMesh
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
             ) {
             //Initialize variables.
             std::vector<Vertex> vertices;
-            std::vector<unsigned int> indices;
+            std::vector<unsigned int> indices(tMesh->max_face_triangles*3);
+            for(size_t f=0;f<tMesh->faces.count;f++) {
+                ufbx_face face=tMesh->faces.data[f];
+                //Triangulate the face.
+                uint32_t numTri=ufbx_triangulate_face(
+                    indices.data(), indices.size(), tMesh, face
+                );
+                //Loop through all triangle corners contiguosly.
+                for(size_t i=0;i<numTri*3;i++) {
+                    uint32_t index=indices[i];
+                    Vertex vert{};
+
+                    ufbx_vec3 v3=ufbx_get_vertex_vec3(&tMesh->vertex_position, index);
+                    vert.position=glm::vec3(v3.x,v3.y,v3.z);
+                    
+                    if(tMesh->vertex_normal.exists) {
+                        v3=ufbx_get_vertex_vec3(&tMesh->vertex_normal, index);
+                        vert.normal=glm::vec3(v3.x,v3.y,v3.z);
+#ifdef FS_PRINT_DEBUG_MSGS
+                        tNorm+=3;
+#endif
+                    }
+                    
+                    if(tMesh->vertex_tangent.exists) {
+                        v3=ufbx_get_vertex_vec3(&tMesh->vertex_tangent, index);
+                        vert.tangent=glm::vec3(v3.x,v3.y,v3.z);
+                    }
+                    
+                    if(tMesh->vertex_uv.exists) {
+                        ufbx_vec2 v2=ufbx_get_vertex_vec2(&tMesh->vertex_uv, index);
+                        vert.uv=glm::vec2(v2.x,v2.y);
+#ifdef FS_PRINT_DEBUG_MSGS
+                        tTex+=2;
+#endif
+                    }
+
+                    vertices.push_back(vert);
+                    indices.push_back(index);
+#ifdef FS_PRINT_DEBUG_MSGS
+                    tVert+=3;
+                    tInd++;
+#endif
+                }
+            }
             //Get textures.
             std::vector<Texture> textures;
 
@@ -51,8 +94,8 @@ namespace Firesteel {
             //Process all meshes.
             for(size_t m=0;m<scene->meshes.count;m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
-                LOGF_DBG("Processing mesh %i/%i\n",m+1,scene->meshes.count);
-                //model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds,vert,ind,norm,tex));
+                LOGF_DBG("Processing mesh %i/%i",m+1,scene->meshes.count);
+                model.meshes.push_back(processMesh(&model,scene->meshes[m],vert,ind,norm,tex));
 #else
                 //model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds));
 #endif // FS_PRINT_DEBUG_MSGS

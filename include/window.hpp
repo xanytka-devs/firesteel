@@ -19,6 +19,10 @@
 #define FS_CONTEXT_MINOR 3
 #endif // !FS_CONTEXT_MINOR
 
+#ifdef FS_HEADLESS
+typedef struct GLFWwindow {};
+#endif // !FS_HEADLESS
+
 namespace Firesteel {
     enum WindowState {
         // Decorated window.
@@ -37,6 +41,7 @@ namespace Firesteel {
 		bool initialize(const char* tTitle="Firesteel App", const WindowState& tState=WS_NORMAL) {
             //Initialize and configure.
             LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
+#ifndef FS_HEADLESS
             if(glfwInit() == GLFW_FALSE) {
                 LOG_CRIT("Failed to initialize GLFW");
                 return false;
@@ -84,65 +89,137 @@ namespace Firesteel {
             glfwSetMouseButtonCallback(mPtr, Mouse::buttonCallback);
             glfwSetScrollCallback(mPtr, Mouse::scrollCallback);
             glfwSetKeyCallback(mPtr, Keyboard::keyCallback);
+#endif // !FS_HEADLESS
             return true;
 		}
-        void swapBuffers() const { glfwSwapBuffers(mPtr); }
-        void pollEvents() const { glfwPollEvents(); }
+        void swapBuffers() const {
+#ifndef FS_HEADLESS
+            glfwSwapBuffers(mPtr);
+#endif // !FS_HEADLESS
+        }
+        void pollEvents() const {
+#ifndef FS_HEADLESS
+            glfwPollEvents();
+#endif // !FS_HEADLESS
+        }
         void clearBuffers() const {
-            glClearColor(static_cast<GLfloat>(mClearColor[0]), static_cast<GLfloat>(mClearColor[1]),
-                static_cast<GLfloat>(mClearColor[2]), static_cast<GLfloat>(1.0f));
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#ifndef FS_HEADLESS
+        glClearColor(static_cast<GLfloat>(mClearColor[0]), static_cast<GLfloat>(mClearColor[1]),
+        static_cast<GLfloat>(mClearColor[2]), static_cast<GLfloat>(1.0f));
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+#endif // !FS_HEADLESS
         }
         void close() { mClosed=true; }
-        void setTitle(const std::string& tTitle) { glfwSetWindowTitle(mPtr, tTitle.c_str()); }
+        void setTitle(const std::string& tTitle) {
+#ifndef FS_HEADLESS
+            glfwSetWindowTitle(mPtr, tTitle.c_str());
+#endif // !FS_HEADLESS
+        }
         void setIcon(const std::string& tIcon) {
             if(!std::filesystem::exists(tIcon)) {
                 LOG_ERRR("File '" + tIcon + "' doesn't exist.");
                 return;
             }
+#ifndef FS_HEADLESS
             GLFWimage images[1]{};
             images[0].pixels=stbi_load(tIcon.c_str(), &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
+#endif // !FS_HEADLESS
         }
         void setIconFromMemory(const unsigned char* tIconData, const size_t tIconDataSize) {
+#ifndef FS_HEADLESS
             GLFWimage images[1]{};
             images[0].pixels=stbi_load_from_memory(tIconData, (int)tIconDataSize, &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
+#endif // !FS_HEADLESS
         }
         void setClearColor(const glm::vec3& tColor) { mClearColor=tColor; }
 
         void setVSync(const bool& tVSync) {
             mVSync=tVSync;
+#ifndef FS_HEADLESS
             glfwSwapInterval(mVSync);
+#endif // !FS_HEADLESS
         }
         void toggleVSync() { setVSync(!mVSync); }
         bool getVSync() const { return mVSync; }
 
-        bool isOpen() const { return (!mClosed && !glfwWindowShouldClose(mPtr)); }
-        bool isMinimized() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
-        bool isIconified() const { return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED); }
-        bool isMaximized() const { return glfwGetWindowAttrib(mPtr, GLFW_MAXIMIZED); }
-        bool isFocused() const { return glfwGetWindowAttrib(mPtr, GLFW_FOCUSED); }
+        bool isOpen() const {
+            return (!mClosed
+#ifndef FS_HEADLESS
+            && !glfwWindowShouldClose(mPtr)
+#endif // !FS_HEADLESS
+            );
+        }
+        bool isMinimized() const {
+#ifndef FS_HEADLESS
+            return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED);
+#endif // !FS_HEADLESS
+            return true;
+        }
+        bool isIconified() const {
+#ifndef FS_HEADLESS
+            return glfwGetWindowAttrib(mPtr, GLFW_ICONIFIED);
+#endif // !FS_HEADLESS
+            return true;
+        }
+        bool isMaximized() const {
+#ifndef FS_HEADLESS
+            return glfwGetWindowAttrib(mPtr, GLFW_MAXIMIZED);
+#endif // !FS_HEADLESS
+            return false;
+        }
+        bool isFocused() const {
+#ifndef FS_HEADLESS
+            return glfwGetWindowAttrib(mPtr, GLFW_FOCUSED);
+#endif // !FS_HEADLESS
+            return false;
+        }
 
-        void setOpacity(const float& tOpac=1.f) const { glfwSetWindowOpacity(mPtr, tOpac); }
-        float getOpacity() const { return glfwGetWindowOpacity(mPtr); }
+        void setOpacity(const float& tOpac=1.f) const {
+#ifndef FS_HEADLESS
+            glfwSetWindowOpacity(mPtr, tOpac);
+#endif // !FS_HEADLESS
+        }
+        float getOpacity() const {
+#ifndef FS_HEADLESS
+            return glfwGetWindowOpacity(mPtr);
+#endif // !FS_HEADLESS
+            return 1;
+        }
         
-        void setPosition(const int& tX, const int& tY) { glfwSetWindowPos(mPtr,tX,tY); }
+        void setPosition(const int& tX, const int& tY) {
+#ifndef FS_HEADLESS
+            glfwSetWindowPos(mPtr,tX,tY);
+#endif // !FS_HEADLESS
+        }
         glm::vec2& getPosition() {
             int x, y=0;
+#ifndef FS_HEADLESS
             glfwGetWindowPos(mPtr,&x,&y);
+#endif // !FS_HEADLESS
             return glm::vec2(x,y);
         }
         int getX() { return static_cast<int>(getPosition().x); }
         int getY() { return static_cast<int>(getPosition().y); }
 
-        void setResizability(const bool& tResizable=true) { glfwSetWindowAttrib(mPtr,GLFW_RESIZABLE,tResizable); }
-        void setSize(const int& tX, const int& tY) { glfwSetWindowSize(mPtr,tX,tY); }
+        void setResizability(const bool& tResizable=true) {
+#ifndef FS_HEADLESS
+            glfwSetWindowAttrib(mPtr,GLFW_RESIZABLE,tResizable);
+#endif // !FS_HEADLESS
+        }
+        void setSize(const int& tX, const int& tY) {
+#ifndef FS_HEADLESS
+            glfwSetWindowSize(mPtr,tX,tY);
+#endif // !FS_HEADLESS
+        }
         void setSizeLimit(const int& tMinX=GLFW_DONT_CARE, const int& tMinY=GLFW_DONT_CARE,
             const int& tMaxX=GLFW_DONT_CARE, const int& tMaxY=GLFW_DONT_CARE) {
+#ifndef FS_HEADLESS
                 glfwSetWindowSizeLimits(mPtr,tMinX,tMinY,tMaxX,tMaxY);
+#endif // !FS_HEADLESS
         }
         int getHeight() { getSizeInternal(); return mHeight; }
         int getWidth() { getSizeInternal(); return mWidth; }
@@ -159,6 +236,7 @@ namespace Firesteel {
             CUR_UNAVAILABLE=4
         };
         void setCursorMode(const CursorState& tMode) {
+#ifndef FS_HEADLESS
             switch (tMode) {
             case Window::CUR_CAPTURED:
                 glfwSetInputMode(mPtr, GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
@@ -176,6 +254,7 @@ namespace Firesteel {
                 glfwSetInputMode(mPtr, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 break;
             }
+#endif // !FS_HEADLESS
         }
         enum Cursor {
             //Default arrow cursor.
@@ -199,7 +278,9 @@ namespace Firesteel {
         // [!EXPIREMENTAL]
         // Wasn't tested on memory overflow. Creates standard cursors every frame.
         void setCursor(const Cursor& tCursor) {
+#ifndef FS_HEADLESS
             glfwSetCursor(mPtr,glfwCreateStandardCursor(tCursor));
+#endif // !FS_HEADLESS
         }
 	private:
         glm::vec3 mClearColor;
@@ -208,13 +289,17 @@ namespace Firesteel {
 		bool mVSync, mClosed;
     private:
         static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+#ifndef FS_HEADLESS
             glViewport(0, 0, width, height);
+#endif // !FS_HEADLESS
         }
         static void errorCallback(int tEC, const char* tDescription) {
             LOGF_ERRR("GLFW Error(%i): %s\n", tEC, tDescription);
         }
         void getSizeInternal() {
+#ifndef FS_HEADLESS
             glfwGetWindowSize(mPtr, &mWidth, &mHeight);
+#endif // !FS_HEADLESS
         }
 	};
 }
