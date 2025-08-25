@@ -71,7 +71,7 @@ namespace Firesteel {
                     }                    
                     if(tMesh->vertex_uv.exists) {
                         ufbx_vec2 v2=ufbx_get_vertex_vec2(&tMesh->vertex_uv, index);
-                        vert.uv=glm::vec2(v2.x,v2.y);
+                        vert.uv=glm::vec2(v2.x,1.f-v2.y);
 #ifdef FS_PRINT_DEBUG_MSGS
                         tTex+=2;
 #endif
