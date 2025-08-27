@@ -1,6 +1,6 @@
 #ifndef FS_TRANSFORM_H
 #define FS_TRANSFORM_H
-#include <glm/vec3.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 struct Transform {
     glm::vec3 position=glm::vec3(0);
@@ -10,6 +10,22 @@ struct Transform {
         position=tPos;
         rotation=tRot;
         size=tSize;
+    }
+    glm::vec3 eulerAngles() const {
+        return glm::radians(rotation);
+    }
+    glm::quat quaternion() const {
+        return glm::quat(eulerAngles());
+    }
+    glm::mat4 getMatrix() const {
+        glm::mat4 result = glm::mat4(1);
+        result = glm::translate(result,position);
+        /*modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.x)), glm::vec3(1, 0, 0));
+            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.y)), glm::vec3(0, 1, 0));
+            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.z)), glm::vec3(0, 0, 1));*/
+        result *= glm::mat4_cast(quaternion());
+        result = glm::scale(result,size);
+        return result;
     }
 };
 

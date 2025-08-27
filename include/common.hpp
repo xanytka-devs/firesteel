@@ -20,7 +20,9 @@
 #include "../external/glfw/include/GLFW/glfw3native.h"
 #endif // !FS_HEADLESS
 
-#include <../external/glm/glm/glm.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "utils/log.hpp"
 

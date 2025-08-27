@@ -42,7 +42,7 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Mesh processShape(const Model* tModel, const tinyobj::shape_t& tShape, const tinyobj::attrib_t& tAttrib, int materialID
+        Mesh processShape(const Model* tModel, const tinyobj::shape_t& tShape, const tinyobj::attrib_t& tAttrib, int materialID, std::vector<std::string>& nodeNames
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
@@ -117,6 +117,7 @@ namespace Firesteel {
             if (materialID >= 0 && materialID < static_cast<int>(tModel->materials.size()))
                 textures=tModel->materials[materialID].textures;
 
+            nodeNames.push_back(tShape.name);
             return Mesh(vertices, indices, textures);
         }
 
@@ -171,17 +172,29 @@ namespace Firesteel {
                 model.materials.push_back({ textures });
             }
             //Process all shapes.
-            for(size_t s=0; s < shapes.size(); s++) {
+            std::vector<std::string> nodeNames;
+            for(size_t s=0;s<shapes.size();s++) {
                 const auto& shape=shapes[s];
                 int materialID=shape.mesh.material_ids[0];
 #ifdef FS_PRINT_DEBUG_MSGS
                 LOGF_DBG("Processing mesh %i/%i",s+1,shapes.size());
-                model.meshes.push_back(processShape(&model, shape, attrib, materialID, vert, ind, norm, tex));
+                model.meshes.push_back(processShape(&model, shape, attrib, materialID, nodeNames, vert, ind, norm, tex));
 #else
-                model.meshes.push_back(processShape(&model, shape, attrib, materialID));
+                model.meshes.push_back(processShape(&model, shape, attrib, materialID, nodeNames));
 #endif // FS_PRINT_DEBUG_MSGS
             }
+            //Process all nodes.
+            Node root;
+            root.name="[Root]";
+            for(size_t n=0;n<model.meshes.size();n++) {
+                Node mesh;
+                mesh.index=static_cast<int>(n);
+                mesh.name=nodeNames[n];
+                root.children.push_back(mesh);
+            }
+            model.nodes.push_back(root);
 #ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Nodes: %i",model.nodes.size());
             LOGF_DBG("Vertices: %i",vert/3);
             LOGF_DBG("Normals: %i",norm/3);
             LOGF_DBG("UVs: %i",tex/2);

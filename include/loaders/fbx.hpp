@@ -105,6 +105,30 @@ namespace Firesteel {
 
             return Mesh(vertices,indices,textures);
         }
+        /// [!WARING]
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        void processNodes(Model* tBaseModel, const ufbx_scene* tModel, const ufbx_node* tNode, Node* tParent=nullptr) {
+            Node node;
+            node.name=std::string(tNode->name.data,tNode->name.length);
+            if(node.name.empty()) node.name="Node_"+std::to_string(tNode->typed_id);
+            //Apply translations to node.
+            const ufbx_transform& t=tNode->local_transform;
+            node.transform.position=glm::vec3(t.translation.x,t.translation.y,t.translation.z);
+            node.transform.rotation=glm::degrees(glm::eulerAngles(
+                glm::quat(CASTF(t.rotation.w),CASTF(t.rotation.x),CASTF(t.rotation.y),CASTF(t.rotation.z)
+            )));
+            node.transform.size=glm::vec3(t.scale.x,t.scale.y,t.scale.z);
+            if(tNode->mesh)
+                for (size_t i=0;i<tModel->meshes.count;i++)
+                    if(tModel->meshes.data[i]==tNode->mesh) {
+                        node.index=static_cast<int>(i);
+                        break;
+                    }
+            if(tParent) tParent->children.push_back(node);
+            else tBaseModel->nodes.push_back(node);
+            for(size_t c=0;c<tNode->children.count;c++)
+                processNodes(tBaseModel,tModel,tNode->children.data[c],(tParent?&tParent->children.back():&tBaseModel->nodes.back()));
+        }
 
         Model load(const std::string& tPath) {
 #ifdef FS_INCLUDE_NVTX
@@ -115,6 +139,8 @@ namespace Firesteel {
             ufbx_error error{};
             ufbx_load_opts options{};
             options.ignore_missing_external_files=true;
+            options.target_unit_meters=1;
+            options.space_conversion=UFBX_SPACE_CONVERSION_ADJUST_TRANSFORMS;
             ufbx_scene* scene=ufbx_load_file(tPath.c_str(),&options,&error);
             //Check errors.
             if(error.type!=UFBX_ERROR_NONE) {
@@ -122,8 +148,8 @@ namespace Firesteel {
                 return model;
             }
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Meshes: "+std::to_string(scene->meshes.count));
-            LOG_DBG("Materials: "+std::to_string(scene->materials.count));
+            LOGF_DBG("Meshes: %i",scene->meshes.count);
+            LOGF_DBG("Materials: %i",scene->materials.count);
             size_t vert=0;
             size_t ind=0;
             size_t norm=0;
@@ -137,13 +163,17 @@ namespace Firesteel {
                 LOGF_DBG("Processing mesh %i/%i",m+1,scene->meshes.count);
                 model.meshes.push_back(processMesh(&model,scene->meshes[m],matId,vert,ind,norm,tex));
 #else
-                //model.meshes.push_back(processMesh(&model,scene->getMesh(static_cast<int>(m)),&materialIds));
+                model.meshes.push_back(processMesh(&model,scene->meshes[m],matId));
 #endif // FS_PRINT_DEBUG_MSGS
             }
+            //Process all nodes.
+            for(size_t c=0;c<scene->root_node->children.count;c++)
+                processNodes(&model,scene,scene->root_node->children.data[c]);
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Vertices: "+std::to_string((int)(vert) / 3));
-            LOG_DBG("Normals: "+std::to_string((int)(norm) / 3));
-            LOG_DBG("UVs: "+std::to_string((int)(tex) / 2));
+            LOGF_DBG("Nodes: %i",model.nodes.size());
+            LOGF_DBG("Vertices: %i",vert/3);
+            LOGF_DBG("Normals: %i",norm/3);
+            LOGF_DBG("UVs: %i",tex/2);
 #endif // FS_PRINT_DEBUG_MSGS
 
             return model;

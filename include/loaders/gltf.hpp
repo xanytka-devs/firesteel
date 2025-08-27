@@ -61,6 +61,30 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the GLTF loader. Use it at your own risk.
+        void processNodes(Model* tBaseModel, const tinygltf::Model* tModel, int tIndex, Node* tParent=nullptr) {
+            const tinygltf::Node& gltfNode=tModel->nodes[tIndex];
+            Node node;
+            node.name=gltfNode.name.empty()?"Node_"+std::to_string(tIndex):gltfNode.name;
+            glm::vec3 pos(0);
+            glm::quat rot(1,0,0,0);
+            glm::vec3 size(1);
+            //Rescue all available transform data.
+            if(!gltfNode.translation.empty()) pos=glm::make_vec3(gltfNode.translation.data());
+            if(!gltfNode.rotation.empty()) rot=glm::make_quat(gltfNode.rotation.data());
+            if(!gltfNode.scale.empty()) size=glm::make_vec3(gltfNode.scale.data());
+            //Apply translations to node.
+            node.transform.position=pos;
+            node.transform.rotation=glm::degrees(glm::eulerAngles(rot));
+            node.transform.size=size;
+            if(gltfNode.mesh>=0) node.index=gltfNode.mesh;
+            if(tParent) tParent->children.push_back(node);
+            else tBaseModel->nodes.push_back(node);
+            for(size_t c=0;c<gltfNode.children.size();c++)
+                processNodes(tBaseModel,tModel,gltfNode.children[c],(tParent?&tParent->children.back():&tBaseModel->nodes.back()));
+        }
+
+        /// [!WARING]
+        /// This function is internal and only used for the GLTF loader. Use it at your own risk.
         Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
@@ -292,7 +316,11 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
                 }
             }
+            //Process all nodes.
+            for(size_t c=0;c<gltf.scenes[gltf.defaultScene].nodes.size();c++)
+                processNodes(&model,&gltf,gltf.scenes[gltf.defaultScene].nodes[c]);
 #ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Nodes: %i",model.nodes.size());
             LOGF_DBG("Vertices: %i",vert/3);
             LOGF_DBG("Normals: %i",norm/3);
             LOGF_DBG("UVs: %i",tex/2);

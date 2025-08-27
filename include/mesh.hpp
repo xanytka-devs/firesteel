@@ -7,6 +7,7 @@
 #include "common.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
+#include "transform.hpp"
 
 namespace Firesteel {
 #define MAX_BONE_INFLUENCE 4
@@ -142,6 +143,13 @@ namespace Firesteel {
             glDeleteBuffers(1, &mEBO);
             glDeleteBuffers(1, &mVBO);
         }
+    };
+
+    struct Node {
+        std::string name;
+        Transform transform;
+        std::vector<Node> children;
+        int index=-1;
     };
 }
 #endif // !FS_MESH_H

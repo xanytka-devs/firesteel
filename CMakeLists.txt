@@ -32,7 +32,6 @@ option(FS_INCLUDE_NVTX "Include NVTX library (DEBUG)" OFF)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
 option(FS_INCLUDE_OS "Include PortableFileDialogs library (OS)" ON)
 option(FS_LOADER_FBX "Include FBX library (MODELS)" ON)
-option(FS_LOADER_PREFER_OFBX "Include OFBX instead of UFBX (not recommended)" OFF)
 option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
 option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
@@ -100,20 +99,10 @@ endif()
 
 if(FS_LOADER_FBX)
 	add_compile_definitions("FS_LOADER_FBX")
-	if(FS_LOADER_PREFER_OFBX)
-		add_compile_definitions("FS_LOADER_OFBX")
-		set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
-			"external/model_loaders/ofbx/ofbx.h"
-			"external/model_loaders/ofbx/ofbx.cpp"
-			"external/model_loaders/ofbx/libdeflate.h"
-			"external/model_loaders/ofbx/libdeflate.c"
-		)
-	else()
-		set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
-			"external/model_loaders/ufbx/ufbx.h"
-			"external/model_loaders/ufbx/ufbx.c"
-		)
-	endif()
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/model_loaders/ufbx/ufbx.h"
+		"external/model_loaders/ufbx/ufbx.c"
+	)
 endif()
 if(FS_LOADER_GLTF)
 	add_compile_definitions("FS_LOADER_GLTF")

@@ -13,7 +13,6 @@
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "utils/stbi_global.hpp"
-#include "transform.hpp"
 #include "model.hpp"
 #ifdef FS_LOADER_OBJ
 #include "loaders/obj.hpp"
@@ -22,11 +21,7 @@
 #include "loaders/gltf.hpp"
 #endif // FS_LOADER_GLTF
 #ifdef FS_LOADER_FBX
-#ifdef FS_LOADER_OFBX
-#include "loaders/ofbx.hpp"
-#else
-#include "loaders/ufbx.hpp"
-#endif // FS_LOADER_OFBX
+#include "loaders/fbx.hpp"
 #endif // FS_LOADER_FBX
 
 namespace Firesteel {
@@ -49,33 +44,24 @@ namespace Firesteel {
             if(model.meshes.size()==0) return;
             if(tShader==nullptr||!tShader->loaded) tShader=Shader::getDefaultShader();
             tShader->enable();
-            tShader->setMat4("model", getMatrix());
-            for(unsigned int i=0;i<model.meshes.size();i++)
-                model.meshes[i].draw(tShader);
+            for(size_t n=0;n<model.nodes.size();n++)
+                drawNode(model.nodes[n], tShader, transform.getMatrix());
         }
         // Renders the model in the default shader.
         void draw() {draw(nullptr);}
-
-        // Returns model matrix.
-        glm::mat4 getMatrix() const {
-            modelMatrix=glm::mat4(1);
-            modelMatrix=glm::translate(modelMatrix, transform.position);
-            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.x)), glm::vec3(1, 0, 0));
-            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.y)), glm::vec3(0, 1, 0));
-            modelMatrix=glm::rotate(modelMatrix, float(glm::radians(transform.rotation.z)), glm::vec3(0, 0, 1));
-            modelMatrix=glm::scale(modelMatrix, transform.size);
-            return modelMatrix;
-        }
 
         bool hasModel() const { return model.meshes.size()!=0; }
         void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
 #endif // FS_PRINT_DEBUG_MSGS
-            for(size_t i=0; i < model.meshes.size(); i++)
+            for(size_t i=0;i<model.meshes.size();i++)
                 model.meshes[i].remove();
-            for(size_t i=0; i < model.materials.size(); i++)
+            for(size_t i=0; i < model.materials.size();i++)
                 model.materials[i].remove();
+            model.nodes.clear();
+            model.meshes.clear();
+            model.materials.clear();
         }
         void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
@@ -91,7 +77,10 @@ namespace Firesteel {
             else if(ext=="obj") model=OBJ::load(tPath);
 #endif // FS_LOADER_OBJ
 #ifdef FS_LOADER_GLTF
-            else if(ext=="gltf"||ext=="glb") model=GLTF::load(tPath,ext=="glb");
+            else if(ext=="gltf"||ext=="glb") {
+                model=GLTF::load(tPath,ext=="glb");
+                transform.rotation.x=-90;
+            }
 #endif // FS_LOADER_GLTF
 #ifdef FS_LOADER_FBX
             else if(ext=="fbx") model=FBX::load(tPath);
@@ -119,6 +108,15 @@ namespace Firesteel {
 
     private:
         static glm::mat4 modelMatrix;
+
+        void drawNode(const Node& tNode, const Shader* tShader, const glm::mat4& tModel) {
+            if(tNode.index>=0&&tNode.index<static_cast<int>(model.meshes.size())) {
+                tShader->setMat4("model",tModel*tNode.transform.getMatrix());
+                model.meshes[tNode.index].draw(tShader);
+            }
+            for(size_t n=0;n<tNode.children.size();n++)
+                drawNode(tNode.children[n],tShader,tModel);
+        }
     };
 }
 
