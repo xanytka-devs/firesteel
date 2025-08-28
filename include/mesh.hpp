@@ -1,12 +1,8 @@
 #ifndef FS_MESH_H
 #define FS_MESH_H
 #include <glm/gtc/matrix_transform.hpp>
-#include <string>
-#include <vector>
 
-#include "common.hpp"
-#include "shader.hpp"
-#include "texture.hpp"
+#include "material.hpp"
 #include "transform.hpp"
 
 namespace Firesteel {
@@ -93,7 +89,7 @@ namespace Firesteel {
             //Clear mesh data.
             vertices.clear();
             indices.clear();
-            for (size_t i=0; i < textures.size(); i++)
+            for(size_t i=0; i < textures.size(); i++)
                 textures[i].remove();
             textures.clear();
         }
@@ -157,14 +153,6 @@ namespace Firesteel {
         }
         Node(const std::string& tName, const Transform& tTransform, const std::vector<Node>& tChildren, const int& tIndex)
             : name(tName), transform(tTransform), children(tChildren), index(tIndex) {}
-    };
-    struct Material {
-        std::vector<Texture> textures;
-        void remove() {
-            for(size_t i=0; i < textures.size(); i++)
-                textures[i].remove();
-            if(shader) shader->remove();
-        }
     };
     struct Model {
         std::string path;

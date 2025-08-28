@@ -3,6 +3,14 @@
 /*
 * Generic internal includes
 */
+// GENERAL //
+#include <vector>
+#include "utils/log.hpp"
+// GLM //
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
+// RENDERING //
 #ifdef FS_RENDERER_OGL
 #include <../external/glad/include/glad/gl.h>
 #endif // FS_HEADLESS
@@ -19,15 +27,12 @@
 #include <../external/glfw/include/GLFW/glfw3.h>
 #include "../external/glfw/include/GLFW/glfw3native.h"
 #endif // !FS_HEADLESS
-
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <glm/gtc/quaternion.hpp>
-
-#include "utils/log.hpp"
-
+// ADDITIONAL //
 #ifdef FS_INCLUDE_NVTX
 #include <nvtx3/nvtx3.hpp>
 #endif // FS_INCLUDE_NVTX
+// DEFENITIONS //
+#define CASTF(...) static_cast<float>(__VA_ARGS__)
+#define IFEX if constexpr
 
 #endif // !FS_COMMON_H

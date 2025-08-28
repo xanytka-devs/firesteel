@@ -145,7 +145,6 @@ namespace String {
     }
 }
 namespace Math {
-#define CASTF(...) static_cast<float>(__VA_ARGS__)
     //Lineary interpolate between `tA` and `tB` by fraction of `tF`.
     float lerp(const float& tA, const float& tB, const float& tF) {
         return tA * (1.f - tF) + (tB * tF);
