@@ -13,7 +13,6 @@
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "utils/stbi_global.hpp"
-#include "model.hpp"
 #ifdef FS_LOADER_OBJ
 #include "loaders/obj.hpp"
 #endif // FS_LOADER_OBJ
@@ -30,12 +29,11 @@ namespace Firesteel {
         Transform transform;
         Model model;
 
-        Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
-            transform=Transform(tPos, tRot, tSize);
-        }
+        Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
+            : transform(Transform(tPos, tRot, tSize)) { }
         Entity(const std::string& tPath,
-            const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1)) {
-            transform=Transform(tPos, tRot, tSize);
+            const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
+                : transform(Transform(tPos, tRot, tSize)) {
             load(tPath);
         }
 
@@ -92,18 +90,20 @@ namespace Firesteel {
 
         void addMesh(const Mesh& tMesh) {
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
+            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures",
                 tMesh.vertices.size(), tMesh.indices.size(), tMesh.textures.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.emplace_back(tMesh);
+            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()-1),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size())-1);
         }
         void addMesh(const std::vector<Vertex>& tVertices,
             const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures) {
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures\n",
+            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures",
                 tVertices.size(), tIndices.size(), tTextures.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.emplace_back(tVertices,tIndices,tTextures);
+            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()-1),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size())-1);
         }
 
     private:

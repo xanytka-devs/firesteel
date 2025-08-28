@@ -3,7 +3,11 @@
 #define FS_OGL_RENDERER_H
 #include "../renderer.hpp"
 #include <imgui.h>
+#if FS_CONTEXT_MAJOR > 2
 #include <backends/imgui_impl_opengl3.h>
+#else
+#include <backends/imgui_impl_opengl2.h>
+#endif
 #include <backends/imgui_impl_glfw.h>
 
 namespace Firesteel {
@@ -44,9 +48,11 @@ namespace Firesteel {
                 //Initialize debug output.
                 glEnable(GL_DEBUG_OUTPUT);
                 glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                //For OpenGL 4.x.
+#if (FS_CONTEXT_MAJOR >= 4) && (FS_CONTEXT_MINOR >= 3)
+                //Set custom debug output.
                 glDebugMessageCallback(glDebugOutput, nullptr);
                 glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+#endif
             }
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Loaded OpenGL extensions");
@@ -78,7 +84,11 @@ namespace Firesteel {
             ImGui::StyleColorsDark();
             //Choose backend.
             ImGui_ImplGlfw_InitForOpenGL(tWin, true);
+#if FS_CONTEXT_MAJOR > 2
             ImGui_ImplOpenGL3_Init();
+#else
+            ImGui_ImplOpenGL2_Init();
+#endif
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
@@ -87,7 +97,11 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
         }
         virtual void imguiNewFrame() override {
+#if FS_CONTEXT_MAJOR > 2
             ImGui_ImplOpenGL3_NewFrame();
+#else
+            ImGui_ImplOpenGL2_NewFrame();
+#endif
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
         }
@@ -96,7 +110,11 @@ namespace Firesteel {
                 nvtx3::scoped_range d{"imgui draw"};
 #endif // FS_INCLUDE_NVTX
             ImGui::Render();
+#if FS_CONTEXT_MAJOR > 2
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#else
+            ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+#endif
             //Viewports need persistent context updates.
             if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 #ifdef FS_INCLUDE_NVTX
@@ -108,7 +126,11 @@ namespace Firesteel {
             }
         }
         virtual void imguiShutdown() {
+#if FS_CONTEXT_MAJOR > 2
             ImGui_ImplOpenGL3_Shutdown();
+#else
+            ImGui_ImplOpenGL2_Shutdown();
+#endif
             ImGui_ImplGlfw_Shutdown();
             ImGui::DestroyContext();
 #ifdef FS_PRINT_DEBUG_MSGS

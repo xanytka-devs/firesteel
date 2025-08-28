@@ -2,7 +2,7 @@
 #ifndef FS_LOADERS_FBX
 #define FS_LOADERS_FBX
 
-#include "../model.hpp"
+#include "../mesh.hpp"
 #include "../utils/stbi_global.hpp"
 
 #include "../../external/model_loaders/ufbx/ufbx.h"

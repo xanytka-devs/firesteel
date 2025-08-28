@@ -1,5 +1,6 @@
 Firesteel v.0.2.1
-- Replaced Assimp with TinyOBJLoader, TinyGLTF, UFBX and OFBX.
+- Replaced Assimp with TinyOBJLoader, TinyGLTF, UFBX.
+- Node-based rendering.
 - Utilities class was reformatted and now much simpler to use.
 - New system dialog provider - "simple-file-dialogs".
 - Better logging: `LOGF(...)` provides formatted output, works pretty much as `printf(...)`, but better.

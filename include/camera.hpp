@@ -23,11 +23,8 @@ namespace Firesteel {
         bool isPerspective=true;
 
         // Constructor with vectors.
-        Camera(const glm::vec3 tPos=glm::vec3(0.f, 0.f, 0.f), const glm::vec3 tRot=glm::vec3(0.f, 0.f, 0.f)) {
-            transform.position=tPos;
-            transform.rotation=tRot;
-            worldUp=glm::vec3(0.f, 1.f, 0.f);
-            forward=glm::vec3(0.0f, 0.0f, -1.0f);
+        Camera(const glm::vec3 tPos=glm::vec3(0.f, 0.f, 0.f), const glm::vec3 tRot=glm::vec3(0.f, 0.f, 0.f))
+            : transform(tPos,tRot,glm::vec3(1)), worldUp(glm::vec3(0.f, 1.f, 0.f)), forward(glm::vec3(0.f,0.f,-1.f)) {
             update();
         }
 

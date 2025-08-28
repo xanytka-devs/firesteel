@@ -1,4 +1,3 @@
-#define FS_PRINT_DEBUG_MSGS
 #include <../include/firesteel.hpp>
 using namespace Firesteel;
 

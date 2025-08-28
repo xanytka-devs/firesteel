@@ -15,9 +15,8 @@ namespace Firesteel {
         unsigned int ID;
         bool loaded=false;
 
-        Shader() {
+        Shader() : ID(0) {
             remove();
-            ID=0;
         }
         Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath=nullptr) {
             remove();

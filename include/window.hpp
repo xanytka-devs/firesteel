@@ -115,14 +115,14 @@ namespace Firesteel {
             glfwSetWindowTitle(mPtr, tTitle.c_str());
 #endif // !FS_HEADLESS
         }
-        void setIcon(const std::string& tIcon) {
-            if(!std::filesystem::exists(tIcon)) {
-                LOG_ERRR("File '" + tIcon + "' doesn't exist.");
+        void setIcon(const std::string& tPath) {
+            if(!std::filesystem::exists(tPath)) {
+                LOG_ERRR("File '" + tPath + "' doesn't exist.");
                 return;
             }
 #ifndef FS_HEADLESS
             GLFWimage images[1]{};
-            images[0].pixels=stbi_load(tIcon.c_str(), &images[0].width, &images[0].height, 0, 4);
+            images[0].pixels=stbi_load(tPath.c_str(), &images[0].width, &images[0].height, 0, 4);
             glfwSetWindowIcon(mPtr, 1, images);
             stbi_image_free(images[0].pixels);
 #endif // !FS_HEADLESS

@@ -8,12 +8,12 @@ namespace Firesteel {
     public:
         Framebuffer() { }
 
-        Framebuffer(const int& tWidth, const int& tHeight, const size_t& tTextures=1) {
-            mSize=glm::vec2(tWidth, tHeight);
+        Framebuffer(const int& tWidth, const int& tHeight, const size_t& tTextures=1)
+            : mSize(glm::vec2(tWidth, tHeight)) {
             createBuffers(tTextures);
         }
-        Framebuffer(const glm::vec2& tSize, const size_t& tTextures=1) {
-            mSize=tSize;
+        Framebuffer(const glm::vec2& tSize, const size_t& tTextures=1)
+            : mSize(tSize) {
             createBuffers(tTextures);
         }
 

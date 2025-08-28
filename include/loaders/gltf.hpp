@@ -2,7 +2,7 @@
 #ifndef FS_LOADERS_GLTF_H
 #define FS_LOADERS_GLTF_H
 
-#include "../model.hpp"
+#include "../mesh.hpp"
 #include "../utils/stbi_global.hpp"
 #include "../utils/json.hpp"
 

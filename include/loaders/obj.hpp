@@ -2,7 +2,7 @@
 #ifndef FS_LOADERS_OBJ_H
 #define FS_LOADERS_OBJ_H
 
-#include "../model.hpp"
+#include "../mesh.hpp"
 #include "../utils/stbi_global.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
