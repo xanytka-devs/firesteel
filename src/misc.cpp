@@ -123,4 +123,4 @@ void Log::clear() {
 #endif // __linux__
 
 #include "shader.hpp"
-Shader Shader::sDefaultShader{};
+std::shared_ptr<Shader> Shader::sDefaultShader=nullptr;

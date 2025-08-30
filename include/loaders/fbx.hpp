@@ -11,14 +11,16 @@ namespace Firesteel {
     namespace FBX {
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.
-        Texture loadMaterialTexture(Model* tModel, const std::string& texPath, const TextureType& type, size_t& tMatId) {
+        Texture loadMaterialTexture(const Model* tModel, const char* tTexPath, const TextureType& tType) {
+            if(!tTexPath) return {};
+            std::string texPath(tTexPath);
             if(texPath.empty()) return {};
             //Get full path.
             std::string fullPath=texPath;
             //Check all materials for this texture.
             for (auto& material : tModel->materials) {
                 for (const auto& texture : material.textures) {
-                    if (texture.path == texPath && texture.type == type) {
+                    if (texture.path == texPath && texture.type == tType) {
                         //If texture is already loaded - return it's copy.
 #ifdef FS_PRINT_DEBUG_MSGS
                         LOG_DBG("Texture \"" + texPath + "\" is already loaded");
@@ -32,16 +34,15 @@ namespace Firesteel {
             LOG_DBG("Loading texture \"" + texPath + "\"");
 #endif
             Texture texture;
-            texture.type=type;
+            texture.type=tType;
             texture.path=texPath;
             texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
-            tModel->materials[tMatId].textures.emplace_back(texture);
 
             return texture;
         }
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.
-        Mesh processMesh(Model* tBaseModel, const ufbx_mesh* tMesh, size_t& tMatId
+        Mesh processMesh(Model* tBaseModel, const ufbx_mesh* tMesh
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
@@ -93,17 +94,13 @@ namespace Firesteel {
 #endif
                 }
             }
-            //Get textures.
-            std::vector<Texture> textures;
-            if(tMesh->materials.count>0) {
-                const ufbx_material* mat=tMesh->materials.data[0];
-                if(mat->fbx.diffuse_color.texture) textures.push_back(loadMaterialTexture(tBaseModel,mat->fbx.diffuse_color.texture->filename.data,TT_DIFFUSE, tMatId));
-                if(mat->fbx.normal_map.texture) textures.push_back(loadMaterialTexture(tBaseModel,mat->fbx.normal_map.texture->filename.data,TT_NORMAL, tMatId));
-                if(mat->fbx.specular_color.texture) textures.push_back(loadMaterialTexture(tBaseModel,mat->fbx.specular_color.texture->filename.data,TT_SPECULAR, tMatId));
-                if(mat->fbx.emission_color.texture) textures.push_back(loadMaterialTexture(tBaseModel,mat->fbx.emission_color.texture->filename.data,TT_EMISSIVE, tMatId));
-            }
+            //Get material.
+            Material* material=nullptr;
+            if(tMesh->materials.count>0
+                && tMesh->materials.data[0]->typed_id<static_cast<uint32_t>(tBaseModel->materials.size()))
+                material=&tBaseModel->materials[tMesh->materials[0]->typed_id];
 
-            return Mesh(vertices,indices,textures);
+            return Mesh(vertices,indices,material);
         }
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.
@@ -128,6 +125,15 @@ namespace Firesteel {
             else tBaseModel->nodes.push_back(node);
             for(size_t c=0;c<tNode->children.count;c++)
                 processNodes(tBaseModel,tModel,tNode->children.data[c],(tParent?&tParent->children.back():&tBaseModel->nodes.back()));
+        }
+        /// [!WARING]
+        /// This function is internal and only used for the FBX loader. Use it at your own risk.
+        void tryAddTexture(const ufbx_material_map* tTex, Model* tModel, Material* tMat, const TextureType& tType) {
+            if(!tTex||!tModel||!tMat) return;
+            if(!tTex->has_value) return;
+            if(!tTex->texture) return;
+            Texture tex = loadMaterialTexture(tModel, tTex->texture->filename.data, tType);
+            if(tex.ID != 0) tMat->textures.push_back(tex);
         }
 
         Model load(const std::string& tPath) {
@@ -155,15 +161,35 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            size_t matId=0;
-            model.materials.resize(scene->materials.count);
+            //Process all materials.
+            for(size_t m=0;m<scene->materials.count;m++) {
+                //Create material.
+                const auto& mat=scene->materials.data[m];
+                Material material;
+                //Load textures.
+                tryAddTexture(&mat->pbr.base_color,&model,&material,TT_DIFFUSE);
+                tryAddTexture(&mat->pbr.normal_map,&model,&material,TT_NORMAL);
+                tryAddTexture(&mat->pbr.specular_color,&model,&material,TT_SPECULAR);
+                tryAddTexture(&mat->pbr.ambient_occlusion,&model,&material,TT_AMBIENT);
+                tryAddTexture(&mat->pbr.displacement_map,&model,&material,TT_DISPLACEMENT);
+                tryAddTexture(&mat->pbr.opacity,&model,&material,TT_OPACITY);
+                tryAddTexture(&mat->pbr.emission_color,&model,&material,TT_EMISSIVE);
+                //Get PBR data.
+                material.params.emplace_back("albedo",glm::vec3(mat->pbr.base_color.value_vec3.x,mat->pbr.base_color.value_vec3.y,mat->pbr.base_color.value_vec3.z));
+                material.params.emplace_back("emission",glm::vec3(mat->pbr.emission_color.value_vec3.x,mat->pbr.emission_color.value_vec3.y,mat->pbr.emission_color.value_vec3.z));
+                material.params.emplace_back("specular",glm::vec3(mat->pbr.specular_color.value_vec3.x,mat->pbr.specular_color.value_vec3.y,mat->pbr.specular_color.value_vec3.z));
+                material.params.emplace_back("ambientOcclusion",static_cast<float>(mat->pbr.ambient_occlusion.value_real));
+                material.params.emplace_back("metallic",static_cast<float>(mat->pbr.metalness.value_real));
+                material.params.emplace_back("roughness",static_cast<float>(mat->pbr.roughness.value_real));
+                model.materials.push_back(material);
+            }
             //Process all meshes.
             for(size_t m=0;m<scene->meshes.count;m++) {
 #ifdef FS_PRINT_DEBUG_MSGS
                 LOGF_DBG("Processing mesh %i/%i",m+1,scene->meshes.count);
-                model.meshes.push_back(processMesh(&model,scene->meshes[m],matId,vert,ind,norm,tex));
+                model.meshes.push_back(processMesh(&model,scene->meshes[m],vert,ind,norm,tex));
 #else
-                model.meshes.push_back(processMesh(&model,scene->meshes[m],matId));
+                model.meshes.push_back(processMesh(&model,scene->meshes[m]));
 #endif // FS_PRINT_DEBUG_MSGS
             }
             //Process all nodes.

@@ -1,14 +1,15 @@
 #include <../include/firesteel.hpp>
 using namespace Firesteel;
 
-Shader shader;
+Material material;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 
 class ModelLoading : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+        material.setShader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
         entity.load("res\\ModelLoading\\backpack.obj");
+        entity.setMaterial(&material);
         camera.update();
     }
     virtual void onUpdate() override {
@@ -16,14 +17,13 @@ class ModelLoading : public Firesteel::App {
         glm::mat4 proj = camera.getProjection(), view = camera.getView();
         camera.aspect = window.aspect();
         //Draw the model.
-        shader.enable();
-        shader.setMat4("projection", proj);
-        shader.setMat4("view", view);
-        entity.draw(&shader);
+        material.getShader()->enable();
+        material.getShader()->setMat4("projection", proj);
+        material.getShader()->setMat4("view", view);
+        entity.draw();
     }
     virtual void onShutdown() override {
         entity.remove();
-        shader.remove();
     }
 };
 

@@ -2,7 +2,7 @@
 #include <../include/input/input.hpp>
 using namespace Firesteel;
 
-Shader shader;
+Material material;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 Node* selectedNode=nullptr;
@@ -29,29 +29,30 @@ static bool DragFloat3(const char* tName, glm::vec3* tFloats, const float& tSpee
     return b;
 }
 static void DropDownNodes(Node* tNode,std::string tPath) {
-    if(ImGui::MenuItem((tPath+tNode->name).c_str())) {selectedNode=tNode;selectedRoot=false;}
+    if(ImGui::MenuItem((tPath+"/"+tNode->name).c_str())) {selectedNode=tNode;selectedRoot=false;}
     for(size_t n=0;n<tNode->children.size();n++)
-        DropDownNodes(&tNode->children[n],"/"+tPath+tNode->name);
+        DropDownNodes(&tNode->children[n],tPath+"/"+tNode->name);
 }
 
 class ModelViewer : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+        material.setShader("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
         auto val=OS::fileDialog(false, false, std::filesystem::current_path().string(),&filters);
         if(val.size()==0) val.push_back("res\\ModelLoading\\backpack.obj");
         entity.load(val[0]);
+        entity.setMaterial(&material);
         camera.update();
         window.setResizability(false);
         window.setVSync(true);
     }
     virtual void onUpdate() override {
-        //Process input.
-        if(Keyboard::keyDown(KeyCode::KEY_1)) enviroment.renderer->setDrawMode(Renderer::DM_FILL);
-        if(Keyboard::keyDown(KeyCode::KEY_2)) enviroment.renderer->setDrawMode(Renderer::DM_WIRE);
-        if(Mouse::getButton(2)) window.setCursor(Window::Cursor::CUR_POINTING_HAND);
-        else window.setCursor(Window::Cursor::CUR_ARROW);
-        //Viewport movement.
         if(!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
+            //Process input.
+            if(Keyboard::keyDown(KeyCode::KEY_1)) enviroment.renderer->setDrawMode(Renderer::DM_FILL);
+            if(Keyboard::keyDown(KeyCode::KEY_2)) enviroment.renderer->setDrawMode(Renderer::DM_WIRE);
+            if(Mouse::getButton(2)) window.setCursor(Window::Cursor::CUR_POINTING_HAND);
+            else window.setCursor(Window::Cursor::CUR_ARROW);
+            //Viewport movement.
             float movement=0;
             //Horizontal.
             movement=-Input::getHorizontalAxis()+(Mouse::getButton(2)?Mouse::getCursorDX():0)*2;
@@ -67,15 +68,18 @@ class ModelViewer : public Firesteel::App {
         glm::mat4 proj = camera.getProjection(), view = camera.getView();
         camera.aspect = window.aspect();
         //Draw the model.
-        shader.enable();
-        shader.setMat4("projection", proj);
-        shader.setMat4("view", view);
-        entity.draw(&shader);
+        material.getShader()->enable();
+        material.getShader()->setMat4("projection", proj);
+        material.getShader()->setMat4("view", view);
+        entity.draw();
         ImGui::Begin("Scene");
         if(ImGui::Button("Change model")) {
             selectedNode=nullptr;selectedRoot=false;
             auto val=OS::fileDialog(false, false, std::filesystem::current_path().string(),&filters);
-            if(val.size()>0) entity.load(val[0]);
+            if(val.size()>0) {
+                entity.load(val[0]);
+                entity.setMaterial(&material);
+            }
         }
         if(entity.hasModel()) {
             if(ImGui::CollapsingHeader(entity.model.getFilename().c_str())) {
@@ -101,7 +105,6 @@ class ModelViewer : public Firesteel::App {
     }
     virtual void onShutdown() override {
         entity.remove();
-        shader.remove();
     }
 };
 

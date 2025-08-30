@@ -10,7 +10,7 @@
 namespace Firesteel {
     struct Shader {
     private:
-        static Shader sDefaultShader;
+        static std::shared_ptr<Shader> sDefaultShader;
     public:
         unsigned int ID;
         bool loaded=false;
@@ -31,12 +31,12 @@ namespace Firesteel {
             bool hasGeomShader=(tGeometryPath != nullptr);
             if(!std::filesystem::exists(tVertexPath)) {
                 LOG_WARN(std::string("Vertex shader at \"") + tVertexPath + "\" doesn't exist");
-                ID=sDefaultShader.ID;
+                ID=sDefaultShader->ID;
                 return;
             }
             if(!std::filesystem::exists(tFragmentPath)) {
                 LOG_WARN(std::string("Fragment shader at \"") + tFragmentPath + "\" doesn't exist");
-                ID=sDefaultShader.ID;
+                ID=sDefaultShader->ID;
                 return;
             }
             if(hasGeomShader)
@@ -71,7 +71,7 @@ namespace Firesteel {
             }
             catch (std::ifstream::failure& e) {
                 LOG_WARN(std::string("Error while reading shader files: ") + e.what());
-                ID=sDefaultShader.ID;
+                ID=sDefaultShader->ID;
                 return;
             }
         }
@@ -95,11 +95,11 @@ namespace Firesteel {
         }
 
         static void setDefaultShader(const char* tVertexCode, const char* tFragmentCode) {
-            sDefaultShader.remove();
-            sDefaultShader=Shader(tVertexCode,tFragmentCode,false,nullptr);
+            if(sDefaultShader) sDefaultShader->remove();
+            sDefaultShader=std::make_shared<Shader>(tVertexCode,tFragmentCode,false,nullptr);
         }
-        static Shader* getDefaultShader() {
-            return &sDefaultShader;
+        static std::shared_ptr<Shader> getDefaultShader() {
+            return sDefaultShader;
         }
 
         // Utilities //

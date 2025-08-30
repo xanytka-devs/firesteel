@@ -85,7 +85,7 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the GLTF loader. Use it at your own risk.
-        Mesh processPrimitive(const Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
+        Mesh processPrimitive(Model* tBaseModel, const tinygltf::Model* tModel, const tinygltf::Primitive* tPrimitive, const std::string tPath
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
@@ -137,13 +137,10 @@ namespace Firesteel {
             for(size_t i=0;i<posAcc.count;i++) {
                 Vertex vert{};
                 //Positions with rotation correction (because of different coordinate system).
-                glm::mat4 rotCorr=glm::rotate(glm::mat4(1.f),glm::radians(90.f),glm::vec3(1.f,0.f,0.f));
                 vert.position=glm::vec3(
-                    rotCorr * glm::vec4(
-                        positions[i*3+0],
-                        positions[i*3+1],
-                        positions[i*3+2],
-                        1.f)
+                    positions[i*3+0],
+                    positions[i*3+1],
+                    positions[i*3+2]
                 );
                 //Normals.
                 if(hasNormals)
@@ -237,24 +234,14 @@ namespace Firesteel {
                 LOG_ERRR("Unsupported index component type");
                 break;
             }
-            //Get textures.
-            std::vector<Texture> textures;
-            const tinygltf::Material& mat=tModel->materials[tPrimitive->material];
-            Texture diffuseTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.baseColorTexture.index), TT_DIFFUSE);
-            Texture normalTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.normalTexture.index), TT_NORMAL);
-            Texture specularTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), TT_SPECULAR);
-            Texture ambientTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.occlusionTexture.index), TT_AMBIENT);
-            Texture emissiveTex=loadMaterialTexture(tBaseModel, getTexPath(tModel,mat.emissiveTexture.index), TT_EMISSIVE);
-            //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
-            //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
-            //Push back all textures.
-            if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
-            if(normalTex.ID!=0) textures.push_back(normalTex);
-            if(specularTex.ID!=0) textures.push_back(specularTex);
-            if(ambientTex.ID!=0) textures.push_back(ambientTex);
-            if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
+            //Get material.
+            Material* material=nullptr;
+            if(tPrimitive->material>=0
+                && tPrimitive->material<static_cast<int>(tModel->materials.size())
+                && tPrimitive->material<static_cast<int>(tBaseModel->materials.size()))
+                    material=&tBaseModel->materials[tPrimitive->material];
 
-            return Mesh(vertices,indices,textures);
+            return Mesh(vertices,indices,material);
         }
 
         Model load(std::string tPath, bool tBinary) {
@@ -284,9 +271,12 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            //Process all materials (textures).
-            for(const auto& mat : gltf.materials) {
-                std::vector<Texture> textures;
+            //Process all materials.
+            for(size_t m=0;m<gltf.materials.size();m++) {
+                //Create material.
+                const auto& mat = gltf.materials[m];
+                Material material;
+                //Load textures
                 Texture diffuseTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.baseColorTexture.index), TT_DIFFUSE);
                 Texture normalTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.normalTexture.index), TT_NORMAL);
                 Texture specularTex=loadMaterialTexture(&model, getTexPath(&gltf,mat.pbrMetallicRoughness.metallicRoughnessTexture.index), TT_SPECULAR);
@@ -295,12 +285,19 @@ namespace Firesteel {
                 //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
                 //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
                 //Push back all textures.
-                if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
-                if(normalTex.ID!=0) textures.push_back(normalTex);
-                if(specularTex.ID!=0) textures.push_back(specularTex);
-                if(ambientTex.ID!=0) textures.push_back(ambientTex);
-                if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
-                model.materials.push_back({ textures });
+                if(diffuseTex.ID!=0) material.textures.push_back(diffuseTex);
+                if(normalTex.ID!=0) material.textures.push_back(normalTex);
+                if(specularTex.ID!=0) material.textures.push_back(specularTex);
+                if(ambientTex.ID!=0) material.textures.push_back(ambientTex);
+                if(emissiveTex.ID!=0) material.textures.push_back(emissiveTex);
+                //Get PBR data.
+                material.params.emplace_back("albedo",glm::vec3(mat.pbrMetallicRoughness.baseColorFactor[0],mat.pbrMetallicRoughness.baseColorFactor[1],mat.pbrMetallicRoughness.baseColorFactor[2]));
+                material.params.emplace_back("emission",glm::vec3(mat.emissiveFactor[0],mat.emissiveFactor[1],mat.emissiveFactor[2]));
+                material.params.emplace_back("specular",glm::vec3(0));
+                material.params.emplace_back("ambientOcclusion",static_cast<float>(mat.occlusionTexture.strength));
+                material.params.emplace_back("metallic",static_cast<float>(mat.pbrMetallicRoughness.metallicFactor));
+                material.params.emplace_back("roughness",static_cast<float>(mat.pbrMetallicRoughness.roughnessFactor));
+                model.materials.push_back(material);
             }
             //Process all meshes.
             for(size_t m=0;m<gltf.meshes.size();m++) {

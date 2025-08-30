@@ -69,21 +69,65 @@ namespace Firesteel {
         ShaderParameterValue mValue;
     };
     struct Material {
-        Shader* shader=nullptr;
-        std::vector<ShaderParameter> params;
-        std::vector<Texture> textures;
+    public:
+        void setShader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
+            mShader=std::make_shared<Shader>(tVertexPath, tFragmentPath, tGeometryPath);
+            if(!mShader) mShader=Shader::getDefaultShader();
+            else if(!mShader->loaded) mShader=Shader::getDefaultShader();
+        }
+        void setShader(std::shared_ptr<Shader>& tShader) {
+            mShader=tShader;
+            if(!mShader) mShader=Shader::getDefaultShader();
+            else if(!mShader->loaded) mShader=Shader::getDefaultShader();
+        }
+        std::shared_ptr<Shader> getShader() const {return mShader;}
         void bind() {
-            if(!shader) return;
-            shader->enable();
-            for (size_t p=0;p<params.size();p++)
-                params[p].bind(shader);
-            
+            mShader->enable();
+            for(size_t p=0;p<params.size();p++)
+                params[p].bind(mShader.get());
+            //Bind appropriate textures.
+            size_t diffuseNr=0;
+            size_t specularNr=0;
+            size_t normalNr=0;
+            size_t heightNr=0;
+            size_t emisNr=0;
+            size_t opacNr=0;
+            mShader->setBool("noTextures", true);
+            //Bind textures.
+            if(textures.size()>0) {
+                mShader->setBool("noTextures", false);
+                Texture::unbind();
+                for(unsigned int i=0; i < textures.size(); i++) {
+                    //Retrieve texture number.
+                    size_t number=0;
+                    std::string name=textures[i].typeToString();
+                    if(name == "diffuse") number=diffuseNr++;
+                    else if(name == "specular") number=specularNr++;
+                    else if(name == "normal") number=normalNr++;
+                    else if(name == "emission") number=emisNr++;
+                    else if(name == "height") number=heightNr++;
+                    else if(name == "opacity") number=opacNr++;
+                    //Now set the sampler to the correct texture unit.
+                    textures[i].enable(i);
+                    mShader->setInt("material." + name + std::to_string(number), i);
+                    mShader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
+                    mShader->setBool("material." + name + "_present", true);
+                }
+                mShader->setBool("material.opacityMask", opacNr > 0);
+            }
         }
         void remove() {
             for(size_t i=0; i < textures.size(); i++)
                 textures[i].remove();
-            if(shader) shader->remove();
+            if(mShader) mShader->remove();
+            textures.clear();
+            params.clear();
         }
+    private:
+        std::shared_ptr<Shader> mShader=Shader::getDefaultShader();
+    public:
+        std::vector<ShaderParameter> params;
+        std::vector<Texture> textures;
     };
 }
 

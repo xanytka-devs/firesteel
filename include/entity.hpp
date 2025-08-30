@@ -37,16 +37,24 @@ namespace Firesteel {
             load(tPath);
         }
 
-        // Renders the model.
-        void draw(const Shader* tShader) {
+        // Renders the model with given material or default shader.
+        void draw() {
             if(model.meshes.size()==0) return;
-            if(tShader==nullptr||!tShader->loaded) tShader=Shader::getDefaultShader();
-            tShader->enable();
             for(size_t n=0;n<model.nodes.size();n++)
-                drawNode(model.nodes[n], tShader, transform.getMatrix());
+                drawNode(model.nodes[n], transform.getMatrix());
         }
-        // Renders the model in the default shader.
-        void draw() {draw(nullptr);}
+        // Replaces materials shader with given one.
+        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tOnlyReplaceMissing=true) {
+            if(!hasModel()) return;
+            for(size_t m=0;m<model.materials.size();m++)
+                if(!model.materials[m].getShader()||!tOnlyReplaceMissing) model.materials[m].setShader(tShader);
+        }
+        // Replaces all materials with given one.
+        void setMaterial(Material* tMaterial, const bool tOnlyReplaceMissing=true) {
+            if(!hasModel()) return;
+            for(size_t m = 0; m < model.materials.size(); m++)
+                if(model.materials[m].getShader()!=Shader::getDefaultShader()||!tOnlyReplaceMissing) model.materials[m] = *tMaterial;
+        }
 
         bool hasModel() const { return model.meshes.size()!=0; }
         void remove() {
@@ -66,6 +74,7 @@ namespace Firesteel {
                 LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
                 return;
             }
+            remove();
             LOG_INFO("Loading model at: \"" + tPath + "\"");
             
             auto extBig=String::split(tPath, '.');
@@ -75,10 +84,7 @@ namespace Firesteel {
             else if(ext=="obj") model=OBJ::load(tPath);
 #endif // FS_LOADER_OBJ
 #ifdef FS_LOADER_GLTF
-            else if(ext=="gltf"||ext=="glb") {
-                model=GLTF::load(tPath,ext=="glb");
-                transform.rotation.x=-90;
-            }
+            else if(ext=="gltf"||ext=="glb") model=GLTF::load(tPath,ext=="glb");
 #endif // FS_LOADER_GLTF
 #ifdef FS_LOADER_FBX
             else if(ext=="fbx") model=FBX::load(tPath);
@@ -90,36 +96,31 @@ namespace Firesteel {
 
         void addMesh(const Mesh& tMesh) {
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures",
-                tMesh.vertices.size(), tMesh.indices.size(), tMesh.textures.size());
+            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
+                tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.emplace_back(tMesh);
-            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()-1),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size())-1);
+            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
         }
         void addMesh(const std::vector<Vertex>& tVertices,
-            const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures) {
+            const std::vector<unsigned int>& tIndices, Material* tMaterial) {
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices, %d indicies and %d textures",
-                tVertices.size(), tIndices.size(), tTextures.size());
+            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
+                tVertices.size(), tIndices.size());
 #endif // FS_PRINT_DEBUG_MSGS
-            model.meshes.emplace_back(tVertices,tIndices,tTextures);
-            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()-1),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size())-1);
+            model.meshes.emplace_back(tVertices,tIndices,tMaterial);
+            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
         }
 
     private:
-        static glm::mat4 modelMatrix;
-
-        void drawNode(const Node& tNode, const Shader* tShader, const glm::mat4& tModel) {
-            if(tNode.index>=0&&tNode.index<static_cast<int>(model.meshes.size())) {
-                tShader->setMat4("model",tModel*tNode.transform.getMatrix());
-                model.meshes[tNode.index].draw(tShader);
-            }
+        void drawNode(const Node& tNode, const glm::mat4& tParentModel) {
+            const glm::mat4 nodeMatrix=tParentModel*tNode.transform.getMatrix();
+            if(tNode.index>=0&&tNode.index<static_cast<int>(model.meshes.size()))
+                model.meshes[tNode.index].draw(nodeMatrix);
             for(size_t n=0;n<tNode.children.size();n++)
-                drawNode(tNode.children[n],tShader,tModel);
+                drawNode(tNode.children[n],nodeMatrix);
         }
     };
 }
-
-glm::mat4 Firesteel::Entity::modelMatrix=glm::mat4(1);
 
 #endif // ! FS_ENTITY_H

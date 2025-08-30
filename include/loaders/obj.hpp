@@ -17,8 +17,10 @@ namespace Firesteel {
             //Get full path.
             std::string fullPath=tModel->getDirectory() + "/" + texPath;
             //Check all materials for this texture.
-            for (auto& material : tModel->materials) {
-                for (const auto& texture : material.textures) {
+            for(size_t m=0;m<tModel->materials.size();m++) {
+                auto& material = tModel->materials[m];
+                for(size_t t=0;t<material.textures.size();t++) {
+                    const auto& texture = material.textures[t];
                     if (texture.path == texPath && texture.type == type) {
                         //If texture is already loaded - return it's copy.
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -42,7 +44,7 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the OBJ loader. Use it at your own risk.
-        Mesh processShape(const Model* tModel, const tinyobj::shape_t& tShape, const tinyobj::attrib_t& tAttrib, int materialID, std::vector<std::string>& nodeNames
+        Mesh processShape(Model* tModel, const tinyobj::shape_t& tShape, const tinyobj::attrib_t& tAttrib, int materialID, std::vector<std::string>& nodeNames
 #ifdef FS_PRINT_DEBUG_MSGS
             , size_t& tVert, size_t& tInd, size_t& tNorm, size_t& tTex
 #endif
@@ -112,13 +114,13 @@ namespace Firesteel {
 #endif
                 }
             }
-            //Get textures.
-            std::vector<Texture> textures;
-            if (materialID >= 0 && materialID < static_cast<int>(tModel->materials.size()))
-                textures=tModel->materials[materialID].textures;
+            //Get material.
+            Material* material=nullptr;
+            if(materialID>=0 && materialID<static_cast<int>(tModel->materials.size()))
+                material=&tModel->materials[materialID];
 
             nodeNames.push_back(tShape.name);
-            return Mesh(vertices, indices, textures);
+            return Mesh(vertices, indices, material);
         }
 
         Model load(std::string tPath) {
@@ -151,8 +153,12 @@ namespace Firesteel {
             size_t norm=0;
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
-            //Process all materials (textures).
-            for (const auto& mat : materials) {
+            //Process all materials.
+            for (size_t m=0;m<materials.size();m++) {
+                //Create material.
+                const auto& mat = materials[m];
+                Material material;
+                //Load textures.
                 Texture diffuseTex=loadMaterialTexture(&model, mat.diffuse_texname, TT_DIFFUSE);
                 Texture normalTex=loadMaterialTexture(&model, mat.normal_texname, TT_NORMAL);
                 Texture specularTex=loadMaterialTexture(&model, mat.specular_texname, TT_SPECULAR);
@@ -161,15 +167,21 @@ namespace Firesteel {
                 Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, TT_OPACITY);
                 Texture emissiveTex=loadMaterialTexture(&model, mat.emissive_texname, TT_EMISSIVE);
                 //Push back all textures.
-                std::vector<Texture> textures;
-                if(diffuseTex.ID!=0) textures.push_back(diffuseTex);
-                if(normalTex.ID!=0) textures.push_back(normalTex);
-                if(specularTex.ID!=0) textures.push_back(specularTex);
-                if(ambientTex.ID!=0) textures.push_back(ambientTex);
-                if(displacementTex.ID!=0) textures.push_back(displacementTex);
-                if(opacityTex.ID!=0) textures.push_back(opacityTex);
-                if(emissiveTex.ID!=0) textures.push_back(emissiveTex);
-                model.materials.push_back({ textures });
+                if(diffuseTex.ID!=0) material.textures.push_back(diffuseTex);
+                if(normalTex.ID!=0) material.textures.push_back(normalTex);
+                if(specularTex.ID!=0) material.textures.push_back(specularTex);
+                if(ambientTex.ID!=0) material.textures.push_back(ambientTex);
+                if(displacementTex.ID!=0) material.textures.push_back(displacementTex);
+                if(opacityTex.ID!=0) material.textures.push_back(opacityTex);
+                if(emissiveTex.ID!=0) material.textures.push_back(emissiveTex);
+                //Get PBR data.
+                material.params.emplace_back("albedo",glm::vec3(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]));
+                material.params.emplace_back("emission",glm::vec3(mat.emission[0],mat.emission[1],mat.emission[2]));
+                material.params.emplace_back("specular",glm::vec3(mat.specular[0],mat.specular[1],mat.specular[2]));
+                material.params.emplace_back("ambientOcclusion",1);
+                material.params.emplace_back("metallic",(float)mat.metallic);
+                material.params.emplace_back("roughness",(float)mat.roughness);
+                model.materials.push_back(material);
             }
             //Process all shapes.
             std::vector<std::string> nodeNames;

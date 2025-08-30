@@ -21,61 +21,14 @@ namespace Firesteel {
 
     struct Mesh {
     public:
-        /// Mesh Data.
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
-        std::vector<Texture> textures;
-        glm::vec3 ambient{0.2f}, diffuse{1.f}, specular{0.5f}, emission{0.f};
-
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures)
-            : vertices(tVertices), indices(tIndices), textures(tTextures) {
+        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, Material* tMaterial)
+            : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
-
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices,
-            const glm::vec3 tDiffuse, const glm::vec3 tSpecular, const glm::vec3 tEmission)
-            : vertices(tVertices), indices(tIndices),
-            diffuse(tDiffuse), specular(tSpecular), emission(tEmission) {
-            makeMesh();
-        }
-
         // Shader must be enabled before running this.
-        void draw(const Shader* tShader) {
-            //Bind appropriate textures.
-            size_t diffuseNr=0;
-            size_t specularNr=0;
-            size_t normalNr=0;
-            size_t heightNr=0;
-            size_t emisNr=0;
-            size_t opacNr=0;
-            //Set material values.
-            tShader->setVec4("material.ambient", glm::vec4(ambient, 1));
-            tShader->setVec4("material.diffuse", glm::vec4(diffuse, 1));
-            tShader->setVec4("material.specular", glm::vec4(specular, 1));
-            tShader->setVec4("material.emission", glm::vec4(emission, 1));
-            tShader->setBool("noTextures", true);
-            //Bind textures.
-            if(textures.size()>0) {
-                tShader->setBool("noTextures", false);
-                Texture::unbind();
-                for(unsigned int i=0; i < textures.size(); i++) {
-                    //Retrieve texture number.
-                    size_t number=0;
-                    std::string name=textures[i].typeToString();
-                    if(name == "diffuse") number=diffuseNr++;
-                    else if(name == "specular") number=specularNr++;
-                    else if(name == "normal") number=normalNr++;
-                    else if(name == "emission") number=emisNr++;
-                    else if(name == "height") number=heightNr++;
-                    else if(name == "opacity") number=opacNr++;
-                    //Now set the sampler to the correct texture unit.
-                    textures[i].enable(i);
-                    tShader->setInt("material." + name + std::to_string(number), i);
-                    tShader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
-                    tShader->setBool("material." + name + "_present", true);
-                }
-                tShader->setBool("material.opacityMask", opacNr > 0);
-            }
+        void draw(const glm::mat4& tModel) {
+            material->bind();
+            material->getShader()->setMat4("model",tModel);
             //Draw mesh.
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -83,23 +36,23 @@ namespace Firesteel {
             //Always good practice to set everything back to defaults once configured.
             Texture::unbind();
         }
-
         void remove() {
             glDeleteVertexArrays(1, &mVAO);
             //Clear mesh data.
             vertices.clear();
             indices.clear();
-            for(size_t i=0; i < textures.size(); i++)
-                textures[i].remove();
-            textures.clear();
         }
-
-        bool hasTextures() const { return textures.size() > 0; }
-    private:
+    public:
+        /// Mesh Data.
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+        Material* material;
+    protected:
         // Render data.
-        unsigned int mVAO, mVBO, mEBO;
-
+        unsigned int mVAO;
+    private:
         void makeMesh() {
+            unsigned int mVBO, mEBO;
             //Create buffers/arrays.
             glGenVertexArrays(1, &mVAO);
             glGenBuffers(1, &mVBO);
@@ -141,11 +94,6 @@ namespace Firesteel {
         }
     };
     struct Node {
-        std::string name;
-        Transform transform;
-        std::vector<Node> children;
-        int index=-1;
-
         Node() {
             name="New Node";
             transform=Transform{};
@@ -153,23 +101,29 @@ namespace Firesteel {
         }
         Node(const std::string& tName, const Transform& tTransform, const std::vector<Node>& tChildren, const int& tIndex)
             : name(tName), transform(tTransform), children(tChildren), index(tIndex) {}
+        
+        std::string name;
+        Transform transform;
+        std::vector<Node> children;
+        int index=-1;
     };
     struct Model {
-        std::string path;
-        std::vector<Material> materials;
-        std::vector<Node> nodes;
-        std::vector<Mesh> meshes;
+        Model(const std::string& tPath="") {
+            materials.clear();
+            meshes.clear();
+            path=tPath;
+        }
         std::string getDirectory() const {
             return path.substr(0, path.find_last_of('\\'));
         }
         std::string getFilename() const {
             return path.substr(path.find_last_of('\\')+1, path.size()-path.find_last_of('\\')-1);
         }
-        Model(const std::string& tPath="") {
-            materials.clear();
-            meshes.clear();
-            path=tPath;
-        }
+
+        std::string path;
+        std::vector<Material> materials;
+        std::vector<Node> nodes;
+        std::vector<Mesh> meshes;
     };
 }
 #endif // !FS_MESH_H
