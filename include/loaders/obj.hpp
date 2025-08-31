@@ -175,7 +175,7 @@ namespace Firesteel {
                 if(opacityTex.ID!=0) material.textures.push_back(opacityTex);
                 if(emissiveTex.ID!=0) material.textures.push_back(emissiveTex);
                 //Get PBR data.
-                material.params.emplace_back("albedo",glm::vec3(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]));
+                material.params.emplace_back("diffuse",glm::vec3(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]));
                 material.params.emplace_back("emission",glm::vec3(mat.emission[0],mat.emission[1],mat.emission[2]));
                 material.params.emplace_back("specular",glm::vec3(mat.specular[0],mat.specular[1],mat.specular[2]));
                 material.params.emplace_back("ambientOcclusion",1);

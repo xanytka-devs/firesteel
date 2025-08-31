@@ -28,6 +28,7 @@ int main() {
 Почему так? Ну во-первых к модели не применяется никакого материала, из-за этого она использует **fallback** (аварийный ресурс).
 
 # Свой материал
+Полноценные материалы в данном случае не нужны, так как текстуры не изменяются. Просто создадим шейдер и заменим им стандартный.
 Существует несколько этапов отрисовки модели. В данном туториале будут затронуты лишь две стадии: Вертексная и Фрагментная.  
 Первая нужна для обработки положений и данных треугольников, а вторая отвечает за отрисовку пикселей этих треугольников на экран.
 ## Вертексный шейдер
@@ -88,19 +89,19 @@ Firesteel работает через материалы, то есть все �
 В `main()` просто принимаются и обрабатываются значения текстур, а также отменяется отрисовка, если прозрачность меньше 0,1.
 
 ## Изменения в коде приложения
-А теперь слегка изменим `main.cpp`, добавив туда новый материал:
+А теперь слегка изменим `main.cpp`, добавив туда новый "материал":
 ``` cpp
 #include "engine/include/firesteel.hpp"
 using namespace Firesteel;
 
-Material material;
+std::shared_ptr<Shader> shader;
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
     virtual void onInitialize() override {
-        material.setShader("shader.vs", "shader.fs");
+        shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
-		entity.setMaterial(&material);
+        entity.setMaterialsShader(shader);
     }
     virtual void onUpdate() override {
         entity.draw();
@@ -132,9 +133,9 @@ Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
     virtual void onInitialize() override {
-        material.setShader("shader.vs", "shader.fs");
+        shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
-		entity.setMaterial(&material);
+        entity.setMaterialsShader(shader);
         camera.update();
     }
     virtual void onUpdate() override {
@@ -142,9 +143,9 @@ class ModelLoaderApp : public Firesteel::App {
         glm::mat4 proj = camera.getProjection();
         glm::mat4 view = camera.getView();
         //Draw the model.
-        material.getShader()->enable();
-        material.getShader()->setMat4("projection", proj);
-        material.getShader()->setMat4("view", view);
+        shader->enable();
+        shader->setMat4("projection", proj);
+        shader->setMat4("view", view);
         entity.draw();
     }
     virtual void onShutdown() override {
@@ -193,9 +194,9 @@ virtual void onUpdate() override {
     glm::mat4 view = camera.getView();
     camera.aspect = window.aspect(); // <---
     //Draw the model.
-    material.getShader()->enable();
-    material.getShader()->setMat4("projection", proj);
-    material.getShader()->setMat4("view", view);
+    shader->enable();
+    shader->setMat4("projection", proj);
+    shader->setMat4("view", view);
     entity.draw();
 }
 ```
@@ -209,9 +210,9 @@ virtual void onUpdate() override {
 Для этого внесём одну строку в `main.cpp`, а именно в `onInitialize()`:
 ``` cpp
 virtual void onInitialize() override {
-    material.setShader("shader.vs", "shader.fs");
+    shader=std::make_shared<Shader>("shader.vs", "shader.fs");
     entity.load("backpack.obj");
-	entity.setMaterial(&material);
+    entity.setMaterialsShader(shader);
     camera.update();
     renderer.setDrawMode(Renderer::DM_WIRE); // <---
 }

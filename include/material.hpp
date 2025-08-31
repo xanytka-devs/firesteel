@@ -72,13 +72,23 @@ namespace Firesteel {
     public:
         void setShader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
             mShader=std::make_shared<Shader>(tVertexPath, tFragmentPath, tGeometryPath);
-            if(!mShader) mShader=Shader::getDefaultShader();
-            else if(!mShader->loaded) mShader=Shader::getDefaultShader();
+            if(!mShader) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (pointer was empty)");
+            } else if(!mShader->loaded) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (shader wasn't loaded)");
+            }
         }
         void setShader(std::shared_ptr<Shader>& tShader) {
             mShader=tShader;
-            if(!mShader) mShader=Shader::getDefaultShader();
-            else if(!mShader->loaded) mShader=Shader::getDefaultShader();
+            if(!mShader) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (pointer was empty)");
+            } else if(!mShader->loaded) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (shader wasn't loaded)");
+            }
         }
         std::shared_ptr<Shader> getShader() const {return mShader;}
         void bind() {

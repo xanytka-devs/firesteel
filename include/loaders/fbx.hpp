@@ -175,7 +175,7 @@ namespace Firesteel {
                 tryAddTexture(&mat->pbr.opacity,&model,&material,TT_OPACITY);
                 tryAddTexture(&mat->pbr.emission_color,&model,&material,TT_EMISSIVE);
                 //Get PBR data.
-                material.params.emplace_back("albedo",glm::vec3(mat->pbr.base_color.value_vec3.x,mat->pbr.base_color.value_vec3.y,mat->pbr.base_color.value_vec3.z));
+                material.params.emplace_back("diffuse",glm::vec3(mat->pbr.base_color.value_vec3.x,mat->pbr.base_color.value_vec3.y,mat->pbr.base_color.value_vec3.z));
                 material.params.emplace_back("emission",glm::vec3(mat->pbr.emission_color.value_vec3.x,mat->pbr.emission_color.value_vec3.y,mat->pbr.emission_color.value_vec3.z));
                 material.params.emplace_back("specular",glm::vec3(mat->pbr.specular_color.value_vec3.x,mat->pbr.specular_color.value_vec3.y,mat->pbr.specular_color.value_vec3.z));
                 material.params.emplace_back("ambientOcclusion",static_cast<float>(mat->pbr.ambient_occlusion.value_real));

@@ -26,9 +26,6 @@
 namespace Firesteel {
     class Entity {
     public:
-        Transform transform;
-        Model model;
-
         Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
             : transform(Transform(tPos, tRot, tSize)) { }
         Entity(const std::string& tPath,
@@ -43,17 +40,32 @@ namespace Firesteel {
             for(size_t n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
         }
-        // Replaces materials shader with given one.
-        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tOnlyReplaceMissing=true) {
+        // Replaces materials with default shader with given shader.
+        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
             if(!hasModel()) return;
             for(size_t m=0;m<model.materials.size();m++)
-                if(!model.materials[m].getShader()||!tOnlyReplaceMissing) model.materials[m].setShader(tShader);
+                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m].setShader(tShader);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Changed entity materials shader");
+#endif // FS_PRINT_DEBUG_MSGS
+        }
+        // Replaces materials with shader id with given shader.
+        void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
+            if(!hasModel()) return;
+            for(size_t m=0;m<model.materials.size();m++)
+                if(model.materials[m].getShader()->ID==tIdToReplace) model.materials[m].setShader(tShader);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Replaced entity materials shader");
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Replaces all materials with given one.
-        void setMaterial(Material* tMaterial, const bool tOnlyReplaceMissing=true) {
+        void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
             if(!hasModel()) return;
             for(size_t m = 0; m < model.materials.size(); m++)
-                if(model.materials[m].getShader()!=Shader::getDefaultShader()||!tOnlyReplaceMissing) model.materials[m] = *tMaterial;
+                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m]=*tMaterial;
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Changed entity material");
+#endif // FS_PRINT_DEBUG_MSGS
         }
 
         bool hasModel() const { return model.meshes.size()!=0; }
@@ -112,6 +124,8 @@ namespace Firesteel {
             model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
         }
 
+        Transform transform;
+        Model model;
     private:
         void drawNode(const Node& tNode, const glm::mat4& tParentModel) {
             const glm::mat4 nodeMatrix=tParentModel*tNode.transform.getMatrix();
