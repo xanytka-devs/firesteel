@@ -2,6 +2,8 @@
 #define FS_RENDERER_H
 #include "common.hpp"
 
+#include <imgui.h>
+
 namespace Firesteel {
 	class Renderer {
     public:

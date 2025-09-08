@@ -2,7 +2,6 @@
 #ifndef FS_OGL_RENDERER_H
 #define FS_OGL_RENDERER_H
 #include "../renderer.hpp"
-#include <imgui.h>
 #if FS_CONTEXT_MAJOR > 2
 #include <backends/imgui_impl_opengl3.h>
 #else

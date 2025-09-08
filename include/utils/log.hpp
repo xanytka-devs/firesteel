@@ -83,17 +83,19 @@
 #endif // __linux__
 /* SIMPLE FUNCTIONS */
 
-#define TLOG(time, ...)		{Log::simple(time,__VA_ARGS__);}
-#define LOG(...)			{TLOG(true,__VA_ARGS__);}
-#define LOG_INFO(...)		{Log::log("[INFO] ",false,CMD_F_GRAY);TLOG(false,__VA_ARGS__);}
-#define LOG_STATE(...)		{Log::log("[STAT] ",false,CMD_F_LBLUE);TLOG(false,__VA_ARGS__);}
-#define LOG_STAT(...)		{LOG_STATE(__VA_ARGS__);}
-#define LOG_WARNING(...)	{Log::log("[WARN] ",false,CMD_F_YELLOW);TLOG(false,__VA_ARGS__);}
-#define LOG_WARN(...)		{LOG_WARNING(__VA_ARGS__);}
-#define LOG_ERROR(...)		{Log::log("[ERRR] ",false,CMD_F_RED);TLOG(false,__VA_ARGS__);}
-#define LOG_ERRR(...)		{LOG_ERROR(__VA_ARGS__);}
-#define LOG_CRITICAL(...)	{Log::log("[CRIT] ",false,CMD_BG_RED+CMD_F_WHITE);TLOG(false,__VA_ARGS__);}
-#define LOG_CRIT(...)		{LOG_CRITICAL(__VA_ARGS__);}
+#define TLOG(time, ...)			{Log::simple(time,__VA_ARGS__);}
+#define LOG(...)				{TLOG(true,__VA_ARGS__);}
+#define LOG_INFO(...)			{Log::log("[INFO] ",false,CMD_F_GRAY);TLOG(false,__VA_ARGS__);}
+#define LOG_STATE(...)			{Log::log("[STAT] ",false,CMD_F_LBLUE);TLOG(false,__VA_ARGS__);}
+#define LOG_STAT(...)			{LOG_STATE(__VA_ARGS__);}
+#define LOG_WARNING(...)		{Log::log("[WARN] ",false,CMD_F_YELLOW);TLOG(false,__VA_ARGS__);}
+#define LOG_WARN(...)			{LOG_WARNING(__VA_ARGS__);}
+#define LOG_ERROR(...)			{Log::log("[ERRR] ",false,CMD_F_RED);TLOG(false,__VA_ARGS__);}
+#define LOG_ERRR(...)			{LOG_ERROR(__VA_ARGS__);}
+#define LOG_CRITICAL(...)		{Log::log("[CRIT] ",false,CMD_BG_RED+CMD_F_WHITE);TLOG(false,__VA_ARGS__);}
+#define LOG_CRIT(...)			{LOG_CRITICAL(__VA_ARGS__);}
+#define ASSERT(condition,...)	{if(!condition){LOG_CRIT(__VA_ARGS__);exit(-1);}}
+//#define IM_ASSERT(condition)	{ASSERT(condition,_CRT_WIDE(condition));}
 /* FORMATTED FUNCTIONS */
 
 #define LOGF(format, ...)			{Log::log(Log::formatStr(format,__VA_ARGS__),true,CMD_F_WHITE,CMD_BG_BLACK,false);}

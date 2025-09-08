@@ -30,9 +30,9 @@ static bool DragFloat3(const char* tName, glm::vec3* tFloats, const float& tSpee
     return b;
 }
 static void DropDownNodes(Node* tNode,std::string tPath) {
-    if(ImGui::MenuItem((tPath+"/"+tNode->name).c_str())) {selectedNode=tNode;selectedRoot=false;}
+    if(ImGui::MenuItem((tPath+tNode->name+"/").c_str())) {selectedNode=tNode;selectedRoot=false;}
     for(size_t n=0;n<tNode->children.size();n++)
-        DropDownNodes(&tNode->children[n],tPath+"/"+tNode->name);
+        DropDownNodes(&tNode->children[n],tPath+tNode->name+"/");
 }
 
 class ModelViewer : public Firesteel::App {
@@ -101,6 +101,9 @@ class ModelViewer : public Firesteel::App {
             ImGui::Begin("Inspector");
             if(selectedNode) {
                 ImGui::Text(selectedNode->name.c_str());
+                int meshId=selectedNode->index;
+                ImGui::DragInt("Mesh ID:",&meshId,1,-1,static_cast<int>(entity.model.meshes.size()-1));
+                if(selectedNode->index!=meshId) selectedNode->index=meshId;
                 ImGui::Separator();
                 ImGui::Text("Transform");
                 DragFloat3("Position",&selectedNode->transform.position);
@@ -108,12 +111,17 @@ class ModelViewer : public Firesteel::App {
                 DragFloat3("Size",&selectedNode->transform.size);
                 ImGui::Separator();
                 ImGui::Text("Material");
-                if(entity.model.meshes[selectedNode->index].material) {
-                    auto& mat=entity.model.meshes[selectedNode->index].material;
-                    ImGui::Text("ID: %i", selectedNode->index);
-                    ImGui::Text("Shader ID: %i", mat->getShader()->ID);
-                    ImGui::Text("Parameters count: %i", mat->params.size());
-                    ImGui::Text("Textures count: %i", mat->textures.size());
+                if(selectedNode->index!=-1&&entity.model.materials.size()>0) {
+                    if(entity.model.meshes[selectedNode->index].material) {
+                        auto& mat=entity.model.meshes[selectedNode->index].material;
+                        if(mat->getShader()) ImGui::Text("Shader ID: %i", mat->getShader()->ID);
+                        if(ImGui::CollapsingHeader(Log::formatStr("Parameters (%i)", mat->params.size()).c_str()))
+                            for(size_t p=0;p<mat->params.size();p++)
+                                ImGui::Text("%s [%s]",mat->params[p].name(),mat->params[p].type().c_str());
+                        if(ImGui::CollapsingHeader(Log::formatStr("Textures (%i)", mat->textures.size()).c_str()))
+                            for(size_t t=0;t<mat->textures.size();t++)
+                                ImGui::Text("%s [%i]",mat->textures[t].typeToString(),mat->textures[t].ID);
+                    } else ImGui::Text("None");
                 } else ImGui::Text("None");
             } else if(selectedRoot) {
                 ImGui::Text("[Root]");
@@ -128,9 +136,13 @@ class ModelViewer : public Firesteel::App {
                     for(size_t m=0;m<entity.model.materials.size();m++) {
                         if(ImGui::CollapsingHeader(Log::formatStr("Material (ID:%i)", m).c_str())) {
                             auto& mat=entity.model.meshes[m].material;
-                            ImGui::Text("Shader ID: %i", mat->getShader()->ID);
-                            ImGui::Text("Parameters count: %i", mat->params.size());
-                            ImGui::Text("Textures count: %i", mat->textures.size());
+                            if(mat->getShader()) ImGui::Text("Shader ID: %i", mat->getShader()->ID);
+                            if(ImGui::CollapsingHeader(Log::formatStr("Parameters (%i)", mat->params.size()).c_str()))
+                                for(size_t p=0;p<mat->params.size();p++)
+                                    ImGui::Text("%s [%s]",mat->params[p].name(),mat->params[p].type().c_str());
+                            if(ImGui::CollapsingHeader(Log::formatStr("Textures (%i)", mat->textures.size()).c_str()))
+                                for(size_t t=0;t<mat->textures.size();t++)
+                                    ImGui::Text("%s [%i]",mat->textures[t].typeToString(),mat->textures[t].ID);
                         }
                     }
                     
@@ -141,6 +153,7 @@ class ModelViewer : public Firesteel::App {
     }
     virtual void onShutdown() override {
         entity.remove();
+        shader->remove();
     }
 };
 

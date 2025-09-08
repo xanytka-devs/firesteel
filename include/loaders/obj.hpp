@@ -197,7 +197,7 @@ namespace Firesteel {
             }
             //Process all nodes.
             Node root;
-            root.name="[Root]";
+            root.name="root";
             for(size_t n=0;n<model.meshes.size();n++) {
                 Node mesh;
                 mesh.index=static_cast<int>(n);

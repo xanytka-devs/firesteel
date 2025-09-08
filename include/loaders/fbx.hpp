@@ -1,4 +1,3 @@
-#ifndef FS_LOADER_OFBX
 #ifndef FS_LOADERS_FBX
 #define FS_LOADERS_FBX
 
@@ -109,12 +108,20 @@ namespace Firesteel {
             node.name=std::string(tNode->name.data,tNode->name.length);
             if(node.name.empty()) node.name="Node_"+std::to_string(tNode->typed_id);
             //Apply translations to node.
-            const ufbx_transform& t=tNode->local_transform;
-            node.transform.position=glm::vec3(t.translation.x,t.translation.y,t.translation.z);
-            node.transform.rotation=glm::degrees(glm::eulerAngles(
-                glm::quat(CASTF(t.rotation.w),CASTF(t.rotation.x),CASTF(t.rotation.y),CASTF(t.rotation.z)
-            )));
-            node.transform.size=glm::vec3(t.scale.x,t.scale.y,t.scale.z);
+            const ufbx_matrix& m=tNode->node_to_parent;
+            //Get position.
+            node.transform.position=glm::vec3(m.m03,m.m13,m.m23);
+            //Get scale.
+            glm::vec3 scl0(m.m00,m.m10,m.m20);
+            glm::vec3 scl1(m.m01,m.m11,m.m21);
+            glm::vec3 scl2(m.m02,m.m12,m.m22);
+            node.transform.size=glm::vec3(glm::length(scl0),glm::length(scl1),glm::length(scl2));
+            //Get rotation.
+            if(node.transform.size.x!=0) scl0/=node.transform.size.x;
+            if(node.transform.size.y!=0) scl1/=node.transform.size.y;
+            if(node.transform.size.z!=0) scl2/=node.transform.size.z;
+            node.transform.rotation=Transform::decomposeQuaternion(glm::quat_cast(glm::mat3(scl0,scl1,scl2)));
+            //Get mesh index.
             if(tNode->mesh)
                 for (size_t i=0;i<tModel->meshes.count;i++)
                     if(tModel->meshes.data[i]==tNode->mesh) {
@@ -208,4 +215,3 @@ namespace Firesteel {
 }
 
 #endif // !FS_LOADERS_FBX
-#endif // !FS_LOADER_OFBX

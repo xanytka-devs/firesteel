@@ -75,8 +75,6 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             for(size_t i=0;i<model.meshes.size();i++)
                 model.meshes[i].remove();
-            for(size_t i=0; i < model.materials.size();i++)
-                model.materials[i].remove();
             model.nodes.clear();
             model.meshes.clear();
             model.materials.clear();
@@ -111,6 +109,7 @@ namespace Firesteel {
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
+            ASSERT(tMesh.material,"There must be a material assigned to new mesh");
             model.meshes.emplace_back(tMesh);
             model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
         }
@@ -120,6 +119,7 @@ namespace Firesteel {
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tVertices.size(), tIndices.size());
 #endif // FS_PRINT_DEBUG_MSGS
+            ASSERT(tMaterial,"There must be a material assigned to new mesh");
             model.meshes.emplace_back(tVertices,tIndices,tMaterial);
             model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
         }

@@ -34,7 +34,7 @@ namespace Firesteel {
         void bind(const Shader* tShader) const {
             std::visit([this,tShader](const auto& value) {
                 //Get type of value, that is being held in parameter.
-                using T = std::decay_t<decltype(mValue)>;
+                using T = std::decay_t<decltype(value)>;
                 //Try to bind saved typename to the parameter name given.
                 IFEX(SAMETYPE(T,bool))      tShader->setBool(mName,value);
                 IFEX(SAMETYPE(T,int))       tShader->setInt(mName,value);
@@ -48,28 +48,36 @@ namespace Firesteel {
             }, mValue);
         }
         std::string type() const {
-            std::visit([this](const auto& value) {
+            return std::visit([](const auto& value) -> std::string {
                 //Get type of value, that is being held in parameter.
-                using T = std::decay_t<decltype(mValue)>;
+                using T = std::decay_t<decltype(value)>;
                 //Try to return string of saved typename.
                 IFEX(SAMETYPE(T,bool))      return "bool";
                 IFEX(SAMETYPE(T,int))       return "int";
                 IFEX(SAMETYPE(T,float))     return "float";
-                IFEX(SAMETYPE(T,glm::vec2)) return "glm::vec2";
-                IFEX(SAMETYPE(T,glm::vec3)) return "glm::vec3";
-                IFEX(SAMETYPE(T,glm::vec4)) return "glm::vec4";
-                IFEX(SAMETYPE(T,glm::mat2)) return "glm::mat2";
-                IFEX(SAMETYPE(T,glm::mat3)) return "glm::mat3";
-                IFEX(SAMETYPE(T,glm::mat4)) return "glm::mat4";
+                IFEX(SAMETYPE(T,glm::vec2)) return "vec2";
+                IFEX(SAMETYPE(T,glm::vec3)) return "vec3";
+                IFEX(SAMETYPE(T,glm::vec4)) return "vec4";
+                IFEX(SAMETYPE(T,glm::mat2)) return "mat2";
+                IFEX(SAMETYPE(T,glm::mat3)) return "mat3";
+                IFEX(SAMETYPE(T,glm::mat4)) return "mat4";
+                return "unknown";
             }, mValue);
         }
-        const std::string& name() const {return mName;}
+        const char* name() const {return mName;}
     protected:
         const char* mName;
         ShaderParameterValue mValue;
     };
     struct Material {
     public:
+        Material() {}
+        Material(std::shared_ptr<Shader>& tShader) {
+            setShader(tShader);
+        }
+        Material(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
+            setShader(tVertexPath,tFragmentPath,tGeometryPath);
+        }
         void setShader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath = nullptr) {
             mShader=std::make_shared<Shader>(tVertexPath, tFragmentPath, tGeometryPath);
             if(!mShader) {
@@ -92,6 +100,7 @@ namespace Firesteel {
         }
         std::shared_ptr<Shader> getShader() const {return mShader;}
         void bind() {
+            if(!mShader) mShader=Shader::getDefaultShader();
             mShader->enable();
             for(size_t p=0;p<params.size();p++)
                 params[p].bind(mShader.get());

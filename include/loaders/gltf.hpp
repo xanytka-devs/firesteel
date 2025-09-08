@@ -65,17 +65,19 @@ namespace Firesteel {
             const tinygltf::Node& gltfNode=tModel->nodes[tIndex];
             Node node;
             node.name=gltfNode.name.empty()?"Node_"+std::to_string(tIndex):gltfNode.name;
-            glm::vec3 pos(0);
-            glm::quat rot(1,0,0,0);
-            glm::vec3 size(1);
-            //Rescue all available transform data.
-            if(!gltfNode.translation.empty()) pos=glm::make_vec3(gltfNode.translation.data());
-            if(!gltfNode.rotation.empty()) rot=glm::make_quat(gltfNode.rotation.data());
-            if(!gltfNode.scale.empty()) size=glm::make_vec3(gltfNode.scale.data());
-            //Apply translations to node.
-            node.transform.position=pos;
-            node.transform.rotation=glm::degrees(glm::eulerAngles(rot));
-            node.transform.size=size;
+            if(gltfNode.matrix.empty()) {
+                glm::vec3 pos(0);
+                glm::vec3 rot(0);
+                glm::vec3 size(1);
+                //Rescue all available transform data.
+                if(!gltfNode.translation.empty()) pos=glm::make_vec3(gltfNode.translation.data());
+                if(!gltfNode.rotation.empty()) rot=glm::degrees(glm::eulerAngles(glm::make_quat(gltfNode.rotation.data())));
+                if(!gltfNode.scale.empty()) size=glm::make_vec3(gltfNode.scale.data());
+                //Apply translations to node.
+                node.transform.position=pos;
+                node.transform.rotation=rot;
+                node.transform.size=size;
+            } else node.transform.fromMatrix(gltfNode.matrix);
             if(gltfNode.mesh>=0) node.index=gltfNode.mesh;
             if(tParent) tParent->children.push_back(node);
             else tBaseModel->nodes.push_back(node);

@@ -24,6 +24,7 @@ class ModelLoading : public Firesteel::App {
     }
     virtual void onShutdown() override {
         entity.remove();
+        shader->remove();
     }
 };
 
