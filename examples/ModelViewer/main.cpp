@@ -4,9 +4,11 @@
 using namespace Firesteel;
 
 std::shared_ptr<Shader> shader;
+std::shared_ptr<Shader> selected;
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
-Node* selectedNode=nullptr;
+std::shared_ptr<Node> selectedNode=nullptr;
+glm::mat4 nodeScaledMat(1);
 bool selectedRoot=false;
 std::vector<std::string> filters{
     "Any 3D Model (.fbx, .gltf, .glb, .obj)","*.fbx *.gltf *.glb *.obj",
@@ -15,6 +17,57 @@ std::vector<std::string> filters{
     "OBJ Model (.obj)","*.obj",
     "All Files","*"
 };
+
+const char* defaultVertShader="#version 330 core\
+layout(location = 0) in vec3 aPos;\
+layout(location = 2) in vec2 aUV;\
+out vec3 frag_POS;\
+out vec2 frag_UV;\
+uniform mat4 model;\
+uniform mat4 view;\
+uniform mat4 projection;\
+void main() {\
+    frag_POS = vec3(model * vec4(aPos, 1.0));\
+    frag_UV = aUV;\
+    gl_Position = projection * view * vec4(frag_POS, 1.0);\
+}";
+const char* defaultFragShader="#version 330 core\
+out vec4 frag_COLOR;\
+in vec3 frag_POS;\
+in vec2 frag_UV;\
+struct Material {\
+    sampler2D diffuse0;\
+    bool diffuse0_isMonochrome;\
+    vec3 diffuse;\
+    bool opacityMask;\
+    sampler2D opacity0;\
+};\
+uniform Material material;\
+uniform bool noTextures;\
+void main() {\
+    // material values\
+    vec4 diffMap = vec4(material.diffuse, 1);\
+    vec4 opacMap = vec4(1);\
+    float transparency = 1.0;\
+    // texture values\
+    if (!noTextures) {\
+        diffMap = texture(material.diffuse0, frag_UV);\
+        if (material.diffuse0_isMonochrome)\
+            diffMap = vec4(vec3(diffMap.r), 1);\
+        opacMap = texture(material.opacity0, frag_UV);\
+        transparency = diffMap.a;\
+        if (transparency < 0.1) discard;\
+        if (material.opacityMask) transparency = opacMap.r;\
+    }\
+    frag_COLOR = vec4(diffMap.rgb, transparency);\
+}";
+const char* selectionFragShader="#version 330 core\
+out vec4 frag_COLOR;\
+in vec3 frag_POS;\
+in vec2 frag_UV;\
+void main() {\
+    frag_COLOR = vec4(1);\
+}";
 
 float vec3[3]={0,0,0};
 static bool DragFloat3(const char* tName, glm::vec3* tFloats, const float& tSpeed = 0.1f) {
@@ -29,19 +82,29 @@ static bool DragFloat3(const char* tName, glm::vec3* tFloats, const float& tSpee
     }
     return b;
 }
-static void DropDownNodes(Node* tNode,std::string tPath) {
+static void DropDownNodes(std::shared_ptr<Node> tNode,std::string tPath) {
     if(ImGui::MenuItem((tPath+tNode->name+"/").c_str())) {selectedNode=tNode;selectedRoot=false;}
     for(size_t n=0;n<tNode->children.size();n++)
-        DropDownNodes(&tNode->children[n],tPath+tNode->name+"/");
+        DropDownNodes(tNode->children[n],tPath+tNode->name+"/");
 }
 
 class ModelViewer : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=std::make_shared<Shader>("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+        //Load base shader.
+        if(std::filesystem::exists("res\\ModelLoading\\shader.vs")&&std::filesystem::exists("res\\ModelLoading\\shader.fs"))
+            shader=std::make_shared<Shader>("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+        else shader=std::make_shared<Shader>(defaultVertShader,defaultFragShader,false,nullptr);
+        //Load selection shader.
+        if(std::filesystem::exists("res\\ModelLoading\\shader.vs")&&std::filesystem::exists("res\\ModelLoading\\selected.fs"))
+            selected=std::make_shared<Shader>("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\selected.fs");
+        else selected=std::make_shared<Shader>(defaultVertShader,selectionFragShader,false,nullptr);
+        //Load model.
         auto val=OS::fileDialog(false, false, std::filesystem::current_path().string(),&filters);
-        if(val.size()==0) val.push_back("res\\ModelLoading\\backpack.obj");
-        entity.load(val[0]);
-        entity.setMaterialsShader(shader);
+        if(val.size()>0) {
+            entity.load(val[0]);
+            entity.setMaterialsShader(shader);
+        }
+        //Additional usefulness.
         camera.update();
         window.setResizability(false);
         window.setVSync(true);
@@ -66,13 +129,35 @@ class ModelViewer : public Firesteel::App {
             if(entity.transform.size.x<0) entity.transform.size*=-1;
         } else Mouse::getWheelDY();
         //Get variables needed for a draw call.
-        glm::mat4 proj = camera.getProjection(), view = camera.getView();
-        camera.aspect = window.aspect();
+        glm::mat4 proj=camera.getProjection(), view=camera.getView();
+        camera.aspect=window.aspect();
         //Draw the model.
         shader->enable();
         shader->setMat4("projection", proj);
         shader->setMat4("view", view);
         entity.draw();
+        //Draw selection.
+        if(selectedNode) {
+            //Get scaled transform.
+            glm::mat4 origMat=selectedNode->getMatrix(entity.transform.getMatrix());
+            nodeScaledMat =glm::scale(origMat, glm::vec3(1.05f));
+            nodeScaledMat=glm::translate(nodeScaledMat, glm::vec3(-selectedNode->transform.position*0.05f));
+            //Draw selected mesh.
+            glStencilFunc(GL_NOTEQUAL,1,0xFF);
+            glStencilMask(0x00);
+            glDisable(GL_DEPTH_TEST);
+            selected->enable();
+            selected->setMat4("projection", proj);
+            selected->setMat4("view", view);
+            selected->setMat4("model", nodeScaledMat);
+            entity.drawNode(selectedNode, nodeScaledMat, true);
+            //Disable selection mask.
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS,1,0xFF);
+            //Draw selection one more time to make so selection just highlights it.
+            entity.drawNode(selectedNode, origMat);
+            glEnable(GL_DEPTH_TEST);
+        }
         ImGui::Begin("Scene");
         if(ImGui::Button("Change model")) {
             selectedNode=nullptr;selectedRoot=false;
@@ -87,17 +172,18 @@ class ModelViewer : public Firesteel::App {
             const unsigned int oldId=shader->ID;
             shader->remove();
             shader=std::make_shared<Shader>("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\shader.fs");
+            selected=std::make_shared<Shader>("res\\ModelLoading\\shader.vs", "res\\ModelLoading\\selected.fs");
             entity.replaceMaterialsShader(oldId,shader);
         }
         if(entity.hasModel()) {
             if(ImGui::CollapsingHeader(entity.model.getFilename().c_str())) {
                 if(ImGui::MenuItem("[Root]")) {selectedNode=nullptr;selectedRoot=true;}
                 for(size_t n=0;n<entity.model.nodes.size();n++)
-                    DropDownNodes(&entity.model.nodes[n],"");
+                DropDownNodes(entity.model.nodes[n],"");
             } else {selectedNode=nullptr;selectedRoot=false;}
-        }
+        } else ImGui::Text("No model given");
         ImGui::End();
-        if(selectedNode||selectedRoot) {
+        if(entity.hasModel()&&(selectedNode||selectedRoot)) {
             ImGui::Begin("Inspector");
             if(selectedNode) {
                 ImGui::Text(selectedNode->name.c_str());

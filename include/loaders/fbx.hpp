@@ -103,35 +103,36 @@ namespace Firesteel {
         }
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.
-        void processNodes(Model* tBaseModel, const ufbx_scene* tModel, const ufbx_node* tNode, Node* tParent=nullptr) {
-            Node node;
-            node.name=std::string(tNode->name.data,tNode->name.length);
-            if(node.name.empty()) node.name="Node_"+std::to_string(tNode->typed_id);
+        void processNodes(Model* tBaseModel, const ufbx_scene* tModel, const ufbx_node* tNode, std::shared_ptr<Node> tParent=nullptr) {
+            std::shared_ptr<Node> node=std::make_shared<Node>();
+            node->parent=tParent;
+            node->name=std::string(tNode->name.data,tNode->name.length);
+            if(node->name.empty()) node->name="Node_"+std::to_string(tNode->typed_id);
             //Apply translations to node.
             const ufbx_matrix& m=tNode->node_to_parent;
             //Get position.
-            node.transform.position=glm::vec3(m.m03,m.m13,m.m23);
+            node->transform.position=glm::vec3(m.m03,m.m13,m.m23);
             //Get scale.
             glm::vec3 scl0(m.m00,m.m10,m.m20);
             glm::vec3 scl1(m.m01,m.m11,m.m21);
             glm::vec3 scl2(m.m02,m.m12,m.m22);
-            node.transform.size=glm::vec3(glm::length(scl0),glm::length(scl1),glm::length(scl2));
+            node->transform.size=glm::vec3(glm::length(scl0),glm::length(scl1),glm::length(scl2));
             //Get rotation.
-            if(node.transform.size.x!=0) scl0/=node.transform.size.x;
-            if(node.transform.size.y!=0) scl1/=node.transform.size.y;
-            if(node.transform.size.z!=0) scl2/=node.transform.size.z;
-            node.transform.rotation=Transform::decomposeQuaternion(glm::quat_cast(glm::mat3(scl0,scl1,scl2)));
+            if(node->transform.size.x!=0) scl0/=node->transform.size.x;
+            if(node->transform.size.y!=0) scl1/=node->transform.size.y;
+            if(node->transform.size.z!=0) scl2/=node->transform.size.z;
+            node->transform.rotation=Transform::decomposeQuaternion(glm::quat_cast(glm::mat3(scl0,scl1,scl2)));
             //Get mesh index.
             if(tNode->mesh)
                 for (size_t i=0;i<tModel->meshes.count;i++)
                     if(tModel->meshes.data[i]==tNode->mesh) {
-                        node.index=static_cast<int>(i);
+                        node->index=static_cast<int>(i);
                         break;
                     }
             if(tParent) tParent->children.push_back(node);
             else tBaseModel->nodes.push_back(node);
             for(size_t c=0;c<tNode->children.count;c++)
-                processNodes(tBaseModel,tModel,tNode->children.data[c],(tParent?&tParent->children.back():&tBaseModel->nodes.back()));
+                processNodes(tBaseModel,tModel,tNode->children.data[c],(tParent?tParent->children.back():tBaseModel->nodes.back()));
         }
         /// [!WARING]
         /// This function is internal and only used for the FBX loader. Use it at your own risk.

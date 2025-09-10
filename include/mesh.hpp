@@ -25,10 +25,12 @@ namespace Firesteel {
             : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
-        // Shader must be enabled before running this.
-        void draw(const glm::mat4& tModel) {
-            material->bind();
-            material->getShader()->setMat4("model",tModel);
+        // If `tOverrideMaterial` is enbaled then shader must be enabled before running this.
+        void draw(const glm::mat4& tModel, const bool& tOverrideMaterial=false) {
+            if (!tOverrideMaterial) {
+                material->bind();
+                material->getShader()->setMat4("model", tModel);
+            }
             //Draw mesh.
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -94,17 +96,26 @@ namespace Firesteel {
         }
     };
     struct Node {
-        Node() {
-            name="New Node";
-            transform=Transform{};
-            children=std::vector<Node>();
+        Node() :
+            name("New Node"), transform(Transform{}),
+            children(std::vector< std::shared_ptr<Node>>()), parent(nullptr) {}
+        Node(const std::string& tName, const Transform& tTransform, const std::vector<std::shared_ptr<Node>>& tChildren, std::shared_ptr<Node> tParent, const int& tIndex)
+            : name(tName), transform(tTransform), children(tChildren), index(tIndex), parent(tParent) {}
+        
+        glm::mat4 getMatrix(glm::mat4 tEntityMatrix) const {
+            glm::mat4 model=tEntityMatrix*transform.getMatrix();
+            std::shared_ptr<Node> lastParent=parent;
+            while(lastParent) {
+                model*=lastParent->transform.getMatrix();
+                lastParent=lastParent->parent;
+            }
+            return model;
         }
-        Node(const std::string& tName, const Transform& tTransform, const std::vector<Node>& tChildren, const int& tIndex)
-            : name(tName), transform(tTransform), children(tChildren), index(tIndex) {}
         
         std::string name;
         Transform transform;
-        std::vector<Node> children;
+        std::vector<std::shared_ptr<Node>> children;
+        std::shared_ptr<Node> parent=nullptr;
         int index=-1;
     };
     struct Model {
@@ -122,7 +133,7 @@ namespace Firesteel {
 
         std::string path;
         std::vector<Material> materials;
-        std::vector<Node> nodes;
+        std::vector<std::shared_ptr<Node>> nodes;
         std::vector<Mesh> meshes;
     };
 }

@@ -196,13 +196,14 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             }
             //Process all nodes.
-            Node root;
-            root.name="root";
+            std::shared_ptr<Node> root=std::make_shared<Node>();
+            root->name="root";
             for(size_t n=0;n<model.meshes.size();n++) {
-                Node mesh;
-                mesh.index=static_cast<int>(n);
-                mesh.name=nodeNames[n];
-                root.children.push_back(mesh);
+                std::shared_ptr<Node> mesh = std::make_shared<Node>();
+                mesh->index=static_cast<int>(n);
+                mesh->name=nodeNames[n];
+                mesh->parent=root;
+                root->children.push_back(mesh);
             }
             model.nodes.push_back(root);
 #ifdef FS_PRINT_DEBUG_MSGS

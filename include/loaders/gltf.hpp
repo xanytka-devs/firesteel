@@ -61,10 +61,11 @@ namespace Firesteel {
 
         /// [!WARING]
         /// This function is internal and only used for the GLTF loader. Use it at your own risk.
-        void processNodes(Model* tBaseModel, const tinygltf::Model* tModel, int tIndex, Node* tParent=nullptr) {
+        void processNodes(Model* tBaseModel, const tinygltf::Model* tModel, int tIndex, std::shared_ptr<Node> tParent=nullptr) {
             const tinygltf::Node& gltfNode=tModel->nodes[tIndex];
-            Node node;
-            node.name=gltfNode.name.empty()?"Node_"+std::to_string(tIndex):gltfNode.name;
+            std::shared_ptr<Node> node=std::make_shared<Node>();
+            node->parent=tParent;
+            node->name=gltfNode.name.empty()?"Node_"+std::to_string(tIndex):gltfNode.name;
             if(gltfNode.matrix.empty()) {
                 glm::vec3 pos(0);
                 glm::vec3 rot(0);
@@ -74,15 +75,15 @@ namespace Firesteel {
                 if(!gltfNode.rotation.empty()) rot=glm::degrees(glm::eulerAngles(glm::make_quat(gltfNode.rotation.data())));
                 if(!gltfNode.scale.empty()) size=glm::make_vec3(gltfNode.scale.data());
                 //Apply translations to node.
-                node.transform.position=pos;
-                node.transform.rotation=rot;
-                node.transform.size=size;
-            } else node.transform.fromMatrix(gltfNode.matrix);
-            if(gltfNode.mesh>=0) node.index=gltfNode.mesh;
+                node->transform.position=pos;
+                node->transform.rotation=rot;
+                node->transform.size=size;
+            } else node->transform.fromMatrix(gltfNode.matrix);
+            if(gltfNode.mesh>=0) node->index=gltfNode.mesh;
             if(tParent) tParent->children.push_back(node);
             else tBaseModel->nodes.push_back(node);
             for(size_t c=0;c<gltfNode.children.size();c++)
-                processNodes(tBaseModel,tModel,gltfNode.children[c],(tParent?&tParent->children.back():&tBaseModel->nodes.back()));
+                processNodes(tBaseModel,tModel,gltfNode.children[c],(tParent?tParent->children.back():tBaseModel->nodes.back()));
         }
 
         /// [!WARING]
@@ -96,16 +97,16 @@ namespace Firesteel {
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;
             //Positions.
-            const tinygltf::Accessor& posAcc=tModel->accessors[tPrimitive->attributes.at("POSITION")];
-            const tinygltf::BufferView& posView=tModel->bufferViews[posAcc.bufferView];
-            const float* positions=reinterpret_cast<const float*>(&tModel->buffers[posView.buffer].data[posView.byteOffset]);
+            const tinygltf::Accessor* posAcc=&tModel->accessors[tPrimitive->attributes.at("POSITION")];
+            const tinygltf::BufferView* posView=&tModel->bufferViews[posAcc->bufferView];
+            const float* positions=reinterpret_cast<const float*>(&tModel->buffers[posView->buffer].data[posView->byteOffset+posAcc->byteOffset]);
             //Normals.
             bool hasNormals=hasAttribute(tPrimitive,"NORMAL");
             const float* normals=nullptr;
             if(hasNormals) {
                 const tinygltf::Accessor* normAcc=&tModel->accessors[tPrimitive->attributes.at("NORMAL")];
                 const tinygltf::BufferView* normView=&tModel->bufferViews[normAcc->bufferView];
-                normals=reinterpret_cast<const float*>(&tModel->buffers[normView->buffer].data[normView->byteOffset]);
+                normals=reinterpret_cast<const float*>(&tModel->buffers[normView->buffer].data[normView->byteOffset+normAcc->byteOffset]);
             }
             //UVs.
             bool hasUVs=hasAttribute(tPrimitive,"TEXCOORD_0");
@@ -113,7 +114,7 @@ namespace Firesteel {
             if(hasUVs) {
                 const tinygltf::Accessor* uvAcc=&tModel->accessors[tPrimitive->attributes.at("TEXCOORD_0")];
                 const tinygltf::BufferView* uvView=&tModel->bufferViews[uvAcc->bufferView];
-                uvs=reinterpret_cast<const float*>(&tModel->buffers[uvView->buffer].data[uvView->byteOffset]);
+                uvs=reinterpret_cast<const float*>(&tModel->buffers[uvView->buffer].data[uvView->byteOffset+uvAcc->byteOffset]);
             }
             //Tangents.
             bool hasTangents=hasAttribute(tPrimitive,"TANGENTS");
@@ -121,7 +122,7 @@ namespace Firesteel {
             if(hasTangents) {
                 const tinygltf::Accessor* tanAcc=&tModel->accessors[tPrimitive->attributes.at("TANGENTS")];
                 const tinygltf::BufferView* tanView=&tModel->bufferViews[tanAcc->bufferView];
-                tangents=reinterpret_cast<const float*>(&tModel->buffers[tanView->buffer].data[tanView->byteOffset]);
+                tangents=reinterpret_cast<const float*>(&tModel->buffers[tanView->buffer].data[tanView->byteOffset+tanAcc->byteOffset]);
             }
             //Bones (joints and weights).
             bool hasBones=hasAttribute(tPrimitive,"JOINTS_0")&&hasAttribute(tPrimitive,"WEIGHTS_0");
@@ -132,11 +133,11 @@ namespace Firesteel {
                 const tinygltf::Accessor* weightAcc=&tModel->accessors[tPrimitive->attributes.at("WEIGHTS_0")];
                 const tinygltf::BufferView* jointView=&tModel->bufferViews[jointAcc->bufferView];
                 const tinygltf::BufferView* weightView=&tModel->bufferViews[weightAcc->bufferView];
-                joints=reinterpret_cast<const uint16_t*>(&tModel->buffers[jointView->buffer].data[jointView->byteOffset]);
-                weights=reinterpret_cast<const float*>(&tModel->buffers[weightView->buffer].data[weightView->byteOffset]);
+                joints=reinterpret_cast<const uint16_t*>(&tModel->buffers[jointView->buffer].data[jointView->byteOffset+jointAcc->byteOffset]);
+                weights=reinterpret_cast<const float*>(&tModel->buffers[weightView->buffer].data[weightView->byteOffset+weightAcc->byteOffset]);
             }
             //Create vertexes.
-            for(size_t i=0;i<posAcc.count;i++) {
+            for(size_t i=0;i<posAcc->count;i++) {
                 Vertex vert{};
                 //Positions with rotation correction (because of different coordinate system).
                 vert.position=glm::vec3(
@@ -168,8 +169,8 @@ namespace Firesteel {
                     vert.bitangent=glm::cross(vert.normal,vert.tangent);
                 } else if(uvs&&normals) {
                     //Index shifts.
-                    size_t i1=(i+1)%posAcc.count;
-                    size_t i2=(i+2)%posAcc.count;
+                    size_t i1=(i+1)%posAcc->count;
+                    size_t i2=(i+2)%posAcc->count;
                     //Get nearest positions and texture coords.
                     glm::vec3 pos1=glm::vec3(positions[i1*3+0],positions[i1*3+1],positions[i1*3+2]);
                     glm::vec3 pos2=glm::vec3(positions[i2*3+0],positions[i2*3+1],positions[i2*3+2]);
@@ -208,27 +209,27 @@ namespace Firesteel {
 #endif
             }
             //Create indicies.
-            const tinygltf::Accessor& indAcc=tModel->accessors[tPrimitive->indices];
-            const tinygltf::BufferView& indView=tModel->bufferViews[indAcc.bufferView];
-            const void* indData=&tModel->buffers[indView.buffer].data[indView.byteOffset];
-            indices.resize(indAcc.count);
-            switch (indAcc.componentType)
+            const tinygltf::Accessor* indAcc=&tModel->accessors[tPrimitive->indices];
+            const tinygltf::BufferView* indView=&tModel->bufferViews[indAcc->bufferView];
+            const void* indData=&tModel->buffers[indView->buffer].data[indView->byteOffset+indAcc->byteOffset];
+            indices.resize(indAcc->count);
+            switch (indAcc->componentType)
             {
             case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE: {
                 const uint8_t* data8=reinterpret_cast<const uint8_t*>(indData);
-                for(size_t i=0;i<indAcc.count;i++)
+                for(size_t i=0;i<indAcc->count;i++)
                     indices[i]=static_cast<unsigned int>(data8[i]);
                 break;
             }
             case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
                 const uint16_t* data16=reinterpret_cast<const uint16_t*>(indData);
-                for(size_t i=0;i<indAcc.count;i++)
+                for(size_t i=0;i<indAcc->count;i++)
                     indices[i]=static_cast<unsigned int>(data16[i]);
                 break;
             }
             case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT: {
                 const uint32_t* data32=reinterpret_cast<const uint32_t*>(indData);
-                for(size_t i=0;i<indAcc.count;i++)
+                for(size_t i=0;i<indAcc->count;i++)
                     indices[i]=static_cast<unsigned int>(data32[i]);
                 break;
             }

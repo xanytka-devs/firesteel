@@ -35,10 +35,19 @@ namespace Firesteel {
         }
 
         // Renders the model with given material or default shader.
-        void draw() {
-            if(model.meshes.size()==0) return;
+        virtual void draw() {
+            if(!hasModel()) return;
             for(size_t n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
+        }
+        // Renders only the given node tree with given material or default shader and parent matrix.
+        virtual void drawNode(const std::shared_ptr<Node>& tNode, const glm::mat4& tParentModel, const bool& tOverrideMaterial=false) {
+            if(!hasModel()) return;
+            const glm::mat4 nodeMatrix=tParentModel*tNode->transform.getMatrix();
+            if(tNode->index>=0&&tNode->index<static_cast<int>(model.meshes.size()))
+                model.meshes[tNode->index].draw(nodeMatrix,tOverrideMaterial);
+            for(size_t n=0;n<tNode->children.size();n++)
+                drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
         }
         // Replaces materials with default shader with given shader.
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
@@ -69,7 +78,7 @@ namespace Firesteel {
         }
 
         bool hasModel() const { return model.meshes.size()!=0; }
-        void remove() {
+        virtual void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
 #endif // FS_PRINT_DEBUG_MSGS
@@ -79,7 +88,7 @@ namespace Firesteel {
             model.meshes.clear();
             model.materials.clear();
         }
-        void load(const std::string& tPath) {
+        virtual void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
                 LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
                 return;
@@ -104,16 +113,19 @@ namespace Firesteel {
             LOG_INFO("Loaded model at: \"" + tPath + "\"");
         }
 
-        void addMesh(const Mesh& tMesh) {
+        virtual void addMesh(const Mesh& tMesh) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             ASSERT(tMesh.material,"There must be a material assigned to new mesh");
             model.meshes.emplace_back(tMesh);
-            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
+            std::shared_ptr<Node> node = std::make_shared<Node>();
+            node->name="Node_"+std::to_string(model.nodes.size());
+            node->index=static_cast<int>(model.nodes.size());
+            model.nodes.emplace_back(node);
         }
-        void addMesh(const std::vector<Vertex>& tVertices,
+        virtual void addMesh(const std::vector<Vertex>& tVertices,
             const std::vector<unsigned int>& tIndices, Material* tMaterial) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
@@ -121,19 +133,14 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             ASSERT(tMaterial,"There must be a material assigned to new mesh");
             model.meshes.emplace_back(tVertices,tIndices,tMaterial);
-            model.nodes.emplace_back("Node_"+std::to_string(model.nodes.size()),Transform(),std::vector<Node>(),static_cast<int>(model.nodes.size()));
+            std::shared_ptr<Node> node = std::make_shared<Node>();
+            node->name = "Node_" + std::to_string(model.nodes.size());
+            node->index = static_cast<int>(model.nodes.size());
+            model.nodes.emplace_back(node);
         }
 
         Transform transform;
         Model model;
-    private:
-        void drawNode(const Node& tNode, const glm::mat4& tParentModel) {
-            const glm::mat4 nodeMatrix=tParentModel*tNode.transform.getMatrix();
-            if(tNode.index>=0&&tNode.index<static_cast<int>(model.meshes.size()))
-                model.meshes[tNode.index].draw(nodeMatrix);
-            for(size_t n=0;n<tNode.children.size();n++)
-                drawNode(tNode.children[n],nodeMatrix);
-        }
     };
 }
 
