@@ -7,7 +7,7 @@
 Ноды нам пока не нужны. Главное знать, что они позволяют *трансформировать* меши.
 А вот меши являются сеткой и состоят они из треугольников, а именно полигонов. На данный момент Firesteel не поддерживает ничего кроме полигонов по стандарту.  
 Так вот полигоны состоят из двух самых важных компонентов - **точек углов** и **индексов**.  
-![Полигон](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh0.png?raw=true)  
+![Полигон](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh0.png?raw=true)  
 Первые определяют все возможные точки, которые позже объединяются в треугольники и отрисовываются на экран.
 Вторые же позволяют сократить итоговое количество точек. Они позволяют переиспользывать уже существующие точки.  
 К примеру у куба 6 сторон. А у каждой стороны по 2 треугольника внутри. И у каждого треугольника по 3 точки.
@@ -134,16 +134,16 @@ void main() {
 Ну тут не самое красивое решение, однако оно всё равно предоставляет нужный результат. Просто передать вектор не получилось бы, так как у полигона были положения с отрицательными координатами.
 
 # Промежуточный результат \#2
-![RGB треугольник](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh1.png?raw=true)  
+![RGB треугольник](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh1.png?raw=true)  
 Ну теперь можно отрисовать и пластину (квад).
 
 # Отрисовываем пластину
 Пластину передать чуть сложнее чем треугольник. Как вы знаете у треугольника три точки и Firesteel может только их и отрисовывать. Так что надо как-то 4 точки превратить в треугольники. Визуально это должно выглядить так:  
-![Пластина из двух треугольников](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh2.png?raw=true)  
+![Пластина из двух треугольников](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh2.png?raw=true)  
 Однако если не использовать индексы и просто передать точки для двух треугольников, то выйдет вот так:  
-![Неоптимизированная пластина](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh4.png?raw=true)  
+![Неоптимизированная пластина](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh4.png?raw=true)  
 Ну это никуда не пойдёт. Зачем создавать 6 точек, если можно справиться всего 4-мя? Используя индексы можно сказать Firesteel-у, что первый треугольник стоит на точках 1, 4 и 3, а второй на 1, 2 и 3.  
-![Оптимизированная пластина](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh3.png?raw=true)  
+![Оптимизированная пластина](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh3.png?raw=true)  
 Теперь надо написать для этого код.
 
 ## Код для отрисовки пластины
@@ -193,5 +193,5 @@ int main() {
 ```
 
 # Промежуточный результат \#3
-![RGB пластина (почти)](https://github.com/xanytka-devs/firesteel/blob/model_loaders/docs/assets/custom_mesh5.png?raw=true)  
+![RGB пластина (почти)](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/custom_mesh5.png?raw=true)  
 На этом собственно всё.

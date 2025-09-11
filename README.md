@@ -35,7 +35,7 @@
 * [NVTX](https://github.com/NVIDIA/NVTX)
 * [OpenFBX](https://github.com/nem0/OpenFBX)
 
-# Установка
+# Использование
 
 ## Обычная (рекомендуется)
 * Установите [Git](https://git-scm.com/) и [CMake](https://cmake.org/)
@@ -50,3 +50,6 @@ git submodule add --recursive https://github.com/xanytka-devs/firesteel.git engi
 
 > [!NOTE]
 > Установка и работа на Linux и MacOS ещё не реализованы, однако некоторые компоненты уже могут работать с Linux.
+
+# Примеры
+Все официальные примеры по использованию программного слоя можно найти [тут](https://github.com/xanytka-devs/fs-examples).
