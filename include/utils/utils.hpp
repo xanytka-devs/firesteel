@@ -14,187 +14,242 @@
 #ifdef FS_PFD
 #include "../external/portable-file-dialogs.hpp"
 #endif // FS_PFD
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 
 #include "../common.hpp"
 #include "UtfConv.hpp"
 
-void genRandom() {
-    __time64_t long_time;
-	_time64(&long_time);
-	srand(static_cast<unsigned int>(long_time));
-}
-bool getRandom() {
-    return rand()%1;
-}
-int getRandom(int tMax) {
-    return rand()%tMax;
-}
-float getRandom(float tMax) {
-    return static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/tMax));
-}
-int getRandom(int tMin, int tMax) {
-    return (rand()%tMax)+tMin;
-}
-float getRandom(float tMin, float tMax) {
-    return tMin+static_cast<float>(rand()) / (static_cast <float> (RAND_MAX/(tMax-tMin)));
-}
-
-float lerp(float a, float b, float f) {
-    return a * (1.f - f) + (b * f);
-}
-glm::vec3 float3ToVec3(float* tF) {
-    return glm::vec3(tF[0], tF[1], tF[2]);
-}
-
-glm::vec3 UIntToRGB(unsigned int tR, unsigned int tG, unsigned int tB) {
-    return glm::vec3(tR/255,tG/255,tB/255);
-}
-glm::vec3 HexToRGB(const char* tHex) {
-    if(tHex[0] == '#') {
+namespace Color {
+    glm::vec3 UIntToRGB(const unsigned int& tR, const unsigned int& tG, const unsigned int& tB) {
+        return glm::vec3(tR/255,tG/255,tB/255);
+    }
+    glm::vec3 HexToRGB(const char* tHex) {
+        if(tHex[0] == '#') {
+            return glm::vec3(
+                std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4)
+            );
+        } else {
+            return glm::vec3(
+                std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4)
+            );
+        }
+    }
+    glm::vec3 CMYKToRGB(const unsigned int& tC, const unsigned int& tM, const unsigned int& tY, const unsigned int& tK) {
         return glm::vec3(
-            std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4)
-        );
-    } else {
-        return glm::vec3(
-            std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4)
+            (unsigned char)(255 * (1 - tC) * (1 - tK)),
+            (unsigned char)(255 * (1 - tM) * (1 - tK)),
+            (unsigned char)(255 * (1 - tY) * (1 - tK))
         );
     }
-}
-glm::vec3 CMYKToRGB(unsigned int tC, unsigned int tM, unsigned int tY, unsigned int tK) {
-    return glm::vec3(
-        (unsigned char)(255 * (1 - tC) * (1 - tK)),
-        (unsigned char)(255 * (1 - tM) * (1 - tK)),
-        (unsigned char)(255 * (1 - tY) * (1 - tK))
-    );
-}
-
-glm::vec4 UIntToRGBA(unsigned int tR, unsigned int tG, unsigned int tB, unsigned int tA) {
-    return glm::vec4(tR / 255, tG / 255, tB / 255, tA / 255);
-}
-glm::vec4 HexToRGBA(const char* tHex) {
-    if(tHex[0] == '#') {
-        return glm::vec4(
-            std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[7] + tHex[8], nullptr, 4)
-        );
-    } else {
-        return glm::vec4(
-            std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4),
-            std::stoul(std::string("0x") + tHex[6] + tHex[7], nullptr, 4)
-        );
+    glm::vec4 UIntToRGBA(const unsigned int tR, const unsigned int& tG, const unsigned int& tB, const unsigned int& tA) {
+        return glm::vec4(tR/255,tG/255,tB/255,tA/255);
+    }
+    glm::vec4 HexToRGBA(const char* tHex) {
+        if(tHex[0] == '#') {
+            return glm::vec4(
+                std::stoul(std::string("0x") + tHex[1] + tHex[2], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[3] + tHex[4], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[5] + tHex[6], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[7] + tHex[8], nullptr, 4)
+            );
+        } else {
+            return glm::vec4(
+                std::stoul(std::string("0x") + tHex[0] + tHex[1], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[2] + tHex[3], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[4] + tHex[5], nullptr, 4),
+                std::stoul(std::string("0x") + tHex[6] + tHex[7], nullptr, 4)
+            );
+        }
     }
 }
-
-std::vector<std::string> StrSplit(const std::string& tS, char tDelim) {
-    std::stringstream ss(tS);
-    std::string item;
-    std::vector<std::string> out;
-    while (std::getline(ss, item, tDelim)) {
-        out.push_back(item);
+namespace String {
+    std::vector<std::string> split(const std::string& tS, const char& tDelim) {
+        std::stringstream ss(tS);
+        std::string item;
+        std::vector<std::string> out;
+        while(std::getline(ss, item, tDelim)) out.push_back(item);
+        return out;
     }
-    return out;
-}
-
-std::string StrReplace(std::string tOrig, char tChar, char tNewChar) {
-    std::vector<std::string> parts = StrSplit(tOrig, tChar);
-    std::string out = parts[0];
-    for (size_t i = 1; i < parts.size(); i++)
-        out += tNewChar + parts[i];
-    return out;
-}
-
-std::string StrStrip(std::string tOrig, char tChar) {
-    return StrReplace(tOrig,tChar,'\0');
-}
-
-std::string StrFromFile(std::string tPath) {
-    std::filesystem::path path(tPath);
-    if(!std::filesystem::exists(path)) {
-        LOG_WARN("File at \"" + tPath + "\" doesn't seem to exist.");
-        return "File at \"" + tPath + "\" doesn't seem to exist.";
+    std::string replace(const std::string& tOrig, const char& tChar, const char& tNewChar) {
+        std::vector<std::string> parts=split(tOrig, tChar);
+        if(parts.size()==1) {
+            LOGF_WARN("String::replace(): Couldn't replace '%c' in '%s'\n",tChar,tOrig.c_str());
+            return tOrig;
+        }
+        std::string out=parts[0];
+        for(size_t i=1;i<parts.size();i++)
+            out+=tNewChar+(i==parts.size())?"":parts[i];
+        return out;
     }
-    // Open the stream to 'lock' the file.
-    std::ifstream f(path, std::ios::in | std::ios::binary);
-    // Obtain the size of the file.
-    const auto sz = std::filesystem::file_size(path);
-    // Create a buffer.
-    std::string result(sz, '\0');
-    // Read the whole file into the buffer.
-    f.read(result.data(), sz);
-    return result;
-}
-
-void StrToFile(std::string tPath, std::string tIn) {
-    std::ofstream file;
-    file.open(tPath);
-    file << tIn << std::endl;
-    file.close();
-}
-
-int StrEndsWith(const char* tStr, const char* tSuffix) {
-    if (!tStr || !tSuffix)
-        return 0;
-    size_t lenstr = strlen(tStr);
-    size_t lensuffix = strlen(tSuffix);
-    if (lensuffix > lenstr)
-        return 0;
-    return strncmp(tStr + lenstr - lensuffix, tSuffix, lensuffix) == 0;
-}
-
-// !!! NOT UTF8 !!!
-// Use StrToLower instead.
-std::string StrASCIIToLower(std::string tStr) {
+    std::string strip(const std::string& tOrig, const char& tChar) {
+        return replace(tOrig,tChar,'\0');
+    }
+    std::string fromFile(const std::string& tPath) {
+        if(!std::filesystem::exists(tPath)) {
+            LOG_WARN("String::fromFile(): File at \"" + tPath + "\" doesn't exist.");
+            return "File at \"" + tPath + "\" doesn't exist.";
+        }
+        //Open the stream to the file.
+        std::ifstream f(tPath, std::ios::in | std::ios::binary);
+        const auto sz=std::filesystem::file_size(tPath);
+        //Read the whole file into the buffer.
+        std::string result(sz, '\0');
+        f.read(result.data(), sz);
+        return result;
+    }
+    void toFile(const std::string& tPath, const std::string& tIn) {
+        std::ofstream file;
+        file.open(tPath);
+        file << tIn << std::endl;
+        file.close();
+    }
+    bool endsWith(const char* tStr, const char* tSuffix) {
+        if(!tStr||!tSuffix) {
+            LOG_WARN("String::endsWith() was given empty arguments");
+            return false;
+        }
+        size_t lenstr=strlen(tStr);
+        size_t lensuffix=strlen(tSuffix);
+        if(lensuffix>lenstr) {
+            LOG_WARN("String::endsWith() was given suffix, bigger than the given string to check");
+            return false;
+        }
+        return strncmp(tStr+lenstr-lensuffix,tSuffix,lensuffix)==0;
+    }
+    // [!WARNING]
+    // Doesn't support UTF8. Use `toLower()` instead.
+    std::string toLowerASCII(std::string& tStr) {
     std::transform(tStr.begin(), tStr.end(), tStr.begin(),
         [](unsigned char c) {
             return std::tolower(c);
         });
-    return tStr;
-}
-// !!! NOT UTF8 !!!
-// Use StrToUpper instead.
-std::string StrASCIIToUpper(std::string tStr) {
+        return tStr;
+    }
+    // [!WARNING]
+    // Doesn't support UTF8. Use `toUpper()` instead.
+    std::string toUpperASCII(std::string& tStr) {
     std::transform(tStr.begin(), tStr.end(), tStr.begin(),
         [](unsigned char c) {
             return std::toupper(c);
         });
-    return tStr;
-}
-
-static const std::string currentDateTime(const char* tFormat = "%d.%m.%Y %X") {
-    struct tm newtime;
-    __time64_t long_time;
-    char timebuf[26];
-    errno_t err;
-
-    // Get time as 64-bit integer.
-    _time64(&long_time);
-    // Convert to local time.
-    err = _localtime64_s(&newtime, &long_time);
-    if (err) {
-        LOG_WARN("Invalid argument to _localtime64_s.");
-        return "invalid";
+        return tStr;
     }
-    strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
-    return timebuf;
+    std::string toLower(const std::string& tStr) {
+        return reinterpret_cast<const char*>(Utf8StrMakeLwrUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
+    }
+    std::string toUpper(const std::string& tStr) {
+        return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
+    }
 }
+namespace Math {
+    //Lineary interpolate between `tA` and `tB` by fraction of `tF`.
+    float lerp(const float& tA, const float& tB, const float& tF) {
+        return tA * (1.f - tF) + (tB * tF);
+    }
+    glm::vec2 lerp(const glm::vec2& tA, const glm::vec2& tB, const float& tF) {
+        return glm::vec2(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF));
+    }
+    glm::vec3 lerp(const glm::vec3& tA, const glm::vec3& tB, const float& tF) {
+        return glm::vec3(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF),lerp(tA.z, tB.z, tF));
+    }
+    glm::vec4 lerp(const glm::vec4& tA, const glm::vec4& tB, const float& tF) {
+        return glm::vec4(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF),lerp(tA.z, tB.z, tF),lerp(tA.w, tB.w, tF));
+    }
 
-std::string StrToLower(std::string tStr) {
-    return reinterpret_cast<const char*>(Utf8StrMakeLwrUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
-}
-std::string StrToUpper(std::string tStr) {
-    return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
-}
+    //Cast array to glm::mat4.
+    glm::mat4 toMat4(const float** tF) {
+        return glm::mat4(
+            tF[0][0],tF[0][1],tF[0][2],tF[0][3],
+            tF[1][0],tF[1][1],tF[1][2],tF[1][3],
+            tF[2][0],tF[2][1],tF[2][2],tF[2][3],
+            tF[3][0],tF[3][1],tF[3][2],tF[3][3]
+        );
+    }
+    glm::mat4 toMat4(const double** tF) {
+        return glm::mat4(
+            CASTF(tF[0][0]),CASTF(tF[0][1]),CASTF(tF[0][2]),CASTF(tF[0][3]),
+            CASTF(tF[1][0]),CASTF(tF[1][1]),CASTF(tF[1][2]),CASTF(tF[1][3]),
+            CASTF(tF[2][0]),CASTF(tF[2][1]),CASTF(tF[2][2]),CASTF(tF[2][3]),
+            CASTF(tF[3][0]),CASTF(tF[3][1]),CASTF(tF[3][2]),CASTF(tF[3][3])
+        );
+    }
+    //Cast std::vector to glm::mat4.
+    glm::mat4 toMat4(const std::vector<float>* tF) {
+        if(tF->size()<17) return glm::mat4(1);
+        glm::mat4 result;
+        for(int i=0;i<4;i++)
+            result[i*4]=glm::vec4(tF->at(i),tF->at(i+1),tF->at(i+2),tF->at(i+3));
+        return result;
+    }
+    glm::mat4 toMat4(const std::vector<double>* tF) {
+        if(tF->size()<17) return glm::mat4(1);
+        glm::mat4 result;
+        for(int i=0;i<4;i++)
+            result[i*4]=glm::vec4(tF->at(i),tF->at(i+1),tF->at(i+2),tF->at(i+3));
+        return result;
+    }
 
+    //Calculate position on theoretical circle from given radius and angle.
+    glm::vec2 posOnCircle(const float& tRad, const float& tAngle) {
+        return glm::vec2(tRad*cos(tAngle*(3.14f/180.f)),tRad*sin(tAngle*(3.14f/180.f)));
+    }
+}
+namespace Random {
+    void setSeed(const unsigned int& tSeed=0) {
+        if(tSeed==0) {
+            __time64_t long_time;
+	        _time64(&long_time);
+	        srand(static_cast<unsigned int>(long_time));
+        } else srand(static_cast<unsigned int>(tSeed));
+    }
+    bool get() {return rand()%1;}
+    int get(const int& tMax=INT_MAX) {return rand()%tMax;}
+    float get(const float& tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
+    int get(const int& tMin=INT_MIN, const int& tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
+    float get(const float& tMin, const float& tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
+}
+namespace DateTime {
+    static const std::string formatted(const char* tFormat="%d.%m.%Y %X") {
+        struct tm newtime;
+        __time64_t long_time;
+        char timebuf[26];
+        errno_t err;
+        // Get time as 64-bit integer.
+        _time64(&long_time);
+        // Convert to local time.
+        err=_localtime64_s(&newtime, &long_time);
+        if(err) {
+            LOG_WARN("formatted() was given invalid arguments");
+            return "invalid";
+        }
+        strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
+        return timebuf;
+    }
+
+    static const std::string getDay() {return formatted("%d");}
+    static const std::string getDayName() {return formatted("%A");}
+    static const std::string getMonth() {return formatted("%m");}
+    static const std::string getMonthName() {return formatted("%B");}
+    static const std::string getYear() {return formatted("%Y");}
+    static const std::string getTime() {return formatted("%X");}
+    static const std::string getHour() {return formatted("%H");}
+    static const std::string getMinute() {return formatted("%M");}
+    static const std::string getSecond() {return formatted("%S");}
+
+    struct Timer {
+    	double time=0.0;
+    	double limit=60.0;
+
+    	void start() {time=limit;}
+    	void reset() {time=0;}
+    	void tick() {time-=1;}
+    	void tick(double tDT) {time-=tDT;}
+    	bool isOver() {return time<=0;}
+    };
+}
 namespace OS {
     std::string executeInCmd(const char* cmd) {
         std::array<char, 128> buffer;

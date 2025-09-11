@@ -1,0 +1,13 @@
+Firesteel v.0.2.1
+- Replaced Assimp with TinyOBJLoader, TinyGLTF, UFBX.
+- Node-based rendering.
+- Utilities class was reformatted and now much simpler to use.
+- New system dialog provider - "simple-file-dialogs".
+- Better logging: `LOGF(...)` provides formatted output, works pretty much as `printf(...)`, but better.
+- Some optimizations (not documented as which).
+- Default fail-safe shader.
+- `Renderer` now acts like an interface. It can be built upon like the `App` class. There's still OpenGL code thrown all around the engine (prominently in base rendering classes (`Mesh`, `Shader`, etc.))
+- Simpler CMake builder - `auto_cmake.bat`.
+- NVTX3 support.
+- Updated documentation.
+- Build support for 86x (not tested).

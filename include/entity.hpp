@@ -1,5 +1,5 @@
-#ifndef FS_MODEL_H
-#define FS_MODEL_H
+#ifndef FS_ENTITY_H
+#define FS_ENTITY_H
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -7,248 +7,141 @@
 #include <map>
 #include <vector>
 #include <glm/gtc/matrix_transform.hpp>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include "common.hpp"
 #include "utils/utils.hpp"
 #include "mesh.hpp"
 #include "shader.hpp"
 #include "utils/stbi_global.hpp"
-#include "transform.hpp"
+#ifdef FS_LOADER_OBJ
+#include "loaders/obj.hpp"
+#endif // FS_LOADER_OBJ
+#ifdef FS_LOADER_GLTF
+#include "loaders/gltf.hpp"
+#endif // FS_LOADER_GLTF
+#ifdef FS_LOADER_FBX
+#include "loaders/fbx.hpp"
+#endif // FS_LOADER_FBX
 
 namespace Firesteel {
-
-    struct Model {
-        std::vector<Texture> textures;
-        std::vector<Mesh> meshes;
-        std::string path;
-        std::string getDirectory() const {
-            return path.substr(0, path.find_last_of('\\'));
-        }
-        Model(const std::string& tPath = "") {
-            textures.clear();
-            meshes.clear();
-            path = tPath;
-        }
-    };
-
     class Entity {
     public:
-        Transform transform;
-        Model model;
-
-        // Simplified constructor.
-        Entity(const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
-            transform = Transform(tPos, tRot, tSize);
-        }
-
-        // Constructor, expects a filepath to a 3D model.
+        Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
+            : transform(Transform(tPos, tRot, tSize)) { }
         Entity(const std::string& tPath,
-            const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1)) {
-            transform = Transform(tPos, tRot, tSize);
+            const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
+                : transform(Transform(tPos, tRot, tSize)) {
             load(tPath);
         }
 
-        // Renders the model.
-        void draw(const Shader* tShader) {
-            if(!mHasMeshes) return;
-            tShader->enable();
-            tShader->setMat4("model", getMatrix());
-            for(unsigned int i = 0; i < model.meshes.size(); i++)
-                model.meshes[i].draw(tShader);
+        // Renders the model with given material or default shader.
+        virtual void draw() {
+            if(!hasModel()) return;
+            for(size_t n=0;n<model.nodes.size();n++)
+                drawNode(model.nodes[n], transform.getMatrix());
+        }
+        // Renders only the given node tree with given material or default shader and parent matrix.
+        virtual void drawNode(const std::shared_ptr<Node>& tNode, const glm::mat4& tParentModel, const bool& tOverrideMaterial=false) {
+            if(!hasModel()) return;
+            const glm::mat4 nodeMatrix=tParentModel*tNode->transform.getMatrix();
+            if(tNode->index>=0&&tNode->index<static_cast<int>(model.meshes.size()))
+                model.meshes[tNode->index].draw(nodeMatrix,tOverrideMaterial);
+            for(size_t n=0;n<tNode->children.size();n++)
+                drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
+        }
+        // Replaces materials with default shader with given shader.
+        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
+            if(!hasModel()) return;
+            for(size_t m=0;m<model.materials.size();m++)
+                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m].setShader(tShader);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Changed entity materials shader");
+#endif // FS_PRINT_DEBUG_MSGS
+        }
+        // Replaces materials with shader id with given shader.
+        void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
+            if(!hasModel()) return;
+            for(size_t m=0;m<model.materials.size();m++)
+                if(model.materials[m].getShader()->ID==tIdToReplace) model.materials[m].setShader(tShader);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Replaced entity materials shader");
+#endif // FS_PRINT_DEBUG_MSGS
+        }
+        // Replaces all materials with given one.
+        void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
+            if(!hasModel()) return;
+            for(size_t m = 0; m < model.materials.size(); m++)
+                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m]=*tMaterial;
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Changed entity material");
+#endif // FS_PRINT_DEBUG_MSGS
         }
 
-        // Returns model matrix.
-        glm::mat4 getMatrix() const {
-            modelMatrix = glm::mat4(1);
-            modelMatrix = glm::translate(modelMatrix, transform.position);
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.x)), glm::vec3(1, 0, 0));
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.y)), glm::vec3(0, 1, 0));
-            modelMatrix = glm::rotate(modelMatrix, float(glm::radians(transform.rotation.z)), glm::vec3(0, 0, 1));
-            modelMatrix = glm::scale(modelMatrix, transform.size);
-            return modelMatrix;
-        }
-
-        // Checks if entity has any meshes.
-        bool hasModel() const { return mHasMeshes; }
-
-        // Clears all meshes.
-        void remove() {
-            for(size_t i = 0; i < model.meshes.size(); i++)
+        bool hasModel() const { return model.meshes.size()!=0; }
+        virtual void remove() {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed entity");
+#endif // FS_PRINT_DEBUG_MSGS
+            for(size_t i=0;i<model.meshes.size();i++)
                 model.meshes[i].remove();
-            for(size_t i = 0; i < model.textures.size(); i++)
-                model.textures[i].remove();
-            mHasMeshes = false;
+            model.nodes.clear();
+            model.meshes.clear();
+            model.materials.clear();
         }
-
-        // Loads a model with ASSIMP.
-        void load(const std::string& tPath) {
+        virtual void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
-                LOG_INFO("Model at: \"" + tPath + "\" doesn't exist");
+                LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
                 return;
             }
-            //Read file via ASSIMP.
-            Assimp::Importer importer;
-            const aiScene* scene = importer.ReadFile(tPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
-            //Check for errors.
-            if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-                LOG_ERRR(std::string("Error while importing model: ") + importer.GetErrorString());
-                return;
-            }
-            model = Model(tPath);
-
+            remove();
             LOG_INFO("Loading model at: \"" + tPath + "\"");
-            processNode(scene->mRootNode, scene);
-            LOG_INFO("Model has been successfully loaded");
-            mHasMeshes = true;
+            
+            auto extBig=String::split(tPath, '.');
+            std::string ext=extBig[extBig.size()-1];
+            if(ext.empty()) {LOG_ERRR("Looks like the extension of given model is invalid");}
+#ifdef FS_LOADER_OBJ
+            else if(ext=="obj") model=OBJ::load(tPath);
+#endif // FS_LOADER_OBJ
+#ifdef FS_LOADER_GLTF
+            else if(ext=="gltf"||ext=="glb") model=GLTF::load(tPath,ext=="glb");
+#endif // FS_LOADER_GLTF
+#ifdef FS_LOADER_FBX
+            else if(ext=="fbx") model=FBX::load(tPath);
+#endif // FS_LOADER_FBX
+            else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
+
+            LOG_INFO("Loaded model at: \"" + tPath + "\"");
         }
 
-    private:
-        static glm::mat4 modelMatrix;
-        bool mHasMeshes = false;
-
-        // Processes a node in a recursive fashion.
-        void processNode(const aiNode* tNode, const aiScene* tScene) {
-            //Process each mesh located at the current node.
-            for (unsigned int i = 0; i < tNode->mNumMeshes; i++) {
-                aiMesh* mesh = tScene->mMeshes[tNode->mMeshes[i]];
-                model.meshes.push_back(processMesh(mesh, tScene));
-            }
-            // Process each of the children nodes.
-            for (unsigned int i = 0; i < tNode->mNumChildren; i++)
-                processNode(tNode->mChildren[i], tScene);
+        virtual void addMesh(const Mesh& tMesh) {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
+                tMesh.vertices.size(), tMesh.indices.size());
+#endif // FS_PRINT_DEBUG_MSGS
+            ASSERT(tMesh.material,"There must be a material assigned to new mesh");
+            model.meshes.emplace_back(tMesh);
+            std::shared_ptr<Node> node = std::make_shared<Node>();
+            node->name="Node_"+std::to_string(model.nodes.size());
+            node->index=static_cast<int>(model.nodes.size());
+            model.nodes.emplace_back(node);
+        }
+        virtual void addMesh(const std::vector<Vertex>& tVertices,
+            const std::vector<unsigned int>& tIndices, Material* tMaterial) {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
+                tVertices.size(), tIndices.size());
+#endif // FS_PRINT_DEBUG_MSGS
+            ASSERT(tMaterial,"There must be a material assigned to new mesh");
+            model.meshes.emplace_back(tVertices,tIndices,tMaterial);
+            std::shared_ptr<Node> node = std::make_shared<Node>();
+            node->name = "Node_" + std::to_string(model.nodes.size());
+            node->index = static_cast<int>(model.nodes.size());
+            model.nodes.emplace_back(node);
         }
 
-        // Processes all vertex data to a Mesh.
-        Mesh processMesh(const aiMesh* tMesh, const aiScene* tScene) {
-            //Data to fill.
-            std::vector<Vertex> vertices;
-            std::vector<unsigned int> indices;
-            std::vector<Texture> textures;
-
-            //Walk through each of the mesh's vertices.
-            for (unsigned int i = 0; i < tMesh->mNumVertices; i++) {
-                Vertex vertex{};
-                glm::vec3 vector{};
-                //Positions.
-                vector.x = tMesh->mVertices[i].x;
-                vector.y = tMesh->mVertices[i].y;
-                vector.z = tMesh->mVertices[i].z;
-                vertex.position = vector;
-                //Normals.
-                if(tMesh->HasNormals()) {
-                    vector.x = tMesh->mNormals[i].x;
-                    vector.y = tMesh->mNormals[i].y;
-                    vector.z = tMesh->mNormals[i].z;
-                    vertex.normal = vector;
-                }
-                //UVs.
-                if(tMesh->mTextureCoords[0]) {
-                    glm::vec2 vec{};
-                    //UVs.
-                    vec.x = tMesh->mTextureCoords[0][i].x;
-                    vec.y = tMesh->mTextureCoords[0][i].y;
-                    vertex.uv = vec;
-                    //Tangent.
-                    vector.x = tMesh->mTangents[i].x;
-                    vector.y = tMesh->mTangents[i].y;
-                    vector.z = tMesh->mTangents[i].z;
-                    vertex.tangent = vector;
-                    //Bitangent.
-                    vector.x = tMesh->mBitangents[i].x;
-                    vector.y = tMesh->mBitangents[i].y;
-                    vector.z = tMesh->mBitangents[i].z;
-                    vertex.bitangent = vector;
-                } else vertex.uv = glm::vec2(0.0f, 0.0f);
-
-                vertices.push_back(vertex);
-            }
-            //Retrieve indicies.
-            for(unsigned int i = 0; i < tMesh->mNumFaces; i++) {
-                aiFace face = tMesh->mFaces[i];
-                for(unsigned int j = 0; j < face.mNumIndices; j++)
-                    indices.push_back(face.mIndices[j]);
-            }
-            //Process materials.
-            aiMaterial* material = tScene->mMaterials[tMesh->mMaterialIndex];
-            //Does the model even have textures?
-            if(material->GetTextureCount(aiTextureType_DIFFUSE) == 0
-                && material->GetTextureCount(aiTextureType_SPECULAR) == 0) {
-                LOG_INFO("No assigned textures found. Using bound color data.");
-                //Diffuse and specular color.
-                aiColor4D dif(1.0f), spec(1.0f), emis(1.0f);
-                aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &dif);
-                aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &spec);
-                aiGetMaterialColor(material, AI_MATKEY_COLOR_EMISSIVE, &emis);
-                //Output.
-                glm::vec4 difVec = glm::vec4(dif.r, dif.g, dif.b, dif.a);
-                glm::vec4 specVec = glm::vec4(spec.r, spec.g, spec.b, spec.a);
-                glm::vec4 emisVec = glm::vec4(emis.r, emis.g, emis.b, emis.a);
-                return Mesh(vertices, indices, difVec, specVec, emisVec);
-            }
-            std::vector<Texture> texs;
-            //Diffuse maps.
-            texs = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-            //Specular maps.
-            texs = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-            //Normal maps.
-            texs = loadMaterialTextures(material, aiTextureType_HEIGHT, "normal");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-            //Emission maps.
-            texs = loadMaterialTextures(material, aiTextureType_EMISSIVE, "emission");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-            //Height maps.
-            texs = loadMaterialTextures(material, aiTextureType_AMBIENT, "height");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-            //Opacity maps.
-            texs = loadMaterialTextures(material, aiTextureType_OPACITY, "opacity");
-            textures.insert(textures.end(), texs.begin(), texs.end());
-            texs.clear();
-
-            if(textures.size()==0) LOG_WARN("Model somehow didn't load any textures");
-
-            return Mesh(vertices, indices, textures);
-        }
-
-        // Checks all material textures of a given type and loads the textures if they're not loaded yet.
-        std::vector<Texture> loadMaterialTextures(const aiMaterial* tMat, const aiTextureType& tType, const std::string& tTypeName) {
-            std::vector<Texture> textures;
-            for(unsigned int i = 0; i < tMat->GetTextureCount(tType); i++) {
-                aiString str;
-                tMat->GetTexture(tType, i, &str);
-                //Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-                bool skip = false;
-                for(unsigned int j = 0; j < model.textures.size(); j++) {
-                    if(std::strcmp(model.textures[j].path.data(), str.C_Str()) != 0) continue;
-                    //Optimization to disable multiple loads for texture.
-                    textures.push_back(model.textures[j]);
-                    skip = true;
-                    break;
-                }
-                if(skip) continue;
-                //If texture hasn't been loaded already, load it.
-                Texture texture;
-                texture.ID = TextureFromFile(model.getDirectory() + "/" + str.C_Str(), &texture.isMonochrome, true);
-                texture.type = tTypeName;
-                texture.path = str.C_Str();
-                textures.push_back(texture);
-                model.textures.push_back(texture);
-            }
-            return textures;
-        }
+        Transform transform;
+        Model model;
     };
-
 }
 
-glm::mat4 Firesteel::Entity::modelMatrix = glm::mat4(1);
-
-#endif // ! FS_MODEL_H
+#endif // ! FS_ENTITY_H

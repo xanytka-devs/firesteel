@@ -25,9 +25,10 @@ int main() {
 ```
 После постройки и запуска проекта вы увидите модель рюкзака, но при этом она будет почти на весь экран и не будет иметь текстур:
 ![Оранжевая модель на весь экран](https://github.com/xanytka-devs/firesteel/blob/main/docs/assets/loading_models0.png?raw=true)
-Почему так? Ну во-первых к модели не применяется никакой шейдерной программы, из-за этого она использует **fallback** (аварийный ресурс).
+Почему так? Ну во-первых к модели не применяется никакого материала, из-за этого она использует **fallback** (аварийный ресурс).
 
-# Своя шейдерная программа
+# Свой материал
+Полноценные материалы в данном случае не нужны, так как текстуры не изменяются. Просто создадим шейдер и заменим им стандартный.
 Существует несколько этапов отрисовки модели. В данном туториале будут затронуты лишь две стадии: Вертексная и Фрагментная.  
 Первая нужна для обработки положений и данных треугольников, а вторая отвечает за отрисовку пикселей этих треугольников на экран.
 ## Вертексный шейдер
@@ -84,29 +85,29 @@ void main() {
 	frag_COLOR = vec4(diffMap.rgb, transparency);
 }
 ```
-Firesteel работает через "материалы", то есть все значения текстур передаются в структуру `Material`. В шейдере должен быть свой адаптер для такого "материала". В данном примере обрабатывается лишь карта рассеивания, однако Firesteel выдает значения и под карту нормалей, отражений, свечения и т.д. Также если на модели нет текстур, то значение `noTextures` выставляется в правду.  
+Firesteel работает через материалы, то есть все значения текстур передаются в структуру `Material`. В шейдере должен быть свой адаптер для такого материала. В данном примере обрабатывается лишь карта рассеивания, однако Firesteel выдает значения и под карту нормалей, отражений, свечения и т.д. Также если на модели нет текстур, то значение `noTextures` выставляется в правду.  
 В `main()` просто принимаются и обрабатываются значения текстур, а также отменяется отрисовка, если прозрачность меньше 0,1.
 
 ## Изменения в коде приложения
-А теперь слегка изменим `main.cpp`, добавив туда новую шейдерную программу:
+А теперь слегка изменим `main.cpp`, добавив туда новый "материал":
 ``` cpp
 #include "engine/include/firesteel.hpp"
 using namespace Firesteel;
 
-Shader shader;
+std::shared_ptr<Shader> shader;
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("shader.vs", "shader.fs");
+        shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
+        entity.setMaterialsShader(shader);
     }
     virtual void onUpdate() override {
-        entity.draw(&shader);
+        entity.draw();
     }
     virtual void onShutdown() override {
         entity.remove();
-        shader.remove();
     }
 };
 
@@ -126,14 +127,15 @@ int main() {
 #include "engine/include/firesteel.hpp"
 using namespace Firesteel;
 
-Shader shader;
+Material material
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
     virtual void onInitialize() override {
-        shader=Shader("shader.vs", "shader.fs");
+        shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
+        entity.setMaterialsShader(shader);
         camera.update();
     }
     virtual void onUpdate() override {
@@ -141,14 +143,13 @@ class ModelLoaderApp : public Firesteel::App {
         glm::mat4 proj = camera.getProjection();
         glm::mat4 view = camera.getView();
         //Draw the model.
-        shader.enable();
-        shader.setMat4("projection", proj);
-        shader.setMat4("view", view);
-        entity.draw(&shader);
+        shader->enable();
+        shader->setMat4("projection", proj);
+        shader->setMat4("view", view);
+        entity.draw();
     }
     virtual void onShutdown() override {
         entity.remove();
-        shader.remove();
     }
 };
 
@@ -193,10 +194,10 @@ virtual void onUpdate() override {
     glm::mat4 view = camera.getView();
     camera.aspect = window.aspect(); // <---
     //Draw the model.
-    shader.enable();
-    shader.setMat4("projection", proj);
-    shader.setMat4("view", view);
-    entity.draw(&shader);
+    shader->enable();
+    shader->setMat4("projection", proj);
+    shader->setMat4("view", view);
+    entity.draw();
 }
 ```
 
@@ -209,8 +210,9 @@ virtual void onUpdate() override {
 Для этого внесём одну строку в `main.cpp`, а именно в `onInitialize()`:
 ``` cpp
 virtual void onInitialize() override {
-    shader=Shader("shader.vs", "shader.fs");
+    shader=std::make_shared<Shader>("shader.vs", "shader.fs");
     entity.load("backpack.obj");
+    entity.setMaterialsShader(shader);
     camera.update();
     renderer.setDrawMode(Renderer::DM_WIRE); // <---
 }

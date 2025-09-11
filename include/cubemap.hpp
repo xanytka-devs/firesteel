@@ -11,58 +11,64 @@ namespace Firesteel {
     public:
         Cubemap()
             : mInitialized(false), mID(0), mVAO(0), mVBO(0) {}
-        // Create cubemap from given files.
-        void load(const std::string tDir,
-                  const std::string tR,
-                  const std::string tL,
-                  const std::string tT,
-                  const std::string tBot,
-                  const std::string tF,
-                  const std::string tBack) {
+        void load(const std::string& tDir,
+                  const std::string& tR,
+                  const std::string& tL,
+                  const std::string& tT,
+                  const std::string& tBot,
+                  const std::string& tF,
+                  const std::string& tBack) {
             load(tDir.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
-        // Create cubemap from files that are in json.
-        void load(const std::string tCubemapJson) {
-            if(!std::filesystem::exists(tCubemapJson)) return;
-            mCfgFile = tCubemapJson;
+        // Create cubemap from JSON defenitions.
+        void load(const std::string& tCubemapJson) {
+            if(!std::filesystem::exists(tCubemapJson)) {
+                LOG_WARN("Cubemap at: \"" + tCubemapJson + "\" doesn't exist")
+                return;
+            }
+            mCfgFile=tCubemapJson;
             std::ifstream ifs(tCubemapJson);
-            nlohmann::json txt = nlohmann::json::parse(ifs);
+            nlohmann::json txt=nlohmann::json::parse(ifs);
             load(txt["dir"], txt["posZ"], txt["negZ"], txt["posY"], txt["negY"], txt["posX"], txt["negX"]);
         }
-        // Create cubemap from given files.
         void load(const char* tDir,
-                  const char* tRight = "right.png",
-                  const char* tLeft = "left.png",
-                  const char* tTop = "top.png",
-                  const char* tBottom = "bottom.png",
-                  const char* tFront = "front.png",
-                  const char* tBack = "back.png") {
+                  const char* tRight="right.png",
+                  const char* tLeft="left.png",
+                  const char* tTop="top.png",
+                  const char* tBottom="bottom.png",
+                  const char* tFront="front.png",
+                  const char* tBack="back.png") {
+#ifdef FS_INCLUDE_NVTX
+            nvtx3::scoped_range r{"cubemap load"};
+#endif // FS_INCLUDE_NVTX
             //Setup.
-            mDir = tDir;
-            mInitialized = true;
-            mFaces = { tFront, tBack, tTop, tBottom, tRight, tLeft };
+            mDir=tDir;
+            mInitialized=true;
+            mFaces={ tFront, tBack, tTop, tBottom, tRight, tLeft };
             glActiveTexture(GL_TEXTURE11);
             glGenTextures(1, &mID);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
             //Load faces.
-            for (unsigned int i = 0; i < 6; i++) {
-                TextureData t = TextureDataFromFile(mDir + "/" + mFaces[i]);
+            for(unsigned int i=0; i < 6; i++) {
+                TextureData t=TextureDataFromFile(mDir + "/" + mFaces[i]);
                 //Get color mode.
-                GLenum color_mode = GL_RED;
+                GLenum color_mode=GL_RED;
                 switch (t.nrComponents) {
                 case 3:
-                    color_mode = GL_RGB;
+                    color_mode=GL_RGB;
                     break;
                 case 4:
-                    color_mode = GL_RGBA;
+                    color_mode=GL_RGBA;
                     break;
                 }
                 //Bind data.
-                if (t.data)
+                if(t.data) {
+#ifdef FS_PRINT_DEBUG_MSGS
+                    LOG_DBG("Loaded cubemap texture \"" + mDir + "/" + mFaces[i] + "\"");
+#endif // FS_PRINT_DEBUG_MSGS
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                         0, color_mode, t.width, t.height, 0, color_mode, GL_UNSIGNED_BYTE, t.data);
-                else
-                    LOG_ERRR(std::string("Failed to load texture at \"") + (const char*)mFaces[i] + "\".");
+                } else LOG_ERRR(std::string("Failed to load texture at \"") + (const char*)mFaces[i] + "\".");
                 //Free data.
                 free(t.data);
             }
@@ -75,18 +81,18 @@ namespace Firesteel {
 
             glActiveTexture(GL_TEXTURE0);
         }
-        // Binds this cubemap
-        void enable() const {
+        void bind() const {
             if(!mInitialized) return;
             glActiveTexture(GL_TEXTURE11);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
         }
+        //Alias for `bind()`.
+        void enable() const {bind();}
 
-        // Create mesh for cubemap.
-        void initialize(const float& tSize) {
+        void makeMesh(const float& tSize) {
             //Set up vertices.
-            mSize = tSize;
-            float skybox_vert[] = {
+            mSize=tSize;
+            float skybox_vert[]={
                 // positions          
                 -1.0f * tSize,  1.0f * tSize, -1.0f * tSize,
                 -1.0f * tSize, -1.0f * tSize, -1.0f * tSize,
@@ -153,18 +159,26 @@ namespace Firesteel {
             glBindVertexArray(0);
             glDepthFunc(GL_LESS);
         }
-        // Clear meshes.
+        // Remove only meshes.
         void clear() {
-            glDeleteTextures(1, &mID);
-            mFaces.clear();
+            glDeleteVertexArrays(1, &mVAO);
+            glDeleteBuffers(1, &mVBO);
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed cubemap meshes");
+#endif // FS_PRINT_DEBUG_MSGS
         }
         // Remove meshes and textures.
         void remove() {
             if(!mInitialized) return;
-            mInitialized = false;
-            glDeleteVertexArrays(1, &mVAO);
-            glDeleteBuffers(1, &mVBO);
+            //Remove textures.
+            mInitialized=false;
+            glDeleteTextures(1, &mID);
+            mFaces.clear();
+            //Remove meshes.
             clear();
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed cubemap");
+#endif // FS_PRINT_DEBUG_MSGS
         }
 
         unsigned int getID() const { return mID; }

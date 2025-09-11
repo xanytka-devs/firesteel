@@ -855,7 +855,7 @@ static int glad_gl_find_extensions_gles2(void) {
     char **exts_i = NULL;
     if (!glad_gl_get_extensions(&exts, &exts_i)) return 0;
 
-    GLAD_UNUSED(glad_gl_has_extension);
+    GLAD_UNUSED(&glad_gl_has_extension);
 
     glad_gl_free_extensions(exts_i);
 

@@ -1,16 +1,12 @@
 #ifndef FS_MESH_H
 #define FS_MESH_H
 #include <glm/gtc/matrix_transform.hpp>
-#include <string>
-#include <vector>
 
-#include "common.hpp"
-#include "shader.hpp"
-#include "texture.hpp"
+#include "material.hpp"
+#include "transform.hpp"
 
 namespace Firesteel {
 #define MAX_BONE_INFLUENCE 4
-
     struct Vertex {
         glm::vec3 position;
         glm::vec3 normal;
@@ -25,70 +21,16 @@ namespace Firesteel {
 
     struct Mesh {
     public:
-        /// Mesh Data.
-        std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
-        std::vector<Texture> textures;
-        glm::vec3 ambient{0.2f}, diffuse{1.f}, specular{0.5f}, emission{0.f};
-
-        // Constructor with textures.
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, const std::vector<Texture>& tTextures)
-            : vertices(tVertices), indices(tIndices), textures(tTextures) {
+        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, Material* tMaterial)
+            : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
-
-        // Constructor without textures.
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices,
-            const glm::vec3 tDiffuse, const glm::vec3 tSpecular, const glm::vec3 tEmission)
-            : vertices(tVertices), indices(tIndices),
-            diffuse(tDiffuse), specular(tSpecular), emission(tEmission) {
-            makeMesh();
-        }
-
-        // Render the mesh.
-        // Shader must be enabled before this.
-        void draw(const Shader* tShader) {
-            //Bind appropriate textures.
-            size_t diffuseNr = 0;
-            size_t specularNr = 0;
-            size_t normalNr = 0;
-            size_t heightNr = 0;
-            size_t emisNr = 0;
-            size_t opacNr = 0;
-            //Set material values.
-            tShader->setVec4("material.ambient", glm::vec4(ambient, 1));
-            tShader->setVec4("material.diffuse", glm::vec4(diffuse, 1));
-            tShader->setVec4("material.specular", glm::vec4(specular, 1));
-            tShader->setVec4("material.emission", glm::vec4(emission, 1));
-            tShader->setBool("noTextures", true);
-            //Do textures.
-            if(textures.size()>0) {
-                tShader->setBool("noTextures", false);
-                Texture::unbind();
-                for (unsigned int i = 0; i < textures.size(); i++) {
-                    //Retrieve texture number.
-                    size_t number = 0;
-                    std::string name = textures[i].type;
-                    if(name == "diffuse")
-                        number = diffuseNr++;
-                    else if(name == "specular")
-                        number = specularNr++;
-                    else if(name == "normal")
-                        number = normalNr++;
-                    else if(name == "emission")
-                        number = emisNr++;
-                    else if(name == "height")
-                        number = heightNr++;
-                    else if(name == "opacity")
-                        number = opacNr++;
-                    //Now set the sampler to the correct texture unit.
-                    textures[i].enable(i);
-                    tShader->setInt("material." + name + std::to_string(number), i);
-                    tShader->setBool("material." + name + std::to_string(number) + "_isMonochrome", textures[i].isMonochrome);
-                }
-                tShader->setBool("material.opacityMask", opacNr > 0);
+        // If `tOverrideMaterial` is enbaled then shader must be enabled before running this.
+        void draw(const glm::mat4& tModel, const bool& tOverrideMaterial=false) {
+            if (!tOverrideMaterial) {
+                material->bind();
+                material->getShader()->setMat4("model", tModel);
             }
-
             //Draw mesh.
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
@@ -96,29 +38,23 @@ namespace Firesteel {
             //Always good practice to set everything back to defaults once configured.
             Texture::unbind();
         }
-
-        // Clears mesh data.
         void remove() {
-            glDeleteBuffers(1, &mEBO);
-            glDeleteBuffers(1, &mVBO);
             glDeleteVertexArrays(1, &mVAO);
             //Clear mesh data.
             vertices.clear();
             indices.clear();
-            for (size_t i = 0; i < textures.size(); i++)
-                textures[i].remove();
-            textures.clear();
         }
-
-        // Checks if mesh has any textures.
-        bool hasTextures() const { return textures.size() > 0; }
-
-    private:
+    public:
+        /// Mesh Data.
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+        Material* material;
+    protected:
         // Render data.
-        unsigned int mVAO, mVBO, mEBO;
-
-        // Initializes all the buffer objects/arrays.
+        unsigned int mVAO;
+    private:
         void makeMesh() {
+            unsigned int mVBO, mEBO;
             //Create buffers/arrays.
             glGenVertexArrays(1, &mVAO);
             glGenBuffers(1, &mVBO);
@@ -154,7 +90,51 @@ namespace Firesteel {
             glEnableVertexAttribArray(6);
             glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
             glBindVertexArray(0);
+            //Delete unnecessary buffers (they've been copied to VAO).
+            glDeleteBuffers(1, &mEBO);
+            glDeleteBuffers(1, &mVBO);
         }
+    };
+    struct Node {
+        Node() :
+            name("New Node"), transform(Transform{}),
+            children(std::vector< std::shared_ptr<Node>>()), parent(nullptr) {}
+        Node(const std::string& tName, const Transform& tTransform, const std::vector<std::shared_ptr<Node>>& tChildren, std::shared_ptr<Node> tParent, const int& tIndex)
+            : name(tName), transform(tTransform), children(tChildren), index(tIndex), parent(tParent) {}
+        
+        glm::mat4 getMatrix(glm::mat4 tEntityMatrix) const {
+            glm::mat4 model=tEntityMatrix*transform.getMatrix();
+            std::shared_ptr<Node> lastParent=parent;
+            while(lastParent) {
+                model*=lastParent->transform.getMatrix();
+                lastParent=lastParent->parent;
+            }
+            return model;
+        }
+        
+        std::string name;
+        Transform transform;
+        std::vector<std::shared_ptr<Node>> children;
+        std::shared_ptr<Node> parent=nullptr;
+        int index=-1;
+    };
+    struct Model {
+        Model(const std::string& tPath="") {
+            materials.clear();
+            meshes.clear();
+            path=tPath;
+        }
+        std::string getDirectory() const {
+            return path.substr(0, path.find_last_of('\\'));
+        }
+        std::string getFilename() const {
+            return path.substr(path.find_last_of('\\')+1, path.size()-path.find_last_of('\\')-1);
+        }
+
+        std::string path;
+        std::vector<Material> materials;
+        std::vector<std::shared_ptr<Node>> nodes;
+        std::vector<Mesh> meshes;
     };
 }
 #endif // !FS_MESH_H

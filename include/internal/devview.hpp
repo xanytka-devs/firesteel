@@ -1,5 +1,7 @@
-#ifndef FS_INTERNAL_DEVVIEW
-#define FS_INTERNAL_DEVVIEW
+#ifndef FS_INTERNAL_DEVVIEW_H
+#define FS_INTERNAL_DEVVIEW_H
+
+#include "config.hpp"
 
 #include <imgui.h>
 
@@ -19,16 +21,17 @@ namespace INTERNAL {
 
 namespace Firesteel {
 	namespace DEVVIEW {
-		static bool drawDevView;
+		static bool sDrawDevView;
 		static void draw(const float tDeltaTime, const unsigned int tFPS) {
-			if(!drawDevView) return;
-			ImGui::Begin("Dev View", &drawDevView);
-			ImGui::Text(("FPS: " + std::to_string(tFPS)).c_str());
+			if(!sDrawDevView || !CONFIG::sAllowDevView) return;
+			ImGui::Begin("Dev View", &sDrawDevView);
+			ImGui::Text("FPS: %d", tFPS);
 			static std::vector<float> frameTimes;
 			frameTimes.push_back(tDeltaTime);
 			if(frameTimes.size() > 128) frameTimes.erase(frameTimes.begin());
 			ImGui::PlotLines("##frame_times_plot", frameTimes.data(), static_cast<int>(frameTimes.size()));
-			ImGui::Text(("Delta time: " + std::to_string(tDeltaTime)).c_str());
+			ImGui::Text("Delta time: %1.f", tDeltaTime);
+			ImGui::Text("Renderer: OpenGL");
 			ImGui::Separator();
 			if(ImGui::MenuItem("Made with Firesteel")) INTERNAL::openURL("https://github.com/xanytka-devs/firesteel");
 			ImGui::End();
@@ -36,4 +39,4 @@ namespace Firesteel {
 	}
 }
 
-#endif // !FS_INTERNAL_DEVVIEW
+#endif // !FS_INTERNAL_DEVVIEW_H

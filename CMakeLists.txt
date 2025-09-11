@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
-project(firesteel VERSION 0.2.0)
+project(firesteel VERSION 0.2.1)
 set(PRJ_NAME firesteel)
 
-set(FiresteelVersion "0.2.0")
+set(FiresteelVersion "0.2.1")
 message(CHECK_START "Firesteel: ${FiresteelVersion}")
 
 # Fixing library-depndend windows stuff.
@@ -16,19 +16,22 @@ option(GLM_ENABLE_CXX_98 "" ON)
 option(GLM_ENABLE_CXX_11 "" ON)
 option(GLM_ENABLE_CXX_14 "" ON)
 option(GLM_ENABLE_CXX_17 "" ON)
-option(ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT OFF)
-option(ASSIMP_BUILD_TESTS OFF)
 
+set(FS_BIN_ADDITIONAL "" CACHE STRING "Additional directories between 'build' and 'bin' directories")
 option(FS_ONLINE "Allow CMake to download files" ON)
-option(FS_INCLUDE_ASSIMP "Include Assimp libraries (GRAPHICS)" ON)
+option(FS_HEADLESS "Build Firesteel without any renderers and any window support" OFF)
 option(FS_INCLUDE_GLM "Include GLM library (UI)" ON)
-option(FS_INCLUDE_FT "Include FreeType library (UI)" ON)
+option(FS_INCLUDE_FT "Include FreeType library (UI)" OFF)
 option(FS_INCLUDE_IMGUI "Include ImGui library (UI)" ON)
+option(FS_INCLUDE_NVTX "Include NVTX library (DEBUG)" OFF)
 option(FS_INCLUDE_OGL "Include OpenGL libraries (GRAPHICS)" ON)
 option(FS_INCLUDE_OS "Include PortableFileDialogs library (OS)" ON)
+option(FS_LOADER_FBX "Include FBX library (MODELS)" ON)
+option(FS_LOADER_GLTF "Include TinyGLTF library (MODELS)" ON)
+option(FS_LOADER_OBJ "Include TinyOBJ library (MODELS)" ON)
 option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_PKGS_ALLOW_OVERRIDES "Allows packages to tinker with CMakeLists.txt \
-(Be cautious, this can be dangerous for integrity of the library!)" ON)
+(Be cautious, this can be dangerous for integrity of the library!)" OFF)
 option(FS_DISABLE_SUBMODULES "Build for CodeQL (Doesn't build modules)" OFF)
 
 MACRO(SUBDIRLIST result curdir)
@@ -43,31 +46,31 @@ MACRO(SUBDIRLIST result curdir)
 ENDMACRO()
 
 file(GLOB_RECURSE ENGINE_INCLUDES "include/*.hpp")
-file(GLOB_RECURSE ENGINE_SOURCES "include/*.cpp")
+file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp")
 if(NOT FS_DISABLE_SUBMODULES)
 	if(FS_INCLUDE_FT)
 		file(GLOB_RECURSE FT_INCLUDES "external/freetype/*.hpp external/freetype/*.h")
 		#Download FreeType.dll distribution.
-		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll")
 			message(CHECK_START "Downloading freetype.dll")
 			file(DOWNLOAD
 				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
-				"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+				"${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll"
 			)
 			#Fallback to Xanytka Website.
-			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll")
 				file(DOWNLOAD
 					"https://xanytka.ru/shared/firesteel/freetype.dll"
-					"${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll"
 				)
 			endif()
 		endif()
 		#Copy the library to general binary folders to enable user to just run the app.
-		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll")
-		    file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug)
-			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Debug/freetype.dll")
-			file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release)
-			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/bin/Release/freetype.dll")
+		if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll")
+			file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}bin/Debug)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}bin/Debug/freetype.dll")
+			file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}bin/Release)
+			file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll" "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}bin/Release/freetype.dll")
 		endif()
 		#Download FreeType.lib distribution.
 		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
@@ -77,10 +80,10 @@ if(NOT FS_DISABLE_SUBMODULES)
 				"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
 			)
 			#Fallback to Xanytka Website.
-			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
+			if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}engine/freetype/freetype.lib")
 				file(DOWNLOAD
 					"https://xanytka.ru/shared/firesteel/freetype.lib"
-					"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
+					"${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}engine/freetype/freetype.lib"
 				)
 			endif()
 		endif()
@@ -89,6 +92,25 @@ else()
 	message("Currently build of submodules is disabled. This means library won't be properly built.")
 endif()
 
+if(FS_LOADER_FBX)
+	add_compile_definitions("FS_LOADER_FBX")
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/model_loaders/ufbx/ufbx.h"
+		"external/model_loaders/ufbx/ufbx.c"
+	)
+endif()
+if(FS_LOADER_GLTF)
+	add_compile_definitions("FS_LOADER_GLTF")
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/model_loaders/tiny_gltf.h"
+	)
+endif()
+if(FS_LOADER_OBJ)
+	add_compile_definitions("FS_LOADER_OBJ")
+	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
+		"external/model_loaders/tiny_obj_loader.h"
+	)
+endif()
 if(FS_INCLUDE_OS)
 	add_compile_definitions("FS_PFD")
 	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
@@ -112,7 +134,7 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 )
 
 add_compile_definitions(FS_VERSION="${FiresteelVersion}")
-target_include_directories(${PRJ_NAME} PUBLIC includes)
+target_include_directories(${PRJ_NAME} PUBLIC include)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
@@ -140,36 +162,33 @@ else()
 endif()
 
 if(NOT FS_DISABLE_SUBMODULES)
-	add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
-	target_link_libraries(${PRJ_NAME} PRIVATE glfw)
-	set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
-	set_target_properties(uninstall PROPERTIES FOLDER "External/GLFW3")
-	set_target_properties(update_mappings PROPERTIES FOLDER "External/GLFW3")
-	target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
+	if(NOT FS_HEADLESS)
+		add_subdirectory(external/glfw ${CMAKE_CURRENT_BINARY_DIR}/glfw)
+		target_link_libraries(${PRJ_NAME} PUBLIC glfw)
+		set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
+		set_target_properties(uninstall PROPERTIES FOLDER "External/GLFW3")
+		set_target_properties(update_mappings PROPERTIES FOLDER "External/GLFW3")
+		target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
 
-	if(FS_INCLUDE_OGL)
-		add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
-		target_link_libraries(${PRJ_NAME} PRIVATE glad)
-		set_target_properties(glad PROPERTIES FOLDER "External")
+		if(FS_INCLUDE_OGL)
+			add_compile_definitions(FS_RENDERER_OGL)
+			add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
+			target_link_libraries(${PRJ_NAME} PRIVATE glad)
+			set_target_properties(glad PROPERTIES FOLDER "External")
+		endif()
+	else()
+		add_compile_definitions(FS_HEADLESS)
 	endif()
 	
 	if(FS_INCLUDE_GLM)
 		add_subdirectory(external/glm ${CMAKE_CURRENT_BINARY_DIR}/glm)
-		target_link_libraries(${PRJ_NAME} PRIVATE glm)
+		target_link_libraries(${PRJ_NAME} PUBLIC glm)
 		set_target_properties(glm PROPERTIES FOLDER "External")
-	endif()
-	
-	if(FS_INCLUDE_ASSIMP)
-		add_subdirectory(external/assimp ${CMAKE_CURRENT_BINARY_DIR}/assimp)
-		target_link_libraries(${PRJ_NAME} PRIVATE assimp)
-		set_target_properties(assimp PROPERTIES FOLDER "External/assimp")
-		set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER "External/assimp")
-		set_target_properties(zlibstatic PROPERTIES FOLDER "External/assimp")
 	endif()
 	
 	if(FS_INCLUDE_FT)
 		target_include_directories(${PRJ_NAME} PRIVATE "external\\freetype\\include" "external\\freetype\\")
-		target_link_libraries(${PRJ_NAME} PUBLIC "engine\\freetype\\freetype")
+		target_link_libraries(${PRJ_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}\\build\\engine\\freetype\\freetype.lib")
 	endif()
 	
 	if(FS_INCLUDE_IMGUI)
@@ -178,5 +197,12 @@ if(NOT FS_DISABLE_SUBMODULES)
 		set_target_properties(imgui PROPERTIES FOLDER "External")
 
 		target_include_directories(${PRJ_NAME} PUBLIC external/imgui)
+	endif()
+	
+	if(FS_INCLUDE_NVTX)
+		add_compile_definitions("FS_INCLUDE_NVTX")
+		add_subdirectory(external/nvtx ${CMAKE_CURRENT_BINARY_DIR}/nvtx)
+		target_link_libraries(${PRJ_NAME} PUBLIC nvtx3-cpp)
+		set_target_properties(nvtx3-cpp PROPERTIES FOLDER "External")
 	endif()
 endif()

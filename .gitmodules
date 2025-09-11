@@ -1,7 +1,4 @@
 
-[submodule "external/assimp"]
-	path = external/assimp
-	url = https://github.com/assimp/assimp.git
 [submodule "external/glfw"]
 	path = external/glfw
 	url = https://github.com/glfw/glfw.git
@@ -12,3 +9,6 @@
 	path = external/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "external/nvtx"]
+	path = external/nvtx
+	url = https://github.com/NVIDIA/NVTX.git
