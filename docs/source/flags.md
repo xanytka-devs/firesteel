@@ -36,8 +36,6 @@
 Включена ли библиотека **NVTX**.
 - `FS_LOADER_FBX`  
 Включён ли загрузчик моделей **FBX**.
-- `FS_LOADER_OFBX`  
-Используется ли **OpenFBX** заместо **UFBX**.
 - `FS_LOADER_GLTF`  
 Включён ли загрузчик моделей **GLTF** и **GLB**.
 - `FS_LOADER_OBJ`  

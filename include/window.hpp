@@ -58,7 +58,7 @@ namespace Firesteel {
             glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
             if(tState==WS_BORDERLESS) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
             else glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-            glfwSetErrorCallback(errorCallback);
+            glfwSetErrorCallback(_errorCallback);
 #ifdef __APPLE__
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -84,7 +84,7 @@ namespace Firesteel {
             //Setup additional parametrs.
             glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_TRUE);
             //Setup callbacks.
-            glfwSetFramebufferSizeCallback(mPtr, framebufferSizeCallback);
+            glfwSetFramebufferSizeCallback(mPtr, _framebufferSizeCallback);
             glfwSetCursorPosCallback(mPtr, Mouse::cursorCallback);
             glfwSetMouseButtonCallback(mPtr, Mouse::buttonCallback);
             glfwSetScrollCallback(mPtr, Mouse::scrollCallback);
@@ -143,6 +143,7 @@ namespace Firesteel {
             glfwSwapInterval(mVSync);
 #endif // !FS_HEADLESS
         }
+        void setVSync(const bool& tVSync) { setSwapInterval(tVSync); }
         void toggleVSync() { setVSync(!mVSync); }
         bool getVSync() const { return mVSync; }
 

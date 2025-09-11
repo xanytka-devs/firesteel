@@ -36,6 +36,11 @@ namespace Firesteel {
             Enviroment::sInstance=&enviroment;
             LOG(std::string("Firesteel ") + FS_VERSION);
             LOG_STATE("STARTUP");
+            //Do some randomization.
+            __time64_t long_time;
+	        _time64(&long_time);
+	        srand(static_cast<unsigned int>(long_time));
+            //Preinitialize.
 			onPreInitialize();
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Run preinitialize");
@@ -72,6 +77,7 @@ namespace Firesteel {
                 if(window.isMinimized()) continue;
                 if(updateViewport) enviroment.renderer->setViewportSize(window.getSize());
                 window.clearBuffers();
+                //ImGui & DevView window.
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
 #ifdef FS_INCLUDE_NVTX
@@ -79,6 +85,7 @@ namespace Firesteel {
 #endif // FS_INCLUDE_NVTX
                 enviroment.renderer->imguiNewFrame();
                 onUpdate();
+                //Draw DevView and finalize update.
                 DEVVIEW::draw(deltaTime, fps);
                 enviroment.renderer->imguiRender(window.ptr());
                 window.swapBuffers();

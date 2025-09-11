@@ -28,6 +28,8 @@ namespace Firesteel {
                 if(!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo=cfg["AllowHardwareEnumeration"];
                 if(!cfg["SaveLogs"].is_null()) Log::sSaveLogs=cfg["SaveLogs"];
             }
+#endif
+            bool canGetSystemInfo=true;
             if(canGetSystemInfo) {
                 LOG_INFO("Hardware Information:");
 
