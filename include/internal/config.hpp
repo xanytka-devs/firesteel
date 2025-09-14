@@ -11,6 +11,7 @@ namespace Firesteel {
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
             std::string firesteelConfigFile="";
+            bool canGetSystemInfo=true;
 #ifdef _WIN32
             char* buf=nullptr;
             size_t sz=0;
@@ -18,8 +19,6 @@ namespace Firesteel {
                 firesteelConfigFile=std::string(buf) + "\\firesteel\\global.cfg.json";
                 free(buf);
             }
-#endif
-            bool canGetSystemInfo=true;
             if (std::filesystem::exists(firesteelConfigFile)) {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);
@@ -29,7 +28,6 @@ namespace Firesteel {
                 if(!cfg["SaveLogs"].is_null()) Log::sSaveLogs=cfg["SaveLogs"];
             }
 #endif
-            bool canGetSystemInfo=true;
             if(canGetSystemInfo) {
                 LOG_INFO("Hardware Information:");
 

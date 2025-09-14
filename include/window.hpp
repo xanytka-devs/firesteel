@@ -2,7 +2,7 @@
 #define FS_WINDOW_H
 #include <filesystem>
 
-#include "common.hpp"
+#include "enviroment.hpp"
 #include "input/keyboard.hpp"
 #include "input/mouse.hpp"
 #include "utils/stbi_global.hpp"
@@ -143,7 +143,6 @@ namespace Firesteel {
             glfwSwapInterval(mVSync);
 #endif // !FS_HEADLESS
         }
-        void setVSync(const bool& tVSync) { setSwapInterval(tVSync); }
         void toggleVSync() { setVSync(!mVSync); }
         bool getVSync() const { return mVSync; }
 
@@ -222,9 +221,9 @@ namespace Firesteel {
                 glfwSetWindowSizeLimits(mPtr,tMinX,tMinY,tMaxX,tMaxY);
 #endif // !FS_HEADLESS
         }
-        int getHeight() { getSizeInternal(); return mHeight; }
-        int getWidth() { getSizeInternal(); return mWidth; }
-        glm::vec2 getSize() { getSizeInternal(); return glm::vec2(mWidth, mHeight); }
+        int getHeight() { _getSizeInternal(); return mHeight; }
+        int getWidth() { _getSizeInternal(); return mWidth; }
+        glm::vec2 getSize() { _getSizeInternal(); return glm::vec2(mWidth, mHeight); }
         float aspect() const { return static_cast<float>(mWidth) / static_cast<float>(mHeight); }
 
         GLFWwindow* ptr() const { return mPtr; }
@@ -289,15 +288,15 @@ namespace Firesteel {
 		int mWidth, mHeight;
 		bool mVSync, mClosed;
     private:
-        static void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
+        static void _framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 #ifndef FS_HEADLESS
             glViewport(0, 0, width, height);
 #endif // !FS_HEADLESS
         }
-        static void errorCallback(int tEC, const char* tDescription) {
+        static void _errorCallback(int tEC, const char* tDescription) {
             LOGF_ERRR("GLFW Error(%i): %s\n", tEC, tDescription);
         }
-        void getSizeInternal() {
+        void _getSizeInternal() {
 #ifndef FS_HEADLESS
             glfwGetWindowSize(mPtr, &mWidth, &mHeight);
 #endif // !FS_HEADLESS

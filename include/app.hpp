@@ -4,7 +4,6 @@
 #include "embedded.hpp"
 #include "common.hpp"
 #include "window.hpp"
-#include "enviroment.hpp"
 #ifdef FS_RENDERER_OGL
 #include "opengl/renderer.hpp"
 #endif // FS_RENDERER_OGL

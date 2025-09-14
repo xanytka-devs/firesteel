@@ -93,26 +93,22 @@ else()
 endif()
 
 if(FS_LOADER_FBX)
-	add_compile_definitions("FS_LOADER_FBX")
 	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/model_loaders/ufbx/ufbx.h"
 		"external/model_loaders/ufbx/ufbx.c"
 	)
 endif()
 if(FS_LOADER_GLTF)
-	add_compile_definitions("FS_LOADER_GLTF")
 	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/model_loaders/tiny_gltf.h"
 	)
 endif()
 if(FS_LOADER_OBJ)
-	add_compile_definitions("FS_LOADER_OBJ")
 	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/model_loaders/tiny_obj_loader.h"
 	)
 endif()
 if(FS_INCLUDE_OS)
-	add_compile_definitions("FS_PFD")
 	set(ENGINE_ADDITIONAL ${ENGINE_ADDITIONAL}
 		"external/portable-file-dialogs.hpp"
 	)
@@ -133,7 +129,20 @@ source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 	${PRJ_ALL}
 )
 
-add_compile_definitions(FS_VERSION="${FiresteelVersion}")
+if(FS_LOADER_FBX)
+	target_compile_definitions(${PRJ_NAME} PUBLIC FS_LOADER_FBX)
+endif()
+if(FS_LOADER_GLTF)
+	target_compile_definitions(${PRJ_NAME} PUBLIC FS_LOADER_GLTF)
+endif()
+if(FS_LOADER_OBJ)
+	target_compile_definitions(${PRJ_NAME} PUBLIC FS_LOADER_OBJ)
+endif()
+if(FS_INCLUDE_OS)
+	target_compile_definitions(${PRJ_NAME} PUBLIC FS_PFD)
+endif()
+
+target_compile_definitions(${PRJ_NAME} PUBLIC FS_VERSION="${FiresteelVersion}")
 target_include_directories(${PRJ_NAME} PUBLIC include)
 target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
@@ -171,13 +180,13 @@ if(NOT FS_DISABLE_SUBMODULES)
 		target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
 
 		if(FS_INCLUDE_OGL)
-			add_compile_definitions(FS_RENDERER_OGL)
+			target_compile_definitions(${PRJ_NAME} PUBLIC FS_RENDERER_OGL)
 			add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 			target_link_libraries(${PRJ_NAME} PRIVATE glad)
 			set_target_properties(glad PROPERTIES FOLDER "External")
 		endif()
 	else()
-		add_compile_definitions(FS_HEADLESS)
+		target_compile_definitions(${PRJ_NAME} PUBLIC FS_HEADLESS)
 	endif()
 	
 	if(FS_INCLUDE_GLM)
@@ -200,7 +209,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 	endif()
 	
 	if(FS_INCLUDE_NVTX)
-		add_compile_definitions("FS_INCLUDE_NVTX")
+		target_compile_definitions(${PRJ_NAME} PUBLIC FS_INCLUDE_NVTX)
 		add_subdirectory(external/nvtx ${CMAKE_CURRENT_BINARY_DIR}/nvtx)
 		target_link_libraries(${PRJ_NAME} PUBLIC nvtx3-cpp)
 		set_target_properties(nvtx3-cpp PROPERTIES FOLDER "External")
