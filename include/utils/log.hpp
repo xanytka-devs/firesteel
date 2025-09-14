@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-#ifdef WIN32
+#ifdef _WIN32
 /* FONT COLORS */
 
 #define CMD_F_BLACK 0
@@ -42,7 +42,7 @@
 #define CMD_BG_LPURPLE 208
 #define CMD_BG_LYELLOW 224
 #define CMD_BG_WHITE 240
-#endif // WIN32
+#endif // _WIN32
 #ifdef __linux__
 /* FONT COLORS */
 
