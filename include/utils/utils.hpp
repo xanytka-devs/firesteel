@@ -292,6 +292,41 @@ namespace OS {
         system(tUrl);
 #endif // !__linux__
     }
+    static void copyToClipboard(const std::string& tContents) {
+#ifdef WIN32
+        if(!OpenClipboard(nullptr)) {
+            LOG_ERRR("Couldn't open clipboard");
+            return;
+        }
+        HGLOBAL hMem=GlobalAlloc(GMEM_MOVEABLE,(tContents.length()+1)*sizeof(char));
+        if(!hMem) {
+            LOG_ERRR("Couldn't allocate clipboard memory");
+            CloseClipboard();
+            return;
+        }
+        char* text=static_cast<char*>(GlobalLock(hMem));
+        if(!text) {
+            LOG_ERRR("Couldn't allocate clipboard text");
+            GlobalFree(hMem);
+            CloseClipboard();
+            return;
+        }
+        EmptyClipboard();
+        strcpy_s(text,tContents.length()+1,tContents.c_str());
+        GlobalUnlock(hMem);
+        SetClipboardData(CF_TEXT,hMem);
+        CloseClipboard();
+#endif // WIN32
+#ifdef __linux__
+        FILE* pipe=popen("xclip -selection clipboard", "w");
+        if(!pipe) {
+            LOG_ERRR("Couldn't open clipboard");
+            return;
+        }
+        fputs(tContents.c_str(),pipe);
+        pclose(pipe);
+#endif // __linux__
+    }
 #ifdef FS_PFD
     /// Calls system dialog to save or open files.
     /// @param `tSave` determines if dialog will require existing files to open or files to save to.
