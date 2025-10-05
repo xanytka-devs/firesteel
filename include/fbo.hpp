@@ -113,7 +113,7 @@ namespace Firesteel {
         unsigned int FBO=0, RBO=0;
         unsigned int FBOtextures[11]{};
         size_t FBOsSize=1;
-
+    private:
         void createBuffers(const size_t& tTexs) {
             FBOsSize=tTexs;
             glActiveTexture(GL_TEXTURE0);

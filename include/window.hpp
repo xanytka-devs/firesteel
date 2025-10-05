@@ -104,9 +104,7 @@ namespace Firesteel {
         }
         void clearBuffers() const {
 #ifndef FS_HEADLESS
-        glClearColor(static_cast<GLfloat>(mClearColor[0]), static_cast<GLfloat>(mClearColor[1]),
-        static_cast<GLfloat>(mClearColor[2]), static_cast<GLfloat>(1.0f));
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            Enviroment::sInstance->renderer->clearBuffers(mClearColor);
 #endif // !FS_HEADLESS
         }
         void close() { mClosed=true; }
@@ -290,7 +288,7 @@ namespace Firesteel {
     private:
         static void _framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 #ifndef FS_HEADLESS
-            glViewport(0, 0, width, height);
+            Enviroment::sInstance->renderer->setViewportSize(width, height);
 #endif // !FS_HEADLESS
         }
         static void _errorCallback(int tEC, const char* tDescription) {

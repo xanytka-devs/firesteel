@@ -9,92 +9,37 @@
 
 namespace Firesteel {
     struct Shader {
-    private:
-        static std::shared_ptr<Shader> sDefaultShader;
     public:
-        unsigned int ID;
-        bool loaded=false;
-
-        Shader() : ID(0) {
+        Shader() : mId(0) {
             remove();
         }
-        Shader(const char* tVertexPath, const char* tFragmentPath, const char* tGeometryPath=nullptr) {
+        Shader(const std::string& tVertexPath, const std::string& tFragmentPath, const std::string& tGeometryPath="") {
             remove();
-            //Retrieve the vertex/fragment source code from file path.
-            std::string vertexCode;
-            std::string fragmentCode;
-            std::string geometryCode;
-            std::ifstream vShaderFile;
-            std::ifstream fShaderFile;
-            std::ifstream gShaderFile;
-            //Check if given paths even exist.
-            bool hasGeomShader=(tGeometryPath != nullptr);
-            if(!std::filesystem::exists(tVertexPath)) {
-                LOG_WARN(std::string("Vertex shader at \"") + tVertexPath + "\" doesn't exist");
-                ID=sDefaultShader->ID;
-                return;
-            }
-            if(!std::filesystem::exists(tFragmentPath)) {
-                LOG_WARN(std::string("Fragment shader at \"") + tFragmentPath + "\" doesn't exist");
-                ID=sDefaultShader->ID;
-                return;
-            }
-            if(hasGeomShader)
-                if(!std::filesystem::exists(tGeometryPath)) {
-                    LOG_WARN(std::string("Geometry shader at \"") + tGeometryPath + "\" doesn't exist");
-                    hasGeomShader=false;
-                }
-            //Ensure ifstream objects can throw exceptions:.
-            vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            if(hasGeomShader) gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            try {
-                //Open files.
-                vShaderFile.open(tVertexPath);
-                fShaderFile.open(tFragmentPath);
-                if(hasGeomShader) gShaderFile.open(tFragmentPath);
-                std::stringstream vShaderStream, fShaderStream, gShaderStream;
-                //Read file's buffer contents into streams.
-                vShaderStream << vShaderFile.rdbuf();
-                fShaderStream << fShaderFile.rdbuf();
-                if(hasGeomShader) gShaderStream << gShaderFile.rdbuf();
-                //Close file handlers.
-                vShaderFile.close();
-                fShaderFile.close();
-                if(hasGeomShader) gShaderFile.close();
-                //Convert stream into string.
-                vertexCode=vShaderStream.str();
-                fragmentCode=fShaderStream.str();
-                if(hasGeomShader) geometryCode=gShaderStream.str();
-                //Generate the program itself.
-                generate(vertexCode.c_str(), fragmentCode.c_str(), hasGeomShader, geometryCode.c_str());
-            }
-            catch (std::ifstream::failure& e) {
-                LOG_WARN(std::string("Error while reading shader files: ") + e.what());
-                ID=sDefaultShader->ID;
-                return;
-            }
+            loadShaders(tVertexPath,tFragmentPath,tGeometryPath);
         }
         Shader(const char* tVertexCode, const char* tFragmentCode, const bool& tHasGeomShader, const char* tGeometryCode) {
             remove();
             generate(tVertexCode, tFragmentCode, tHasGeomShader, tGeometryCode);
         }
 
+        unsigned int getId() const { return mId; }
+        unsigned int loaded() const { return mLoaded; }
+
         void bind() const {
-            if(!loaded) return;
-            glUseProgram(ID);
+            if(!mLoaded) return;
+            glUseProgram(mId);
             setFloat("time", static_cast<float>(glfwGetTime()));
         }
         //Alias for `bind()`.
         void enable() const {bind();}
         void remove() {
-            if(loaded) {
-                glDeleteProgram(ID);
-                loaded=false;
-            }
+            if(!mLoaded) return;
+            glDeleteProgram(mId);
+            mLoaded=false;
         }
 
         static void setDefaultShader(const char* tVertexCode, const char* tFragmentCode) {
+            if(!tVertexCode||!tFragmentCode) return;
             if(sDefaultShader) sDefaultShader->remove();
             sDefaultShader=std::make_shared<Shader>(tVertexCode,tFragmentCode,false,nullptr);
         }
@@ -105,28 +50,28 @@ namespace Firesteel {
         // Utilities //
 
         void setInt(const std::string& tName, const int tValue) const {
-            glUniform1i(glGetUniformLocation(ID, tName.c_str()), tValue);
+            glUniform1i(glGetUniformLocation(mId, tName.c_str()), tValue);
         }
         void setFloat(const std::string& tName, const float tValue) const {
-            glUniform1f(glGetUniformLocation(ID, tName.c_str()), tValue);
+            glUniform1f(glGetUniformLocation(mId, tName.c_str()), tValue);
         }
         void setVec2(const std::string& tName, const float tX, const float tY) const {
-            glUniform2f(glGetUniformLocation(ID, tName.c_str()), tX, tY);
+            glUniform2f(glGetUniformLocation(mId, tName.c_str()), tX, tY);
         }
         void setVec3(const std::string& tName, const float tX, const float tY, const float tZ) const {
-            glUniform3f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ);
+            glUniform3f(glGetUniformLocation(mId, tName.c_str()), tX, tY, tZ);
         }
         void setVec4(const std::string& tName, const float tX, const float tY, const float tZ, const float tW) const {
-            glUniform4f(glGetUniformLocation(ID, tName.c_str()), tX, tY, tZ, tW);
+            glUniform4f(glGetUniformLocation(mId, tName.c_str()), tX, tY, tZ, tW);
         }
         void setMat2(const std::string& tName, const glm::mat2& tMat) const {
-            glUniformMatrix2fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+            glUniformMatrix2fv(glGetUniformLocation(mId, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
         }
         void setMat3(const std::string& tName, const glm::mat3& tMat) const {
-            glUniformMatrix3fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+            glUniformMatrix3fv(glGetUniformLocation(mId, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
         }
         void setMat4(const std::string& tName, const glm::mat4& tMat) const {
-            glUniformMatrix4fv(glGetUniformLocation(ID, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(mId, tName.c_str()), 1, GL_FALSE, &tMat[0][0]);
         }
 
         void setBool(const std::string& tName, const bool tValue) const {
@@ -142,6 +87,10 @@ namespace Firesteel {
             setVec4(tName, tValue.x, tValue.y, tValue.z, tValue.w);
         }
 
+    private:
+        bool mLoaded = false;
+        unsigned int mId;
+        static std::shared_ptr<Shader> sDefaultShader;
     private:
         bool getErrors(GLuint tShader, size_t tType=0) {
             GLint success;
@@ -161,6 +110,61 @@ namespace Firesteel {
                 }
             }
             return success;
+        }
+        void loadShaders(const std::string& tVertexPath, const std::string& tFragmentPath, const std::string& tGeometryPath = "") {
+            //Retrieve the vertex/fragment source code from file path.
+            std::string vCode;
+            std::string fCode;
+            std::string gCode;
+            std::ifstream vShaderFile;
+            std::ifstream fShaderFile;
+            std::ifstream gShaderFile;
+            //Check if given paths even exist.
+            bool hasGeomShader=(!tGeometryPath.empty());
+            if(!std::filesystem::exists(tVertexPath)) {
+                LOG_WARN("Vertex shader at \"" + tVertexPath + "\" doesn't exist");
+                mId=sDefaultShader->mId;
+                return;
+            }
+            if(!std::filesystem::exists(tFragmentPath)) {
+                LOG_WARN("Fragment shader at \"" + tFragmentPath + "\" doesn't exist");
+                mId=sDefaultShader->mId;
+                return;
+            }
+            if(hasGeomShader && !std::filesystem::exists(tGeometryPath)) {
+                LOG_WARN("Geometry shader at \"" + tGeometryPath + "\" doesn't exist");
+                hasGeomShader=false;
+            }
+            //Ensure ifstream objects can throw exceptions:.
+            vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            if(hasGeomShader) gShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            try {
+                //Open files.
+                vShaderFile.open(tVertexPath);
+                fShaderFile.open(tFragmentPath);
+                if(hasGeomShader) gShaderFile.open(tFragmentPath);
+                std::stringstream vShaderStream, fShaderStream, gShaderStream;
+                //Read file's buffer contents into streams.
+                vShaderStream << vShaderFile.rdbuf();
+                fShaderStream << fShaderFile.rdbuf();
+                if(hasGeomShader) gShaderStream << gShaderFile.rdbuf();
+                //Close file handlers.
+                vShaderFile.close();
+                fShaderFile.close();
+                if(hasGeomShader) gShaderFile.close();
+                //Convert stream into string.
+                vCode=vShaderStream.str();
+                fCode=fShaderStream.str();
+                if(hasGeomShader) gCode=gShaderStream.str();
+                //Generate the program itself.
+                generate(vCode.c_str(), fCode.c_str(), hasGeomShader, gCode.c_str());
+            }
+            catch (std::ifstream::failure& e) {
+                LOGF_WARN("Error while reading shader files: %s", e.what());
+                mId=sDefaultShader->mId;
+                return;
+            }
         }
         void generate(const char* tVShaderCode, const char* tFShaderCode, const bool& tHasGeomShader, const char* tGShaderCode) {
             unsigned int vertex, fragment, geometry;
@@ -182,17 +186,17 @@ namespace Firesteel {
                 if (!getErrors(geometry)) return;
             }
             //Link program.
-            ID=glCreateProgram();
-            glAttachShader(ID, vertex);
-            glAttachShader(ID, fragment);
-            if (tHasGeomShader) glAttachShader(ID, geometry);
-            glLinkProgram(ID);
-            getErrors(ID, 1);
+            mId=glCreateProgram();
+            glAttachShader(mId, vertex);
+            glAttachShader(mId, fragment);
+            if(tHasGeomShader) glAttachShader(mId, geometry);
+            glLinkProgram(mId);
+            getErrors(mId, 1);
             //Delete unnecessary shaders.
             glDeleteShader(vertex);
             glDeleteShader(fragment);
             if(tHasGeomShader) glDeleteShader(geometry);
-            loaded=true;
+            mLoaded=true;
         }
     };
 }

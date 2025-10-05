@@ -1,4 +1,9 @@
-Firesteel v.0.2.1
+Firesteel v.0.2.1.1
+- Loading from file support for material
+- Access changes in `Shader` class
+- New `FS_NO_JSON` flag for disabling native inclusion and use of json. If disabled some functionality won't be accessable
+
+Firesteel v.0.2.1.0
 - Replaced Assimp with TinyOBJLoader, TinyGLTF, UFBX.
 - Node-based rendering.
 - Utilities class was reformatted and now much simpler to use.

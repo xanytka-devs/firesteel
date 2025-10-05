@@ -33,6 +33,7 @@ option(FS_PKGS "Include&build external packages in local pkgs folder" ON)
 option(FS_PKGS_ALLOW_OVERRIDES "Allows packages to tinker with CMakeLists.txt \
 (Be cautious, this can be dangerous for integrity of the library!)" OFF)
 option(FS_DISABLE_SUBMODULES "Build for CodeQL (Doesn't build modules)" OFF)
+option(FS_BUILD_TESTS "Builds tests" OFF)
 
 MACRO(SUBDIRLIST result curdir)
   FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
@@ -214,4 +215,8 @@ if(NOT FS_DISABLE_SUBMODULES)
 		target_link_libraries(${PRJ_NAME} PUBLIC nvtx3-cpp)
 		set_target_properties(nvtx3-cpp PROPERTIES FOLDER "External")
 	endif()
+endif()
+
+if(FS_BUILD_TESTS)
+	add_subdirectory(test)
 endif()

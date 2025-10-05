@@ -3,7 +3,9 @@
 
 #include "systemspecs.hpp"
 #include "../utils/log.hpp"
+#ifndef FS_NO_JSON
 #include "../utils/json.hpp"
+#endif // !FS_NO_JSON
 
 namespace Firesteel {
     namespace CONFIG {
@@ -12,7 +14,7 @@ namespace Firesteel {
             // Generic data retrieval (for better understanding of logs, etc.).
             std::string firesteelConfigFile="";
             bool canGetSystemInfo=true;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(FS_NO_JSON)
             char* buf=nullptr;
             size_t sz=0;
             if (_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {

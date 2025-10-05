@@ -53,7 +53,7 @@ namespace Firesteel {
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
             if(!hasModel()) return;
             for(size_t m=0;m<model.materials.size();m++)
-                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m].setShader(tShader);
+                if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m].setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity materials shader");
 #endif // FS_PRINT_DEBUG_MSGS
@@ -62,7 +62,7 @@ namespace Firesteel {
         void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
             if(!hasModel()) return;
             for(size_t m=0;m<model.materials.size();m++)
-                if(model.materials[m].getShader()->ID==tIdToReplace) model.materials[m].setShader(tShader);
+                if(model.materials[m].getShader()->getId()==tIdToReplace) model.materials[m].setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Replaced entity materials shader");
 #endif // FS_PRINT_DEBUG_MSGS
@@ -71,7 +71,7 @@ namespace Firesteel {
         void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
             if(!hasModel()) return;
             for(size_t m = 0; m < model.materials.size(); m++)
-                if(model.materials[m].getShader()->ID==Shader::getDefaultShader()->ID||tReplaceAll) model.materials[m]=*tMaterial;
+                if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m]=*tMaterial;
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity material");
 #endif // FS_PRINT_DEBUG_MSGS

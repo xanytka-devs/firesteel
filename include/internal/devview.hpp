@@ -3,7 +3,7 @@
 
 #include "config.hpp"
 
-#include <imgui.h>
+#include "../renderer.hpp"
 
 namespace INTERNAL {
 #ifdef WIN32

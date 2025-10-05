@@ -95,7 +95,6 @@
 #define LOG_CRITICAL(...)		{Log::log("[CRIT] ",false,CMD_BG_RED+CMD_F_WHITE);TLOG(false,__VA_ARGS__);}
 #define LOG_CRIT(...)			{LOG_CRITICAL(__VA_ARGS__);}
 #define ASSERT(condition,...)	{if(!condition){LOG_CRIT(__VA_ARGS__);exit(-1);}}
-//#define IM_ASSERT(condition)	{ASSERT(condition,_CRT_WIDE(condition));}
 /* FORMATTED FUNCTIONS */
 
 #define LOGF(format, ...)			{Log::log(Log::formatStr(format,__VA_ARGS__),true,CMD_F_WHITE,CMD_BG_BLACK,false);}
@@ -109,6 +108,18 @@
 #define LOGF_ERRR(format, ...)		{LOGF_ERROR(format,__VA_ARGS__);}
 #define LOGF_CRITICAL(format, ...)	{Log::log("[CRIT] ",false,CMD_F_WHITE,CMD_BG_RED);LOGF(format,__VA_ARGS__);}
 #define LOGF_CRIT(format, ...)		{LOGF_CRITICAL(format,__VA_ARGS__);}
+
+/*
+// Expiremental custom asserts. Currently doesn't work.
+#define EX_ASSERT(x)			\
+	do {\
+		if(!x) {\
+			LOG_CRIT(#x);\
+			exit(-1);\
+		}\
+	} while(0);
+#define IM_ASSERT(x)			EX_ASSERT(x)
+#define JSON_ASSERT(x)			EX_ASSERT(x)*/
 #ifdef FS_PRINT_DEBUG_MSGS
 // [!WARNING]
 // This function is limited to framework-specific debug messages and won't work if 'FS_PRINT_DEBUG_MSGS' isn't defined.

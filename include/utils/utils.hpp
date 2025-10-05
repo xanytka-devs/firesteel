@@ -119,6 +119,9 @@ namespace String {
         }
         return strncmp(tStr+lenstr-lensuffix,tSuffix,lensuffix)==0;
     }
+    bool endsWith(const std::string& tStr, const char* tSuffix) {
+        return endsWith(tStr.c_str(), tSuffix);
+    }
     // [!WARNING]
     // Doesn't support UTF8. Use `toLower()` instead.
     std::string toLowerASCII(std::string& tStr) {
@@ -145,7 +148,7 @@ namespace String {
     }
 }
 namespace Math {
-    //Lineary interpolate between `tA` and `tB` by fraction of `tF`.
+    // Lineary interpolate between `tA` and `tB` by fraction of `tF`.
     float lerp(const float& tA, const float& tB, const float& tF) {
         return tA * (1.f - tF) + (tB * tF);
     }
@@ -159,7 +162,7 @@ namespace Math {
         return glm::vec4(lerp(tA.x, tB.x, tF),lerp(tA.y, tB.y, tF),lerp(tA.z, tB.z, tF),lerp(tA.w, tB.w, tF));
     }
 
-    //Cast array to glm::mat4.
+    // Cast array to glm::mat4.
     glm::mat4 toMat4(const float** tF) {
         return glm::mat4(
             tF[0][0],tF[0][1],tF[0][2],tF[0][3],
@@ -176,7 +179,7 @@ namespace Math {
             CASTF(tF[3][0]),CASTF(tF[3][1]),CASTF(tF[3][2]),CASTF(tF[3][3])
         );
     }
-    //Cast std::vector to glm::mat4.
+    // Cast std::vector to glm::mat4.
     glm::mat4 toMat4(const std::vector<float>* tF) {
         if(tF->size()<17) return glm::mat4(1);
         glm::mat4 result;
@@ -192,9 +195,21 @@ namespace Math {
         return result;
     }
 
-    //Calculate position on theoretical circle from given radius and angle.
+    // Calculate position on theoretical circle from given radius and angle.
     glm::vec2 posOnCircle(const float& tRad, const float& tAngle) {
         return glm::vec2(tRad*cos(tAngle*(3.14f/180.f)),tRad*sin(tAngle*(3.14f/180.f)));
+    }
+    // Calculates position on theoretical sphere.
+    // @param `tTheta` Angle in XY plane.
+    // @param `tPhi` Angle from Z axis.
+    glm::vec3 posOnSphere(const float& tRad, const float& tTheta, const float& tPhi) {
+        float theta=glm::radians(tTheta);
+        float phi=glm::radians(tPhi);
+        return glm::vec3(
+            tRad*sin(phi)*cos(theta),
+            tRad*sin(phi)*sin(theta),
+            tRad*cos(phi)
+        );
     }
 }
 namespace Random {
@@ -247,12 +262,12 @@ namespace DateTime {
     	void reset() {time=0;}
     	void tick() {time-=1;}
     	void tick(double tDT) {time-=tDT;}
-    	bool isOver() {return time<=0;}
+        bool isOver() const { return time <= 0; }
     };
 }
 namespace OS {
     std::string executeInCmd(const char* cmd) {
-        std::array<char, 128> buffer;
+        std::array<char, 128> buffer{};
         std::string result;
         std::unique_ptr<FILE, decltype(
 #ifdef WIN32
@@ -477,7 +492,7 @@ std::string FileDialog::open() const {
     return default_file;
 #endif // !WIN32
 #ifdef __linux__
-    //Currently isn't implemented.
+    //Currently isn't implemented. Use OS::fileDialog() instead.
     return "";
 #endif // !__linux__
 }
@@ -521,11 +536,11 @@ static void showMessageBox(GLFWwindow* tWin, std::string tMsg, std::string tTitl
 #endif // !WIN32
 #ifdef __linux__
     // Of course there's SDL2s message box API, but it needs SDL2 so I won't implement it for now.
-    LOG_INFO("Currently Message Boxes are not implemented for the Linux OS.");
+    LOG_INFO("Use OS::messageBox() instead.");
 #endif // !__linux__
 #ifdef __APPLE__
     // Of course there's SDL2s message box API, but it needs SDL2 so I won't implement it for now.
-    LOG_INFO("Currently Message Boxes are not implemented for the MacOS.");
+    LOG_INFO("Use OS::messageBox() instead.");
 #endif // !__APPLE__
 }
 

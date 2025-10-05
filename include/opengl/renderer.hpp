@@ -57,6 +57,11 @@ namespace Firesteel {
             LOG_DBG("Loaded OpenGL extensions");
 #endif // FS_PRINT_DEBUG_MSGS
 		}
+        virtual void clearBuffers(const glm::vec3& tColor) override {
+            glClearColor(static_cast<GLfloat>(tColor[0]), static_cast<GLfloat>(tColor[1]),
+                static_cast<GLfloat>(tColor[2]), static_cast<GLfloat>(1.0f));
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        }
         virtual void setViewportSize(const int& tX, const int& tY) override {
             glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
         }
