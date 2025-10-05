@@ -20,7 +20,6 @@ target_link_libraries(%prj_name%^
 	glm^
 )^
 target_compile_features(%prj_name% PUBLIC cxx_std_17)^
-target_include_directories(%prj_name% PUBLIC includes)^
 target_include_directories(%prj_name% PUBLIC engine/external/glfw)^
 set_target_properties(%prj_name% PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)>CMakeLists.txt
 
