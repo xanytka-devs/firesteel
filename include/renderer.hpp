@@ -21,9 +21,13 @@ namespace Firesteel {
         virtual void setViewportSize(const glm::vec2& tSize) { }
         virtual void setDrawMode(const DrawMode& tDrawMode) { }
         virtual void imguiInitialize(GLFWwindow* tWin) { }
-        virtual void imguiNewFrame() { }
+        virtual void imguiNewFrame() {}
         virtual void imguiRender(GLFWwindow* tWin) { }
         virtual void imguiShutdown() { }
+
+        // Creates a dockspace for ImGui.
+        // Use it every render frame before any other ImGui functions.
+        virtual void imguiSetupDockspace(const char* tName, const bool& tEndDockWindow=true) { }
     protected:
         bool mInitialized=false;
 	};

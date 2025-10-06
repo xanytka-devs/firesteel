@@ -100,6 +100,27 @@ namespace Firesteel {
             LOG_DBG("Initialized ImGui");
 #endif // FS_PRINT_DEBUG_MSGS
         }
+        virtual void imguiSetupDockspace(const char* tName, const bool& tEndDockWindow=true) override {
+            //Style failsafe.
+            ImGui::PopStyleVar(3);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+            //Setup viewport.
+            const ImGuiViewport* viewport = ImGui::GetMainViewport();
+            ImGui::SetNextWindowPos(viewport->WorkPos);
+            ImGui::SetNextWindowSize(viewport->WorkSize);
+            ImGui::SetNextWindowViewport(viewport->ID);
+            ImGuiID dockspace_id = ImGui::GetID(tName);
+            ImGui::Begin(tName, NULL, ImGuiDockNodeFlags_PassthruCentralNode);
+            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+                | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground);
+            //Reset styling.
+            ImGui::PopStyleVar(1);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f,1.0f));
+            if(tEndDockWindow) ImGui::End();
+        }
         virtual void imguiNewFrame() override {
 #if FS_CONTEXT_MAJOR > 2
             ImGui_ImplOpenGL3_NewFrame();
