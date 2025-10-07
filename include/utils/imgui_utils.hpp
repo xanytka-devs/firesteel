@@ -180,6 +180,29 @@ namespace ImGuiUtil {
         }
         return b;
     }
+    // Creates a dockspace for ImGui.
+    // Use it every render frame before any other ImGui functions.
+    void setupDockspace(const char* tName, const bool& tEndDockWindow = true) {
+        //Style failsafe.
+        ImGui::PopStyleVar(3);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        //Setup viewport.
+        const ImGuiViewport* viewport=ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->WorkPos);
+        ImGui::SetNextWindowSize(viewport->WorkSize);
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGuiID dockspace_id=ImGui::GetID(tName);
+        ImGui::Begin(tName, NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+            | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize
+            | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoBackground);
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+        //Reset styling.
+        ImGui::PopStyleVar(1);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
+        if(tEndDockWindow) ImGui::End();
+    }
 }
 
 #endif // !FS_IMGUI_UTILS
