@@ -182,7 +182,7 @@ namespace ImGuiUtil {
     }
     // Creates a dockspace for ImGui.
     // Use it every render frame before any other ImGui functions.
-    void setupDockspace(const char* tName, const bool& tEndDockWindow = true) {
+    void SetupDockspace(const char* tName, const bool& tEndDockWindow = true) {
         //Style failsafe.
         ImGui::PopStyleVar(3);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
