@@ -22,6 +22,8 @@
 #ifdef FS_LOADER_FBX
 #include "loaders/fbx.hpp"
 #endif // FS_LOADER_FBX
+#include <component.hpp>
+#include <type_traits>
 
 namespace Firesteel {
     class Entity {
@@ -34,8 +36,13 @@ namespace Firesteel {
             load(tPath);
         }
 
+        // Sends update callback to all components.
+        virtual void update() {
+            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
+        }
         // Renders the model with given material or default shader.
         virtual void draw() {
+            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
             if(!hasModel()) return;
             for(size_t n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
@@ -84,17 +91,18 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             for(size_t i=0;i<model.meshes.size();i++)
                 model.meshes[i].remove();
+            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
             model.nodes.clear();
             model.meshes.clear();
             model.materials.clear();
         }
         virtual void load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
-                LOG_WARN("Model at: \"" + tPath + "\" doesn't exist");
+                LOG_WARN("Model at path \"" + tPath + "\" doesn't exist");
                 return;
             }
             remove();
-            LOG_INFO("Loading model at: \"" + tPath + "\"");
+            LOG_INFO("Loading model at path \"" + tPath + "\"");
             
             auto extBig=String::split(tPath, '.');
             std::string ext=extBig[extBig.size()-1];
@@ -110,7 +118,7 @@ namespace Firesteel {
 #endif // FS_LOADER_FBX
             else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
 
-            LOG_INFO("Loaded model at: \"" + tPath + "\"");
+            LOG_INFO("Loaded model at path \"" + tPath + "\"");
         }
 
         virtual void addMesh(const Mesh& tMesh) {
@@ -138,9 +146,50 @@ namespace Firesteel {
             node->index = static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
         }
+        template<typename T, typename... Args>
+        std::shared_ptr<T> addComponent(Args&&... tArgs) {
+            ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
+            auto comp=std::make_shared<T>(this, std::forward<Args>(tArgs)...);
+            mComponents.push_back(comp);
+            mComponents[mComponents.size()-1]->onStart();
+            return comp;
+        }
+        template<typename T>
+        std::shared_ptr<T> getComponent(const size_t& tIdx=0) {
+            std::shared_ptr<T> comp=nullptr;
+            size_t iter=0;
+            for(size_t i=0;i<mComponents.size();i++)
+                if(typeid(*mComponents[i])==typeid(T)) {
+                    comp=mComponents[i];
+                    iter++;
+                    if(iter>tIdx) break;
+                }
+            return comp;
+        }
+        template<typename T>
+        bool hasComponent() {
+            for(size_t i=0;i<mComponents.size();i++)
+                if(typeid(*mComponents[i]) == typeid(T)) return true;
+            return false;
+        }
+        template<typename T>
+        bool removeComponent(const size_t& tIdx=0) {
+            size_t iter=0;
+            for(size_t i=0;i<mComponents.size();i++)
+                if(typeid(*mComponents[i])==typeid(T)) {
+                    iter++;
+                    if(iter>tIdx) {
+                        mComponents.erase(mComponents.begin() + i);
+                        return true;
+                    }
+                }
+            return false;
+        }
 
         Transform transform;
         Model model;
+    private:
+        std::vector<std::shared_ptr<Component>> mComponents;
     };
 }
 
