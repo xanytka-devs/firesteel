@@ -1,5 +1,8 @@
+#ifndef FS_NO_COMPONENTS
 #ifndef FS_COMPONENT
 #define FS_COMPONENT
+
+#include <type_traits>
 
 namespace Firesteel {
 	class Entity;
@@ -20,3 +23,4 @@ namespace Firesteel {
 }
 
 #endif // !FS_COMPONENT
+#endif // !FS_NO_COMPONENTS

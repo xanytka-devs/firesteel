@@ -25,6 +25,7 @@ namespace Firesteel {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);
                 nlohmann::json cfg=nlohmann::json::parse(ifs);
+                ifs.close();
                 if(!cfg["AllowDevView"].is_null()) sAllowDevView=cfg["AllowDevView"];
                 if(!cfg["AllowHardwareEnumeration"].is_null()) canGetSystemInfo=cfg["AllowHardwareEnumeration"];
                 if(!cfg["SaveLogs"].is_null()) Log::sSaveLogs=cfg["SaveLogs"];

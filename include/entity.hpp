@@ -23,7 +23,6 @@
 #include "loaders/fbx.hpp"
 #endif // FS_LOADER_FBX
 #include <component.hpp>
-#include <type_traits>
 
 namespace Firesteel {
     class Entity {
@@ -38,7 +37,9 @@ namespace Firesteel {
 
         // Sends update callback to all components.
         virtual void update() {
+#ifndef FS_NO_COMPONENTS
             for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
+#endif // !FS_NO_COMPONENTS
         }
         // Renders the model with given material or default shader.
         virtual void draw() {
@@ -146,6 +147,7 @@ namespace Firesteel {
             node->index = static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
         }
+#ifndef FS_NO_COMPONENTS
         template<typename T, typename... Args>
         std::shared_ptr<T> addComponent(Args&&... tArgs) {
             ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
@@ -185,11 +187,17 @@ namespace Firesteel {
                 }
             return false;
         }
+#endif // !FS_NO_COMPONENTS
 
         Transform transform;
         Model model;
+#ifndef FS_NO_SCENES
+        std::string name;
+#endif // !FS_NO_SCENES
+#ifndef FS_NO_COMPONENTS
     private:
         std::vector<std::shared_ptr<Component>> mComponents;
+#endif // !FS_NO_COMPONENTS
     };
 }
 
