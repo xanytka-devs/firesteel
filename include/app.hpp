@@ -33,7 +33,7 @@ namespace Firesteel {
 		virtual int start(const char* tTitle="Firesteel App",
             const unsigned int tWinWidth=800, const unsigned int tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
             Enviroment::sInstance=&enviroment;
-            LOG(std::string("Firesteel ") + FS_VERSION);
+            LOG(std::string("Firesteel ") + enviroment.getVersion());
             LOG_STATE("STARTUP");
             //Do some randomization.
             __time64_t long_time;

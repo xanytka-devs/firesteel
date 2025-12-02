@@ -13,6 +13,18 @@ namespace Firesteel {
 			LOG_INFO("Announcer: "+value);
 		}
 
+#ifndef FS_NO_JSON
+		virtual nlohmann::json serialize() const override {
+			return {
+				{"type", "Announcer"},
+				{"value", value}
+			};
+		}
+		static std::shared_ptr<Announcer> deserialize(Entity* tEntity, const nlohmann::json& tData) {
+			return std::make_shared<Announcer>(tEntity, tData["value"].get<std::string>());
+		}
+#endif // !FS_NO_JSON
+
 		std::string value;
 	};
 }

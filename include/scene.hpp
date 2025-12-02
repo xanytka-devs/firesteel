@@ -8,6 +8,9 @@
 #endif // !FS_NO_JSON
 
 namespace Firesteel {
+#ifndef FS_NO_JSON
+	using ComponentFactory=std::function<std::shared_ptr<Component>(Entity*, const nlohmann::json&)>;
+#endif // !FS_NO_JSON
 	struct Scene {
 		Scene() {}
 #ifndef FS_NO_JSON
@@ -16,6 +19,7 @@ namespace Firesteel {
 				LOG_ERRR("Scene at path \""+tPath+"\" doesn't exist");
 				return;
 			}
+			clear();
 			std::ifstream ifs(tPath);
 			nlohmann::json scene=nlohmann::json::parse(ifs);
 			ifs.close();
@@ -29,21 +33,36 @@ namespace Firesteel {
 						ent.transform.position=glm::vec3(t["rot"][0], t["rot"][1], t["rot"][2]);
 						ent.transform.position=glm::vec3(t["size"][0], t["size"][1], t["size"][2]);
 					}
+					entities.push_back(std::make_shared<Entity>(ent));
 				}
 		}
 		void save(const std::string& tPath) const {
 			nlohmann::json scene;
-			for(size_t i=0;i<entities.size();i++) {
-				scene["entities"][i]["name"]=entities[i]->name;
-				for(size_t j=0;j<3;j++) scene["entities"][i]["transform"]["pos"][j]=entities[i]->transform.position[j];
-				for(size_t j=0;j<3;j++) scene["entities"][i]["transform"]["rot"][j]=entities[i]->transform.rotation[j];
-				for(size_t j=0;j<3;j++) scene["entities"][i]["transform"]["size"][j]=entities[i]->transform.size[j];
-			}
+
+			nlohmann::json ents=nlohmann::json::array();
+			for(size_t i=0;i<entities.size();i++) ents.push_back(entities[i]->serialize());
+			scene["entities"]=ents;
+
 			std::ofstream o(tPath);
-			o<<scene<<std::endl;
+			o/*<<std::setw(4)*/<<scene<<std::endl;
 			o.close();
 		}
 #endif // !FS_NO_JSON
+		void update() {
+			for(size_t i=0;i<entities.size();i++) entities[i]->update();
+		}
+		bool removeAt(const size_t& tId) {
+			if(tId>=entities.size()) {
+				LOGF_WARN("Tried to remove entity at %i while max id is %i",tId,entities.size()-1);
+				return false;
+			}
+			entities[tId]->remove();
+			entities.erase(entities.begin()+tId);
+		}
+		void clear() {
+			for(size_t i=0;i<entities.size();i++) entities[i]->remove();
+			entities.clear();
+		}
 		std::vector<std::shared_ptr<Entity>> entities;
 	};
 }

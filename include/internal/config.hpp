@@ -17,11 +17,11 @@ namespace Firesteel {
 #if defined(_WIN32) && !defined(FS_NO_JSON)
             char* buf=nullptr;
             size_t sz=0;
-            if (_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {
+            if(_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {
                 firesteelConfigFile=std::string(buf) + "\\firesteel\\global.cfg.json";
                 free(buf);
             }
-            if (std::filesystem::exists(firesteelConfigFile)) {
+            if(std::filesystem::exists(firesteelConfigFile)) {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);
                 nlohmann::json cfg=nlohmann::json::parse(ifs);

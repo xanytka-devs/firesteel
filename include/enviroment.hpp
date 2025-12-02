@@ -9,6 +9,9 @@ namespace Firesteel {
     public:
         static Enviroment* sInstance;
         std::unique_ptr<Renderer> renderer;
+        const char* getVersion() { return mVersion; }
+    private:
+        const char* mVersion=FS_VERSION;
     };
     
 }

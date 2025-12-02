@@ -188,6 +188,22 @@ namespace Firesteel {
             return false;
         }
 #endif // !FS_NO_COMPONENTS
+#if !defined(FS_NO_JSON) and !defined(FS_NO_COMPONENTS)
+        nlohmann::json serialize() const {
+            nlohmann::json js;
+            js["name"]=name;
+            for(size_t j=0;j<3;j++) js["transform"]["pos"][j]=transform.position[j];
+            for(size_t j=0;j<3;j++) js["transform"]["rot"][j]=transform.rotation[j];
+            for(size_t j=0;j<3;j++) js["transform"]["size"][j]=transform.size[j];
+            nlohmann::json comps=nlohmann::json::array();
+			for(const auto& c:mComponents) comps.push_back(c->serialize());
+            js["components"]=comps;
+            return js;
+        }
+        Entity deserialize(const nlohmann::json& tData) {
+            Entity ent
+        }
+#endif // !FS_NO_JSON && !FS_NO_COMPONENTS
 
         Transform transform;
         Model model;

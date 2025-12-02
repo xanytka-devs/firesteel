@@ -2,7 +2,9 @@
 #define FS_CUBEMAP_H
 #include "common.hpp"
 #include "shader.hpp"
+#ifndef FS_NO_JSON
 #include "utils/json.hpp"
+#endif // !FS_NO_JSON
 #include "utils/utils.hpp"
 #include "utils/stbi_global.hpp"
 
@@ -20,6 +22,7 @@ namespace Firesteel {
                   const std::string& tBack) {
             load(tDir.c_str(), tR.c_str(), tL.c_str(), tT.c_str(), tBot.c_str(), tF.c_str(), tBack.c_str());
         }
+#ifndef FS_NO_JSON
         // Create cubemap from JSON defenitions.
         void load(const std::string& tCubemapJson) {
             if(!std::filesystem::exists(tCubemapJson)) {
@@ -31,6 +34,7 @@ namespace Firesteel {
             nlohmann::json txt=nlohmann::json::parse(ifs);
             load(txt["dir"], txt["posZ"], txt["negZ"], txt["posY"], txt["negY"], txt["posX"], txt["negX"]);
         }
+#endif // !FS_NO_JSON
         void load(const char* tDir,
                   const char* tRight="right.png",
                   const char* tLeft="left.png",
@@ -160,7 +164,7 @@ namespace Firesteel {
             glDepthFunc(GL_LESS);
         }
         // Remove only meshes.
-        void clear() {
+        void clear() const {
             glDeleteVertexArrays(1, &mVAO);
             glDeleteBuffers(1, &mVBO);
 #ifdef FS_PRINT_DEBUG_MSGS
