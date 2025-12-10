@@ -10,22 +10,26 @@ namespace Firesteel {
 		Announcer(Entity* tEntity, const std::string& tVal)
 			: value(tVal), Component(tEntity) { }
 		virtual void onUpdate() override {
-			LOG_INFO("Announcer: "+value);
+			LOG_INFO("fs.announcer: "+value);
 		}
 
 #ifndef FS_NO_JSON
 		virtual nlohmann::json serialize() const override {
 			return {
-				{"type", "Announcer"},
+				{"type", getName()},
 				{"value", value}
 			};
 		}
 		static std::shared_ptr<Announcer> deserialize(Entity* tEntity, const nlohmann::json& tData) {
-			return std::make_shared<Announcer>(tEntity, tData["value"].get<std::string>());
+			std::string val="Hello there!";
+			if(tData.contains("value")) val=tData["value"];
+			return std::make_shared<Announcer>(tEntity, val);
 		}
 #endif // !FS_NO_JSON
 
 		std::string value;
+
+		virtual const char* getName() const override { return "fs.announcer"; }
 	};
 }
 

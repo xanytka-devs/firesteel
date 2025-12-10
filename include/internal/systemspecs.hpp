@@ -47,10 +47,10 @@ namespace INTERNAL {
 
 struct CPUInfo {
     const char* output="";
-    std::string model;
-    std::string vendor;
-    unsigned int cores;
-    unsigned int frequency;
+    std::string model="";
+    std::string vendor="";
+    unsigned int cores=0;
+    unsigned int frequency=0;
 };
 CPUInfo getCPUInfo() {
     CPUInfo out;
@@ -131,7 +131,7 @@ CPUInfo getCPUInfo() {
         HRESULT hr=pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
         if (uReturn == 0) break;
 
-        VARIANT vtProp;
+        VARIANT vtProp{};
         hr=pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr)) {
             out.model=std::string(_bstr_t(vtProp.bstrVal));
@@ -186,8 +186,8 @@ CPUInfo getCPUInfo() {
 
 struct GPUInfo {
     const char* output="";
-    std::string model;
-    double memoryGB;
+    std::string model="";
+    double memoryGB=0;
 };
 GPUInfo getGPUInfo() {
     GPUInfo out;
@@ -237,7 +237,7 @@ GPUInfo getGPUInfo() {
         HRESULT hr=pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
         if (uReturn == 0) break;
 
-        VARIANT vtProp;
+        VARIANT vtProp{};
         hr=pclsObj->Get(L"Name", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr)) {
             out.model=std::string(_bstr_t(vtProp.bstrVal));
@@ -282,7 +282,7 @@ GPUInfo getGPUInfo() {
 
 struct RAMInfo {
     const char* output="";
-    double memoryGB;
+    double memoryGB=0;
 };
 RAMInfo getRAMInfo() {
     RAMInfo out;
@@ -319,8 +319,8 @@ RAMInfo getRAMInfo() {
 
 struct MotherboardInfo {
     const char* output="";
-    std::string model;
-    std::string vendor;
+    std::string model="";
+    std::string vendor="";
 };
 MotherboardInfo getMotherboardInfo() {
     MotherboardInfo out;
@@ -370,7 +370,7 @@ MotherboardInfo getMotherboardInfo() {
         HRESULT hr=pEnumerator->Next(WBEM_INFINITE, 1, &pclsObj, &uReturn);
         if (uReturn == 0) break;
 
-        VARIANT vtProp;
+        VARIANT vtProp{};
         hr=pclsObj->Get(L"Manufacturer", 0, &vtProp, 0, 0);
         if (SUCCEEDED(hr)) {
             out.vendor=std::string(_bstr_t(vtProp.bstrVal));
@@ -413,10 +413,10 @@ MotherboardInfo getMotherboardInfo() {
 }
 
 struct OSInfo {
-    std::string name;
-    std::string version;
-    std::string architecture;
-    std::string distroBuild;
+    std::string name="";
+    std::string version="";
+    std::string architecture="";
+    std::string distroBuild="";
 };
 OSInfo getOSInfo() {
     OSInfo out;

@@ -14,8 +14,8 @@ namespace Firesteel {
     };
     struct Texture {
         unsigned int ID=0;
-        TextureType type;
-        std::string path;
+        TextureType type=TT_DIFFUSE;
+        std::string path="";
         bool isMonochrome=false;
         
         void bind(const size_t& tId=0) const {

@@ -156,6 +156,10 @@ namespace Firesteel {
             mComponents[mComponents.size()-1]->onStart();
             return comp;
         }
+        void addComponent(std::shared_ptr<Component> tComp) {
+            mComponents.push_back(tComp);
+            mComponents[mComponents.size()-1]->onStart();
+        }
         template<typename T>
         std::shared_ptr<T> getComponent(const size_t& tIdx=0) {
             std::shared_ptr<T> comp=nullptr;
@@ -174,6 +178,11 @@ namespace Firesteel {
                 if(typeid(*mComponents[i]) == typeid(T)) return true;
             return false;
         }
+        bool hasComponent(const char* tName) {
+            for(size_t i=0;i<mComponents.size();i++)
+                if(mComponents[i]->getName()==tName) return true;
+            return false;
+        }
         template<typename T>
         bool removeComponent(const size_t& tIdx=0) {
             size_t iter=0;
@@ -187,21 +196,42 @@ namespace Firesteel {
                 }
             return false;
         }
+        bool removeComponent(const size_t& tIdx=0) {
+            if(tIdx>=mComponents.size()) return false;
+            mComponents.erase(mComponents.begin()+tIdx);
+            return true;
+        }
+        std::vector<std::shared_ptr<Component>> getComponents() { return mComponents; }
 #endif // !FS_NO_COMPONENTS
-#if !defined(FS_NO_JSON) and !defined(FS_NO_COMPONENTS)
+#if !defined(FS_NO_JSON) && !defined(FS_NO_COMPONENTS)
         nlohmann::json serialize() const {
             nlohmann::json js;
             js["name"]=name;
-            for(size_t j=0;j<3;j++) js["transform"]["pos"][j]=transform.position[j];
-            for(size_t j=0;j<3;j++) js["transform"]["rot"][j]=transform.rotation[j];
-            for(size_t j=0;j<3;j++) js["transform"]["size"][j]=transform.size[j];
+            for(int j=0;j<3;j++) js["transform"]["pos"][j]=transform.position[j];
+            for(int j=0;j<3;j++) js["transform"]["rot"][j]=transform.rotation[j];
+            for(int j=0;j<3;j++) js["transform"]["size"][j]=transform.size[j];
             nlohmann::json comps=nlohmann::json::array();
 			for(const auto& c:mComponents) comps.push_back(c->serialize());
             js["components"]=comps;
             return js;
         }
-        Entity deserialize(const nlohmann::json& tData) {
-            Entity ent
+        static std::shared_ptr<Entity> deserialize(const nlohmann::json& tData) {
+            Entity e;
+            if(tData.contains("name")) e.name=tData["name"];
+            if(tData.contains("transform")) {
+                if(tData["transform"].contains("pos")) for(int j=0;j<3;j++) e.transform.position[j]=tData["transform"]["pos"][j];
+                if(tData["transform"].contains("rot")) for(int j=0;j<3;j++) e.transform.rotation[j]=tData["transform"]["rot"][j];
+                if(tData["transform"].contains("size")) for(int j=0;j<3;j++) e.transform.size[j]=tData["transform"]["size"][j];
+            }
+            if(tData.contains("components"))
+                for(const auto& comp:tData["components"]) {
+                    const std::string type=comp["type"];
+                    if(ComponentRegistry::Instance->contains(type)) {
+                        auto c=ComponentRegistry::Instance->get(type)(&e,comp);
+                        e.addComponent(c);
+                    } else LOG_ERRR("Unknown component type "+type);
+                }
+            return std::make_shared<Entity>(e);
         }
 #endif // !FS_NO_JSON && !FS_NO_COMPONENTS
 

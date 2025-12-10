@@ -8,9 +8,6 @@
 #endif // !FS_NO_JSON
 
 namespace Firesteel {
-#ifndef FS_NO_JSON
-	using ComponentFactory=std::function<std::shared_ptr<Component>(Entity*, const nlohmann::json&)>;
-#endif // !FS_NO_JSON
 	struct Scene {
 		Scene() {}
 #ifndef FS_NO_JSON
@@ -24,17 +21,12 @@ namespace Firesteel {
 			nlohmann::json scene=nlohmann::json::parse(ifs);
 			ifs.close();
 			if(scene.contains("entities"))
-				for(size_t i=0;i<scene["entities"].size();i++) {
-					Entity ent;
-					if(scene["entities"][i].contains("name")) ent.name=scene["entities"][i]["name"];
-					if(scene["entities"][i].contains("transform")) {
-						nlohmann::json t=scene["entities"][i]["transform"];
-						ent.transform.position=glm::vec3(t["pos"][0], t["pos"][1], t["pos"][2]);
-						ent.transform.position=glm::vec3(t["rot"][0], t["rot"][1], t["rot"][2]);
-						ent.transform.position=glm::vec3(t["size"][0], t["size"][1], t["size"][2]);
-					}
-					entities.push_back(std::make_shared<Entity>(ent));
-				}
+				for(size_t i=0;i<scene["entities"].size();i++)
+					entities.push_back(Entity::deserialize(scene["entities"][i]));
+#ifdef FS_PRINT_DEBUG_MSGS
+			LOGF_DBG("Loaded %d entities from \"%s\"",
+				entities.size(), tPath.c_str());
+#endif // FS_PRINT_DEBUG_MSGS
 		}
 		void save(const std::string& tPath) const {
 			nlohmann::json scene;
@@ -46,6 +38,10 @@ namespace Firesteel {
 			std::ofstream o(tPath);
 			o/*<<std::setw(4)*/<<scene<<std::endl;
 			o.close();
+#ifdef FS_PRINT_DEBUG_MSGS
+			LOGF_DBG("Saved %d entities to \"%s\"",
+				entities.size(), tPath.c_str());
+#endif // FS_PRINT_DEBUG_MSGS
 		}
 #endif // !FS_NO_JSON
 		void update() {
@@ -58,8 +54,12 @@ namespace Firesteel {
 			}
 			entities[tId]->remove();
 			entities.erase(entities.begin()+tId);
+			return true;
 		}
 		void clear() {
+#ifdef FS_PRINT_DEBUG_MSGS
+			LOGF_DBG("Removed %d entities", entities.size());
+#endif // FS_PRINT_DEBUG_MSGS
 			for(size_t i=0;i<entities.size();i++) entities[i]->remove();
 			entities.clear();
 		}
