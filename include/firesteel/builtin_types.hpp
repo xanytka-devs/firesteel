@@ -37,6 +37,22 @@ namespace Firesteel {
 		}
 #endif // !FS_NO_JSON
 	};
+	struct UIntTypeHandler : public ITypeHandler {
+		std::string toString(const void* tVal) const override {
+			return std::to_string(*static_cast<const unsigned int*>(tVal));
+		}
+		void fromString(void* tVal, const std::string& tStr) const override {
+			*static_cast<unsigned int*>(tVal)=std::stoi(tStr);
+		}
+#ifndef FS_NO_JSON
+		nlohmann::json toJson(void* tVal) const override {
+			return *static_cast<const unsigned int*>(tVal);
+		}
+		void fromJson(void* tVal, const nlohmann::json& tJson) const override {
+			*static_cast<unsigned int*>(tVal)=tJson.get<int>();
+		}
+#endif // !FS_NO_JSON
+	};
 	struct FloatTypeHandler : public ITypeHandler {
 		std::string toString(const void* tVal) const override {
 			return std::to_string(*static_cast<const float*>(tVal));
@@ -50,6 +66,22 @@ namespace Firesteel {
 		}
 		void fromJson(void* tVal, const nlohmann::json& tJson) const override {
 			*static_cast<float*>(tVal)=tJson.get<float>();
+		}
+#endif // !FS_NO_JSON
+	};
+	struct DoubleTypeHandler : public ITypeHandler {
+		std::string toString(const void* tVal) const override {
+			return std::to_string(*static_cast<const double*>(tVal));
+		}
+		void fromString(void* tVal, const std::string& tStr) const override {
+			*static_cast<double*>(tVal)=std::stof(tStr);
+		}
+#ifndef FS_NO_JSON
+		nlohmann::json toJson(void* tVal) const override {
+			return *static_cast<const double*>(tVal);
+		}
+		void fromJson(void* tVal, const nlohmann::json& tJson) const override {
+			*static_cast<double*>(tVal)=tJson.get<double>();
 		}
 #endif // !FS_NO_JSON
 	};

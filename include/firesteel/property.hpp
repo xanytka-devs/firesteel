@@ -30,7 +30,7 @@ namespace Firesteel {
 	{\
 		auto* handler=Firesteel::TypeRegistry::sInstance().get<std::remove_reference_t<decltype(name)>>();\
 		if(handler) mProperties.emplace_back(#name,&name,handler);\
-		else {LOG_ERRR("No Type Handler for property \"#name\"");}\
+		else {LOGF_ERRR("No Type Handler for property \"%s\"",#name);}\
 	}
 }
 #endif // !FS_PROPERTY

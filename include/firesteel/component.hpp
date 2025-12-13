@@ -60,6 +60,8 @@ namespace Firesteel {
 	};
 #ifndef FS_NO_JSON
 	using ComponentFactory=std::function<std::shared_ptr<Component>(Entity*, const nlohmann::json&)>;
+	template<typename T>
+	ComponentFactory DefaultComponentFactory=ComponentFactory([](Entity* e, const nlohmann::json& j) {return Component::create<T>(e,j);});
 	class ComponentRegistry {
 	public:
 		static std::unique_ptr<ComponentRegistry> sInstance;

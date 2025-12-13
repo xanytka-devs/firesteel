@@ -3,6 +3,7 @@ using namespace Firesteel;
 
 #include <firesteel/scene.hpp>
 #include <firesteel/components/announcer.hpp>
+#include <firesteel/components/particle_system.hpp>
 #include <firesteel/utils/imgui_utils.hpp>
 
 Scene scene;
@@ -15,9 +16,8 @@ class WindowApp : public Firesteel::App {
 		ComponentRegistry::sInstance->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
 			return std::make_shared<Component>(e);
 		});
-		ComponentRegistry::sInstance->append("fs.announcer", [](Entity* e, const nlohmann::json& j) {
-			return Component::create<Announcer>(e,j);
-		});
+		ComponentRegistry::sInstance->append("fs.announcer", DefaultComponentFactory<Announcer>);
+		ComponentRegistry::sInstance->append("fs.particle_system", DefaultComponentFactory<ParticleSystem>);
 		scene.entities.push_back(std::make_shared<Entity>());
 		scene.entities[0]->name="Test";
 	}
