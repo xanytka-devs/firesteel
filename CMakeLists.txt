@@ -129,7 +129,6 @@ add_library(${PRJ_NAME}
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/ FILES
 	${PRJ_ALL}
 )
-
 if(FS_LOADER_FBX)
 	target_compile_definitions(firesteel PUBLIC FS_LOADER_FBX)
 endif()
@@ -145,8 +144,8 @@ endif()
 
 target_compile_definitions(firesteel PUBLIC "FS_VERSION=\"${FiresteelVersion}\"")
 target_include_directories(${PRJ_NAME} PUBLIC include)
-target_include_directories(${PRJ_NAME} PUBLIC stb)
 target_include_directories(${PRJ_NAME} PRIVATE src)
+target_include_directories(${PRJ_NAME} PUBLIC external)
 target_compile_features(${PRJ_NAME} PUBLIC cxx_std_17)
 get_filename_component(PKGS_DIR
                        "${CMAKE_CURRENT_LIST_DIR}/../pkgs"
@@ -178,13 +177,14 @@ if(NOT FS_DISABLE_SUBMODULES)
 		set_target_properties(glfw PROPERTIES FOLDER "External/GLFW3")
 		set_target_properties(uninstall PROPERTIES FOLDER "External/GLFW3")
 		set_target_properties(update_mappings PROPERTIES FOLDER "External/GLFW3")
-		target_include_directories(${PRJ_NAME} PUBLIC external/glfw)
+		target_include_directories(${PRJ_NAME} PUBLIC external/glfw/include)
 
 		if(FS_INCLUDE_OGL)
 			target_compile_definitions(firesteel PUBLIC FS_RENDERER_OGL)
 			add_subdirectory(external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
 			target_link_libraries(${PRJ_NAME} PRIVATE glad)
 			set_target_properties(glad PROPERTIES FOLDER "External")
+			target_include_directories(${PRJ_NAME} PUBLIC external/glad/include)
 		endif()
 	else()
 		target_compile_definitions(firesteel PUBLIC FS_HEADLESS)

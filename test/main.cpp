@@ -1,27 +1,27 @@
-#include "../include/firesteel.hpp"
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
-#include "../include/scene.hpp"
-#include "../include/components/announcer.hpp"
-#include "../include/utils/imgui_utils.hpp"
+#include <firesteel/scene.hpp>
+#include <firesteel/components/announcer.hpp>
+#include <firesteel/utils/imgui_utils.hpp>
 
 Scene scene;
 size_t selection;
 
 class WindowApp : public Firesteel::App {
-	virtual void onInitialize() override {
+	void onInitialize() override {
 		LOG("Hello there!");
-		ComponentRegistry::Instance=std::make_unique<ComponentRegistry>();
-		ComponentRegistry::Instance->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
+		ComponentRegistry::sInstance=std::make_unique<ComponentRegistry>();
+		ComponentRegistry::sInstance->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
 			return std::make_shared<Component>(e);
 		});
-		ComponentRegistry::Instance->append("fs.announcer", [](Entity* e, const nlohmann::json& j) {
-			return Announcer::deserialize(e,j);
+		ComponentRegistry::sInstance->append("fs.announcer", [](Entity* e, const nlohmann::json& j) {
+			return Component::create<Announcer>(e,j);
 		});
 		scene.entities.push_back(std::make_shared<Entity>());
 		scene.entities[0]->name="Test";
 	}
-	virtual void onUpdate() override {
+	void onUpdate() override {
 		ImGui::Begin("Scene");
 		if(ImGui::Button("Load"))
 			scene.load("scene.json");
@@ -50,7 +50,7 @@ class WindowApp : public Firesteel::App {
 			ImGui::Separator();
 			size_t compId=0;
 			for(auto& comp : ent->getComponents()) {
-				bool open=ImGui::CollapsingHeader((std::string(comp->getName())+"##"+std::to_string(compId)).c_str(),ImGuiTreeNodeFlags_AllowOverlap);
+				bool open=ImGui::CollapsingHeader((std::string(comp->name())+"##"+std::to_string(compId)).c_str(),ImGuiTreeNodeFlags_AllowOverlap);
 				ImGui::SameLine();
 				if(ImGui::Button(("X##"+std::to_string(compId)).c_str())) {
 					ent->removeComponent(compId);
@@ -62,7 +62,7 @@ class WindowApp : public Firesteel::App {
 				compId++;
 			}
 			if(ImGui::BeginMenu("+ Add Component")) {
-				for(const auto& [name,factory] : ComponentRegistry::Instance->map()) {
+				for(const auto& [name,factory] : ComponentRegistry::sInstance->map()) {
 					if(ImGui::MenuItem(name.c_str())) ent->addComponent(factory(ent,{}));
 				}
 				ImGui::EndMenu();
@@ -70,7 +70,7 @@ class WindowApp : public Firesteel::App {
 		}
 		ImGui::End();
 	}
-	virtual void onShutdown() override {
+	void onShutdown() override {
 		scene.clear();
 	}
 };

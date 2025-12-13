@@ -3,10 +3,6 @@ project(imgui)
 
 option(IMGUI_BACKEND_OPENGL "Support for rendering in OpenGL" ON)
 option(IMGUI_STD "Support for std::string" ON)
-option(IMGUI_FONT_AWESOME "Support for Font Awesome font icons" OFF)
-option(IMGUI_IMGUIZMO "Support for rendering 3d manipulation tools" OFF)
-option(IMGUI_KNOBS "Support for rendering knobs" OFF)
-option(IMGUI_MARKDOWN "Support for rendering markdown" OFF)
 
 if(IMGUI_BACKEND_OPENGL)
 	set(IMGUI_BACKEND ${IMGUI_BACKEND}
