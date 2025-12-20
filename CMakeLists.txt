@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
-project(firesteel VERSION 0.2.1.1)
+project(firesteel VERSION 0.2.2)
 set(PRJ_NAME firesteel)
 
-set(FiresteelVersion "0.2.1.1")
+set(FiresteelVersion "0.2.2")
 message(CHECK_START "Firesteel: ${FiresteelVersion}")
 
 # Fixing library-depndend windows stuff.

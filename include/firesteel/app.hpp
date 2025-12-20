@@ -23,7 +23,9 @@ namespace Firesteel {
         int mFrameCount=0;
 	public:
 		App() {
-			LOG_INFO("Initializing Firesteel App.");
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Initializing Firesteel App.");
+#endif // FS_PRINT_DEBUG_MSGS
 		}
 		virtual ~App() { }
 		void shutdown() {

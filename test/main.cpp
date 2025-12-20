@@ -1,75 +1,15 @@
+/*
+* This file is for various testing between major versions of Firesteel.
+*/
+
+#define FS_PRINT_DEBUG_MSGS
 #include <firesteel/firesteel.hpp>
 using namespace Firesteel;
-
-#include <firesteel/scene.hpp>
-#include <firesteel/components/announcer.hpp>
-#include <firesteel/components/particle_system.hpp>
-#include <firesteel/utils/imgui_utils.hpp>
-
-Scene scene;
-uint selection;
 
 class WindowApp : public Firesteel::App {
 	void onInitialize() override {
 		LOG("Hello World!");
-		ComponentRegistry::sInstance()->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
-			return std::make_shared<Component>(e);
-		});
-		ComponentRegistry::sInstance()->append("fs.announcer", DefaultComponentFactory<Announcer>);
-		ComponentRegistry::sInstance()->append("fs.particle_system", DefaultComponentFactory<ParticleSystem>);
 		window.setVSync(true);
-	}
-	void onUpdate() override {
-		ImGui::Begin("Scene");
-		if(ImGui::Button("Load"))
-			scene.load("scene.json");
-		ImGui::SameLine();
-		if(ImGui::Button("Save"))
-			scene.save("scene.json");
-		for(uint i = 0;i<scene.entities.size();i++)
-			if(ImGui::MenuItem(Log::formatStr(scene.entities[i]->name+"##%i", i).c_str(),0,selection-1==i)) selection=i+1;
-		if(ImGui::Button("+ Create Entity")) {
-			scene.entities.push_back(std::make_shared<Entity>());
-			scene.entities[scene.entities.size()-1]->name="New Entity";
-		}
-		ImGui::End();
-		ImGui::Begin("Inspector");
-		if(selection!=0) {
-			Entity* ent=scene.entities[selection-1].get();
-			ImGui::Text("Name: %s", ent->name.c_str());
-			ImGui::SameLine();
-			if(ImGui::Button("X")) {
-				scene.removeAt(selection-1);
-				selection=0;
-			}
-			ImGuiUtil::DragFloat3("Position",&ent->transform.position);
-			ImGuiUtil::DragFloat3("Rotation",&ent->transform.rotation);
-			ImGuiUtil::DragFloat3("Size",&ent->transform.size);
-			ImGui::Separator();
-			uint compId=0;
-			for(auto& comp : ent->getComponents()) {
-				bool open=ImGui::CollapsingHeader((std::string(comp->name())+"##"+std::to_string(compId)).c_str(),ImGuiTreeNodeFlags_AllowOverlap);
-				ImGui::SameLine();
-				if(ImGui::Button(("X##"+std::to_string(compId)).c_str())) {
-					ent->removeComponent(compId);
-					compId--;
-				}
-				if(open) {
-					ImGui::Text(comp->serialize().dump().c_str());
-				}
-				compId++;
-			}
-			if(ImGui::BeginMenu("+ Add Component")) {
-				for(const auto& [name,factory] : ComponentRegistry::sInstance()->map()) {
-					if(ImGui::MenuItem(name.c_str())) ent->addComponent(factory(ent,{}));
-				}
-				ImGui::EndMenu();
-			}
-		}
-		ImGui::End();
-	}
-	void onShutdown() override {
-		scene.clear();
 	}
 };
 

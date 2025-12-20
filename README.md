@@ -21,6 +21,7 @@
 При издании физических копий игры/программы необходимо [сделать запрос к Xanytka](https://support.xanytka.ru/publisher/phys_copies).
 
 # Сторонние библиотеки
+
 ## Изначально включены
 * [GLM](https://github.com/g-truc/glm)
 * [ImGUI](https://github.com/ocornut/imgui)
@@ -40,7 +41,7 @@
 ## Обычная (рекомендуется)
 * Установите [Git](https://git-scm.com/) и [CMake](https://cmake.org/)
 * Запустите команду
-```bash
+``` bash
 git submodule add --recursive https://github.com/xanytka-devs/firesteel.git engine
 ```
 * Запустите `auto_cmake.cmd` внутри новой папки

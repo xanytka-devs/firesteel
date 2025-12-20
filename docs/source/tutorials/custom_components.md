@@ -1,6 +1,6 @@
 # Свои компоненты
-Перед тем, как начать проверьте, не включены ли у вас в коде следующие флаги:
-- `FS_NO_COMPONENTS`
+Перед тем, как начать проверьте, не включены ли у вас в коде следующие флаги:  
+- `FS_NO_COMPONENTS`  
 - `FS_NO_REG_TYPES`
 
 Если они включены, то лучше уберите их.
@@ -78,15 +78,15 @@ MyComponent(Entity* tEntity, const std::string& tVal="Hello World!")
 	: value(tVal), Component(tEntity) { }
 ```
 Ну и да, заместо типа `std::string` ещё могут быть и другие типы данных.  
-Вот их список на данный момент:
-- bool
-- uint (т.е. unsigned int)
-- int
-- float
-- double
-- std::string
-- glm::vec2
-- glm::vec3
+Вот их список на данный момент:  
+- bool  
+- uint (т.е. unsigned int)  
+- int  
+- float  
+- double  
+- std::string  
+- glm::vec2  
+- glm::vec3  
 - glm::vec4
 
 # Свой сериализатор для типа данных

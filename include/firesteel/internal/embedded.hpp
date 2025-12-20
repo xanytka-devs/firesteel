@@ -1,10 +1,10 @@
 /*
-/// Copyright 2025 Xanytka Devs
-///   This file contains embedded data for Firesteel.
-
-/// Content list:
-/// * Embedded::defaultShaderVert - Vertex shader if some other shader fails (failsafe)
-/// * Embedded::defaultShaderFrag - Fragment shader if some other shader fails (failsafe)
+* Copyright 2025 Xanytka Devs
+*   This file contains embedded data for Firesteel.
+*
+* Content list:
+* * Embedded::defaultShaderVert - Vertex shader if some other shader fails (failsafe)
+* * Embedded::defaultShaderFrag - Fragment shader if some other shader fails (failsafe)
 */
 
 namespace Firesteel {
