@@ -2,19 +2,19 @@
 Для начала загрузим и отрисуем модель. Если вы хотите идти рука-об-руку с туториалом, то модель рюкзака, а также текстуры к нему можно скачать [здесь](https://github.com/xanytka-devs/fs-examples/blob/main/res/ModelLoading/).
 Напишите следующий код в `main.cpp`:
 ``` cpp
-#include "engine/include/firesteel.hpp"
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         entity.load("backpack.obj");
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
     }
 };
@@ -91,22 +91,22 @@ Firesteel работает через материалы, то есть все �
 ## Изменения в коде приложения
 А теперь слегка изменим `main.cpp`, добавив туда новый "материал":
 ``` cpp
-#include "engine/include/firesteel.hpp"
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 std::shared_ptr<Shader> shader;
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
         entity.setMaterialsShader(shader);
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
     }
 };
@@ -124,7 +124,7 @@ int main() {
 # Камера
 Начнём, пожалуй с `main.cpp` в этот раз:
 ``` cpp
-#include "engine/include/firesteel.hpp"
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 Material material
@@ -132,13 +132,13 @@ Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0, 0, -90));
 Entity entity;
 
 class ModelLoaderApp : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         shader=std::make_shared<Shader>("shader.vs", "shader.fs");
         entity.load("backpack.obj");
         entity.setMaterialsShader(shader);
         camera.update();
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         //Get variables, needed for a draw call.
         glm::mat4 proj = camera.getProjection();
         glm::mat4 view = camera.getView();
@@ -148,7 +148,7 @@ class ModelLoaderApp : public Firesteel::App {
         shader->setMat4("view", view);
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
     }
 };
@@ -188,7 +188,7 @@ void main() {
 # "Сужение" рюкзака
 В действительности рюкзак более широкий из-за того, что камера не имеет данных о размерах окна и поэтому искажает итоговую картинку. Чинится это добавлением буквально одной линии в `main.cpp` в `onUpdate()` до действий с шейдором:
 ``` cpp
-virtual void onUpdate() override {
+void onUpdate() override {
     //Get and set variables, needed for a draw call.
     glm::mat4 proj = camera.getProjection();
     glm::mat4 view = camera.getView();
@@ -209,12 +209,12 @@ virtual void onUpdate() override {
 В отрисовщике (рендерере) Firesteel поддерживается изменение режима отрисовки. Почему бы не попробывать их потыкать?  
 Для этого внесём одну строку в `main.cpp`, а именно в `onInitialize()`:
 ``` cpp
-virtual void onInitialize() override {
+void onInitialize() override {
     shader=std::make_shared<Shader>("shader.vs", "shader.fs");
     entity.load("backpack.obj");
     entity.setMaterialsShader(shader);
     camera.update();
-    renderer.setDrawMode(Renderer::DM_WIRE); // <---
+    enviroment().renderer->setDrawMode(Renderer::DM_WIRE); // <---
 }
 ```
 

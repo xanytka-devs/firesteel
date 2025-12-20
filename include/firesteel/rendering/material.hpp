@@ -175,7 +175,7 @@ namespace Firesteel {
             txt["shader"]["frag"]=fragmentPath;
             if(!geometryPath.empty()) txt["shader"]["frag"]=geometryPath;
             //Save parameters.
-            for(size_t i=0;i<params.size();i++) {
+            for(uint i=0;i<params.size();i++) {
                 switch(params[i].type()) {
                 case SPVT_VEC2:
                     txt["param"][params[i].name()][0]=params[i].get<glm::vec2>().x;
@@ -212,6 +212,7 @@ namespace Firesteel {
             return true;
         }
 
+        // Not implemented.
         void reload() {
 
         }
@@ -246,23 +247,23 @@ namespace Firesteel {
         void bind() {
             if(!mShader) mShader=Shader::getDefaultShader();
             mShader->enable();
-            for(size_t p=0;p<params.size();p++)
+            for(uint p=0;p<params.size();p++)
                 params[p].bind(mShader.get());
             //Bind appropriate textures.
-            size_t diffuseNr=0;
-            size_t specularNr=0;
-            size_t normalNr=0;
-            size_t heightNr=0;
-            size_t emisNr=0;
-            size_t opacNr=0;
+            uint diffuseNr=0;
+            uint specularNr=0;
+            uint normalNr=0;
+            uint heightNr=0;
+            uint emisNr=0;
+            uint opacNr=0;
             mShader->setBool("noTextures", true);
             //Bind textures.
             if(textures.size()>0) {
                 mShader->setBool("noTextures", false);
                 Texture::unbind();
-                for(unsigned int i=0; i < textures.size(); i++) {
+                for(uint i=0;i<textures.size();i++) {
                     //Retrieve texture number.
-                    size_t number=0;
+                    uint number=0;
                     std::string name=textures[i].typeToString();
                     if(name == "diffuse") number=diffuseNr++;
                     else if(name == "specular") number=specularNr++;
@@ -280,8 +281,7 @@ namespace Firesteel {
             }
         }
         void remove() {
-            for(size_t i=0; i < textures.size(); i++)
-                textures[i].remove();
+            for(uint i=0;i<textures.size();i++) textures[i].remove();
             if(mShader) mShader->remove();
             textures.clear();
             params.clear();

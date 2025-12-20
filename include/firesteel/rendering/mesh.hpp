@@ -21,7 +21,7 @@ namespace Firesteel {
 
     struct Mesh {
     public:
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<unsigned int>& tIndices, Material* tMaterial)
+        Mesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial)
             : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
@@ -33,7 +33,7 @@ namespace Firesteel {
             }
             //Draw mesh.
             glBindVertexArray(mVAO);
-            glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
             //Always good practice to set everything back to defaults once configured.
             Texture::unbind();
@@ -47,14 +47,14 @@ namespace Firesteel {
     public:
         /// Mesh Data.
         std::vector<Vertex> vertices;
-        std::vector<unsigned int> indices;
+        std::vector<uint> indices;
         Material* material;
     protected:
         // Render data.
-        unsigned int mVAO;
+        uint mVAO;
     private:
         void makeMesh() {
-            unsigned int mVBO, mEBO;
+            uint mVBO, mEBO;
             //Create buffers/arrays.
             glGenVertexArrays(1, &mVAO);
             glGenBuffers(1, &mVBO);
@@ -65,7 +65,7 @@ namespace Firesteel {
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
             //Load data into entity buffers.
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint), &indices[0], GL_STATIC_DRAW);
 
             //Set the vertex attribute pointers.
             //Positions.

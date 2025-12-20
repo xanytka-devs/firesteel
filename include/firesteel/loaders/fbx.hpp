@@ -35,7 +35,7 @@ namespace Firesteel {
             Texture texture;
             texture.type=tType;
             texture.path=texPath;
-            texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            texture.id=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
 
             return texture;
         }
@@ -141,7 +141,7 @@ namespace Firesteel {
             if(!tTex->has_value) return;
             if(!tTex->texture) return;
             Texture tex = loadMaterialTexture(tModel, tTex->texture->filename.data, tType);
-            if(tex.ID != 0) tMat->textures.push_back(tex);
+            if(tex.id != 0) tMat->textures.push_back(tex);
         }
 
         Model load(const std::string& tPath) {

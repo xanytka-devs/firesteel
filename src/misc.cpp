@@ -124,9 +124,3 @@ void Log::clear() {
 
 #include <firesteel/rendering/shader.hpp>
 std::shared_ptr<Shader> Shader::sDefaultShader=nullptr;
-
-#include <firesteel/enviroment.hpp>
-Enviroment* Enviroment::sInstance=nullptr;
-
-#include <firesteel/component.hpp>
-std::unique_ptr<ComponentRegistry> ComponentRegistry::sInstance=nullptr;

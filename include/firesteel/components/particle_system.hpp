@@ -3,6 +3,7 @@
 #include <firesteel/common.hpp>
 #include <firesteel/component.hpp>
 #include <firesteel/entity.hpp>
+#include <firesteel/utils/delta_time.hpp>
 #include <firesteel/utils/utils.hpp>
 
 namespace Firesteel {
@@ -39,8 +40,7 @@ namespace Firesteel {
 			glBindVertexArray(0);
 		}
 		void onUpdate() override {
-			//TODO: Make DeltaTime global, accessable from Component's point of execution.
-			float dt=0.01f;
+			float dt=DeltaTime::get();
 			for(unsigned int i=0;i<maxParticles;i++) {
                 Particle& p=mParticles[i];
                 p.life-=dt;

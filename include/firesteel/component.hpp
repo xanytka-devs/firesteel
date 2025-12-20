@@ -52,7 +52,7 @@ namespace Firesteel {
 		virtual void properties() {}
 		template<typename T>
 		void addProperty(const char* tName, T* tVal) {
-			auto* handler=TypeRegistry::sInstance().get<T>();
+			auto* handler=TypeRegistry::sInstance()->get<T>();
 			if(handler) mProperties.emplace_back(tName,tVal,handler);
 			else LOGF_ERRR("No Type Handler for property \"%s\"",tName);
 		}
@@ -64,7 +64,10 @@ namespace Firesteel {
 	ComponentFactory DefaultComponentFactory=ComponentFactory([](Entity* e, const nlohmann::json& j) {return Component::create<T>(e,j);});
 	class ComponentRegistry {
 	public:
-		static std::unique_ptr<ComponentRegistry> sInstance;
+		static ComponentRegistry* sInstance() {
+			static ComponentRegistry instance;
+			return &instance;
+		}
 
 		bool contains(const std::string& tName) {
 			return mFactories.count(tName);

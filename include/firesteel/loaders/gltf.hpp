@@ -41,7 +41,7 @@ namespace Firesteel {
             Texture texture;
             texture.type=type;
             texture.path=texPath;
-            texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            texture.id=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
 
             return texture;
         }
@@ -288,11 +288,11 @@ namespace Firesteel {
                 //Texture displacementTex=loadMaterialTexture(&model, mat.displacement_texname, "displacement");
                 //Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, "opacity");
                 //Push back all textures.
-                if(diffuseTex.ID!=0) material.textures.push_back(diffuseTex);
-                if(normalTex.ID!=0) material.textures.push_back(normalTex);
-                if(specularTex.ID!=0) material.textures.push_back(specularTex);
-                if(ambientTex.ID!=0) material.textures.push_back(ambientTex);
-                if(emissiveTex.ID!=0) material.textures.push_back(emissiveTex);
+                if(diffuseTex.id!=0) material.textures.push_back(diffuseTex);
+                if(normalTex.id!=0) material.textures.push_back(normalTex);
+                if(specularTex.id!=0) material.textures.push_back(specularTex);
+                if(ambientTex.id!=0) material.textures.push_back(ambientTex);
+                if(emissiveTex.id!=0) material.textures.push_back(emissiveTex);
                 //Get PBR data.
                 material.params.emplace_back("diffuse",glm::vec3(mat.pbrMetallicRoughness.baseColorFactor[0],mat.pbrMetallicRoughness.baseColorFactor[1],mat.pbrMetallicRoughness.baseColorFactor[2]));
                 material.params.emplace_back("emission",glm::vec3(mat.emissiveFactor[0],mat.emissiveFactor[1],mat.emissiveFactor[2]));

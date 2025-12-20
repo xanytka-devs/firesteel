@@ -1,3 +1,4 @@
+#ifndef FS_NO_COMPONENTS
 #ifndef FS_PROPERTY
 #define FS_PROPERTY
 #include <firesteel/type.hpp>
@@ -28,9 +29,10 @@ namespace Firesteel {
 
 #define PROPERTY(name) \
 	{\
-		auto* handler=Firesteel::TypeRegistry::sInstance().get<std::remove_reference_t<decltype(name)>>();\
+		auto* handler=Firesteel::TypeRegistry::sInstance()->get<std::remove_reference_t<decltype(name)>>();\
 		if(handler) mProperties.emplace_back(#name,&name,handler);\
 		else {LOGF_ERRR("No Type Handler for property \"%s\"",#name);}\
 	}
 }
 #endif // !FS_PROPERTY
+#endif // !FS_NO_COMPONENTS

@@ -7,19 +7,17 @@ using namespace Firesteel;
 #include <firesteel/utils/imgui_utils.hpp>
 
 Scene scene;
-size_t selection;
+uint selection;
 
 class WindowApp : public Firesteel::App {
 	void onInitialize() override {
-		LOG("Hello there!");
-		ComponentRegistry::sInstance=std::make_unique<ComponentRegistry>();
-		ComponentRegistry::sInstance->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
+		LOG("Hello World!");
+		ComponentRegistry::sInstance()->append("fs.generic", [](Entity* e, const nlohmann::json& j) {
 			return std::make_shared<Component>(e);
 		});
-		ComponentRegistry::sInstance->append("fs.announcer", DefaultComponentFactory<Announcer>);
-		ComponentRegistry::sInstance->append("fs.particle_system", DefaultComponentFactory<ParticleSystem>);
-		scene.entities.push_back(std::make_shared<Entity>());
-		scene.entities[0]->name="Test";
+		ComponentRegistry::sInstance()->append("fs.announcer", DefaultComponentFactory<Announcer>);
+		ComponentRegistry::sInstance()->append("fs.particle_system", DefaultComponentFactory<ParticleSystem>);
+		window.setVSync(true);
 	}
 	void onUpdate() override {
 		ImGui::Begin("Scene");
@@ -28,7 +26,7 @@ class WindowApp : public Firesteel::App {
 		ImGui::SameLine();
 		if(ImGui::Button("Save"))
 			scene.save("scene.json");
-		for(size_t i = 0;i<scene.entities.size();i++)
+		for(uint i = 0;i<scene.entities.size();i++)
 			if(ImGui::MenuItem(Log::formatStr(scene.entities[i]->name+"##%i", i).c_str(),0,selection-1==i)) selection=i+1;
 		if(ImGui::Button("+ Create Entity")) {
 			scene.entities.push_back(std::make_shared<Entity>());
@@ -48,7 +46,7 @@ class WindowApp : public Firesteel::App {
 			ImGuiUtil::DragFloat3("Rotation",&ent->transform.rotation);
 			ImGuiUtil::DragFloat3("Size",&ent->transform.size);
 			ImGui::Separator();
-			size_t compId=0;
+			uint compId=0;
 			for(auto& comp : ent->getComponents()) {
 				bool open=ImGui::CollapsingHeader((std::string(comp->name())+"##"+std::to_string(compId)).c_str(),ImGuiTreeNodeFlags_AllowOverlap);
 				ImGui::SameLine();
@@ -62,7 +60,7 @@ class WindowApp : public Firesteel::App {
 				compId++;
 			}
 			if(ImGui::BeginMenu("+ Add Component")) {
-				for(const auto& [name,factory] : ComponentRegistry::sInstance->map()) {
+				for(const auto& [name,factory] : ComponentRegistry::sInstance()->map()) {
 					if(ImGui::MenuItem(name.c_str())) ent->addComponent(factory(ent,{}));
 				}
 				ImGui::EndMenu();

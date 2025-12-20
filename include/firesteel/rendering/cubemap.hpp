@@ -53,7 +53,7 @@ namespace Firesteel {
             glGenTextures(1, &mID);
             glBindTexture(GL_TEXTURE_CUBE_MAP, mID);
             //Load faces.
-            for(unsigned int i=0; i < 6; i++) {
+            for(uint i=0;i<6;i++) {
                 TextureData t=TextureDataFromFile(mDir + "/" + mFaces[i]);
                 //Get color mode.
                 GLenum color_mode=GL_RED;
@@ -185,7 +185,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
         }
 
-        unsigned int getID() const { return mID; }
+        uint getID() const { return mID; }
         std::string getDirectory() const { return mDir; }
         std::string getCfgFile() const { return mCfgFile; }
         float getSize() const { return mSize; }
@@ -193,7 +193,7 @@ namespace Firesteel {
 
         ~Cubemap() { remove(); }
     private:
-        unsigned int mVAO, mVBO, mID;
+        uint mVAO, mVBO, mID;
         float mSize;
         std::string mDir, mCfgFile;
         std::vector<const char*> mFaces;

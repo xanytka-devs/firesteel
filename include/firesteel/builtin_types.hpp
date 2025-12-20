@@ -1,3 +1,4 @@
+#ifndef FS_NO_COMPONENTS
 #ifndef FS_BUILTIN_TYPES
 #define FS_BUILTIN_TYPES
 
@@ -194,3 +195,4 @@ namespace Firesteel {
 }
 
 #endif // !FS_BUILTIN_TYPES
+#endif // !FS_NO_COMPONENTS

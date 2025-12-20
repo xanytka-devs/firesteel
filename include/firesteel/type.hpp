@@ -1,3 +1,4 @@
+#ifndef FS_NO_COMPONENTS
 #ifndef FS_TYPES
 #define FS_TYPES
 
@@ -20,9 +21,9 @@ namespace Firesteel {
 
 	class TypeRegistry {
 	public:
-		static TypeRegistry& sInstance() {
+		static TypeRegistry* sInstance() {
 			static TypeRegistry inst;
-			return inst;
+			return &inst;
 		}
 		template<typename T>
 		void registerType(std::unique_ptr<ITypeHandler> tHandler) {
@@ -43,3 +44,4 @@ namespace Firesteel {
 }
 
 #endif // !FS_TYPES
+#endif // !FS_NO_COMPONENTS

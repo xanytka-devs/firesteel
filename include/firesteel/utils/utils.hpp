@@ -182,14 +182,14 @@ namespace Math {
     // Cast std::vector to glm::mat4.
     glm::mat4 toMat4(const std::vector<float>* tF) {
         if(tF->size()<17) return glm::mat4(1);
-        glm::mat4 result;
+        glm::mat4 result{};
         for(int i=0;i<4;i++)
             result[i*4]=glm::vec4(tF->at(i),tF->at(i+1),tF->at(i+2),tF->at(i+3));
         return result;
     }
     glm::mat4 toMat4(const std::vector<double>* tF) {
         if(tF->size()<17) return glm::mat4(1);
-        glm::mat4 result;
+        glm::mat4 result{};
         for(int i=0;i<4;i++)
             result[i*4]=glm::vec4(tF->at(i),tF->at(i+1),tF->at(i+2),tF->at(i+3));
         return result;
@@ -244,15 +244,15 @@ namespace DateTime {
         return timebuf;
     }
 
-    static const std::string getDay() {return formatted("%d");}
-    static const std::string getDayName() {return formatted("%A");}
-    static const std::string getMonth() {return formatted("%m");}
-    static const std::string getMonthName() {return formatted("%B");}
-    static const std::string getYear() {return formatted("%Y");}
-    static const std::string getTime() {return formatted("%X");}
-    static const std::string getHour() {return formatted("%H");}
-    static const std::string getMinute() {return formatted("%M");}
-    static const std::string getSecond() {return formatted("%S");}
+    static const std::string day() {return formatted("%d");}
+    static const std::string dayName() {return formatted("%A");}
+    static const std::string month() {return formatted("%m");}
+    static const std::string monthName() {return formatted("%B");}
+    static const std::string year() {return formatted("%Y");}
+    static const std::string time() {return formatted("%X");}
+    static const std::string hour() {return formatted("%H");}
+    static const std::string minute() {return formatted("%M");}
+    static const std::string second() {return formatted("%S");}
 
     struct Timer {
     	double time=0.0;

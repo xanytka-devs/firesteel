@@ -7,11 +7,11 @@
 namespace Firesteel {
     class Enviroment {
     public:
-        static Enviroment* sInstance;
+        static Enviroment* sInstance() {
+            static Enviroment instance;
+            return &instance;
+        }
         std::unique_ptr<Renderer> renderer;
-        const char* getVersion() { return mVersion; }
-    private:
-        const char* mVersion=FS_VERSION;
     };
     
 }

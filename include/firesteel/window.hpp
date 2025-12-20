@@ -104,7 +104,7 @@ namespace Firesteel {
         }
         void clearBuffers() const {
 #ifndef FS_HEADLESS
-            Enviroment::sInstance->renderer->clearBuffers(mClearColor);
+            Enviroment::sInstance()->renderer->clearBuffers(mClearColor);
 #endif // !FS_HEADLESS
         }
         void close() { mClosed=true; }
@@ -288,7 +288,7 @@ namespace Firesteel {
     private:
         static void _framebufferSizeCallback(GLFWwindow* window, int width, int height) {
 #ifndef FS_HEADLESS
-            Enviroment::sInstance->renderer->setViewportSize(width, height);
+            Enviroment::sInstance()->renderer->setViewportSize(width, height);
 #endif // !FS_HEADLESS
         }
         static void _errorCallback(int tEC, const char* tDescription) {

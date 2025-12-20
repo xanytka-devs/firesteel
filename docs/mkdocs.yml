@@ -76,6 +76,7 @@ nav:
   - Конфигурация: flags.md
   - Туториалы:
     - Пакеты: tutorials/packages.md
-    - Своё окно: tutorials/your_own_window.md
+    - Первое окно: tutorials/your_own_window.md
     - Загрузка модели: tutorials/loading_models.md
     - Модель без загрузки: tutorials/custom_mesh.md
+    - Создание компонентов: tutorials/custom_components.md

@@ -22,7 +22,9 @@
 #ifdef FS_LOADER_FBX
 #include <firesteel/loaders/fbx.hpp>
 #endif // FS_LOADER_FBX
+#ifndef FS_NO_COMPONENTS
 #include <firesteel/component.hpp>
+#endif // !FS_NO_COMPONENTS
 
 namespace Firesteel {
     class Entity {
@@ -38,14 +40,14 @@ namespace Firesteel {
         // Sends update callback to all components.
         virtual void update() {
 #ifndef FS_NO_COMPONENTS
-            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
 #endif // !FS_NO_COMPONENTS
         }
         // Renders the model with given material or default shader.
         virtual void draw() {
-            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
             if(!hasModel()) return;
-            for(size_t n=0;n<model.nodes.size();n++)
+            for(uint n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
         }
         // Renders only the given node tree with given material or default shader and parent matrix.
@@ -54,13 +56,13 @@ namespace Firesteel {
             const glm::mat4 nodeMatrix=tParentModel*tNode->transform.getMatrix();
             if(tNode->index>=0&&tNode->index<static_cast<int>(model.meshes.size()))
                 model.meshes[tNode->index].draw(nodeMatrix,tOverrideMaterial);
-            for(size_t n=0;n<tNode->children.size();n++)
+            for(uint n=0;n<tNode->children.size();n++)
                 drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
         }
         // Replaces materials with default shader with given shader.
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
             if(!hasModel()) return;
-            for(size_t m=0;m<model.materials.size();m++)
+            for(uint m=0;m<model.materials.size();m++)
                 if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m].setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity materials shader");
@@ -69,7 +71,7 @@ namespace Firesteel {
         // Replaces materials with shader id with given shader.
         void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
             if(!hasModel()) return;
-            for(size_t m=0;m<model.materials.size();m++)
+            for(uint m=0;m<model.materials.size();m++)
                 if(model.materials[m].getShader()->getId()==tIdToReplace) model.materials[m].setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Replaced entity materials shader");
@@ -78,7 +80,7 @@ namespace Firesteel {
         // Replaces all materials with given one.
         void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
             if(!hasModel()) return;
-            for(size_t m = 0; m < model.materials.size(); m++)
+            for(uint m = 0; m < model.materials.size(); m++)
                 if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m]=*tMaterial;
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity material");
@@ -90,9 +92,11 @@ namespace Firesteel {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
 #endif // FS_PRINT_DEBUG_MSGS
-            for(size_t i=0;i<model.meshes.size();i++)
+#ifndef FS_NO_COMPONENTS
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
+#endif // !FS_NO_COMPONENTS
+            for(uint i=0;i<model.meshes.size();i++)
                 model.meshes[i].remove();
-            for(size_t i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
             model.nodes.clear();
             model.meshes.clear();
             model.materials.clear();
@@ -162,10 +166,10 @@ namespace Firesteel {
             mComponents[mComponents.size()-1]->onStart();
         }
         template<typename T>
-        std::shared_ptr<T> getComponent(const size_t& tIdx=0) {
+        std::shared_ptr<T> getComponent(const uint& tIdx=0) {
             std::shared_ptr<T> comp=nullptr;
-            size_t iter=0;
-            for(size_t i=0;i<mComponents.size();i++)
+            uint iter=0;
+            for(uint i=0;i<mComponents.size();i++)
                 if(typeid(*mComponents[i])==typeid(T)) {
                     comp=mComponents[i];
                     iter++;
@@ -175,19 +179,19 @@ namespace Firesteel {
         }
         template<typename T>
         bool hasComponent() {
-            for(size_t i=0;i<mComponents.size();i++)
+            for(uint i=0;i<mComponents.size();i++)
                 if(typeid(*mComponents[i])==typeid(T)) return true;
             return false;
         }
         bool hasComponent(const char* tName) {
-            for(size_t i=0;i<mComponents.size();i++)
+            for(uint i=0;i<mComponents.size();i++)
                 if(mComponents[i]->name()==tName) return true;
             return false;
         }
         template<typename T>
-        bool removeComponent(const size_t& tIdx=0) {
-            size_t iter=0;
-            for(size_t i=0;i<mComponents.size();i++)
+        bool removeComponent(const uint& tIdx=0) {
+            uint iter=0;
+            for(uint i=0;i<mComponents.size();i++)
                 if(typeid(*mComponents[i])==typeid(T)) {
                     iter++;
                     if(iter>tIdx) {
@@ -197,14 +201,14 @@ namespace Firesteel {
                 }
             return false;
         }
-        bool removeComponent(const size_t& tIdx=0) {
+        bool removeComponent(const uint& tIdx=0) {
             if(tIdx>=mComponents.size()) return false;
             mComponents.erase(mComponents.begin()+tIdx);
             return true;
         }
         std::vector<std::shared_ptr<Component>> getComponents() { return mComponents; }
 #endif // !FS_NO_COMPONENTS
-#if !defined(FS_NO_JSON) && !defined(FS_NO_COMPONENTS)
+#if !defined(FS_NO_JSON) || !defined(FS_NO_COMPONENTS)
         nlohmann::json serialize() const {
             nlohmann::json js;
             js["name"]=name;
@@ -227,8 +231,8 @@ namespace Firesteel {
             if(tData.contains("components"))
                 for(const auto& comp:tData["components"]) {
                     const std::string type=comp["type"];
-                    if(ComponentRegistry::sInstance->contains(type)) {
-                        auto c=ComponentRegistry::sInstance->get(type)(&e,comp);
+                    if(ComponentRegistry::sInstance()->contains(type)) {
+                        auto c=ComponentRegistry::sInstance()->get(type)(&e, comp);
                         e.addComponent(c);
                     } else LOG_ERRR("Unknown component type "+type);
                 }

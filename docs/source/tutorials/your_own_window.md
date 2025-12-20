@@ -4,11 +4,11 @@
 # Отрисовка окна
 Для создания простого окна нужно добавить несколько простых строчек кода в файл **main.cpp**:
 ``` cpp
-#include "engine/include/app.hpp"
+#include <firesteel/app.hpp>
 using namespace Firesteel;
 
 class HelloWorldApp : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         LOG_INFO("Hello World!");
     }
 };

@@ -18,13 +18,13 @@
 Почему бы не отрисовать сам полигон?  
 Введите следущий код в `main.cpp`:
 ``` cpp
-#include <../include/firesteel.hpp>
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 Entity entity;
 
 class CustomMesh : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         //Setup mesh.
         const float setup[3][3]={
             { 1,     1,    0},
@@ -42,10 +42,10 @@ class CustomMesh : public Firesteel::App {
         //Append mesh to the model.
         entity.addMesh(verticies,indicies,&material);
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
         material.remove();
     }
@@ -64,14 +64,14 @@ int main() {
 
 # Крутим треугольник
 ``` cpp
-#include <../include/firesteel.hpp>
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 Material material;
 Entity entity;
 
 class CustomMesh : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         material.setShader("shader.vs", "shader.fs");
         //Setup mesh.
         const float setup[3][3]={
@@ -92,10 +92,10 @@ class CustomMesh : public Firesteel::App {
         entity.transform.rotation.x=180.f;
         entity.transform.size=glm::vec3(0.8f);
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
         material.remove();
     }
@@ -149,14 +149,14 @@ void main() {
 ## Код для отрисовки пластины
 Внесите в `main.cpp` следущие изменения:
 ``` cpp
-#include <../include/firesteel.hpp>
+#include <firesteel/firesteel.hpp>
 using namespace Firesteel;
 
 Material material;
 Entity entity;
 
 class CustomMesh : public Firesteel::App {
-    virtual void onInitialize() override {
+    void onInitialize() override {
         material.setShader("shader.vs", "shader.fs");
         //Setup mesh.
         const float setup[4][3]={
@@ -178,10 +178,10 @@ class CustomMesh : public Firesteel::App {
         entity.transform.rotation.x=180.f;
         entity.transform.size=glm::vec3(0.8f);
     }
-    virtual void onUpdate() override {
+    void onUpdate() override {
         entity.draw();
     }
-    virtual void onShutdown() override {
+    void onShutdown() override {
         entity.remove();
         material.remove();
     }

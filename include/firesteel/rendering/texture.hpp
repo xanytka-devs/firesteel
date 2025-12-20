@@ -13,17 +13,17 @@ namespace Firesteel {
         TT_OPACITY
     };
     struct Texture {
-        unsigned int ID=0;
+        uint id=0;
         TextureType type=TT_DIFFUSE;
         std::string path="";
         bool isMonochrome=false;
         
-        void bind(const size_t& tId=0) const {
+        void bind(const uint& tId=0) const {
             glActiveTexture(GL_TEXTURE0 + static_cast<GLenum>(tId));
-            glBindTexture(GL_TEXTURE_2D, ID);
+            glBindTexture(GL_TEXTURE_2D, id);
         }
         //Alias for `bind()`.
-        void enable(const size_t& tId=0) const {bind(tId);}
+        void enable(const uint& tId=0) const { bind(tId); }
         static void unbind() {
             glBindTexture(GL_TEXTURE_2D, 0);
             glActiveTexture(GL_TEXTURE0);
@@ -31,7 +31,7 @@ namespace Firesteel {
         //Alias for `unbind()`.
         static void disable() {unbind();}
         void remove() const {
-            glDeleteTextures(1, &ID);
+            glDeleteTextures(1, &id);
         }
 
         const char* typeToString() {

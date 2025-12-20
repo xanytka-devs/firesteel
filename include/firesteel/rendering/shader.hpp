@@ -89,7 +89,7 @@ namespace Firesteel {
 
     private:
         bool mLoaded = false;
-        unsigned int mId;
+        uint mId;
         static std::shared_ptr<Shader> sDefaultShader;
     private:
         bool getErrors(GLuint tShader, size_t tType=0) {
@@ -177,9 +177,9 @@ namespace Firesteel {
             fragment=glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(fragment, 1, &tFShaderCode, NULL);
             glCompileShader(fragment);
-            if (!getErrors(fragment)) return;
+            if(!getErrors(fragment)) return;
             //Geometry Shader.
-            if (tHasGeomShader) {
+            if(tHasGeomShader) {
                 geometry=glCreateShader(GL_GEOMETRY_SHADER);
                 glShaderSource(geometry, 1, &tGShaderCode, NULL);
                 glCompileShader(geometry);

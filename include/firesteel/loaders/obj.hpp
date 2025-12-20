@@ -37,7 +37,7 @@ namespace Firesteel {
             Texture texture;
             texture.type=type;
             texture.path=texPath;
-            texture.ID=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
+            texture.id=TextureFromFile(fullPath.c_str(), &texture.isMonochrome, true);
 
             return texture;
         }
@@ -154,7 +154,7 @@ namespace Firesteel {
             size_t tex=0;
 #endif // FS_PRINT_DEBUG_MSGS
             //Process all materials.
-            for (size_t m=0;m<materials.size();m++) {
+            for(size_t m=0;m<materials.size();m++) {
                 //Create material.
                 const auto& mat = materials[m];
                 Material material;
@@ -167,13 +167,13 @@ namespace Firesteel {
                 Texture opacityTex=loadMaterialTexture(&model, mat.alpha_texname, TT_OPACITY);
                 Texture emissiveTex=loadMaterialTexture(&model, mat.emissive_texname, TT_EMISSIVE);
                 //Push back all textures.
-                if(diffuseTex.ID!=0) material.textures.push_back(diffuseTex);
-                if(normalTex.ID!=0) material.textures.push_back(normalTex);
-                if(specularTex.ID!=0) material.textures.push_back(specularTex);
-                if(ambientTex.ID!=0) material.textures.push_back(ambientTex);
-                if(displacementTex.ID!=0) material.textures.push_back(displacementTex);
-                if(opacityTex.ID!=0) material.textures.push_back(opacityTex);
-                if(emissiveTex.ID!=0) material.textures.push_back(emissiveTex);
+                if(diffuseTex.id!=0) material.textures.push_back(diffuseTex);
+                if(normalTex.id!=0) material.textures.push_back(normalTex);
+                if(specularTex.id!=0) material.textures.push_back(specularTex);
+                if(ambientTex.id!=0) material.textures.push_back(ambientTex);
+                if(displacementTex.id!=0) material.textures.push_back(displacementTex);
+                if(opacityTex.id!=0) material.textures.push_back(opacityTex);
+                if(emissiveTex.id!=0) material.textures.push_back(emissiveTex);
                 //Get PBR data.
                 material.params.emplace_back("diffuse",glm::vec3(mat.diffuse[0],mat.diffuse[1],mat.diffuse[2]));
                 material.params.emplace_back("emission",glm::vec3(mat.emission[0],mat.emission[1],mat.emission[2]));

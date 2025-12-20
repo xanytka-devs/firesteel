@@ -34,5 +34,6 @@
 // DEFENITIONS //
 #define CASTF(...) static_cast<float>(__VA_ARGS__)
 #define IFEX if constexpr
+typedef unsigned int uint;
 
 #endif // !FS_COMMON_H

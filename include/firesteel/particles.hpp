@@ -22,11 +22,11 @@ namespace Firesteel {
     class ParticleSystem {
     public:
         std::vector<Particle> particles;
-        unsigned int VAO=0, VBO=0;
-        unsigned int maxParticles;
+        uint VAO=0, VBO=0;
+        uint maxParticles;
         glm::vec3 emitterPosition;
 
-        ParticleSystem(const glm::vec3& tPosition, const unsigned int& tMaxParticles = 1000, const std::string& tTexturePath = "",bool tInit = true) {
+        ParticleSystem(const glm::vec3& tPosition, const uint& tMaxParticles = 1000, const std::string& tTexturePath = "", bool tInit = true) {
             emitterPosition=tPosition;
             maxParticles=tMaxParticles;
             if(tInit) init();
@@ -52,7 +52,7 @@ namespace Firesteel {
         }
 
         void update(const float& dt) {
-            for(unsigned int i=0;i<maxParticles;i++) {
+            for(uint i=0;i<maxParticles;i++) {
                 Particle& p=particles[i];
                 p.Life-=dt;
                 if(p.Life>0.f) {
@@ -73,7 +73,7 @@ namespace Firesteel {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             shader->enable();
             glBindVertexArray(VAO);
-            for(size_t i=0;i<particles.size();i++) {
+            for(uint i=0;i<particles.size();i++) {
                 if(particles[i].Life<=0.0f) continue;
                 shader->setVec3("offset", particles[i].Position-glm::vec3(particles[i].Life));
                 shader->setVec4("color", particles[i].Color);

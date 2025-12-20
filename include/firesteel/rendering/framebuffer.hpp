@@ -37,13 +37,13 @@ namespace Firesteel {
             glEnable(GL_DEPTH_TEST);
         }
         //Alias for `bind()`.
-        void enable() const {bind();}
+        void enable() const { bind(); }
         static void unbind() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glDisable(GL_DEPTH_TEST);
         }
         //Alias for `unbind()`.
-        static void disable() {unbind();}
+        static void disable() { unbind(); }
         void bindAsTexture() const {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, FBOtextures[0]);
@@ -101,7 +101,7 @@ namespace Firesteel {
             for(int i=0; i < FBOsSize;i++) glDeleteTextures(1, &FBOtextures[i]);
         }
 
-        unsigned int getID(const size_t& tID=0) const { return FBOtextures[tID]; }
+        uint getID(const size_t& tID=0) const { return FBOtextures[tID]; }
         glm::vec2 getSize() const { return mSize; }
         float getWidth() const { return mSize.x; }
         float getHeight() const { return mSize.y; }
@@ -109,9 +109,9 @@ namespace Firesteel {
     private:
         glm::vec2 mSize=glm::vec2(0);
         bool madeMesh=false;
-        unsigned int quadVAO=0, quadVBO=0;
-        unsigned int FBO=0, RBO=0;
-        unsigned int FBOtextures[11]{};
+        uint quadVAO=0, quadVBO=0;
+        uint FBO=0, RBO=0;
+        uint FBOtextures[11]{};
         size_t FBOsSize=1;
     private:
         void createBuffers(const size_t& tTexs) {
@@ -122,13 +122,13 @@ namespace Firesteel {
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             //Framebuffer's textures.
             glGenTextures(static_cast<GLsizei>(FBOsSize), FBOtextures);
-            unsigned int attachments[11]{};
+            uint attachments[11]{};
             for(size_t i=0; i < FBOsSize; i++) {
                 glBindTexture(GL_TEXTURE_2D, FBOtextures[i]);
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, static_cast<GLsizei>(mSize.x), static_cast<GLsizei>(mSize.y), 0, GL_RGB, GL_FLOAT, NULL);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                attachments[i]=GL_COLOR_ATTACHMENT0 + static_cast<unsigned int>(i);
+                attachments[i]=GL_COLOR_ATTACHMENT0 + static_cast<uint>(i);
                 glFramebufferTexture2D(GL_FRAMEBUFFER, attachments[i], GL_TEXTURE_2D, FBOtextures[i], 0);
             }
             //Framebuffer's render buffer.
