@@ -11,6 +11,8 @@ namespace Firesteel {
             static Enviroment instance;
             return &instance;
         }
+        static Renderer* getRenderer() { return sInstance()->renderer.get(); }
+
         std::unique_ptr<Renderer> renderer;
     };
     

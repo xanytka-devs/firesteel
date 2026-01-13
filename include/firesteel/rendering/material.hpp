@@ -212,9 +212,33 @@ namespace Firesteel {
             return true;
         }
 
-        // Not implemented.
-        void reload() {
-
+        bool reload() {
+            if(!std::filesystem::exists(vertexPath)) {
+                LOG_WARN("Tried to reload shader but vertex shader didn't exist");
+                return false;
+            }
+            if(!std::filesystem::exists(fragmentPath)) {
+                LOG_WARN("Tried to reload shader but fragment shader didn't exist");
+                return false;
+            }
+            if(geometryPath!="") {
+                if(!std::filesystem::exists(vertexPath)) {
+                    LOG_WARN("Tried to reload shader but geometry shader didn't exist");
+                    return false;
+                }
+                mShader=std::make_shared<Shader>(vertexPath, fragmentPath, geometryPath);
+            } else mShader=std::make_shared<Shader>(vertexPath, fragmentPath);
+            
+            if(!mShader) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (pointer was empty)");
+                return false;
+            } else if(!mShader->loaded()) {
+                mShader=Shader::getDefaultShader();
+                LOG_ERRR("Failed to set shader (shader wasn't loaded)");
+                return false;
+            }
+            return true;
         }
 #endif // !FS_NO_JSON
 
@@ -293,7 +317,6 @@ namespace Firesteel {
         std::string vertexPath="";
         std::string fragmentPath="";
         std::string geometryPath="";
-        std::string path="";
         std::string name="New Material";
         unsigned int type=0;
 #endif // !FS_NO_JSON

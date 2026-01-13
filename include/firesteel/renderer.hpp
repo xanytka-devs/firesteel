@@ -16,10 +16,15 @@ namespace Firesteel {
         virtual void initializeParams() { }
         virtual void printInfo() { LOG_INFO("Headless context"); }
         virtual void loadExtencions() {}
+
         virtual void clearBuffers(const glm::vec3& tColor) { }
+
+        virtual void setAlphaBlending(const bool& tVal) { }
+
         virtual void setViewportSize(const int& tX, const int& tY) { }
         virtual void setViewportSize(const glm::vec2& tSize) { }
         virtual void setDrawMode(const DrawMode& tDrawMode) { }
+
         virtual void imguiInitialize(GLFWwindow* tWin) { }
         virtual void imguiNewFrame() {}
         virtual void imguiRender(GLFWwindow* tWin) { }

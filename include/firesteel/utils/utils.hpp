@@ -76,7 +76,7 @@ namespace String {
     std::string replace(const std::string& tOrig, const char& tChar, const char& tNewChar) {
         std::vector<std::string> parts=split(tOrig, tChar);
         if(parts.size()==1) {
-            LOGF_WARN("String::replace(): Couldn't replace '%c' in '%s'\n",tChar,tOrig.c_str());
+            LOGF_WARN("String::replace(): Couldn't replace '%c' in '%s'",tChar,tOrig.c_str());
             return tOrig;
         }
         std::string out=parts[0];

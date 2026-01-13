@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <imgui.h>
 
-namespace ImGuiUtil {
+namespace ImGui {
     float vec4[4]={ 0,0,0,0 };
     float vec3[3]={ 0,0,0 };
     float vec2[2]={ 0,0 };

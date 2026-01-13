@@ -3,6 +3,7 @@
 #include <firesteel/common.hpp>
 #include <firesteel/component.hpp>
 #include <firesteel/entity.hpp>
+#include <firesteel/enviroment.hpp>
 #include <firesteel/utils/delta_time.hpp>
 #include <firesteel/utils/utils.hpp>
 
@@ -51,7 +52,7 @@ namespace Firesteel {
             }
 		}
 		void onDraw() override {
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			Enviroment::getRenderer()->setAlphaBlending(false);
 			Shader* shader=mEntity->model.materials[0].getShader().get();
 			shader->enable();
 			glBindVertexArray(mVAO);
@@ -62,7 +63,7 @@ namespace Firesteel {
 				glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 			}
 			glBindVertexArray(0);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			Enviroment::getRenderer()->setAlphaBlending(true);
 		}
 		void onRemove() override {
 			glDeleteVertexArrays(1, &mVAO);

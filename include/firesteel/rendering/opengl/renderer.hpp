@@ -62,6 +62,9 @@ namespace Firesteel {
                 static_cast<GLfloat>(tColor[2]), static_cast<GLfloat>(1.0f));
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
+        void setAlphaBlending(const bool& tVal) override {
+            glBlendFunc(GL_SRC_ALPHA, tVal?GL_ONE_MINUS_SRC_ALPHA:GL_ONE);
+        }
         void setViewportSize(const int& tX, const int& tY) override {
             glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
         }
