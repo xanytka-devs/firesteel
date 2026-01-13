@@ -1,3 +1,11 @@
+Firesteel v.0.2.2
+- Component system
+- Serialization of entities and components into scenes
+- Serializable data type registry
+- Global includes like `#include <firesteel/firesteel.hpp>`
+- Merge imgui.utils with engine's utils
+- Refactoring, restructuring and optimization
+
 Firesteel v.0.2.1.1
 - Loading from file support for material
 - Access changes in `Shader` class
