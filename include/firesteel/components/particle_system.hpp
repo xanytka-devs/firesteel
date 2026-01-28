@@ -21,7 +21,7 @@ namespace Firesteel {
 	// @warning This component is experimental. Use on your own risk.
 	class ParticleSystem : public Component {
 	public:
-		ParticleSystem(Entity* tEntity, unsigned int tMaxParticles=100)
+		ParticleSystem(std::shared_ptr<Entity> tEntity, unsigned int tMaxParticles=100)
 			: maxParticles(tMaxParticles), Component(tEntity) { }
 		void onStart() override {
 			mParticles.resize(maxParticles);

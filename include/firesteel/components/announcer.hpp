@@ -7,7 +7,7 @@
 namespace Firesteel {
 	class Announcer : public Component {
 	public:
-		Announcer(Entity* tEntity, const std::string& tVal="Hello World!")
+		Announcer(std::shared_ptr<Entity> tEntity, const std::string& tVal="Hello World!")
 			: value(tVal), Component(tEntity) { }
 		void onUpdate() override {
 			LOG_INFO("fs.announcer: "+value);
