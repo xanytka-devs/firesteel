@@ -50,8 +50,20 @@ namespace Firesteel {
 		void draw() {
 			for(uint i=0;i<entities.size();i++) entities[i]->draw();
 		}
-		void add(std::shared_ptr<Entity>& tEntity) { entities.push_back(tEntity); }
-		void add(Entity& tEntity) { entities.push_back(std::make_shared<Entity>(tEntity)); }
+		std::shared_ptr<Entity> add(std::shared_ptr<Entity>& tEntity) {
+			entities.push_back(tEntity);
+			return tEntity;
+		}
+		std::shared_ptr<Entity> add(Entity& tEntity) {
+			auto ent=std::make_shared<Entity>(tEntity);
+			entities.push_back(ent);
+			return ent;
+		}
+		std::shared_ptr<Entity> create() {
+			auto ent=std::make_shared<Entity>();
+			entities.push_back(ent);
+			return ent;
+		}
 		bool removeAt(const uint& tId) {
 			if(tId>=entities.size()) {
 				LOGF_WARN("Tried to remove entity at %i while max id is %i",tId,entities.size()-1);

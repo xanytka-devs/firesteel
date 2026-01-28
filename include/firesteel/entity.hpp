@@ -153,12 +153,11 @@ namespace Firesteel {
         }
 #ifndef FS_NO_COMPONENTS
         template<typename T, typename... Args>
-        std::shared_ptr<T> addComponent(Args&&... tArgs) {
-            ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
-            auto comp=std::make_shared<T>(this, std::forward<Args>(tArgs)...);
-            mComponents.push_back(comp);
-            mComponents[mComponents.size()-1]->onStart();
-            mComponents[mComponents.size()-1]->registerProperties();
+        static std::shared_ptr<T> addComponent(std::shared_ptr<Entity> tEntity, Args&&... tArgs) {
+            ASSERT((std::is_base_of<Component, T>::value), "Given component must be derived from base Component type");
+            auto comp = std::make_shared<T>(tEntity, std::forward<Args>(tArgs)...);
+            comp->registerProperties();
+            tEntity->addComponent(comp);
             return comp;
         }
         void addComponent(std::shared_ptr<Component> tComp) {
@@ -207,6 +206,7 @@ namespace Firesteel {
             return true;
         }
         std::vector<std::shared_ptr<Component>> getComponents() { return mComponents; }
+        uint getComponnetCount() const { return mComponents.size(); }
 #endif // !FS_NO_COMPONENTS
 #if !defined(FS_NO_JSON) || !defined(FS_NO_COMPONENTS)
         nlohmann::json serialize() const {
