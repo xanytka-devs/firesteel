@@ -47,6 +47,11 @@ namespace Firesteel {
 		void update() {
 			for(uint i=0;i<entities.size();i++) entities[i]->update();
 		}
+		void draw() {
+			for(uint i=0;i<entities.size();i++) entities[i]->draw();
+		}
+		void add(std::shared_ptr<Entity>& tEntity) { entities.push_back(tEntity); }
+		void add(Entity& tEntity) { entities.push_back(std::make_shared<Entity>(tEntity)); }
 		bool removeAt(const uint& tId) {
 			if(tId>=entities.size()) {
 				LOGF_WARN("Tried to remove entity at %i while max id is %i",tId,entities.size()-1);

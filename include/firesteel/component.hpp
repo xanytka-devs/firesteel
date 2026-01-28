@@ -8,12 +8,12 @@ namespace Firesteel {
 	class Entity;
 	class Component {
 	public:
-		Component(Entity* tEntity)
+		Component(std::shared_ptr<Entity> tEntity)
 			: mEntity(tEntity) {
 			registerProperties();
 		}
 		template<typename T>
-		static std::shared_ptr<Component> create(Entity* tEntity, const nlohmann::json& tData) {
+		static std::shared_ptr<Component> create(std::shared_ptr<Entity> tEntity, const nlohmann::json& tData) {
             ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
 			auto comp=std::make_shared<T>(tEntity);
 			comp->registerProperties();
@@ -46,7 +46,7 @@ namespace Firesteel {
 		bool isInitialized() const { return mInitialized; }
 		virtual const char* name() const { return "fs.generic"; }
 	protected:
-		Entity* mEntity;
+		std::shared_ptr<Entity> mEntity;
 		bool mInitialized=false;
 
 		virtual void properties() {}
@@ -59,9 +59,9 @@ namespace Firesteel {
 		std::vector<Property> mProperties;
 	};
 #ifndef FS_NO_JSON
-	using ComponentFactory=std::function<std::shared_ptr<Component>(Entity*, const nlohmann::json&)>;
+	using ComponentFactory=std::function<std::shared_ptr<Component>(std::shared_ptr<Entity>, const nlohmann::json&)>;
 	template<typename T>
-	ComponentFactory DefaultComponentFactory=ComponentFactory([](Entity* e, const nlohmann::json& j) {return Component::create<T>(e,j);});
+	ComponentFactory DefaultComponentFactory=ComponentFactory([](std::shared_ptr<Entity> e, const nlohmann::json& j) {return Component::create<T>(e,j);});
 	class ComponentRegistry {
 	public:
 		static ComponentRegistry* sInstance() {

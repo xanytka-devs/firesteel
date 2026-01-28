@@ -99,8 +99,8 @@ namespace Firesteel {
                     mLastFrameFPS=currentFrame;
                 }
                 if(window.isMinimized()) continue;
-                if(updateViewport) enviroment().renderer->setViewportSize(window.getSize());
                 window.clearBuffers();
+                if(updateViewport) enviroment().renderer->setViewportSize(window.getSize());
                 //ImGui & DevView window.
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;

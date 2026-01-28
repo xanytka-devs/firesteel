@@ -221,22 +221,22 @@ namespace Firesteel {
             return js;
         }
         static std::shared_ptr<Entity> deserialize(const nlohmann::json& tData) {
-            Entity e;
-            if(tData.contains("name")) e.name=tData["name"];
+            std::shared_ptr<Entity> e=std::make_shared<Entity>();
+            if(tData.contains("name")) e->name=tData["name"];
             if(tData.contains("transform")) {
-                if(tData["transform"].contains("pos")) for(int j=0;j<3;j++) e.transform.position[j]=tData["transform"]["pos"][j];
-                if(tData["transform"].contains("rot")) for(int j=0;j<3;j++) e.transform.rotation[j]=tData["transform"]["rot"][j];
-                if(tData["transform"].contains("size")) for(int j=0;j<3;j++) e.transform.size[j]=tData["transform"]["size"][j];
+                if(tData["transform"].contains("pos")) for(int j=0;j<3;j++) e->transform.position[j]=tData["transform"]["pos"][j];
+                if(tData["transform"].contains("rot")) for(int j=0;j<3;j++) e->transform.rotation[j]=tData["transform"]["rot"][j];
+                if(tData["transform"].contains("size")) for(int j=0;j<3;j++) e->transform.size[j]=tData["transform"]["size"][j];
             }
             if(tData.contains("components"))
                 for(const auto& comp:tData["components"]) {
                     const std::string type=comp["type"];
                     if(ComponentRegistry::sInstance()->contains(type)) {
-                        auto c=ComponentRegistry::sInstance()->get(type)(&e, comp);
-                        e.addComponent(c);
+                        auto c=ComponentRegistry::sInstance()->get(type)(e, comp);
+                        e->addComponent(c);
                     } else LOG_ERRR("Unknown component type "+type);
                 }
-            return std::make_shared<Entity>(e);
+            return e;
         }
 #endif // !FS_NO_JSON && !FS_NO_COMPONENTS
 
