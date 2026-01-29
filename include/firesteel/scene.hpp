@@ -11,10 +11,10 @@ namespace Firesteel {
 	struct Scene {
 		Scene() {}
 #ifndef FS_NO_JSON
-		void load(const std::string& tPath) {
+		bool load(const std::string& tPath) {
 			if(!std::filesystem::exists(tPath)) {
 				LOG_ERRR("Scene at path \""+tPath+"\" doesn't exist");
-				return;
+				return false;
 			}
 			clear();
 			std::ifstream ifs(tPath);
@@ -27,6 +27,7 @@ namespace Firesteel {
 			LOGF_DBG("Loaded %d entities from \"%s\"",
 				entities.size(), tPath.c_str());
 #endif // FS_PRINT_DEBUG_MSGS
+			return true;
 		}
 		void save(const std::string& tPath) const {
 			nlohmann::json scene;
