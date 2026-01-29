@@ -25,17 +25,19 @@ namespace Firesteel {
             : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
-        // If `tOverrideMaterial` is enbaled then shader must be enabled before running this.
+        // If `tOverrideMaterial` is eanbled then shader must be enabled before running this.
         void draw(const glm::mat4& tModel, const bool& tOverrideMaterial=false) {
-            if (!tOverrideMaterial) {
-                material->bind();
-                material->getShader()->setMat4("model", tModel);
-            }
+            if(material != nullptr) {
+                if(!tOverrideMaterial) {
+                    material->bind();
+                    material->getShader()->setMat4("model", tModel);
+                }
+            } else Shader::getDefaultShader()->bind();
             //Draw mesh.
             glBindVertexArray(mVAO);
             glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
-            //Always good practice to set everything back to defaults once configured.
+            //Always a good practice to set everything back to defaults once configured.
             Texture::unbind();
         }
         void remove() {

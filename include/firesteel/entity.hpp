@@ -40,12 +40,16 @@ namespace Firesteel {
         // Sends update callback to all components.
         virtual void update() {
 #ifndef FS_NO_COMPONENTS
+            if(!enabled) return;
             for(uint i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
 #endif // !FS_NO_COMPONENTS
         }
         // Renders the model with given material or default shader.
         virtual void draw() {
+#ifndef FS_NO_COMPONENTS
+            if(!enabled) return;
             for(uint i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
+#endif // !FS_NO_COMPONENTS
             if(!hasModel()) return;
             for(uint n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
@@ -213,7 +217,7 @@ namespace Firesteel {
             return true;
         }
         std::vector<std::shared_ptr<Component>> getComponents() { return mComponents; }
-        uint getComponnetCount() const { return mComponents.size(); }
+        uint getComponnetCount() const { return static_cast<uint>(mComponents.size()); }
 #endif // !FS_NO_COMPONENTS
 #if !defined(FS_NO_JSON) || !defined(FS_NO_COMPONENTS)
         nlohmann::json serialize() const {
@@ -251,6 +255,7 @@ namespace Firesteel {
         Model model;
 #ifndef FS_NO_SCENES
         std::string name;
+        bool enabled;
 #endif // !FS_NO_SCENES
 #ifndef FS_NO_COMPONENTS
     private:
