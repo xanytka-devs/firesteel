@@ -88,6 +88,16 @@ namespace Firesteel {
         }
 
         bool hasModel() const { return model.meshes.size()!=0; }
+        virtual void removeModel() {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed entity's model");
+#endif // FS_PRINT_DEBUG_MSGS
+            for(uint i=0;i<model.meshes.size();i++)
+                model.meshes[i].remove();
+            model.nodes.clear();
+            model.meshes.clear();
+            model.materials.clear();
+        }
         virtual void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity");
@@ -95,18 +105,14 @@ namespace Firesteel {
 #ifndef FS_NO_COMPONENTS
             for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
 #endif // !FS_NO_COMPONENTS
-            for(uint i=0;i<model.meshes.size();i++)
-                model.meshes[i].remove();
-            model.nodes.clear();
-            model.meshes.clear();
-            model.materials.clear();
+            removeModel();
         }
-        virtual void load(const std::string& tPath) {
+        virtual bool load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
                 LOG_WARN("Model at path \"" + tPath + "\" doesn't exist");
-                return;
+                return false;
             }
-            remove();
+            removeModel();
             LOG_INFO("Loading model at path \"" + tPath + "\"");
             
             auto extBig=String::split(tPath, '.');
@@ -124,6 +130,7 @@ namespace Firesteel {
             else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
 
             LOG_INFO("Loaded model at path \"" + tPath + "\"");
+            return true;
         }
 
         virtual void addMesh(const Mesh& tMesh) {
