@@ -92,7 +92,7 @@ namespace Firesteel {
         }
 
         bool hasModel() const { return model.meshes.size()!=0; }
-        virtual void removeModel() {
+        virtual void removeModel(const bool& tRemoveMaterials=false) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Removed entity's model");
 #endif // FS_PRINT_DEBUG_MSGS
@@ -100,7 +100,7 @@ namespace Firesteel {
                 model.meshes[i].remove();
             model.nodes.clear();
             model.meshes.clear();
-            model.materials.clear();
+            if(tRemoveMaterials) model.materials.clear();
         }
         virtual void remove() {
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -109,7 +109,7 @@ namespace Firesteel {
 #ifndef FS_NO_COMPONENTS
             for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
 #endif // !FS_NO_COMPONENTS
-            removeModel();
+            removeModel(true);
         }
         virtual bool load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
