@@ -1,5 +1,6 @@
 #ifndef FS_MESH_H
 #define FS_MESH_H
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <firesteel/transform.hpp>
@@ -34,15 +35,12 @@ namespace Firesteel {
                 }
             } else Shader::getDefaultShader()->bind();
             //Draw mesh.
-            glBindVertexArray(mVAO);
-            glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
-            glBindVertexArray(0);
-            //Always a good practice to set everything back to defaults once configured.
+            mDraw();
             Texture::unbind();
         }
         void remove() {
-            glDeleteVertexArrays(1, &mVAO);
             //Clear mesh data.
+            mRemove();
             vertices.clear();
             indices.clear();
         }
@@ -52,7 +50,15 @@ namespace Firesteel {
         std::vector<uint> indices;
         Material* material;
     protected:
-        // Render data.
+        virtual void mRemove() {
+            glDeleteVertexArrays(1, &mVAO);
+        }
+        virtual void mDraw() {
+            glBindVertexArray(mVAO);
+            glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+        }
+    private:
         uint mVAO;
     private:
         void makeMesh() {

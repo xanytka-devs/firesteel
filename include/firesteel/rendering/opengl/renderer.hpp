@@ -2,6 +2,7 @@
 #ifndef FS_OGL_RENDERER_H
 #define FS_OGL_RENDERER_H
 #include <firesteel/renderer.hpp>
+#include <firesteel/rendering/opengl/mesh.hpp>
 #if FS_CONTEXT_MAJOR > 2
 #include <backends/imgui_impl_opengl3.h>
 #else
@@ -65,12 +66,6 @@ namespace Firesteel {
         void setAlphaBlending(const bool& tVal) override {
             glBlendFunc(GL_SRC_ALPHA, tVal?GL_ONE_MINUS_SRC_ALPHA:GL_ONE);
         }
-        void setViewportSize(const int& tX, const int& tY) override {
-            glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
-        }
-        void setViewportSize(const glm::vec2& tSize) override {
-            setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
-        }
         void setDrawMode(const DrawMode& tDrawMode) override {
             switch (tDrawMode) {
             case DrawMode::DM_WIRE:
@@ -80,6 +75,39 @@ namespace Firesteel {
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 break;
             }
+        }
+        void setDepthTestType(const DepthTestType& tVal) override {
+            uint v=0;
+            switch (tVal) {
+            case DTT_LESS:
+                v=GL_LESS;
+                break;
+            case DTT_LEQUAL:
+                v=GL_LEQUAL;
+                break;
+            case DTT_EQUAL:
+                v=GL_EQUAL;
+                break;
+            case DTT_GEQUAL:
+                v=GL_GEQUAL;
+                break;
+            case DTT_GREATER:
+                v=GL_GREATER;
+                break;
+            case DTT_NOT_EQUAL:
+                v=GL_NOTEQUAL;
+                break;
+            default:
+                v=GL_ALWAYS;
+                break;
+            }
+            glDepthFunc(v);
+        }
+        void setViewportSize(const int& tX, const int& tY) override {
+            glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
+        }
+        void setViewportSize(const glm::vec2& tSize) override {
+            setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
         }
         void imguiInitialize(GLFWwindow* tWin) override {
             IMGUI_CHECKVERSION();
@@ -186,6 +214,9 @@ namespace Firesteel {
             case GL_DEBUG_SEVERITY_NOTIFICATION: LOG("Severity: notification"); break;
             }
             LOG("-----", "\n", CMD_F_RED);
+        }
+        std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial) override {
+            return std::make_unique<OGLMesh>(tVertices, tIndices, tMaterial);
         }
 	};
 
