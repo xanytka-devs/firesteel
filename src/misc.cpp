@@ -25,12 +25,14 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 #include <firesteel/utils/log.hpp>
 #include <fstream>
 #include <filesystem>
+#include <algorithm>
+#include <time.h>
 
 bool gInited=false;
 std::ofstream gLogStream;
 
 static const std::string currentDateTime(const char* tFormat) {
-	struct tm newtime;
+	/*struct tm newtime;
 	__time64_t long_time;
 	char timebuf[26];
 	errno_t err;
@@ -44,7 +46,11 @@ static const std::string currentDateTime(const char* tFormat) {
 		return "invalid";
 	}
 	strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
-	return timebuf;
+	return timebuf;*/
+	auto t = std::time(nullptr);
+    auto tm = *std::localtime(&t);
+
+    return std::put_time(&tm, tFormat)._M_fmt;
 }
 
 bool Log::sSaveLogs=true;

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include <memory>
 
 #ifdef _WIN32
 /* FONT COLORS */

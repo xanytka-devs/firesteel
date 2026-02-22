@@ -212,23 +212,9 @@ namespace Math {
         );
     }
 }
-namespace Random {
-    void setSeed(const unsigned int& tSeed=0) {
-        if(tSeed==0) {
-            __time64_t long_time;
-	        _time64(&long_time);
-	        srand(static_cast<unsigned int>(long_time));
-        } else srand(static_cast<unsigned int>(tSeed));
-    }
-    bool get() {return rand()%1;}
-    int get(const int& tMax=INT_MAX) {return rand()%tMax;}
-    float get(const float& tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
-    int get(const int& tMin=INT_MIN, const int& tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
-    float get(const float& tMin, const float& tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
-}
 namespace DateTime {
     static const std::string formatted(const char* tFormat="%d.%m.%Y %X") {
-        struct tm newtime;
+        /*struct tm newtime;
         __time64_t long_time;
         char timebuf[26];
         errno_t err;
@@ -241,7 +227,12 @@ namespace DateTime {
             return "invalid";
         }
         strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
-        return timebuf;
+        return timebuf;*/
+
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+
+        return std::put_time(&tm, tFormat)._M_fmt;
     }
 
     static const std::string day() {return formatted("%d");}
@@ -264,6 +255,18 @@ namespace DateTime {
     	void tick(double tDT) {time-=tDT;}
         bool isOver() const { return time <= 0; }
     };
+}
+namespace Random {
+    void setSeed(const unsigned int& tSeed=0) {
+        if(tSeed==0) {
+	        srand(static_cast<unsigned int>(std::hash<std::string>()(DateTime::formatted())));
+        } else srand(static_cast<unsigned int>(tSeed));
+    }
+    bool get() {return rand()%1;}
+    int get(const int& tMax=INT_MAX) {return rand()%tMax;}
+    float get(const float& tMax) {return static_cast<float>(rand())/static_cast<float>(RAND_MAX/tMax);}
+    int get(const int& tMin=INT_MIN, const int& tMax=INT_MAX) {return tMin+(rand()%(tMax-tMin));}
+    float get(const float& tMin, const float& tMax) {return tMin+static_cast<float>(rand())/static_cast<float>(RAND_MAX/(tMax-tMin));}
 }
 namespace OS {
     std::string executeInCmd(const char* cmd) {

@@ -1,7 +1,7 @@
 #ifndef STBI_GLOBAL_H
 #define STBI_GLOBAL_H
 
-#define __STDC_LIB_EXT1__
+//#define __STDC_LIB_EXT1__
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.hpp>
 #define STB_IMAGE_WRITE_IMPLEMENTATION

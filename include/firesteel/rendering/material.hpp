@@ -137,8 +137,8 @@ namespace Firesteel {
             fragmentPath=txt["shader"]["frag"];
             if(!txt["shader"]["geom"].is_null()) {
                 geometryPath=txt["shader"]["geom"];
-                setShader(std::make_shared<Shader>(vertexPath, fragmentPath, geometryPath));
-            } else setShader(std::make_shared<Shader>(vertexPath, fragmentPath));
+                setShader(vertexPath, fragmentPath, geometryPath);
+            } else setShader(vertexPath, fragmentPath);
             //Load parameters.
             if(!txt["param"].is_null() && mShader->loaded()) {
                 mShader->enable();

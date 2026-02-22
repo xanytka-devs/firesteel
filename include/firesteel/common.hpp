@@ -5,6 +5,7 @@
 */
 // GENERAL //
 #include <vector>
+#include <memory>
 #include "utils/log.hpp"
 // GLM //
 #include <glm/glm.hpp>
