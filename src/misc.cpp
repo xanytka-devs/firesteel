@@ -22,6 +22,7 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 
 
 
+#include <firesteel/utils/date_time.hpp>
 #include <firesteel/utils/log.hpp>
 #include <fstream>
 #include <filesystem>
@@ -30,29 +31,6 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 
 bool gInited=false;
 std::ofstream gLogStream;
-
-static const std::string currentDateTime(const char* tFormat) {
-#ifdef __linux__
-        auto t=std::time(nullptr);
-        auto tm=*std::localtime(&t);
-        return std::put_time(&tm, tFormat)._M_fmt;
-#else if(defined(_WIN32))
-        struct tm newtime;
-        __time64_t long_time;
-        char timebuf[26];
-        errno_t err;
-        // Get time as 64-bit integer.
-        _time64(&long_time);
-        // Convert to local time.
-        err=_localtime64_s(&newtime, &long_time);
-        if(err) {
-            LOG_WARN("formatted() was given invalid arguments");
-            return "invalid";
-        }
-        strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
-        return timebuf;
-#endif // !__LINUX__
-}
 
 bool Log::sSaveLogs=true;
 void Log::logToFile(const char* tMsg, const bool tAddTimestamp, const bool& tEndLine) {
@@ -65,7 +43,7 @@ void Log::logToFile(const char* tMsg, const bool tAddTimestamp, const bool& tEnd
 		gInited=true;
 	}
 	std::ostringstream logEntry;
-	if(tAddTimestamp) logEntry << currentDateTime("%X") + " ";
+	if(tAddTimestamp) logEntry << DateTime::formatted("%X") + " ";
 	logEntry << tMsg;
 	if(tEndLine) logEntry << std::endl;
 	gLogStream << logEntry.str();
@@ -79,7 +57,7 @@ void Log::destroyFileLogger() {
 		LOG_ERRR("Couldn't open 'latest.log'");
 		return;
 	}
-	std::string destFileName="logs/" + currentDateTime("%d-%m-%Y %X") + ".log";
+	std::string destFileName="logs/" + DateTime::formatted("%d-%m-%Y %X") + ".log";
 	std::replace(destFileName.begin(), destFileName.end(), ':', '.');
 	std::ofstream dest(destFileName, std::ios::trunc | std::ios::binary);
 	if (!dest.good()) {

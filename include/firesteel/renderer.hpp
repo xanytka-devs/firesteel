@@ -34,9 +34,7 @@ namespace Firesteel {
         virtual void setDepthTestType(const DepthTestType& tVal) { }
 
         virtual void setViewportSize(const int& tX, const int& tY) { }
-        void setViewportSize(const glm::vec2& tSize) {
-            setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
-        }
+        void setViewportSize(const glm::vec2& tSize) { setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y)); }
 
         virtual void imguiInitialize(GLFWwindow* tWin) { }
         virtual void imguiNewFrame() {}

@@ -4,7 +4,7 @@
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 [![Static Badge](https://img.shields.io/badge/chat-Telegram-orange?logo=telegram&logoColor=ccc)](https://t.me/xanytka)  
 # Firesteel
-Понятный, кроссплатформенный\* и полностью настраиваемый программный слой для создания игр и программ.
+Понятный, кроссплатформенный и полностью настраиваемый программный слой для создания игр и программ.
 
 ## Возможности создания игр
 Программный слой имеет лишь загрузчики контента, отрисовщик и математическую базу. Однако также имеется обширная библиотека [пакетов](https://xanytka.ru/p).

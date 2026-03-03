@@ -13,11 +13,7 @@
 
 namespace DateTime {
     static const std::string formatted(const char* tFormat="%d.%m.%Y %X") {      
-#ifdef __linux__
-        auto t=std::time(nullptr);
-        auto tm=*std::localtime(&t);
-        return std::put_time(&tm, tFormat)._M_fmt;
-#else if(defined(_WIN32))
+#ifdef _WIN32
         struct tm newtime;
         __time64_t long_time;
         char timebuf[26];
@@ -27,12 +23,16 @@ namespace DateTime {
         // Convert to local time.
         err=_localtime64_s(&newtime, &long_time);
         if(err) {
-            LOG_WARN("formatted() was given invalid arguments");
+            LOG_WARN("DateTime::formatted() was given invalid arguments");
             return "invalid";
         }
         strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
         return timebuf;
-#endif // !__LINUX__
+#else
+        auto t=std::time(nullptr);
+        auto tm=*std::localtime(&t);
+        return std::put_time(&tm, tFormat)._M_fmt;
+#endif // !_WIN32
     }
 
     static const std::string day() {return formatted("%d");}
