@@ -43,6 +43,7 @@ namespace Firesteel {
             const uint tWinWidth=800, const uint tWinHeight=600, const WindowState tWinState=WS_NORMAL) {
             LOG(std::string("Firesteel ") + FS_VERSION);
             LOG_STATE("STARTUP");
+            srand(static_cast<int>(glfwGetTime()/31);
             //Preinitialize.
 #if !defined(FS_NO_REG_TYPES) || !defined(FS_NO_COMPONENTS)
             auto* reg=TypeRegistry::sInstance();

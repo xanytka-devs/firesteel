@@ -32,25 +32,26 @@ bool gInited=false;
 std::ofstream gLogStream;
 
 static const std::string currentDateTime(const char* tFormat) {
-	/*struct tm newtime;
-	__time64_t long_time;
-	char timebuf[26];
-	errno_t err;
-
-	// Get time as 64-bit integer.
-	_time64(&long_time);
-	// Convert to local time.
-	err=_localtime64_s(&newtime, &long_time);
-	if (err) {
-		LOG_WARN("Invalid argument to _localtime64_s.");
-		return "invalid";
-	}
-	strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
-	return timebuf;*/
-	auto t = std::time(nullptr);
-    auto tm = *std::localtime(&t);
-
-    return std::put_time(&tm, tFormat)._M_fmt;
+#ifdef __linux__
+        auto t=std::time(nullptr);
+        auto tm=*std::localtime(&t);
+        return std::put_time(&tm, tFormat)._M_fmt;
+#else if(defined(_WIN32))
+        struct tm newtime;
+        __time64_t long_time;
+        char timebuf[26];
+        errno_t err;
+        // Get time as 64-bit integer.
+        _time64(&long_time);
+        // Convert to local time.
+        err=_localtime64_s(&newtime, &long_time);
+        if(err) {
+            LOG_WARN("formatted() was given invalid arguments");
+            return "invalid";
+        }
+        strftime(timebuf, sizeof(timebuf), tFormat, &newtime);
+        return timebuf;
+#endif // !__LINUX__
 }
 
 bool Log::sSaveLogs=true;

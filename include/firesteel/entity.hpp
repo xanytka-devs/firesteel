@@ -9,7 +9,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <firesteel/common.hpp>
-#include <firesteel/utils/utils.hpp>
+#include <firesteel/utils/string.hpp>
 #include <firesteel/rendering/mesh.hpp>
 #include <firesteel/rendering/shader.hpp>
 #include <firesteel/utils/stbi_global.hpp>
