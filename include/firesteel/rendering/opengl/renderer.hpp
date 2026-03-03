@@ -106,9 +106,6 @@ namespace Firesteel {
         void setViewportSize(const int& tX, const int& tY) override {
             glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
         }
-        void setViewportSize(const glm::vec2& tSize) override {
-            setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y));
-        }
         void imguiInitialize(GLFWwindow* tWin) override {
             IMGUI_CHECKVERSION();
             ImGui::CreateContext();

@@ -5,6 +5,8 @@
 */
 // GENERAL //
 #include <vector>
+#include <memory>
+#include <string>
 #include "utils/log.hpp"
 // GLM //
 #include <glm/glm.hpp>
@@ -13,7 +15,7 @@
 // RENDERING //
 #ifdef FS_RENDERER_OGL
 #include <glad/gl.h>
-#endif // FS_HEADLESS
+#endif // FS_RENDERER_OGL
 #ifdef WIN32
 #define GLFW_EXPOSE_NATIVE_WIN32
 #endif // WIN32

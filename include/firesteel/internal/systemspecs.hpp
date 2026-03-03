@@ -515,7 +515,7 @@ OSInfo getOSInfo() {
     //For Linux.
     struct utsname unameData;
     if (uname(&unameData) == 0) {
-        out.os=std::string(unameData.sysname);
+        out.name=std::string(unameData.sysname);
         out.version=std::string(unameData.release);
         out.architecture=std::string(unameData.machine);
     }

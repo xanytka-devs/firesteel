@@ -193,7 +193,7 @@ namespace Firesteel {
             glfwSetWindowPos(mPtr,tX,tY);
 #endif // !FS_HEADLESS
         }
-        glm::vec2& getPosition() {
+        glm::vec2 getPosition() {
             int x, y=0;
 #ifndef FS_HEADLESS
             glfwGetWindowPos(mPtr,&x,&y);
