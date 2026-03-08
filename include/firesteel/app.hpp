@@ -71,6 +71,7 @@ namespace Firesteel {
             if(!onRendererSelect()) return -2;
 #ifndef FS_NO_REG_DEFAULT_SHADER
             Shader::setDefaultShader(Embedded::defaultShaderVert,Embedded::defaultShaderFrag);
+            enviroment().renderer->setPrimitiveShader(Embedded::primitiveShaderVert,Embedded::primitiveShaderFrag);
 #endif // !FS_NO_REG_DEFAULT_SHADER
             //Final steps.
             CONFIG::checkGlobalFile();

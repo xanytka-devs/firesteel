@@ -41,10 +41,18 @@ namespace Firesteel {
         virtual void imguiRender(GLFWwindow* tWin) { }
         virtual void imguiShutdown() { }
 
-        virtual void drawPoint(const glm::vec2& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) { }
-        virtual void drawPoint(const glm::vec3& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) { }
-        virtual void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec3& tColor=glm::vec3(1)) { }
-        virtual void drawLine(const glm::vec3& tStartPos,const glm::vec3& tEndPos,const glm::vec3& tColor=glm::vec3(1)) {
+        virtual void setPrimitiveShader(const char* tVertexCode, const char* tFragmentCode) {
+            if(!tVertexCode||!tFragmentCode) return;
+            if(mPrimitiveShader) mPrimitiveShader->remove();
+            mPrimitiveShader=std::make_shared<Shader>(tVertexCode,tFragmentCode,false,nullptr);
+        }
+        virtual std::shared_ptr<Shader> getPrimitiveShader() {
+            return mPrimitiveShader;
+        }
+
+        virtual void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1)) { }
+        virtual void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1)) { }
+        virtual void drawLine(const glm::vec3& tStartPos,const glm::vec3& tEndPos,const glm::vec4& tColor=glm::vec4(1)) {
             drawLine({tStartPos,tEndPos},tColor);
         }
 
@@ -53,7 +61,7 @@ namespace Firesteel {
         }
     protected:
         bool mInitialized=false;
-        static std::shared_ptr<Shader> sPrimitiveShader;
+        std::shared_ptr<Shader> mPrimitiveShader;
 	};
 
 }

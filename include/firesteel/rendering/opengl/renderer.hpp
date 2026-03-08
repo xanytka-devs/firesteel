@@ -170,29 +170,43 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
         }
 
-        void drawPoint(const glm::vec2& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
-            glColor3f(tColor.r,tColor.g,tColor.b);
-            glPointSize(tSize);
-            glBegin(GL_POINTS);
-            glVertex2f(tPos.x,tPos.y);
-            glEnd();
+        void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1)) override {
+            uint VBO,VAO;
+            glGenVertexArrays(1,&VAO);
+            glGenBuffers(1,&VBO);
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER,VBO);
+            glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3),&tPos,GL_STATIC_DRAW);
+            glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(glm::vec3),(void*)0);
+            glEnableVertexAttribArray(0);
+
+            mPrimitiveShader->bind();
+            mPrimitiveShader->setVec4("color",tColor);
+
+            glDrawArrays(GL_POINTS,0,1);
             glFlush();
+
+            glDeleteBuffers(1,&VBO);
+            glDeleteVertexArrays(1,&VAO);
         }
-        void drawPoint(const glm::vec3& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
-            glColor3f(tColor.r,tColor.g,tColor.b);
-            glPointSize(tSize);
-            glBegin(GL_POINTS);
-            glVertex3f(tPos.x,tPos.y,tPos.z);
-            glEnd();
+        void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1)) override {
+            uint VBO,VAO;
+            glGenVertexArrays(1,&VAO);
+            glGenBuffers(1,&VBO);
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER,VBO);
+            glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3),tPosList.data(),GL_STATIC_DRAW);
+            glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(glm::vec3),(void*)0);
+            glEnableVertexAttribArray(0);
+
+            mPrimitiveShader->bind();
+            mPrimitiveShader->setVec4("color",tColor);
+
+            glDrawArrays(GL_LINES,0,tPosList.size());
             glFlush();
-        }
-        void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec3& tColor=glm::vec3(1)) override {
-            glColor3f(tColor.r,tColor.g,tColor.b);
-            glBegin(GL_LINES);
-            for(uint i=0;i<tPosList.size();i++)
-                glVertex3f(tPosList[i].x,tPosList[i].y,tPosList[i].z);
-            glEnd();
-            glFlush();
+
+            glDeleteBuffers(1,&VBO);
+            glDeleteVertexArrays(1,&VAO);
         }
         
     private:

@@ -15,8 +15,8 @@ layout(location = 0) in vec3 aPos;\n\
 layout(location = 2) in vec2 aUV;\n\
 out vec2 uv;\n\
 uniform mat4 model;\n\
-uniform mat4 view; \n\
-uniform mat4 projection; \n\
+uniform mat4 view;\n\
+uniform mat4 projection;\n\
 void main() {\n\
 	mat4 projView = projection * view;\n\
 	if(projView==mat4(0)) projView=mat4(1);\n\
@@ -40,6 +40,24 @@ void main() {\n\
 	vec3 col = inAColorSquare ? vec3(1.0, 0.25, 0.0) : vec3(0.0, 0.0, 0.0);\n\
 	frag_COLOR=vec4(col, 1.0);\n\
 	frag_COLOR1=vec4(0);\n\
+}\
+";
+        static const char* primitiveShaderVert = "\
+#version 330 core\n\
+layout(location = 0) in vec3 aPos;\n\
+out vec4 vert_COLOR;\n\
+uniform vec4 color;\n\
+void main() {\n\
+	vert_COLOR=color;\n\
+	gl_Position=vec4(aPos, 1.0);\n\
+}\
+";
+	    static const char* primitiveShaderFrag = "\
+#version 330 core\n\
+out vec4 frag_COLOR;\n\
+in vec4 vert_COLOR;\n\
+void main() {\n\
+	frag_COLOR=vert_COLOR;\n\
 }\
 ";
     }
