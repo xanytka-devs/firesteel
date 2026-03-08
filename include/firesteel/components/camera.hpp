@@ -27,7 +27,16 @@ namespace Firesteel {
             PROP("aspect",camera.aspect);
             PROP("isPerspective",camera.isPerspective);
         }
+        const char* name() const override { return "fs.camera"; }
 
+        glm::mat4 getView() const {return camera.getView();}
+        glm::mat4 getProjection(const float tClipSize=1) const {
+            return camera.getProjection(tClipSize);
+        }
+        void update() {camera.update();}
+        void lookAt(const glm::vec3& tTarget) {camera.lookAt(tTarget);}
+        void lookAt(const Transform& tTarget) {camera.lookAt(tTarget);}
+        
         Camera camera;
     };
 }
