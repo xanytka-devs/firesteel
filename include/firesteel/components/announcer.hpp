@@ -1,13 +1,13 @@
-#ifndef FS_COMP_ANNOUNCER
-#define FS_COMP_ANNOUNCER
+#ifndef FS_COMP_ANNOUNCER_H
+#define FS_COMP_ANNOUNCER_H
 
 #include <firesteel/utils/log.hpp>
 #include <firesteel/component.hpp>
 
 namespace Firesteel {
-	class Announcer : public Component {
+	class AnnouncerComponent : public Component {
 	public:
-		Announcer(std::shared_ptr<Entity> tEntity, const std::string& tVal="Hello World!")
+		AnnouncerComponent(std::shared_ptr<Entity> tEntity, const std::string& tVal="Hello World!")
 			: value(tVal), Component(tEntity) { }
 		void onUpdate() override {
 			LOG_INFO("fs.announcer: "+value);
@@ -22,4 +22,4 @@ namespace Firesteel {
 	};
 }
 
-#endif // !FS_COMP_ANNOUNCER
+#endif // !FS_COMP_ANNOUNCER_H

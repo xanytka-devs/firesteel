@@ -33,6 +33,12 @@ namespace Firesteel {
 		if(handler) mProperties.emplace_back(#name,&name,handler);\
 		else {LOGF_ERRR("No Type Handler for property \"%s\"",#name);}\
 	}
+#define PROP(name,val) \
+	{\
+		auto* handler=Firesteel::TypeRegistry::sInstance()->get<std::remove_reference_t<decltype(val)>>();\
+		if(handler) mProperties.emplace_back(name,&val,handler);\
+		else {LOGF_ERRR("No Type Handler for property \"%s\"",name);}\
+	}
 }
 #endif // !FS_PROPERTY
 #endif // !FS_NO_COMPONENTS

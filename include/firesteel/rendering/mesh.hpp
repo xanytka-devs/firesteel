@@ -126,6 +126,7 @@ namespace Firesteel {
         std::shared_ptr<Node> parent=nullptr;
         int index=-1;
     };
+//#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
     struct Model {
         Model(const std::string& tPath="") {
             materials.clear();
@@ -144,5 +145,6 @@ namespace Firesteel {
         std::vector<std::shared_ptr<Node>> nodes;
         std::vector<Mesh> meshes;
     };
+//#endif // FS_NO_COMPONENTS
 }
 #endif // !FS_MESH_H

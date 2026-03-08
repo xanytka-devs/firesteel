@@ -1,11 +1,15 @@
-#ifndef FS_COMP_PARTICLE_SYSTEM
-#define FS_COMP_PARTICLE_SYSTEM
+#ifndef FS_COMP_PARTICLE_SYSTEM_H
+#define FS_COMP_PARTICLE_SYSTEM_H
 #include <firesteel/common.hpp>
 #include <firesteel/component.hpp>
 #include <firesteel/entity.hpp>
 #include <firesteel/enviroment.hpp>
 #include <firesteel/utils/delta_time.hpp>
-#include <firesteel/utils/utils.hpp>
+#include <firesteel/utils/random.hpp>
+#include <firesteel/utils/math.hpp>
+#ifdef FS_COMPONENT_RENDERING
+#include <firesteel/components/model.hpp>
+#endif // FS_COMPONENT_RENDERING
 
 namespace Firesteel {
 	struct Particle {
@@ -19,10 +23,15 @@ namespace Firesteel {
 
 	// @brief Particle system depended on Entity.
 	// @warning This component is experimental. Use on your own risk.
-	class ParticleSystem : public Component {
+	class ParticleSystemComponent : public Component {
 	public:
-		ParticleSystem(std::shared_ptr<Entity> tEntity, unsigned int tMaxParticles=100)
-			: maxParticles(tMaxParticles), Component(tEntity) { }
+		ParticleSystemComponent(std::shared_ptr<Entity> tEntity,
+			const glm::vec4& tStartColor=glm::vec4(1), const glm::vec4& tEndColor=glm::vec4(0),
+			const glm::vec3& tParticleStartVelocity=glm::vec3(0,-1,0), const float& tParticleLifetime=1, const float& tParticleLifetimeRandom=0.f,
+			const uint& tMaxParticles=100)
+			: maxParticles(tMaxParticles), Component(tEntity),
+			startColor(tStartColor), endColor(tEndColor), particleStartVelocity(tParticleStartVelocity),
+			particleLifetime(tParticleLifetime), particleLifetimeRandom(tParticleLifetimeRandom) { }
 		void onStart() override {
 			mParticles.resize(maxParticles);
 			float particle_quad[] = {
@@ -31,6 +40,7 @@ namespace Firesteel {
 				 0.05f,  0.05f, 0.0f,
 				-0.05f,  0.05f, 0.0f
 			};
+			uint mVBO=0;
 			glGenVertexArrays(1,&mVAO);
 			glGenBuffers(1,&mVBO);
 			glBindVertexArray(mVAO);
@@ -39,52 +49,69 @@ namespace Firesteel {
 			glEnableVertexAttribArray(0);
 			glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float),(void*)0);
 			glBindVertexArray(0);
+			glDeleteBuffers(1, &mVBO);
 		}
 		void onUpdate() override {
 			float dt=DeltaTime::get();
-			for(unsigned int i=0;i<maxParticles;i++) {
+			for(uint i=0;i<maxParticles;i++) {
                 Particle& p=mParticles[i];
                 p.life-=dt;
+				float time=p.life/particleLifetime;
                 if(p.life>0.f) {
                     p.position+=p.velocity*dt;
-                    p.color.a-=dt*2.5f;
+                    p.color=Math::lerp(startColor,endColor,time);
                 } else respawn(p);
             }
 		}
 		void onDraw() override {
-			Enviroment::getRenderer()->setAlphaBlending(false);
-			Shader* shader=mEntity->model.materials[0].getShader().get();
+			//Enviroment::getRenderer()->setAlphaBlending(false);
+			Shader* shader=
+#ifdef FS_COMPONENT_RENDERING
+			mEntity->getComponent<ModelComponent>()->model.materials[0].getShader().get();
+#else
+			mEntity->model.materials[0].getShader().get();
+#endif
 			shader->enable();
 			glBindVertexArray(mVAO);
 			for(size_t i=0;i<mParticles.size();i++) {
 				if(mParticles[i].life<=0.0f) continue;
-				shader->setVec3("offset", mParticles[i].position-glm::vec3(mParticles[i].life));
+				shader->setVec3("offset", mParticles[i].position);
 				shader->setVec4("color", mParticles[i].color);
 				glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 			}
 			glBindVertexArray(0);
-			Enviroment::getRenderer()->setAlphaBlending(true);
+			//Enviroment::getRenderer()->setAlphaBlending(true);
 		}
 		void onRemove() override {
 			glDeleteVertexArrays(1, &mVAO);
-			glDeleteBuffers(1, &mVBO);
 		}
 
 		void properties() override {
 			PROPERTY(maxParticles);
+			PROPERTY(startColor);
+			PROPERTY(endColor);
+			PROPERTY(particleStartVelocity);
+			PROPERTY(particleLifetime);
+			PROPERTY(particleLifetimeRandom);
 		}
 		const char* name() const override { return "fs.particle_system"; }
+
+		glm::vec4 startColor;
+		glm::vec4 endColor;
+		glm::vec3 particleStartVelocity;
+		float particleLifetime;
+		float particleLifetimeRandom;
 	private:
 		std::vector<Particle> mParticles;
-		unsigned int mVAO=0, mVBO=0;
-		unsigned int maxParticles=100;
+		uint mVAO=0;
+		uint maxParticles;
 
 		void respawn(Particle& particle) const {
             particle.position=mEntity->transform.position;
-            particle.velocity=glm::vec3(10,0,0);
-            particle.color=glm::vec4(Random::get(1.f),Random::get(1.f),Random::get(1.f), 1.0f);
-            particle.life=1+Random::get(1.f);
+            particle.velocity=particleStartVelocity;
+            particle.color=startColor;
+            particle.life=particleLifetime+(particleLifetimeRandom>=0.f?Random::get(particleLifetimeRandom):0);
         }
 	};
 }
-#endif // !FS_COMP_PARTICLE_SYSTEM
+#endif // !FS_COMP_PARTICLE_SYSTEM_H

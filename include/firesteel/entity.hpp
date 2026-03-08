@@ -13,6 +13,10 @@
 #include <firesteel/rendering/mesh.hpp>
 #include <firesteel/rendering/shader.hpp>
 #include <firesteel/utils/stbi_global.hpp>
+#ifndef FS_NO_COMPONENTS
+#include <firesteel/component.hpp>
+#endif // !FS_NO_COMPONENTS
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
 #ifdef FS_LOADER_OBJ
 #include <firesteel/loaders/obj.hpp>
 #endif // FS_LOADER_OBJ
@@ -22,19 +26,22 @@
 #ifdef FS_LOADER_FBX
 #include <firesteel/loaders/fbx.hpp>
 #endif // FS_LOADER_FBX
-#ifndef FS_NO_COMPONENTS
-#include <firesteel/component.hpp>
-#endif // !FS_NO_COMPONENTS
+#endif
 
 namespace Firesteel {
     class Entity {
     public:
         Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
             : transform(Transform(tPos, tRot, tSize)) { }
-        Entity(const std::string& tPath,
+        Entity(
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
+            const std::string& tPath,
+#endif
             const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
                 : transform(Transform(tPos, tRot, tSize)) {
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
             load(tPath);
+#endif // FS_NO_COMPONENTS
         }
 
         // Sends update callback to all components.
@@ -50,10 +57,13 @@ namespace Firesteel {
             if(!enabled) return;
             for(uint i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
 #endif // !FS_NO_COMPONENTS
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
             if(!hasModel()) return;
             for(uint n=0;n<model.nodes.size();n++)
                 drawNode(model.nodes[n], transform.getMatrix());
+#endif
         }
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
         // Renders only the given node tree with given material or default shader and parent matrix.
         virtual void drawNode(const std::shared_ptr<Node>& tNode, const glm::mat4& tParentModel, const bool& tOverrideMaterial=false) {
             if(!hasModel()) return;
@@ -101,15 +111,6 @@ namespace Firesteel {
             model.nodes.clear();
             model.meshes.clear();
             if(tRemoveMaterials) model.materials.clear();
-        }
-        virtual void remove() {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Removed entity");
-#endif // FS_PRINT_DEBUG_MSGS
-#ifndef FS_NO_COMPONENTS
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
-#endif // !FS_NO_COMPONENTS
-            removeModel(true);
         }
         virtual bool load(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
@@ -161,6 +162,17 @@ namespace Firesteel {
             node->name = "Node_" + std::to_string(model.nodes.size());
             node->index = static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
+        }
+#endif // FS_NO_COMPONENTS
+        virtual void remove() {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOG_DBG("Removed entity");
+#endif // FS_PRINT_DEBUG_MSGS
+#ifndef FS_NO_COMPONENTS
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
+#else
+            removeModel(true);
+#endif // !FS_NO_COMPONENTS
         }
 #ifndef FS_NO_COMPONENTS
         template<typename T, typename... Args>
@@ -252,11 +264,13 @@ namespace Firesteel {
 #endif // !FS_NO_JSON && !FS_NO_COMPONENTS
 
         Transform transform;
-        Model model;
 #ifndef FS_NO_SCENES
         std::string name;
         bool enabled;
 #endif // !FS_NO_SCENES
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
+        Model model;
+#endif
 #ifndef FS_NO_COMPONENTS
     private:
         std::vector<std::shared_ptr<Component>> mComponents;

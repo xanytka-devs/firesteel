@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <windows.h>

@@ -12,15 +12,24 @@ namespace Firesteel {
         static bool sAllowDevView;
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
-            std::string firesteelConfigFile="";
             bool canGetSystemInfo=true;
-#if defined(_WIN32) && !defined(FS_NO_JSON)
+#ifndef FS_NO_JSON
+            std::string firesteelConfigFile="";
+#ifdef _WIN32
             char* buf=nullptr;
             size_t sz=0;
             if(_dupenv_s(&buf, &sz, "APPDATA") == 0 && buf != nullptr) {
-                firesteelConfigFile=std::string(buf) + "\\firesteel\\global.cfg.json";
+                firesteelConfigFile=std::string(buf)+"\\firesteel\\global.cfg.json";
                 free(buf);
             }
+#else
+            const char* cfgHome=std::getenv("XDG_CONFIG_HOME");
+            if(cfgHome) firesteelConfigFile=std::string(cfgHome)+"\\firesteel\\global.cfg.json";
+            else {
+                cfgHome=std::getenv("HOME");
+                if(home) firesteelConfigFile=std::string(cfgHome)+"\\firesteel\\global.cfg.json";
+            }
+#endif
             if(std::filesystem::exists(firesteelConfigFile)) {
                 LOG_INFO("Found global Firesteel config. Retrieving...");
                 std::ifstream ifs(firesteelConfigFile);

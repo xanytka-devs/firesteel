@@ -3,7 +3,7 @@
 #include <glm/ext/matrix_transform.hpp>
 
 #include <firesteel/common.hpp>
-#include <firesteel/utils/utils.hpp>
+#include <firesteel/utils/random.hpp>
 #include <firesteel/rendering/shader.hpp>
 
 namespace Firesteel {
