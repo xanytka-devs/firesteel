@@ -31,7 +31,9 @@ namespace Firesteel {
 			const uint& tMaxParticles=100)
 			: maxParticles(tMaxParticles), Component(tEntity),
 			startColor(tStartColor), endColor(tEndColor), particleStartVelocity(tParticleStartVelocity),
-			particleLifetime(tParticleLifetime), particleLifetimeRandom(tParticleLifetimeRandom) { }
+			particleLifetime(tParticleLifetime), particleLifetimeRandom(tParticleLifetimeRandom) {
+				mParticles.resize(tMaxParticles);
+			}
 		void onStart() override {
 			mParticles.resize(maxParticles);
 			float particle_quad[] = {
@@ -66,11 +68,13 @@ namespace Firesteel {
 		void onDraw() override {
 			//Enviroment::getRenderer()->setAlphaBlending(false);
 			Shader* shader=
+				mEntity->model.materials.size()!=0?
 #ifdef FS_COMPONENT_RENDERING
-			mEntity->getComponent<ModelComponent>()->model.materials[0].getShader().get();
+				mEntity->getComponent<ModelComponent>()->model.materials[0].getShader().get():
 #else
-			mEntity->model.materials[0].getShader().get();
+				mEntity->model.materials[0].getShader().get():
 #endif
+				Shader::getDefaultShader().get();
 			shader->enable();
 			glBindVertexArray(mVAO);
 			for(size_t i=0;i<mParticles.size();i++) {
