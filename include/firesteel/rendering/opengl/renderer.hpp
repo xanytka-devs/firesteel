@@ -171,24 +171,20 @@ namespace Firesteel {
         }
 
         void drawPoint(const glm::vec2& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
-            glEnable(GL_POINT_SIZE);
             glColor3f(tColor.r,tColor.g,tColor.b);
             glPointSize(tSize);
             glBegin(GL_POINTS);
             glVertex2f(tPos.x,tPos.y);
             glEnd();
             glFlush();
-            glDisable(GL_POINT_SIZE);
         }
         void drawPoint(const glm::vec3& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
-            glEnable(GL_POINT_SIZE);
             glColor3f(tColor.r,tColor.g,tColor.b);
             glPointSize(tSize);
             glBegin(GL_POINTS);
             glVertex3f(tPos.x,tPos.y,tPos.z);
             glEnd();
             glFlush();
-            glDisable(GL_POINT_SIZE);
         }
         void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec3& tColor=glm::vec3(1)) override {
             glColor3f(tColor.r,tColor.g,tColor.b);
