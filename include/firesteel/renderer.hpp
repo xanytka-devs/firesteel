@@ -41,11 +41,19 @@ namespace Firesteel {
         virtual void imguiRender(GLFWwindow* tWin) { }
         virtual void imguiShutdown() { }
 
+        virtual void drawPoint(const glm::vec2& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) { }
+        virtual void drawPoint(const glm::vec3& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) { }
+        virtual void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec3& tColor=glm::vec3(1)) { }
+        virtual void drawLine(const glm::vec3& tStartPos,const glm::vec3& tEndPos,const glm::vec3& tColor=glm::vec3(1)) {
+            drawLine({tStartPos,tEndPos},tColor);
+        }
+
         virtual std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial) {
             return std::make_unique<Mesh>(tVertices,tIndices,tMaterial);
         }
     protected:
         bool mInitialized=false;
+        static std::shared_ptr<Shader> sPrimitiveShader;
 	};
 
 }

@@ -169,6 +169,36 @@ namespace Firesteel {
             LOG_DBG("Shutdown ImGui");
 #endif // FS_PRINT_DEBUG_MSGS
         }
+
+        void drawPoint(const glm::vec2& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
+            glEnable(GL_POINT_SIZE);
+            glColor3f(tColor.r,tColor.g,tColor.b);
+            glPointSize(tSize);
+            glBegin(GL_POINTS);
+            glVertex2f(tPos.x,tPos.y);
+            glEnd();
+            glFlush();
+            glDisable(GL_POINT_SIZE);
+        }
+        void drawPoint(const glm::vec3& tPos,const glm::vec3& tColor=glm::vec3(1),const float& tSize=10.f) override {
+            glEnable(GL_POINT_SIZE);
+            glColor3f(tColor.r,tColor.g,tColor.b);
+            glPointSize(tSize);
+            glBegin(GL_POINTS);
+            glVertex3f(tPos.x,tPos.y,tPos.z);
+            glEnd();
+            glFlush();
+            glDisable(GL_POINT_SIZE);
+        }
+        void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec3& tColor=glm::vec3(1)) override {
+            glColor3f(tColor.r,tColor.g,tColor.b);
+            glBegin(GL_LINES);
+            for(uint i=0;i<tPosList.size();i++)
+                glVertex3f(tPosList[i].x,tPosList[i].y,tPosList[i].z);
+            glEnd();
+            glFlush();
+        }
+        
     private:
         static void APIENTRY glDebugOutput(GLenum tSource,
             GLenum tType,
