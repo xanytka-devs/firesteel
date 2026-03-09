@@ -76,6 +76,25 @@ namespace Firesteel {
                 break;
             }
         }
+        void setCullFace(const CullFaceType& tCullFace) override {
+            switch (tCullFace) {
+            case CFT_BACK:
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_BACK);
+                break;
+            case CFT_FRONT_AND_BACK:
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_FRONT_AND_BACK);
+                break;
+            case CFT_FRONT:
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_FRONT);
+                break;
+            default:
+                glDisable(GL_CULL_FACE);
+                break;
+            }
+        }
         void setDepthTestType(const DepthTestType& tVal) override {
             uint v=0;
             switch (tVal) {

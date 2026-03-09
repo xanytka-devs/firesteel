@@ -21,6 +21,12 @@ namespace Firesteel {
             DTT_NOT_EQUAL=5,
             DTT_ALWAYS=6
         };
+        enum CullFaceType {
+            CFT_DISABLED=0,
+            CFT_BACK=1,
+            CFT_FRONT=2,
+            CFT_FRONT_AND_BACK=3
+        };
         Renderer() { }
 		virtual bool initialize() { return true; }
         virtual void initializeParams() { }
@@ -30,7 +36,8 @@ namespace Firesteel {
         virtual void clearBuffers(const glm::vec3& tColor) { }
 
         virtual void setAlphaBlending(const bool& tVal) { }
-        virtual void setDrawMode(const DrawMode& tDrawMode) {}
+        virtual void setDrawMode(const DrawMode& tDrawMode) { }
+        virtual void setCullFace(const CullFaceType& tCullFace) { }
         virtual void setDepthTestType(const DepthTestType& tVal) { }
 
         virtual void setViewportSize(const int& tX, const int& tY) { }
