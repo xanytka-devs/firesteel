@@ -122,6 +122,36 @@ namespace Firesteel {
             }
             glDepthFunc(v);
         }
+        bool getAlphaBlending() override {
+            unsigned char v=0;
+            glGetBooleanv(GL_BLEND,&v);
+            return v!=0;
+        }
+        DrawMode getDrawMode() override {
+            int v=0;
+            glGetIntegerv(GL_POLYGON_MODE,&v);
+            if(v==0) return DM_FILL;
+            return DM_WIRE;
+        }
+        CullFaceType getCullFace() override {
+            int v=0;
+            glGetIntegerv(GL_CULL_FACE_MODE,&v);
+            if(v==0) return CFT_DISABLED;
+            else if(v==1) return CFT_BACK;
+            else if(v==2) return CFT_FRONT_AND_BACK;
+            return CFT_FRONT;
+        }
+        DepthTestType getDepthTestType() override {
+            int v=0;
+            glGetIntegerv(GL_DEPTH_FUNC,&v);
+            if(v==0) return DTT_LESS;
+            else if(v==1) return DTT_LEQUAL;
+            else if(v==2) return DTT_EQUAL;
+            else if(v==3) return DTT_GEQUAL;
+            else if(v==4) return DTT_GREATER;
+            else if(v==5) return DTT_NOT_EQUAL;
+            return DTT_ALWAYS;
+        }
         void setViewportSize(const int& tX, const int& tY) override {
             glViewport(0, 0, static_cast<GLsizei>(tX), static_cast<GLsizei>(tY));
         }

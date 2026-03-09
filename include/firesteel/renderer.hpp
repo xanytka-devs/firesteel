@@ -40,6 +40,11 @@ namespace Firesteel {
         virtual void setCullFace(const CullFaceType& tCullFace) { }
         virtual void setDepthTestType(const DepthTestType& tVal) { }
 
+        virtual bool getAlphaBlending() { return false; }
+        virtual DrawMode getDrawMode() { return DM_FILL; }
+        virtual CullFaceType getCullFace() { return CFT_BACK; }
+        virtual DepthTestType getDepthTestType() { return DTT_LESS; }
+
         virtual void setViewportSize(const int& tX, const int& tY) { }
         void setViewportSize(const glm::vec2& tSize) { setViewportSize(static_cast<int>(tSize.x), static_cast<int>(tSize.y)); }
 
