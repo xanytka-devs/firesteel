@@ -38,7 +38,7 @@
 #define CASTF(...) static_cast<float>(__VA_ARGS__)
 #define IFEX if constexpr
 #define SAMETYPE(type,base) std::is_same<type,base>::value
-#define BASEDONTYPE(type,base) std::is_base_of<type,base>::value
+#define BASEDONTYPE(type,base) std::is_base_of<base,type>::value
 typedef unsigned int uint;
 
 #endif // !FS_COMMON_H
