@@ -189,7 +189,7 @@ namespace Firesteel {
         }
         template<typename T>
         T* getComponent(const uint& tIdx=0) {
-            std::string v=T().name();
+            std::string v=T(nullptr).name();
             T* c=nullptr;
             uint ix=0;
             for(uint i=0;i<mComponents.size();i++) {
