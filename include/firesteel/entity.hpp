@@ -188,21 +188,29 @@ namespace Firesteel {
             mComponents[mComponents.size()-1]->onStart();
         }
         template<typename T>
-        std::shared_ptr<T> getComponent(const uint& tIdx=0) {
-            std::shared_ptr<T> comp=nullptr;
-            uint iter=0;
-            for(uint i=0;i<mComponents.size();i++)
-                if(typeid(*mComponents[i])==typeid(T)) {
-                    comp=mComponents[i];
-                    iter++;
-                    if(iter>tIdx) break;
+        T* getComponent(const uint& tIdx=0) {
+            std::string v=T().name();
+            T* c=nullptr;
+            uint ix=0;
+            for(uint i=0;i<mComponents.size();i++) {
+                if(mComponents[i]->name()==v) {
+                    c=dynamic_cast<T*>(mComponents[i].get());
+                    if(ix==tIdx) break;
+                    ix++;
                 }
-            return comp;
+            }
+            return c;
         }
         template<typename T>
         bool hasComponent() {
+            std::string v=T().name();
             for(uint i=0;i<mComponents.size();i++)
-                if(typeid(*mComponents[i])==typeid(T)) return true;
+                if(mComponents[i]->name()==v) return true;
+            return false;
+        }
+        bool hasComponent(const std::string& tName) {
+            for(uint i=0;i<mComponents.size();i++)
+                if(mComponents[i]->name()==tName) return true;
             return false;
         }
         bool hasComponent(const char* tName) {
