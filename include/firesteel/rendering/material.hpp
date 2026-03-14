@@ -1,16 +1,12 @@
 #ifndef FS_MATERIAL
 #define FS_MATERIAL
 
-#include <variant>
-
 #include <firesteel/common.hpp>
 #include <firesteel/rendering/shader.hpp>
 #include <firesteel/rendering/texture.hpp>
 #ifndef FS_NO_JSON
 #include <firesteel/utils/json.hpp>
 #endif // !FS_NO_JSON
-
-#define SAMETYPE(type, base) std::is_same_v<type,base>
 
 namespace Firesteel {
     //All available shader parameter types.
