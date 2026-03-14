@@ -203,7 +203,7 @@ namespace Firesteel {
         }
         template<typename T>
         bool hasComponent() {
-            std::string v=T().name();
+            std::string v=T(nullptr).name();
             for(uint i=0;i<mComponents.size();i++)
                 if(mComponents[i]->name()==v) return true;
             return false;
@@ -220,15 +220,22 @@ namespace Firesteel {
         }
         template<typename T>
         bool removeComponent(const uint& tIdx=0) {
-            uint iter=0;
-            for(uint i=0;i<mComponents.size();i++)
-                if(typeid(*mComponents[i])==typeid(T)) {
-                    iter++;
-                    if(iter>tIdx) {
-                        mComponents.erase(mComponents.begin() + i);
-                        return true;
-                    }
+            std::string v=T(nullptr).name();
+            T* c=nullptr;
+            uint ix=0;
+            uint iz=0;
+            for(uint i=0;i<mComponents.size();i++) {
+                if(mComponents[i]->name()==v) {
+                    c=dynamic_cast<T*>(mComponents[i].get());
+                    if(ix==tIdx) break;
+                    ix++;
                 }
+                iz++;
+            }
+            if(c) {
+                mComponents.erase(mComponents.begin()+(iz+ix));
+                return true;
+            }
             return false;
         }
         bool removeComponent(const uint& tIdx=0) {
