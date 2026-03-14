@@ -12,6 +12,7 @@ namespace Firesteel {
             const float& tNearPlane=0.1f, const float& tFarPlane=100.f,
             const float& tFov=45.0f, const float& tAspect=0.5f, const bool& tIsPerspective=true)
             : Component(tEntity) {
+                if(tEntity==nullptr) return;
                 camera=Camera{tEntity->transform.position,tEntity->transform.rotation};
                 camera.nearPlane=tNearPlane;
                 camera.farPlane=tFarPlane;
