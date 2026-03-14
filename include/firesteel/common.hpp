@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include <variant>
+#include <type_traits>
 #include "utils/log.hpp"
 // GLM //
 #include <glm/glm.hpp>
@@ -37,7 +37,8 @@
 // DEFENITIONS //
 #define CASTF(...) static_cast<float>(__VA_ARGS__)
 #define IFEX if constexpr
-#define SAMETYPE(type, base) std::is_same_v<type,base>
+#define SAMETYPE(type,base) std::is_same<type,base>::value
+#define BASEDONTYPE(type,base) std::is_base_of<type,base>::value
 typedef unsigned int uint;
 
 #endif // !FS_COMMON_H

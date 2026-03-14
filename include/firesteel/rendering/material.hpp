@@ -1,6 +1,8 @@
 #ifndef FS_MATERIAL
 #define FS_MATERIAL
 
+#include <variant>
+
 #include <firesteel/common.hpp>
 #include <firesteel/rendering/shader.hpp>
 #include <firesteel/rendering/texture.hpp>
