@@ -57,7 +57,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll")
 			message(CHECK_START "Downloading freetype.dll")
 			file(DOWNLOAD
-				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.dll"
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/x64/freetype.dll"
 				"${CMAKE_CURRENT_SOURCE_DIR}/build/${FS_BIN_ADDITIONAL}freetype.dll"
 			)
 			#Fallback to Xanytka Website.
@@ -79,7 +79,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 		if(FS_ONLINE AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib")
 			message(CHECK_START "Downloading freetype.lib")
 			file(DOWNLOAD
-				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/win64/freetype.lib"
+				"https://github.com/ubawurinna/freetype-windows-binaries/raw/refs/heads/master/release%20dll/x64/freetype.lib"
 				"${CMAKE_CURRENT_SOURCE_DIR}/build/engine/freetype/freetype.lib"
 			)
 			#Fallback to Xanytka Website.

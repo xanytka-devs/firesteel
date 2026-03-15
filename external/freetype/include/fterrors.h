@@ -4,7 +4,7 @@
  *
  *   FreeType error code handling (specification).
  *
- * Copyright (C) 1996-2024 by
+ * Copyright (C) 1996-2025 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -124,7 +124,7 @@
 
 
   /* include module base error codes */
-#include "../external/freetype/include/ftmoderr.h"
+#include <freetype/ftmoderr.h>
 
 
   /*******************************************************************/
@@ -197,7 +197,7 @@
 
 
   /* now include the error codes */
-#include "../external/freetype/include/fterrdef.h"
+#include <freetype/fterrdef.h>
 
 
 #ifdef FT_ERROR_END_LIST

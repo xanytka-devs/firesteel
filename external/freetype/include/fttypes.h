@@ -4,7 +4,7 @@
  *
  *   FreeType simple types definitions (specification only).
  *
- * Copyright (C) 1996-2024 by
+ * Copyright (C) 1996-2025 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -20,10 +20,10 @@
 #define FTTYPES_H_
 
 
-#include "../ft2build.h"
+#include <ft2build.h>
 #include FT_CONFIG_CONFIG_H
-#include "../external/freetype/include/ftsystem.h"
-#include "../external/freetype/include/ftimage.h"
+#include <freetype/ftsystem.h>
+#include <freetype/ftimage.h>
 
 #include <stddef.h>
 
