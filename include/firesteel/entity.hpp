@@ -138,13 +138,25 @@ namespace Firesteel {
             return true;
         }
 
-        virtual void addMesh(const Mesh& tMesh) {
+        virtual void emplaceMesh(const Mesh& tMesh) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             ASSERT(tMesh.material,"There must be a material assigned to new mesh");
             model.meshes.emplace_back(tMesh);
+            std::shared_ptr<Node> node = std::make_shared<Node>();
+            node->name="Node_"+std::to_string(model.nodes.size());
+            node->index=static_cast<int>(model.nodes.size());
+            model.nodes.emplace_back(node);
+        }
+        virtual void pushMesh(const Mesh& tMesh) {
+#ifdef FS_PRINT_DEBUG_MSGS
+            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
+                tMesh.vertices.size(), tMesh.indices.size());
+#endif // FS_PRINT_DEBUG_MSGS
+            ASSERT(tMesh.material,"There must be a material assigned to new mesh");
+            model.meshes.push_back(tMesh);
             std::shared_ptr<Node> node = std::make_shared<Node>();
             node->name="Node_"+std::to_string(model.nodes.size());
             node->index=static_cast<int>(model.nodes.size());
