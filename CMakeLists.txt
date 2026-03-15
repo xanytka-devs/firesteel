@@ -200,7 +200,7 @@ if(NOT FS_DISABLE_SUBMODULES)
 	endif()
 	
 	if(FS_INCLUDE_FT)
-		target_include_directories(${PRJ_NAME} PRIVATE "external\\freetype\\include" "external\\freetype\\")
+		target_include_directories(${PRJ_NAME} PUBLIC external/freetype/include)
 		target_link_libraries(${PRJ_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}\\build\\engine\\freetype\\freetype.lib")
 	endif()
 	
