@@ -22,6 +22,7 @@ namespace Firesteel {
 
     struct Mesh {
     public:
+        Mesh() {}
         Mesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial)
             : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
@@ -51,10 +52,12 @@ namespace Firesteel {
         Material* material;
     protected:
         virtual void mRemove() {
-            glDeleteVertexArrays(1, &mVAO);
+            if(mVAO==0) return;
+            glDeleteVertexArrays(1, &mVAO-1);
         }
         virtual void mDraw() {
-            glBindVertexArray(mVAO);
+            if(mVAO==0) return;
+            glBindVertexArray(mVAO-1);
             glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
         }
@@ -101,6 +104,7 @@ namespace Firesteel {
             //Delete unnecessary buffers (they've been copied to VAO).
             glDeleteBuffers(1, &mEBO);
             glDeleteBuffers(1, &mVBO);
+            mVAO+=1;
         }
     };
     struct Node {
