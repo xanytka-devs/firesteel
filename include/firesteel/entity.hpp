@@ -76,9 +76,11 @@ namespace Firesteel {
         void replaceMaterials(Material* tMaterial, const bool& tReplaceAll=false) {
             if(!hasModel()) {
                 LOG_WARN("Failed to replace material for a entity without model "
-#ifndef FS_NO_SCENES
+#endif
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)&&!defined(FS_NO_SCENES)
                     +name
 #endif // !FS_NO_SCENES
+#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
                 );
                 return;
             }
