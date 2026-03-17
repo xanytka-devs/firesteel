@@ -75,13 +75,11 @@ namespace Firesteel {
         }
         void replaceMaterials(Material* tMaterial, const bool& tReplaceAll=false) {
             if(!hasModel()) {
-                LOG_WARN("Failed to replace material for a entity without model "
-#endif
-#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)&&!defined(FS_NO_SCENES)
-                    +name
+#ifndef FS_NO_SCENES
+                LOG_WARN("Failed to replace material: No model entity \""+name+"\"");
+#else
+                LOG_WARN("Failed to replace material: No model entity");
 #endif // !FS_NO_SCENES
-#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
-                );
                 return;
             }
             for(uint m=0;m<model.meshes.size();m++)
