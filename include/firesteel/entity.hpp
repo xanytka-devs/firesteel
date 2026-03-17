@@ -94,8 +94,10 @@ namespace Firesteel {
         // Replaces all materials with given one.
         void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
             if(!hasModel()) return;
-            for(uint m = 0; m < model.materials.size(); m++)
-                if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m]=*tMaterial;
+            if(!tReplaceAll) {
+                for(uint m=0;m<model.materials.size();m++)
+                    if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()) model.materials[m]=*tMaterial;
+            } else for(uint m=0;m<model.materials.size();m++) model.materials[m]=*tMaterial;
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity material");
 #endif // FS_PRINT_DEBUG_MSGS
