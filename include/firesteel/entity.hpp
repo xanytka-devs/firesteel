@@ -73,6 +73,18 @@ namespace Firesteel {
             for(uint n=0;n<tNode->children.size();n++)
                 drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
         }
+        void replaceMaterials(Material* tMaterial, const bool& tReplaceAll=false) {
+            if(!hasModel()) {
+                LOG_WARN("Failed to replace material for a entity without model "
+#ifndef FS_NO_SCENES
+                    +name
+#endif // !FS_NO_SCENES
+                );
+                return;
+            }
+            for(uint m=0;m<model.meshes.size();m++)
+                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=tMaterial;
+        }
         // Replaces materials with default shader with given shader.
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
             if(!hasModel()) return;
@@ -146,7 +158,7 @@ namespace Firesteel {
                 tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.emplace_back(tMesh);
-            std::shared_ptr<Node> node = std::make_shared<Node>();
+            std::shared_ptr<Node> node=std::make_shared<Node>();
             node->name="Node_"+std::to_string(model.nodes.size());
             node->index=static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
@@ -157,7 +169,7 @@ namespace Firesteel {
                 tMesh.vertices.size(), tMesh.indices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.push_back(tMesh);
-            std::shared_ptr<Node> node = std::make_shared<Node>();
+            std::shared_ptr<Node> node=std::make_shared<Node>();
             node->name="Node_"+std::to_string(model.nodes.size());
             node->index=static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
@@ -169,9 +181,9 @@ namespace Firesteel {
                 tVertices.size(), tIndices.size());
 #endif // FS_PRINT_DEBUG_MSGS
             model.meshes.emplace_back(tVertices,tIndices,tMaterial);
-            std::shared_ptr<Node> node = std::make_shared<Node>();
-            node->name = "Node_" + std::to_string(model.nodes.size());
-            node->index = static_cast<int>(model.nodes.size());
+            std::shared_ptr<Node> node=std::make_shared<Node>();
+            node->name="Node_"+std::to_string(model.nodes.size());
+            node->index=static_cast<int>(model.nodes.size());
             model.nodes.emplace_back(node);
         }
 #endif // FS_NO_COMPONENTS
