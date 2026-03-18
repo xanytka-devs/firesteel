@@ -241,24 +241,37 @@ namespace ImGui {
 
     void AlignedText(const TextAligment& tAlig, const std::string& tText) {
         switch (tAlig) {
-        case TextAligment_Right:
+        case TextAligment_Center:
             ImGui::SetCursorPosX((ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x)*0.5f);
             break;
-        case TextAligment_Center:
-            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(tText.c_str()).x);
+        case TextAligment_Right:
+            ImGui::SetCursorPosX(ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x);
             break;
         default:
             break;
         }
 		ImGui::Text(tText.c_str());
     }
-    void AlignedTextColored(const TextAligment& tAlig, const ImVec4 tColor, const std::string& tText) {
+    void AlignedTextLinkOpenURL(const TextAligment& tAlig, const std::string& tText, const std::string& tUrl) {
         switch (tAlig) {
-        case TextAligment_Right:
+        case TextAligment_Center:
             ImGui::SetCursorPosX((ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x)*0.5f);
             break;
+        case TextAligment_Right:
+            ImGui::SetCursorPosX(ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x);
+            break;
+        default:
+            break;
+        }
+		ImGui::TextLinkOpenURL(tText.c_str(),tUrl.c_str());
+    }
+    void AlignedTextColored(const TextAligment& tAlig, const ImVec4 tColor, const std::string& tText) {
+        switch (tAlig) {
         case TextAligment_Center:
-            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(tText.c_str()).x);
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x)*0.5f);
+            break;
+        case TextAligment_Right:
+            ImGui::SetCursorPosX(ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x);
             break;
         default:
             break;
