@@ -133,6 +133,7 @@ namespace Firesteel {
             stbi_image_free(images[0].pixels);
 #endif // !FS_HEADLESS
         }
+        glm::vec3 getClearColor() { return mClearColor; }
         void setClearColor(const glm::vec3& tColor) { mClearColor=tColor; }
 
         void setVSync(const bool& tVSync) {
