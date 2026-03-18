@@ -35,6 +35,33 @@ namespace ImGui {
         return b;
     }
 
+    static bool ColorPicker3(const char* tName, glm::vec3* tColor, ImGuiColorEditFlags tFlags=ImGuiColorEditFlags_None) {
+        vec3[0]=tColor->r;
+        vec3[1]=tColor->g;
+        vec3[2]=tColor->b;
+        bool b=ImGui::ColorPicker3(tName,vec3,tFlags);
+        if(b) {
+            tColor->x=vec3[0];
+            tColor->y=vec3[1];
+            tColor->z=vec3[2];
+        }
+        return b;
+    }
+    static bool ColorPicker4(const char* tName, glm::vec4* tColor, ImGuiColorEditFlags tFlags=ImGuiColorEditFlags_None) {
+        vec4[0]=tColor->r;
+        vec4[1]=tColor->g;
+        vec4[2]=tColor->b;
+        vec4[3]=tColor->a;
+        bool b=ImGui::ColorPicker4(tName,vec4,tFlags);
+        if(b) {
+            tColor->r=vec4[0];
+            tColor->g=vec4[1];
+            tColor->b=vec4[2];
+            tColor->a=vec4[3];
+        }
+        return b;
+    }
+
     static bool DragFloat4(const char* tName, glm::vec4* tFloats, const float& tSpeed=0.1f) {
         vec4[0]=tFloats->x;
         vec4[1]=tFloats->y;
