@@ -1,8 +1,10 @@
 #ifndef FS_IMGUI_UTILS
 #define FS_IMGUI_UTILS
 
+#include <string>
 #include <glm/glm.hpp>
 #include <imgui.h>
+#include <imgui/misc/cpp/imgui_stdlib.h>
 
 namespace ImGui {
     float vec4[4]={ 0,0,0,0 };
@@ -229,6 +231,39 @@ namespace ImGui {
         ImGui::PopStyleVar(1);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(1.0f, 1.0f));
         if(tEndDockWindow) ImGui::End();
+    }
+
+    enum TextAligment {
+        TextAligment_Left,
+        TextAligment_Center,
+        TextAligment_Right
+    };
+
+    void AlignedText(const TextAligment& tAlig, const std::string& tText) {
+        switch (tAlig) {
+        case TextAligment_Right:
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x)*0.5f);
+            break;
+        case TextAligment_Center:
+            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(tText.c_str()).x);
+            break;
+        default:
+            break;
+        }
+		ImGui::Text(tText.c_str());
+    }
+    void AlignedTextColored(const TextAligment& tAlig, const ImVec4 tColor, const std::string& tText) {
+        switch (tAlig) {
+        case TextAligment_Right:
+            ImGui::SetCursorPosX((ImGui::GetWindowSize().x-ImGui::CalcTextSize(tText.c_str()).x)*0.5f);
+            break;
+        case TextAligment_Center:
+            ImGui::SetCursorPosX(ImGui::GetWindowSize().x - ImGui::CalcTextSize(tText.c_str()).x);
+            break;
+        default:
+            break;
+        }
+		ImGui::TextColored(tColor,tText.c_str());
     }
 }
 
