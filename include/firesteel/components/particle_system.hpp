@@ -72,7 +72,7 @@ namespace Firesteel {
 #ifdef FS_COMPONENT_RENDERING
 				mEntity->getComponent<ModelComponent>()->model.materials[0].getShader().get():
 #else
-				mEntity->model.materials[0].getShader().get():
+				mEntity->model.materials[0]->getShader().get():
 #endif
 				Shader::getDefaultShader().get();
 			shader->enable();
