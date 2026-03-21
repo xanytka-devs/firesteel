@@ -68,7 +68,7 @@ namespace Firesteel {
             drawLine({tStartPos,tEndPos},tColor);
         }
 
-        virtual std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial) {
+        virtual std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial) {
             return std::make_unique<Mesh>(tVertices,tIndices,tMaterial);
         }
     protected:

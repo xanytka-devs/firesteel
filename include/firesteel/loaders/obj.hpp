@@ -19,8 +19,8 @@ namespace Firesteel {
             //Check all materials for this texture.
             for(size_t m=0;m<tModel->materials.size();m++) {
                 auto& material = tModel->materials[m];
-                for(size_t t=0;t<material.textures.size();t++) {
-                    const auto& texture = material.textures[t];
+                for(size_t t=0;t<material->textures.size();t++) {
+                    const auto& texture=material->textures[t];
                     if (texture.path == texPath && texture.type == type) {
                         //If texture is already loaded - return it's copy.
 #ifdef FS_PRINT_DEBUG_MSGS
@@ -115,9 +115,9 @@ namespace Firesteel {
                 }
             }
             //Get material.
-            Material* material=nullptr;
+            std::shared_ptr<Material> material=nullptr;
             if(materialID>=0 && materialID<static_cast<int>(tModel->materials.size()))
-                material=&tModel->materials[materialID];
+                material=tModel->materials[materialID];
 
             nodeNames.push_back(tShape.name);
             return Mesh(vertices, indices, material);
@@ -181,7 +181,7 @@ namespace Firesteel {
                 material.params.emplace_back("ambientOcclusion",1);
                 material.params.emplace_back("metallic",(float)mat.metallic);
                 material.params.emplace_back("roughness",(float)mat.roughness);
-                model.materials.push_back(material);
+                model.materials.push_back(std::make_shared<Material>(material));
             }
             //Process all shapes.
             std::vector<std::string> nodeNames;

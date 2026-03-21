@@ -301,7 +301,7 @@ namespace Firesteel {
             }
             LOG("-----", "\n", CMD_F_RED);
         }
-        std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial) override {
+        std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial) override {
             return std::make_unique<OGLMesh>(tVertices, tIndices, tMaterial);
         }
 	};

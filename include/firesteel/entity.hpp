@@ -73,7 +73,7 @@ namespace Firesteel {
             for(uint n=0;n<tNode->children.size();n++)
                 drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
         }
-        void replaceMaterials(Material* tMaterial, const bool& tReplaceAll=false) {
+        void replaceMaterials(std::shared_ptr<Material> tMaterial, const bool& tReplaceAll=false) {
             if(!hasModel()) {
 #ifndef FS_NO_SCENES
                 LOG_WARN("Failed to replace material: No model entity \""+name+"\"");
@@ -82,15 +82,15 @@ namespace Firesteel {
 #endif // !FS_NO_SCENES
                 return;
             }
-            model.materials.push_back(*tMaterial);
+            model.materials.push_back(tMaterial);
             for(uint m=0;m<model.meshes.size();m++)
-                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=&model.materials[model.materials.size()-1];
+                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=model.materials[model.materials.size()-1];
         }
         // Replaces materials with default shader with given shader.
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
             if(!hasModel()) return;
             for(uint m=0;m<model.materials.size();m++)
-                if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m].setShader(tShader);
+                if(model.materials[m]->getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m]->setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Changed entity materials shader");
 #endif // FS_PRINT_DEBUG_MSGS
@@ -99,20 +99,9 @@ namespace Firesteel {
         void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
             if(!hasModel()) return;
             for(uint m=0;m<model.materials.size();m++)
-                if(model.materials[m].getShader()->getId()==tIdToReplace) model.materials[m].setShader(tShader);
+                if(model.materials[m]->getShader()->getId()==tIdToReplace) model.materials[m]->setShader(tShader);
 #ifdef FS_PRINT_DEBUG_MSGS
             LOG_DBG("Replaced entity materials shader");
-#endif // FS_PRINT_DEBUG_MSGS
-        }
-        // Replaces all materials with given one.
-        void setMaterial(Material* tMaterial, const bool tReplaceAll=false) {
-            if(!hasModel()) return;
-            if(!tReplaceAll) {
-                for(uint m=0;m<model.materials.size();m++)
-                    if(model.materials[m].getShader()->getId()==Shader::getDefaultShader()->getId()) model.materials[m]=*tMaterial;
-            } else for(uint m=0;m<model.materials.size();m++) model.materials[m]=*tMaterial;
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Changed entity material");
 #endif // FS_PRINT_DEBUG_MSGS
         }
 
@@ -176,7 +165,7 @@ namespace Firesteel {
             model.nodes.emplace_back(node);
         }
         virtual void addMesh(const std::vector<Vertex>& tVertices,
-            const std::vector<unsigned int>& tIndices, Material* tMaterial) {
+            const std::vector<unsigned int>& tIndices, std::shared_ptr<Material> tMaterial) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tVertices.size(), tIndices.size());

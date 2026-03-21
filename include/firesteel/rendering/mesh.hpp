@@ -23,7 +23,7 @@ namespace Firesteel {
     struct Mesh {
     public:
         Mesh() {}
-        Mesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial)
+        Mesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial)
             : vertices(tVertices), indices(tIndices), material(tMaterial) {
             makeMesh();
         }
@@ -49,7 +49,7 @@ namespace Firesteel {
         /// Mesh Data.
         std::vector<Vertex> vertices;
         std::vector<uint> indices;
-        Material* material;
+        std::shared_ptr<Material> material;
     protected:
         virtual void mRemove() {
             if(mVAO==0) return;
@@ -145,7 +145,7 @@ namespace Firesteel {
         }
 
         std::string path;
-        std::vector<Material> materials;
+        std::vector<std::shared_ptr<Material>> materials;
         std::vector<std::shared_ptr<Node>> nodes;
         std::vector<Mesh> meshes;
     };

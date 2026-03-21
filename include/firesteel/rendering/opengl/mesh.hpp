@@ -7,7 +7,7 @@
 namespace Firesteel {
 	struct OGLMesh : public Mesh {
 	public:
-        OGLMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, Material* tMaterial)
+        OGLMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial)
             : Mesh(tVertices,tIndices,tMaterial) {
             makeMesh();
         }
