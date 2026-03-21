@@ -37,7 +37,6 @@ namespace Firesteel {
             } else Shader::getDefaultShader()->bind();
             //Draw mesh.
             mDraw();
-            Texture::unbind();
         }
         void remove() {
             //Clear mesh data.
@@ -60,6 +59,7 @@ namespace Firesteel {
             glBindVertexArray(mVAO-1);
             glDrawElements(GL_TRIANGLES, static_cast<uint>(indices.size()), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
+            Texture::unbind();
         }
     private:
         uint mVAO;

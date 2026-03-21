@@ -211,6 +211,7 @@ namespace Firesteel {
         }
 
         bool reload() {
+            mShader->remove();
             if(!std::filesystem::exists(vertexPath)) {
                 LOG_WARN("Tried to reload shader but vertex shader didn't exist");
                 return false;
