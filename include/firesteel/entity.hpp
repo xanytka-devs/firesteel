@@ -82,8 +82,9 @@ namespace Firesteel {
 #endif // !FS_NO_SCENES
                 return;
             }
+            model.materials.push_back(*tMaterial);
             for(uint m=0;m<model.meshes.size();m++)
-                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=tMaterial;
+                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=&model.materials[model.materials.size()-1];
         }
         // Replaces materials with default shader with given shader.
         void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
