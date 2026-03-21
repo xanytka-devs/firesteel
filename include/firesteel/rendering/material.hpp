@@ -242,6 +242,7 @@ namespace Firesteel {
 #endif // !FS_NO_JSON
 
         void setShader(const std::string& tVertexPath, const std::string& tFragmentPath, const std::string& tGeometryPath="") {
+            if(mShader) mShader->remove();
             mShader=std::make_shared<Shader>(tVertexPath, tFragmentPath, tGeometryPath);
             if(!mShader) {
                 mShader=Shader::getDefaultShader();
@@ -252,6 +253,7 @@ namespace Firesteel {
             }
         }
         void setShader(std::shared_ptr<Shader>& tShader) {
+            if(mShader) mShader->remove();
             mShader=tShader;
             if(!mShader) {
                 mShader=Shader::getDefaultShader();

@@ -35,12 +35,17 @@ namespace Firesteel {
 
 	struct Window {
 	public:
+        static Window get() {
+            static Window inst;
+            return inst;
+        }
+
 		Window(const unsigned int& tWidth=800, const unsigned int& tHeight=600, const bool& tVsync=false) :
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
 
 		bool initialize(const char* tTitle="Firesteel App", const WindowState& tState=WS_NORMAL) {
             //Initialize and configure.
-            LOG_INFO(std::string("Creating window \"") + tTitle + "\"");
+            LOGF_INFO("Creating window \"%s\"",tTitle);
 #ifndef FS_HEADLESS
             if(glfwInit() == GLFW_FALSE) {
                 LOG_CRIT("Failed to initialize GLFW");
@@ -72,7 +77,7 @@ namespace Firesteel {
                 mon=nullptr;
             }
             mPtr=glfwCreateWindow(mWidth, mHeight, tTitle, mon, NULL);
-            if (mPtr == NULL) {
+            if(mPtr==NULL) {
                 LOG_CRIT("Failed to create GLFW window");
                 glfwTerminate();
                 return false;
@@ -115,7 +120,7 @@ namespace Firesteel {
         }
         void setIcon(const std::string& tPath) {
             if(!std::filesystem::exists(tPath)) {
-                LOG_ERRR("File '" + tPath + "' doesn't exist.");
+                LOG_ERRR("Icon at \""+tPath+"\" doesn't exist.");
                 return;
             }
 #ifndef FS_HEADLESS
@@ -133,7 +138,7 @@ namespace Firesteel {
             stbi_image_free(images[0].pixels);
 #endif // !FS_HEADLESS
         }
-        glm::vec3 getClearColor() { return mClearColor; }
+        glm::vec3 getClearColor() const { return mClearColor; }
         void setClearColor(const glm::vec3& tColor) { mClearColor=tColor; }
 
         void setVSync(const bool& tVSync) {

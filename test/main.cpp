@@ -9,7 +9,7 @@ using namespace Firesteel;
 class WindowApp : public Firesteel::App {
 	void onInitialize() override {
 		LOG("Hello World!");
-		window.setVSync(true);
+		window->setVSync(true);
 	}
 };
 
