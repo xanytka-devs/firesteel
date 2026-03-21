@@ -219,7 +219,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
         }
 
-        void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1)) override {
+        void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1),const glm::mat4& tView=glm::mat4(1),const glm::mat4& tProj=glm::mat4(1)) override {
             uint VBO,VAO;
             glGenVertexArrays(1,&VAO);
             glGenBuffers(1,&VBO);
@@ -230,6 +230,8 @@ namespace Firesteel {
             glEnableVertexAttribArray(0);
 
             mPrimitiveShader->bind();
+            mPrimitiveShader->setMat4("view",tView);
+            mPrimitiveShader->setMat4("projection",tProj);
             mPrimitiveShader->setVec4("color",tColor);
 
             glDrawArrays(GL_POINTS,0,1);
@@ -238,7 +240,7 @@ namespace Firesteel {
             glDeleteBuffers(1,&VBO);
             glDeleteVertexArrays(1,&VAO);
         }
-        void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1)) override {
+        void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1),const glm::mat4& tView=glm::mat4(1),const glm::mat4& tProj=glm::mat4(1)) override {
             uint VBO,VAO;
             glGenVertexArrays(1,&VAO);
             glGenBuffers(1,&VBO);
@@ -249,6 +251,8 @@ namespace Firesteel {
             glEnableVertexAttribArray(0);
 
             mPrimitiveShader->bind();
+            mPrimitiveShader->setMat4("view",tView);
+            mPrimitiveShader->setMat4("projection",tProj);
             mPrimitiveShader->setVec4("color",tColor);
 
             glDrawArrays(GL_LINES,0,tPosList.size());

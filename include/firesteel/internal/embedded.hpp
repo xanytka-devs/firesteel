@@ -5,6 +5,8 @@
 * Content list:
 * * Embedded::defaultShaderVert - Vertex shader if some other shader fails (failsafe)
 * * Embedded::defaultShaderFrag - Fragment shader if some other shader fails (failsafe)
+* * Embedded::primitiveShaderVert - Vertex shader for rendering basic primitives
+* * Embedded::primitiveShaderFrag - Fragment shader for rendering basic primitives
 */
 
 namespace Firesteel {
@@ -31,8 +33,10 @@ void main() {\n\
         static const char* primitiveShaderVert = "\
 #version 330 core\n\
 layout(location = 0) in vec3 aPos;\n\
+uniform mat4 view;\n\
+uniform mat4 projection;\n\
 void main() {\n\
-	gl_Position=vec4(aPos, 1.0);\n\
+	gl_Position=projection*view*vec4(aPos, 1.0);\n\
 }\
 ";
 	    static const char* primitiveShaderFrag = "\
