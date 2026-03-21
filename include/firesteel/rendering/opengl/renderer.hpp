@@ -246,7 +246,7 @@ namespace Firesteel {
             glGenBuffers(1,&VBO);
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER,VBO);
-            glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3),tPosList.data(),GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3)*tPosList.size(),tPosList.data(),GL_STATIC_DRAW);
             glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(glm::vec3),(void*)0);
             glEnableVertexAttribArray(0);
 
