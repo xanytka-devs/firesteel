@@ -35,11 +35,6 @@ namespace Firesteel {
 
 	struct Window {
 	public:
-        static Window get() {
-            static Window inst;
-            return inst;
-        }
-
 		Window(const unsigned int& tWidth=800, const unsigned int& tHeight=600, const bool& tVsync=false) :
 			mPtr(NULL), mWidth(tWidth), mHeight(tHeight), mVSync(tVsync), mClearColor(glm::vec3(0)), mClosed(false) {}
 

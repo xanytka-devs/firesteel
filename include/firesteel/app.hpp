@@ -29,7 +29,7 @@ namespace Firesteel {
 		}
 		virtual ~App() { }
 		void shutdown() {
-			window->close();
+			window.close();
 		}
         // [!DANGEROUS]
         // Immediately errors out of application no matter the cost.
@@ -65,9 +65,8 @@ namespace Firesteel {
             LOG_DBG("Run preinitialize");
 #endif // FS_PRINT_DEBUG_MSGS
             //Create a window.
-            Window::get()=Window(tWinWidth, tWinHeight);
-            window=&Window::get();
-            if(!window->initialize(tTitle, tWinState)) return -1;
+            window=Window(tWinWidth, tWinHeight);
+            if(!window.initialize(tTitle, tWinState)) return -1;
             //Select renderer.
             if(!onRendererSelect()) return -2;
 #ifndef FS_NO_REG_DEFAULT_SHADER
@@ -82,11 +81,11 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
             //Update loop.
             LOG_STATE("UPDATE LOOP");
-            while(window->isOpen()) {
+            while(window.isOpen()) {
 #ifdef FS_INCLUDE_NVTX
                 nvtx3::scoped_range u{"update"};
 #endif // FS_INCLUDE_NVTX
-                window->pollEvents();
+                window.pollEvents();
                 //Per-frame time logic.
                 double currentFrame=glfwGetTime();
                 DeltaTime::sInstance()->set(static_cast<float>(currentFrame-mLastFrame));
@@ -97,9 +96,9 @@ namespace Firesteel {
                     mFrameCount=0;
                     mLastFrameFPS=currentFrame;
                 }
-                if(window->isMinimized()) continue;
-                window->clearBuffers();
-                if(updateViewport) enviroment().renderer->setViewportSize(window->getSize());
+                if(window.isMinimized()) continue;
+                window.clearBuffers();
+                if(updateViewport) enviroment().renderer->setViewportSize(window.getSize());
                 //ImGui & DevView window.
                 if((Keyboard::getKey(KeyCode::LEFT_CONTROL) || Keyboard::getKey(KeyCode::RIGHT_CONTROL))
                     && Keyboard::keyDown(KeyCode::SLASH)) DEVVIEW::sDrawDevView=true;
@@ -110,15 +109,15 @@ namespace Firesteel {
                 onUpdate();
                 //Draw DevView and finalize update.
                 DEVVIEW::draw(DeltaTime::get(), DeltaTime::fps());
-                enviroment().renderer->imguiRender(window->ptr());
-                window->swapBuffers();
+                enviroment().renderer->imguiRender(window.ptr());
+                window.swapBuffers();
             }
             //Shutdown.
             LOG_STATE("SHUTDOWN");
             onShutdown();
             enviroment().renderer->imguiShutdown();
             //Quitting.
-            window->close();
+            window.close();
             glfwTerminate();
             LOG_INFO("Window terminated");
             LOG_STATE("QUIT");
@@ -145,7 +144,7 @@ namespace Firesteel {
             enviroment().renderer->loadExtencions();
             enviroment().renderer->printInfo();
             enviroment().renderer->initializeParams();
-            enviroment().renderer->imguiInitialize(window->ptr());
+            enviroment().renderer->imguiInitialize(window.ptr());
             return true;
         }
         // [!OVERRIDABLE]
@@ -159,7 +158,7 @@ namespace Firesteel {
 		virtual void onShutdown() { }
 
         Enviroment& enviroment() { return *(Enviroment::sInstance()); }
-		Window* window;
+		Window window;
         bool updateViewport=true;
 	};
 }
