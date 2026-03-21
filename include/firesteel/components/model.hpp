@@ -118,7 +118,7 @@ namespace Firesteel {
             model.nodes.emplace_back(node);
         }
         virtual void addMesh(const std::vector<Vertex>& tVertices,
-            const std::vector<unsigned int>& tIndices, Material* tMaterial) {
+            const std::vector<unsigned int>& tIndices, std::shared_ptr<Material> tMaterial) {
 #ifdef FS_PRINT_DEBUG_MSGS
             LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
                 tVertices.size(), tIndices.size());
