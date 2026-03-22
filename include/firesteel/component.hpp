@@ -6,12 +6,13 @@
 
 namespace Firesteel {
 	class Entity;
-	class Component {
+	class Component : public std::enable_shared_from_this<Component> {
 	public:
 		Component(std::shared_ptr<Entity> tEntity)
 			: mEntity(tEntity) {
 			registerProperties();
 		}
+		std::shared_ptr<Component> getShared() {return shared_from_this(); }
 		template<typename T>
 		static std::shared_ptr<Component> create(std::shared_ptr<Entity> tEntity, const nlohmann::json& tData) {
             ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
