@@ -20,10 +20,18 @@ namespace Firesteel {
 			if(!tData.empty()) comp->deserialize(tData);
 			return comp;
 		}
-		virtual void onStart() {}
-		virtual void onUpdate() {}
-		virtual void onDraw() {}
-		virtual void onRemove() {}
+		void start() {
+			if(enabled) onStart();
+		}
+		void update() {
+			if(enabled) onUpdate();
+		}
+		void draw() {
+			if(enabled) onDraw();
+		}
+		void remove() {
+			if(enabled) onRemove();
+		}
 #ifndef FS_NO_JSON
 		virtual nlohmann::json serialize() const {
 			nlohmann::json j;
@@ -43,12 +51,16 @@ namespace Firesteel {
 #endif // !FS_NO_JSON
 
 		void registerProperties() { properties(); }
-		bool isInitialized() const { return mInitialized; }
 		virtual const char* name() const { return "fs.generic"; }
+		std::shared_ptr<Entity> entity() { return mEntity; }
+		bool enabled=true;
 	protected:
 		std::shared_ptr<Entity> mEntity;
-		bool mInitialized=false;
 
+		virtual void onStart() {}
+		virtual void onUpdate() {}
+		virtual void onDraw() {}
+		virtual void onRemove() {}
 		virtual void properties() {}
 		template<typename T>
 		void addProperty(const char* tName, T* tVal) {

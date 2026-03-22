@@ -48,14 +48,14 @@ namespace Firesteel {
         virtual void update() {
 #ifndef FS_NO_COMPONENTS
             if(!enabled) return;
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onUpdate();
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->update();
 #endif // !FS_NO_COMPONENTS
         }
         // Renders the model with given material or default shader.
         virtual void draw() {
 #ifndef FS_NO_COMPONENTS
             if(!enabled) return;
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onDraw();
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->draw();
 #endif // !FS_NO_COMPONENTS
 #if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
             if(!hasModel()) return;
@@ -182,7 +182,7 @@ namespace Firesteel {
             LOG_DBG("Removed entity");
 #endif // FS_PRINT_DEBUG_MSGS
 #ifndef FS_NO_COMPONENTS
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->onRemove();
+            for(uint i=0;i<mComponents.size();i++) mComponents[i]->remove();
 #else
             removeModel(true);
 #endif // !FS_NO_COMPONENTS
@@ -198,7 +198,7 @@ namespace Firesteel {
         }
         void addComponent(std::shared_ptr<Component> tComp) {
             mComponents.push_back(tComp);
-            mComponents[mComponents.size()-1]->onStart();
+            mComponents[mComponents.size()-1]->start();
         }
         template<typename T>
         T* getComponent(const uint& tIdx=0) {
