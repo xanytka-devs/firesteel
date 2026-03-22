@@ -294,7 +294,7 @@ namespace Firesteel {
         Transform transform;
 #ifndef FS_NO_SCENES
         std::string name;
-        bool enabled;
+        bool enabled=true;
 #endif // !FS_NO_SCENES
 #if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
         Model model;

@@ -39,6 +39,8 @@
 #define IFEX if constexpr
 #define SAMETYPE(type,base) std::is_same<type,base>::value
 #define BASEDONTYPE(type,base) std::is_base_of<base,type>::value
+typedef unsigned char uchar;
 typedef unsigned int uint;
+typedef unsigned long ulong;
 
 #endif // !FS_COMMON_H

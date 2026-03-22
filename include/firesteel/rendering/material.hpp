@@ -164,7 +164,7 @@ namespace Firesteel {
             }
         }
         // Saves material to specified json file.
-        bool save(const std::string& tMaterialPath) {
+        bool save(const std::string& tMaterialPath,const bool& tPrettyPrint=false) {
             nlohmann::json txt;
             //Basic properties.
             txt["name"]=name;
@@ -206,7 +206,8 @@ namespace Firesteel {
             }
 
             std::ofstream o(tMaterialPath);
-            o << std::setw(4) << txt << std::endl;
+            if(tPrettyPrint) o<<std::setw(4)<<txt<<std::endl;
+            else o<<txt<<std::endl;
             return true;
         }
 

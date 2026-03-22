@@ -21,7 +21,7 @@ namespace Firesteel {
 			nlohmann::json scene=nlohmann::json::parse(ifs);
 			ifs.close();
 			if(scene.contains("entities"))
-				for(uint i=0;i<scene["entities"].size();i++)
+				for(ulong i=0;i<scene["entities"].size();i++)
 					entities.push_back(Entity::deserialize(scene["entities"][i]));
 #ifdef FS_PRINT_DEBUG_MSGS
 			LOGF_DBG("Loaded %d entities from \"%s\"",
@@ -29,7 +29,7 @@ namespace Firesteel {
 #endif // FS_PRINT_DEBUG_MSGS
 			return true;
 		}
-		void save(const std::string& tPath) const {
+		void save(const std::string& tPath,const bool& tPrettyPrint=false) const {
 			nlohmann::json scene;
 
 			nlohmann::json ents=nlohmann::json::array();
@@ -37,7 +37,8 @@ namespace Firesteel {
 			scene["entities"]=ents;
 
 			std::ofstream o(tPath);
-			o/*<<std::setw(4)*/<<scene<<std::endl;
+			if(tPrettyPrint) o<<std::setw(4)<<scene<<std::endl;
+			else o<<scene<<std::endl;
 			o.close();
 #ifdef FS_PRINT_DEBUG_MSGS
 			LOGF_DBG("Saved %d entities to \"%s\"",
@@ -46,10 +47,10 @@ namespace Firesteel {
 		}
 #endif // !FS_NO_JSON
 		void update() {
-			for(uint i=0;i<entities.size();i++) entities[i]->update();
+			for(ulong i=0;i<entities.size();i++) entities[i]->update();
 		}
 		void draw() {
-			for(uint i=0;i<entities.size();i++) entities[i]->draw();
+			for(ulong i=0;i<entities.size();i++) entities[i]->draw();
 		}
 		std::shared_ptr<Entity> add(std::shared_ptr<Entity>& tEntity) {
 			entities.push_back(tEntity);
@@ -65,7 +66,7 @@ namespace Firesteel {
 			entities.push_back(ent);
 			return ent;
 		}
-		bool removeAt(const uint& tId) {
+		bool removeAt(const ulong& tId) {
 			if(tId>=entities.size()) {
 				LOGF_WARN("Tried to remove entity at %i while max id is %i",tId,entities.size()-1);
 				return false;
@@ -78,7 +79,7 @@ namespace Firesteel {
 #ifdef FS_PRINT_DEBUG_MSGS
 			LOGF_DBG("Removed %d entities", entities.size());
 #endif // FS_PRINT_DEBUG_MSGS
-			for(uint i=0;i<entities.size();i++) entities[i]->remove();
+			for(ulong i=0;i<entities.size();i++) entities[i]->remove();
 			entities.clear();
 		}
 		std::vector<std::shared_ptr<Entity>> entities;

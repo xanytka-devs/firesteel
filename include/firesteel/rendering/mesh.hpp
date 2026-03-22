@@ -62,7 +62,7 @@ namespace Firesteel {
             Texture::unbind();
         }
     private:
-        uint mVAO;
+        uint mVAO=0;
     private:
         void makeMesh() {
             uint mVBO, mEBO;

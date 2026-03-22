@@ -255,7 +255,7 @@ namespace Firesteel {
             mPrimitiveShader->setMat4("projection",tProj);
             mPrimitiveShader->setVec4("color",tColor);
 
-            glDrawArrays(GL_LINES,0,tPosList.size());
+            glDrawArrays(GL_LINES,0,static_cast<GLsizei>(tPosList.size()));
             glFlush();
 
             glDeleteBuffers(1,&VBO);
