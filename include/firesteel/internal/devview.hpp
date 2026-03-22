@@ -29,10 +29,31 @@ namespace Firesteel {
 			frameTimes.push_back(tDeltaTime);
 			if(frameTimes.size() > 128) frameTimes.erase(frameTimes.begin());
 			ImGui::PlotLines("##frame_times_plot", frameTimes.data(), static_cast<int>(frameTimes.size()));
-			ImGui::Text("Delta time: %1.f", tDeltaTime);
-			ImGui::Text("Renderer: OpenGL");
+			if(ImGui::IsItemHovered()) {
+				ImGui::BeginTooltip();
+				ImGui::Text("Delta time: %.5f", tDeltaTime);
+				ImGui::EndTooltip();
+			}
+			ImGui::Text(("Renderer: "+Enviroment::getRenderer()->name()).c_str());
+#if defined(FS_INCLUDE_NVTX)||defined(FS_PRINT_DEBUG_MSGS)||!defined(FS_NO_COMPONENTS)||!defined(FS_NO_JSON)
+			ImGui::Separator();
+#endif
+#ifdef FS_INCLUDE_NVTX
+			ImGui::Text("NVTX enabled");
+#endif // FS_INCLUDE_NVTX
+#ifdef FS_PRINT_DEBUG_MSGS
+			ImGui::Text("Debug printing enabled");
+#endif // FS_INCLUDE_NVTX
+#ifndef FS_NO_COMPONENTS
+			ImGui::Text("Component system enabled");
+#endif // FS_INCLUDE_NVTX
+#ifndef FS_NO_JSON
+			ImGui::Text("JSON modules enabled");
+#endif // FS_INCLUDE_NVTX
+
 			ImGui::Separator();
 			if(ImGui::MenuItem("Made with Firesteel")) INTERNAL::openURL("https://github.com/xanytka-devs/firesteel");
+			ImGui::Text("v.%s",FS_VERSION);
 			ImGui::End();
 		}
 	}

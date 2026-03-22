@@ -31,6 +31,7 @@ namespace Firesteel {
 		virtual bool initialize() { return true; }
         virtual void initializeParams() { }
         virtual void printInfo() { LOG_INFO("Headless context"); }
+        virtual std::string name() { return "Headless"; }
         virtual void loadExtencions() {}
 
         virtual void clearBuffers(const glm::vec3& tColor) { }
