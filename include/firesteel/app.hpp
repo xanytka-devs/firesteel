@@ -52,6 +52,8 @@ namespace Firesteel {
             reg->registerType<int>(std::make_unique<IntTypeHandler>());
             reg->registerType<float>(std::make_unique<FloatTypeHandler>());
             reg->registerType<double>(std::make_unique<DoubleTypeHandler>());
+            reg->registerType<char>(std::make_unique<CharTypeHandler>());
+            reg->registerType<uchar>(std::make_unique<UCharTypeHandler>());
             reg->registerType<std::string>(std::make_unique<StringTypeHandler>());
             reg->registerType<glm::vec2>(std::make_unique<Vec2TypeHandler>());
             reg->registerType<glm::vec3>(std::make_unique<Vec3TypeHandler>());

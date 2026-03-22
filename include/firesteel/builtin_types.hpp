@@ -54,6 +54,38 @@ namespace Firesteel {
 		}
 #endif // !FS_NO_JSON
 	};
+	struct CharTypeHandler : public ITypeHandler {
+		std::string toString(const void* tVal) const override {
+			return std::to_string(*static_cast<const char*>(tVal));
+		}
+		void fromString(void* tVal, const std::string& tStr) const override {
+			*static_cast<char*>(tVal)= static_cast<char>(std::stoi(tStr));
+		}
+#ifndef FS_NO_JSON
+		nlohmann::json toJson(void* tVal) const override {
+			return *static_cast<const char*>(tVal);
+		}
+		void fromJson(void* tVal, const nlohmann::json& tJson) const override {
+			*static_cast<char*>(tVal)=static_cast<char>(tJson.get<int>());
+		}
+#endif // !FS_NO_JSON
+	};
+	struct UCharTypeHandler : public ITypeHandler {
+		std::string toString(const void* tVal) const override {
+			return std::to_string(*static_cast<const unsigned char*>(tVal));
+		}
+		void fromString(void* tVal, const std::string& tStr) const override {
+			*static_cast<unsigned char*>(tVal)= static_cast<unsigned char>(std::stoi(tStr));
+		}
+#ifndef FS_NO_JSON
+		nlohmann::json toJson(void* tVal) const override {
+			return *static_cast<const unsigned char*>(tVal);
+		}
+		void fromJson(void* tVal, const nlohmann::json& tJson) const override {
+			*static_cast<unsigned char*>(tVal)=static_cast<unsigned char>(tJson.get<int>());
+		}
+#endif // !FS_NO_JSON
+	};
 	struct FloatTypeHandler : public ITypeHandler {
 		std::string toString(const void* tVal) const override {
 			return std::to_string(*static_cast<const float*>(tVal));
