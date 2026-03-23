@@ -200,7 +200,7 @@ namespace Firesteel {
             mComponents.push_back(tComp);
             mComponents[mComponents.size()-1]->start();
         }
-        template<typename T>
+        template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
         std::shared_ptr<T> getComponent(const uint& tIdx=0) {
             std::string v=(T(nullptr)).name();
             uint ix=0;
@@ -215,7 +215,7 @@ namespace Firesteel {
             }
             return nullptr;
         }
-        template<typename T>
+        template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
         bool hasComponent() {
             std::string v=T(nullptr).name();
             for(uint i=0;i<mComponents.size();i++)
@@ -232,7 +232,7 @@ namespace Firesteel {
                 if(mComponents[i]->name()==tName) return true;
             return false;
         }
-        template<typename T>
+        template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
         bool removeComponent(const uint& tIdx=0) {
             std::string v=T(nullptr).name();
             T* c=nullptr;
