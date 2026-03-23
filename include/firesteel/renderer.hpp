@@ -63,10 +63,10 @@ namespace Firesteel {
             return mPrimitiveShader;
         }
 
-        virtual void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1),const glm::mat4& tView=glm::mat4(1),const glm::mat4& tProj=glm::mat4(1)) { }
-        virtual void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1),const glm::mat4& tView=glm::mat4(1),const glm::mat4& tProj=glm::mat4(1)) { }
-        virtual void drawLine(const glm::vec3& tStartPos,const glm::vec3& tEndPos,const glm::vec4& tColor=glm::vec4(1),const glm::mat4& tView=glm::mat4(1),const glm::mat4& tProj=glm::mat4(1)) {
-            drawLine({tStartPos,tEndPos},tColor,tView,tProj);
+        virtual void drawPoint(const glm::vec3& tPos,const glm::vec4& tColor=glm::vec4(1)) { }
+        virtual void drawLine(const std::vector<glm::vec3>& tPosList,const glm::vec4& tColor=glm::vec4(1)) { }
+        virtual void drawLine(const glm::vec3& tStartPos,const glm::vec3& tEndPos,const glm::vec4& tColor=glm::vec4(1)) {
+            drawLine({tStartPos,tEndPos},tColor);
         }
 
         virtual std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial) {

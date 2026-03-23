@@ -36,7 +36,11 @@ layout(location = 0) in vec3 aPos;\n\
 uniform mat4 view;\n\
 uniform mat4 projection;\n\
 void main() {\n\
-	gl_Position=projection*view*vec4(aPos, 1.0);\n\
+	mat4 v=view;\n\
+	mat4 p=projection;\n\
+	if(v==mat4(0)) v=mat4(1);\n\
+	if(p==mat4(0)) p=mat4(1);\n\
+	gl_Position=p*v*vec4(aPos, 1.0);\n\
 }\
 ";
 	    static const char* primitiveShaderFrag = "\
