@@ -216,6 +216,37 @@ namespace Firesteel {
             return nullptr;
         }
         template<typename T>
+        std::shared_ptr<T> getComponentFromBase(const uint& tIdx=0) {
+            uint ix=0;
+            for(uint i=0;i<mComponents.size();i++) {
+                auto& c=mComponents[i];
+                if(auto casted=std::dynamic_pointer_cast<T>(c)) {
+                    if(ix==tIdx) return casted;
+                    ix++;
+                }
+            }
+            return nullptr;
+        }
+        template<typename T>
+        std::vector<std::shared_ptr<T>> getAllComponentsFromBase() {
+            std::vector<std::shared_ptr<T>> result;
+            for(uint i=0;i<mComponents.size();i++) {
+                auto& c=mComponents[i];
+                if(auto casted=std::dynamic_pointer_cast<T>(c))
+                    result.push_back(casted);
+            }
+            return result;
+        }
+        template<typename T>
+        bool hasComponentFromBase() {
+            for(uint i=0;i<mComponents.size();i++) {
+                auto& c=mComponents[i];
+                if(auto casted=std::dynamic_pointer_cast<T>(c))
+                    return true;
+            }
+            return false;
+        }
+        template<typename T>
         bool hasComponent() {
             std::string v=T(nullptr).name();
             for(uint i=0;i<mComponents.size();i++)
