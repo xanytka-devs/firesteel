@@ -47,7 +47,7 @@ git submodule add --recursive https://github.com/xanytka-devs/firesteel.git engi
 * Запустите `auto_cmake.cmd` внутри новой папки
 
 ## Упрощённая
-Инструкции по сборке можно найти [тут](https://github.com/xanytka-devs/fs-example).
+Инструкции по сборке можно найти [тут](https://github.com/xanytka-devs/fs-template).
 
 > [!NOTE]
 > Установка и работа на Linux и MacOS ещё не реализованы, однако некоторые компоненты уже могут работать с Linux.
