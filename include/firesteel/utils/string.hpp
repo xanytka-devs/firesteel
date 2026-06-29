@@ -89,6 +89,10 @@ namespace String {
     std::string toUpper(const std::string& tStr) {
         return reinterpret_cast<const char*>(Utf8StrMakeUprUtf8Str(reinterpret_cast<const unsigned char*>(tStr.c_str())));
     }
+    template<typename ... Args>
+    std::string format(const std::string& format, Args ... args) {
+        return Log::formatStr(format, args);
+    }
 }
 
 #endif // !FS_UTIL_STRING_H

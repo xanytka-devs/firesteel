@@ -1,5 +1,5 @@
-#ifndef FS_IMGUI_UTILS
-#define FS_IMGUI_UTILS
+#ifndef FS_UTIL_IMGUI_H
+#define FS_UTIL_IMGUI_H
 
 #include <string>
 #include <glm/glm.hpp>
@@ -280,4 +280,4 @@ namespace ImGui {
     }
 }
 
-#endif // !FS_IMGUI_UTILS
+#endif // !FS_UTIL_IMGUI_H

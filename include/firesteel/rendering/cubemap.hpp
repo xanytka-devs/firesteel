@@ -5,7 +5,6 @@
 #ifndef FS_NO_JSON
 #include <firesteel/utils/json.hpp>
 #endif // !FS_NO_JSON
-#include <firesteel/utils/utils.hpp>
 #include <firesteel/utils/stbi_global.hpp>
 
 namespace Firesteel {
