@@ -1,8 +1,6 @@
 #ifndef FS_JOYSTICK_H
 #define FS_JOYSTICK_H
 
-#include <firesteel/common.hpp>
-
 namespace Firesteel {
 	enum JoystickControls {
 		// From: https://pastebin.com/6rusNyxR
@@ -37,48 +35,19 @@ namespace Firesteel {
 	class Joystick {
 	public:
 		// Sets up joystick input.
-		Joystick() {
-			initialize(0);
-		}
+		Joystick();
 		// Sets up joystick input.
-		Joystick(int tID) {
-			initialize(tID);
-		}
+		Joystick(int tID);
 		// General info about controller.
-		void printInfo() {
-			if(!mPresence) {
-				LOG_INFO("Joystick: None");
-				return;
-			}
-			LOG_INFO(std::string("Joystick: ") + mName + " (" + std::to_string(mID) + ")");
-			LOG_INFO("Axes: " + std::to_string(mAxesCount));
-			LOG_INFO("Buttons: " + std::to_string(mButtonCount));
-		}
+		void printInfo();
 		// Initializes controller.
-		void initialize(const int tID) {
-			mID=getGID(tID);
-			update();
-		}
+		void initialize(const int tID);
 
 		// Updates variables of joystick.
-		void update() {
-			mPresence=glfwJoystickPresent(mID);
-			if(!mPresence) return;
-			mName=glfwGetJoystickName(mID);
-			mAxes=glfwGetJoystickAxes(mID, &mAxesCount);
-			mButtons=glfwGetJoystickButtons(mID, &mButtonCount);
-		}
+		void update();
 
-		float getAxis(const int tAxis) {
-			if(mPresence)
-				return mAxes[tAxis];
-			return 0.0f;
-		}
-		unsigned char getButton(const int tButton) {
-			if(mPresence)
-				return mButtons[tButton];
-			return GLFW_RELEASE;
-		}
+		float getAxis(const int tAxis);
+		unsigned char getButton(const int tButton);
 		int getAxesCount() const { return mAxesCount; }
 		int getButtonCount() const { return mButtonCount; }
 
@@ -87,7 +56,7 @@ namespace Firesteel {
 		int getID() const { return mID; }
 
 		// Get global ID of joystick.
-		static int getGID(const int tID) { return GLFW_JOYSTICK_1 + tID; }
+		static int getGID(const int tID) { return tID; }
 	private:
 		int mPresence;
 		int mID;
