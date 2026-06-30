@@ -9,318 +9,69 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <firesteel/common.hpp>
-#include <firesteel/util/string.hpp>
 #include <firesteel/rendering/mesh.hpp>
-#include <firesteel/rendering/shader.hpp>
-#include <firesteel/util/stbi_global.hpp>
 #ifndef FS_NO_COMPONENTS
 #include <firesteel/component.hpp>
 #endif // !FS_NO_COMPONENTS
-#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
-#ifdef FS_LOADER_OBJ
-#include <firesteel/loaders/obj.hpp>
-#endif // FS_LOADER_OBJ
-#ifdef FS_LOADER_GLTF
-#include <firesteel/loaders/gltf.hpp>
-#endif // FS_LOADER_GLTF
-#ifdef FS_LOADER_FBX
-#include <firesteel/loaders/fbx.hpp>
-#endif // FS_LOADER_FBX
-#endif
 
 namespace Firesteel {
     class Entity {
     public:
-        Entity(const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
-            : transform(Transform(tPos, tRot, tSize)) { }
+        Entity(const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1));
         Entity(
 #if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
             const std::string& tPath,
 #endif
-            const glm::vec3 tPos=glm::vec3(0), const glm::vec3 tRot=glm::vec3(0), const glm::vec3 tSize=glm::vec3(1))
-                : transform(Transform(tPos, tRot, tSize)) {
-#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
-            load(tPath);
-#endif // FS_NO_COMPONENTS
-        }
+            const glm::vec3 tPos = glm::vec3(0), const glm::vec3 tRot = glm::vec3(0), const glm::vec3 tSize = glm::vec3(1));
 
         // Sends update callback to all components.
-        virtual void update() {
-#ifndef FS_NO_COMPONENTS
-            if(!enabled) return;
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->update();
-#endif // !FS_NO_COMPONENTS
-        }
+        virtual void update();
         // Renders the model with given material or default shader.
-        virtual void draw() {
-#ifndef FS_NO_COMPONENTS
-            if(!enabled) return;
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->draw();
-#endif // !FS_NO_COMPONENTS
-#if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
-            if(!hasModel()) return;
-            for(uint n=0;n<model.nodes.size();n++)
-                drawNode(model.nodes[n], transform.getMatrix());
-#endif
-        }
+        virtual void draw();
 #if !defined(FS_NO_COMPONENTS)&&!defined(FS_COMPONENT_RENDERING)
         // Renders only the given node tree with given material or default shader and parent matrix.
-        virtual void drawNode(const std::shared_ptr<Node>& tNode, const glm::mat4& tParentModel, const bool& tOverrideMaterial=false) {
-            if(!hasModel()) return;
-            const glm::mat4 nodeMatrix=tParentModel*tNode->transform.getMatrix();
-            if(tNode->index>=0&&tNode->index<static_cast<int>(model.meshes.size()))
-                model.meshes[tNode->index].draw(nodeMatrix,tOverrideMaterial);
-            for(uint n=0;n<tNode->children.size();n++)
-                drawNode(tNode->children[n],nodeMatrix,tOverrideMaterial);
-        }
-        void replaceMaterials(std::shared_ptr<Material> tMaterial, const bool& tReplaceAll=false) {
-            if(!hasModel()) {
-#ifndef FS_NO_SCENES
-                LOG_WARN("Failed to replace material: No model entity \""+name+"\"");
-#else
-                LOG_WARN("Failed to replace material: No model entity");
-#endif // !FS_NO_SCENES
-                return;
-            }
-            model.materials.push_back(tMaterial);
-            for(uint m=0;m<model.meshes.size();m++)
-                if(model.meshes[m].material==nullptr||tReplaceAll) model.meshes[m].material=model.materials[model.materials.size()-1];
-        }
+        virtual void drawNode(const std::shared_ptr<Node>& tNode, const glm::mat4& tParentModel, const bool& tOverrideMaterial = false);
+        void replaceMaterials(std::shared_ptr<Material> tMaterial, const bool& tReplaceAll = false);
         // Replaces materials with default shader with given shader.
-        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll=false) {
-            if(!hasModel()) return;
-            for(uint m=0;m<model.materials.size();m++)
-                if(model.materials[m]->getShader()->getId()==Shader::getDefaultShader()->getId()||tReplaceAll) model.materials[m]->setShader(tShader);
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Changed entity materials shader");
-#endif // FS_PRINT_DEBUG_MSGS
-        }
+        void setMaterialsShader(std::shared_ptr<Shader> tShader, const bool tReplaceAll = false);
         // Replaces materials with shader id with given shader.
-        void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader) {
-            if(!hasModel()) return;
-            for(uint m=0;m<model.materials.size();m++)
-                if(model.materials[m]->getShader()->getId()==tIdToReplace) model.materials[m]->setShader(tShader);
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Replaced entity materials shader");
-#endif // FS_PRINT_DEBUG_MSGS
-        }
+        void replaceMaterialsShader(const unsigned int& tIdToReplace, std::shared_ptr<Shader> tShader);
 
         bool hasModel() const { return model.meshes.size()!=0; }
-        virtual void removeModel(const bool& tRemoveMaterials=false) {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Removed entity's model");
-#endif // FS_PRINT_DEBUG_MSGS
-            for(uint i=0;i<model.meshes.size();i++)
-                model.meshes[i].remove();
-            model.nodes.clear();
-            model.meshes.clear();
-            if(tRemoveMaterials) model.materials.clear();
-        }
-        virtual bool load(const std::string& tPath) {
-            if(!std::filesystem::exists(tPath)) {
-                LOG_WARN("Model at path \"" + tPath + "\" doesn't exist");
-                return false;
-            }
-            removeModel();
-            LOG_INFO("Loading model at path \"" + tPath + "\"");
-            
-            auto extBig=String::split(tPath, '.');
-            std::string ext=extBig[extBig.size()-1];
-            if(ext.empty()) {LOG_ERRR("Looks like the extension of given model is invalid");}
-#ifdef FS_LOADER_OBJ
-            else if(ext=="obj") model=OBJ::load(tPath);
-#endif // FS_LOADER_OBJ
-#ifdef FS_LOADER_GLTF
-            else if(ext=="gltf"||ext=="glb") model=GLTF::load(tPath,ext=="glb");
-#endif // FS_LOADER_GLTF
-#ifdef FS_LOADER_FBX
-            else if(ext=="fbx") model=FBX::load(tPath);
-#endif // FS_LOADER_FBX
-            else LOG_ERRR("Looks like \"" + ext + " \" model format isn't supported. Please try obj, gltf, glb or fbx.");
+        virtual void removeModel(const bool& tRemoveMaterials = false);
+        virtual bool load(const std::string& tPath);
 
-            LOG_INFO("Loaded model at path \"" + tPath + "\"");
-            return true;
-        }
-
-        virtual void emplaceMesh(const Mesh& tMesh) {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
-                tMesh.vertices.size(), tMesh.indices.size());
-#endif // FS_PRINT_DEBUG_MSGS
-            model.meshes.emplace_back(tMesh);
-            std::shared_ptr<Node> node=std::make_shared<Node>();
-            node->name="Node_"+std::to_string(model.nodes.size());
-            node->index=static_cast<int>(model.nodes.size());
-            model.nodes.emplace_back(node);
-        }
-        virtual void pushMesh(const Mesh& tMesh) {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
-                tMesh.vertices.size(), tMesh.indices.size());
-#endif // FS_PRINT_DEBUG_MSGS
-            model.meshes.push_back(tMesh);
-            std::shared_ptr<Node> node=std::make_shared<Node>();
-            node->name="Node_"+std::to_string(model.nodes.size());
-            node->index=static_cast<int>(model.nodes.size());
-            model.nodes.emplace_back(node);
-        }
+        virtual void emplaceMesh(const Mesh& tMesh);
+        virtual void pushMesh(const Mesh& tMesh);
         virtual void addMesh(const std::vector<Vertex>& tVertices,
-            const std::vector<unsigned int>& tIndices, std::shared_ptr<Material> tMaterial) {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOGF_DBG("Added custom mesh to entity with %d vertices and %d indicies",
-                tVertices.size(), tIndices.size());
-#endif // FS_PRINT_DEBUG_MSGS
-            model.meshes.emplace_back(tVertices,tIndices,tMaterial);
-            std::shared_ptr<Node> node=std::make_shared<Node>();
-            node->name="Node_"+std::to_string(model.nodes.size());
-            node->index=static_cast<int>(model.nodes.size());
-            model.nodes.emplace_back(node);
-        }
+            const std::vector<unsigned int>& tIndices, std::shared_ptr<Material> tMaterial);
 #endif // FS_NO_COMPONENTS
-        virtual void remove() {
-#ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG("Removed entity");
-#endif // FS_PRINT_DEBUG_MSGS
-#ifndef FS_NO_COMPONENTS
-            for(uint i=0;i<mComponents.size();i++) mComponents[i]->remove();
-#else
-            removeModel(true);
-#endif // !FS_NO_COMPONENTS
-        }
+        virtual void remove();
 #ifndef FS_NO_COMPONENTS
         template<typename T, typename... Args>
-        static std::shared_ptr<T> addComponent(std::shared_ptr<Entity> tEntity, Args&&... tArgs) {
-            ASSERT((std::is_base_of<Component, T>::value), "Given component must be derived from base Component type");
-            auto comp = std::make_shared<T>(tEntity, std::forward<Args>(tArgs)...);
-            comp->registerProperties();
-            tEntity->addComponent(comp);
-            return comp;
-        }
-        void addComponent(std::shared_ptr<Component> tComp) {
-            mComponents.push_back(tComp);
-            mComponents[mComponents.size()-1]->start();
-        }
+        static std::shared_ptr<T> addComponent(std::shared_ptr<Entity> tEntity, Args&&... tArgs);
+        void addComponent(std::shared_ptr<Component> tComp);
         template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
-        std::shared_ptr<T> getComponent(const uint& tIdx=0) {
-            std::string v=(T(nullptr)).name();
-            uint ix=0;
-            for(uint i=0;i<mComponents.size();i++) {
-                if(mComponents[i]->name()==v) {
-                    auto casted=std::dynamic_pointer_cast<T>(mComponents[i]);
-                    if(casted) {
-                        if(ix==tIdx) return casted;
-                        ix++;
-                    }
-                }
-            }
-            return nullptr;
-        }
+        std::shared_ptr<T> getComponent(const uint& tIdx = 0);
         template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
-        bool hasComponent() {
-            std::string v=T(nullptr).name();
-            for(uint i=0;i<mComponents.size();i++)
-                if(mComponents[i]->name()==v) return true;
-            return false;
-        }
-        bool hasComponent(const std::string& tName) {
-            for(uint i=0;i<mComponents.size();i++)
-                if(mComponents[i]->name()==tName) return true;
-            return false;
-        }
-        bool hasComponent(const char* tName) {
-            for(uint i=0;i<mComponents.size();i++)
-                if(mComponents[i]->name()==tName) return true;
-            return false;
-        }
+        bool hasComponent();
+        bool hasComponent(const std::string& tName);
+        bool hasComponent(const char* tName);
         template<typename T, typename=std::enable_if_t<std::is_base_of_v<Component, T>>>
-        bool removeComponent(const uint& tIdx=0) {
-            std::string v=T(nullptr).name();
-            T* c=nullptr;
-            uint ix=0;
-            uint iz=0;
-            for(uint i=0;i<mComponents.size();i++) {
-                if(mComponents[i]->name()==v) {
-                    c=dynamic_cast<T*>(mComponents[i].get());
-                    if(ix==tIdx) break;
-                    ix++;
-                }
-                iz++;
-            }
-            if(c) {
-                mComponents.erase(mComponents.begin()+(iz+ix));
-                return true;
-            }
-            return false;
-        }
-        bool removeComponent(const uint& tIdx=0) {
-            if(tIdx>=mComponents.size()) return false;
-            mComponents.erase(mComponents.begin()+tIdx);
-            return true;
-        }
+        bool removeComponent(const uint& tIdx = 0);
+        bool removeComponent(const uint& tIdx = 0);
         template<typename T>
-        std::shared_ptr<T> getComponentFromBase(const uint& tIdx=0) {
-            uint ix=0;
-            for(uint i=0;i<mComponents.size();i++) {
-                auto& c=mComponents[i];
-                if(auto casted=std::dynamic_pointer_cast<T>(c)) {
-                    if(ix==tIdx) return casted;
-                    ix++;
-                }
-            }
-            return nullptr;
-        }
+        std::shared_ptr<T> getComponentFromBase(const uint& tIdx = 0);
         template<typename T>
-        std::vector<std::shared_ptr<T>> getAllComponentsFromBase() {
-            std::vector<std::shared_ptr<T>> result;
-            for(uint i=0;i<mComponents.size();i++) {
-                auto& c=mComponents[i];
-                if(auto casted=std::dynamic_pointer_cast<T>(c))
-                    result.push_back(casted);
-            }
-            return result;
-        }
+        std::vector<std::shared_ptr<T>> getAllComponentsFromBase();
         template<typename T>
-        bool hasComponentFromBase() {
-            for(uint i=0;i<mComponents.size();i++) {
-                auto& c=mComponents[i];
-                if(auto casted=std::dynamic_pointer_cast<T>(c))
-                    return true;
-            }
-            return false;
-        }
+        bool hasComponentFromBase();
         std::vector<std::shared_ptr<Component>> getComponents() { return mComponents; }
-        uint getComponnetCount() const { return static_cast<uint>(mComponents.size()); }
+        uint getComponetCount() const { return static_cast<uint>(mComponents.size()); }
 #endif // !FS_NO_COMPONENTS
 #if !defined(FS_NO_JSON) || !defined(FS_NO_COMPONENTS)
-        nlohmann::json serialize() const {
-            nlohmann::json js;
-            js["name"]=name;
-            for(int j=0;j<3;j++) js["transform"]["pos"][j]=transform.position[j];
-            for(int j=0;j<3;j++) js["transform"]["rot"][j]=transform.rotation[j];
-            for(int j=0;j<3;j++) js["transform"]["size"][j]=transform.size[j];
-            nlohmann::json comps=nlohmann::json::array();
-			for(const auto& c:mComponents) comps.push_back(c->serialize());
-            js["components"]=comps;
-            return js;
-        }
-        static std::shared_ptr<Entity> deserialize(const nlohmann::json& tData) {
-            std::shared_ptr<Entity> e=std::make_shared<Entity>();
-            if(tData.contains("name")) e->name=tData["name"];
-            if(tData.contains("transform")) {
-                if(tData["transform"].contains("pos")) for(int j=0;j<3;j++) e->transform.position[j]=tData["transform"]["pos"][j];
-                if(tData["transform"].contains("rot")) for(int j=0;j<3;j++) e->transform.rotation[j]=tData["transform"]["rot"][j];
-                if(tData["transform"].contains("size")) for(int j=0;j<3;j++) e->transform.size[j]=tData["transform"]["size"][j];
-            }
-            if(tData.contains("components"))
-                for(const auto& comp:tData["components"]) {
-                    const std::string type=comp["type"];
-                    if(ComponentRegistry::sInstance()->contains(type)) {
-                        auto c=ComponentRegistry::sInstance()->get(type)(e, comp);
-                        e->addComponent(c);
-                    } else LOG_ERRR("Unknown component type "+type);
-                }
-            return e;
-        }
+        nlohmann::json serialize() const;
+        static std::shared_ptr<Entity> deserialize(const nlohmann::json& tData);
 #endif // !FS_NO_JSON && !FS_NO_COMPONENTS
 
         Transform transform;
