@@ -7,7 +7,7 @@
 #include <firesteel/rendering/shader.hpp>
 #include <firesteel/rendering/texture.hpp>
 #ifndef FS_NO_JSON
-#include <firesteel/utils/json.hpp>
+#include <firesteel/util/json.hpp>
 #endif // !FS_NO_JSON
 
 namespace Firesteel {

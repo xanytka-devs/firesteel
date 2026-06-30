@@ -3,8 +3,8 @@
 #define FS_LOADERS_GLTF_H
 
 #include <firesteel/rendering/mesh.hpp>
-#include <firesteel/utils/stbi_global.hpp>
-#include <firesteel/utils/json.hpp>
+#include <firesteel/util/stbi_global.hpp>
+#include <firesteel/util/json.hpp>
 
 #define TINYGLTF_IMPLEMENTATION
 #define TINYGLTF_NOEXCEPTION

@@ -4,6 +4,8 @@
 #include "color.hpp"
 #include "date_time.hpp"
 #include "delta_time.hpp"
+#include "easing.hpp"
+#include "geometry.hpp"
 #include "math.hpp"
 #include "os.hpp"
 #include "random.hpp"

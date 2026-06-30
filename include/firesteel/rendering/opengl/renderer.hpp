@@ -2,7 +2,6 @@
 #ifndef FS_OGL_RENDERER_H
 #define FS_OGL_RENDERER_H
 #include <firesteel/renderer.hpp>
-#include <firesteel/rendering/opengl/mesh.hpp>
 #if FS_CONTEXT_MAJOR > 2
 #include <backends/imgui_impl_opengl3.h>
 #else
@@ -301,9 +300,6 @@ namespace Firesteel {
             case GL_DEBUG_SEVERITY_NOTIFICATION: LOG("Severity: notification"); break;
             }
             LOG("-----", "\n", CMD_F_RED);
-        }
-        std::unique_ptr<Mesh> createMesh(const std::vector<Vertex>& tVertices, const std::vector<uint>& tIndices, std::shared_ptr<Material> tMaterial) override {
-            return std::make_unique<OGLMesh>(tVertices, tIndices, tMaterial);
         }
 	};
 

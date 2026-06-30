@@ -3,7 +3,7 @@
 #define FS_TYPES
 
 #ifndef FS_NO_JSON
-#include <firesteel/utils/json.hpp>
+#include <firesteel/util/json.hpp>
 #endif // !FS_NO_JSON
 #include <typeindex>
 #include <type_traits>

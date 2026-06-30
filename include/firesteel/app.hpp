@@ -2,7 +2,7 @@
 #define FS_APP_H
 
 #include <firesteel/internal/embedded.hpp>
-#include <firesteel/utils/delta_time.hpp>
+#include <firesteel/util/delta_time.hpp>
 #include <firesteel/common.hpp>
 #include <firesteel/window.hpp>
 #ifdef FS_RENDERER_OGL
@@ -135,7 +135,7 @@ namespace Firesteel {
             //Check for Vulkan.
             bool isVulkan=(glfwVulkanSupported() == 1);
 #ifdef FS_PRINT_DEBUG_MSGS
-            LOG_DBG(std::string("Vulkan is") + (isVulkan ? "" : "n't") + " supported on current machine.");
+            LOGF_DBG("Vulkan is%s supported on current machine.", isVulkan ? "" : "n't");
 #endif // FS_PRINT_DEBUG_MSGS
             //Renderer init.
             enviroment().renderer=std::make_unique<Renderer>();

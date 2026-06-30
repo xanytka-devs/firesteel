@@ -6,7 +6,7 @@
 #include <filesystem>
 
 #include <firesteel/common.hpp>
-#include <firesteel/utils/utf_conv.hpp>
+#include <firesteel/util/utf_conv.hpp>
 
 namespace String {
     std::vector<std::string> split(const std::string& tS, const char& tDelim) {

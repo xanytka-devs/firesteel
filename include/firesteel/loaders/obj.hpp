@@ -3,7 +3,7 @@
 #define FS_LOADERS_OBJ_H
 
 #include <firesteel/rendering/mesh.hpp>
-#include <firesteel/utils/stbi_global.hpp>
+#include <firesteel/util/stbi_global.hpp>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <model_loaders/tiny_obj_loader.h>

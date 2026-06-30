@@ -9,10 +9,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <firesteel/common.hpp>
-#include <firesteel/utils/string.hpp>
+#include <firesteel/util/string.hpp>
 #include <firesteel/rendering/mesh.hpp>
 #include <firesteel/rendering/shader.hpp>
-#include <firesteel/utils/stbi_global.hpp>
+#include <firesteel/util/stbi_global.hpp>
 #ifndef FS_NO_COMPONENTS
 #include <firesteel/component.hpp>
 #endif // !FS_NO_COMPONENTS

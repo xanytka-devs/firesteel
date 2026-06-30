@@ -2,9 +2,9 @@
 #define FS_INTERNAL_CONFIG_H
 
 #include <firesteel/internal/systemspecs.hpp>
-#include <firesteel/utils/log.hpp>
+#include <firesteel/util/log.hpp>
 #ifndef FS_NO_JSON
-#include <firesteel/utils/json.hpp>
+#include <firesteel/util/json.hpp>
 #endif // !FS_NO_JSON
 
 namespace Firesteel {
@@ -13,6 +13,7 @@ namespace Firesteel {
 	    void checkGlobalFile() {
             // Generic data retrieval (for better understanding of logs, etc.).
             bool canGetSystemInfo=true;
+            sAllowDevView=true;
 #ifndef FS_NO_JSON
             std::string firesteelConfigFile="";
 #ifdef _WIN32

@@ -2,7 +2,7 @@
 #define FS_LOADERS_FBX
 
 #include <firesteel/rendering/mesh.hpp>
-#include <firesteel/utils/stbi_global.hpp>
+#include <firesteel/util/stbi_global.hpp>
 
 #include <model_loaders/ufbx/ufbx.h>
 

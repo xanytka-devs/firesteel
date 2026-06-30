@@ -22,8 +22,8 @@ bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST]={ 0 };
 
 
 
-#include <firesteel/utils/date_time.hpp>
-#include <firesteel/utils/log.hpp>
+#include <firesteel/util/date_time.hpp>
+#include <firesteel/util/log.hpp>
 #include <fstream>
 #include <filesystem>
 #include <algorithm>

@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 #include <type_traits>
-#include "utils/log.hpp"
+#include "util/log.hpp"
 // GLM //
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -27,8 +27,8 @@
 #define GL_SILENCE_DEPRECATION
 #endif // __APPLE__
 #ifndef FS_HEADLESS
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
+#include <glfw/glfw3.h>
+#include <glfw/glfw3native.h>
 #endif // !FS_HEADLESS
 // ADDITIONAL //
 #ifdef FS_INCLUDE_NVTX

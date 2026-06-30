@@ -5,7 +5,7 @@
 #include <firesteel/enviroment.hpp>
 #include <firesteel/input/keyboard.hpp>
 #include <firesteel/input/mouse.hpp>
-#include <firesteel/utils/stbi_global.hpp>
+#include <firesteel/util/stbi_global.hpp>
 
 /*
     *OpenGL context*
