@@ -8,50 +8,20 @@ namespace Firesteel {
 	class Entity;
 	class Component : public std::enable_shared_from_this<Component> {
 	public:
-		Component(std::shared_ptr<Entity> tEntity)
-			: mEntity(tEntity) {
-			registerProperties();
-		}
+		Component(std::shared_ptr<Entity> tEntity);
 		std::shared_ptr<Component> getShared() {return shared_from_this(); }
 		template<typename T>
-		static std::shared_ptr<Component> create(std::shared_ptr<Entity> tEntity, const nlohmann::json& tData) {
-            ASSERT((std::is_base_of<Component,T>::value), "Given component must be derived from base Component type");
-			auto comp=std::make_shared<T>(tEntity);
-			comp->registerProperties();
-			if(!tData.empty()) comp->deserialize(tData);
-			return comp;
-		}
-		void start() {
-			if(enabled) onStart();
-		}
-		void update() {
-			if(enabled) onUpdate();
-		}
-		void draw() {
-			if(enabled) onDraw();
-		}
-		void remove() {
-			if(enabled) onRemove();
-		}
+		static std::shared_ptr<Component> create(std::shared_ptr<Entity> tEntity, const nlohmann::json& tData);
+		void start();
+		void update();
+		void draw();
+		void remove();
 #ifndef FS_NO_JSON
-		virtual nlohmann::json serialize() const {
-			nlohmann::json j;
-			j["type"]=name();
-			if(!mProperties.empty()) {
-				nlohmann::json data=nlohmann::json::object();
-				for(const auto& prop:mProperties) data[prop.name()]=prop.serialize();
-				j["data"]=data;
-			}
-			return j;
-		}
-		virtual void deserialize(const nlohmann::json& tData) {
-			if(!tData.contains("data")) return;
-			const auto& data=tData["data"];
-			for(auto& p:mProperties) if(data.contains(p.name())) p.deserialize(data[p.name()]);
-		}
+		virtual nlohmann::json serialize() const;
+		virtual void deserialize(const nlohmann::json& tData);
 #endif // !FS_NO_JSON
 
-		void registerProperties() { properties(); }
+		void registerProperties();
 		virtual const char* name() const { return "fs.generic"; }
 		std::shared_ptr<Entity> entity() { return mEntity; }
 		bool enabled=true;
@@ -64,11 +34,7 @@ namespace Firesteel {
 		virtual void onRemove() {}
 		virtual void properties() {}
 		template<typename T>
-		void addProperty(const char* tName, T* tVal) {
-			auto* handler=TypeRegistry::sInstance()->get<T>();
-			if(handler) mProperties.emplace_back(tName,tVal,handler);
-			else LOGF_ERRR("No Type Handler for property \"%s\"",tName);
-		}
+		void addProperty(const char* tName, T* tVal);
 		std::vector<Property> mProperties;
 	};
 #ifndef FS_NO_JSON
@@ -77,25 +43,11 @@ namespace Firesteel {
 	ComponentFactory DefaultComponentFactory=ComponentFactory([](std::shared_ptr<Entity> e, const nlohmann::json& j) {return Component::create<T>(e,j);});
 	class ComponentRegistry {
 	public:
-		static ComponentRegistry* sInstance() {
-			static ComponentRegistry instance;
-			return &instance;
-		}
+		static ComponentRegistry* sInstance();
 
-		bool contains(const std::string& tName) {
-			return mFactories.count(tName);
-		}
-		void append(const std::string& tName, ComponentFactory tFactory) {
-			if(contains(tName)) {
-				LOG_ERRR("Tried to overwrite component \""+tName+"\". Duplicate entries aren't allowed");
-				return;
-			}
-			mFactories[tName]=tFactory;
-		}
-		ComponentFactory get(const std::string& tName) {
-			ASSERT(contains(tName),"Component registry doesn't contain "+tName);
-			return mFactories[tName];
-		}
+		bool contains(const std::string& tName);
+		void append(const std::string& tName, ComponentFactory tFactory);
+		ComponentFactory get(const std::string& tName);
 		const std::unordered_map<std::string, ComponentFactory> map() {
 			return mFactories;
 		}

@@ -3,6 +3,10 @@
 
 #include <firesteel/common.hpp>
 
+#ifdef FS_HEADLESS
+typedef struct GLFWwindow {};
+#endif // !FS_HEADLESS
+
 namespace Firesteel {
 	enum KeyCode {
 		SPACEBAR=32,
@@ -132,39 +136,16 @@ namespace Firesteel {
 	class Keyboard {
 	public:
 		// Happens on every input callback.
-		static void keyCallback(GLFWwindow* tWindow, int tKey, int tScanCode, int tAction, int tMods) {
-			//Check action.
-			if(tKey == -1) return;
-			if(tAction != GLFW_RELEASE) {
-				mAnyKeyPressed=true;
-				if(!mKeys[tKey]) mKeys[tKey]=true;
-			} else {
-				mAnyKeyPressed=false;
-				mKeys[tKey]=false;
-			}
-			if(tAction == GLFW_REPEAT) mAnyKeyPressed=false;
-			//Detect if key is pressed continuously.
-			mKeysChanged[tKey]=tAction != GLFW_REPEAT;
-		}
+		static void keyCallback(GLFWwindow* tWindow, int tKey, int tScanCode, int tAction, int tMods);
 
 		// Gets current state of given key.
-		static bool getKey(const int tKey) {
-			return mKeys[tKey];
-		}
+		static bool getKey(const int tKey);
 		// Has key changed?
-		static bool keyChanged(const int tKey) {
-			bool output=mKeysChanged[tKey];
-			mKeysChanged[tKey]=false;
-			return output;
-		}
+		static bool keyChanged(const int tKey);
 		// Is key up?
-		static bool keyUp(const int tKey) {
-			return !mKeys[tKey] && keyChanged(tKey);
-		}
+		static bool keyUp(const int tKey);
 		// Is key down?
-		static bool keyDown(const int tKey) {
-			return mKeys[tKey] && keyChanged(tKey);
-		}
+		static bool keyDown(const int tKey);
 		// Checks if any key is currently pressed.
 		static bool isAnyKeyDown() { return mAnyKeyPressed; }
 	private:

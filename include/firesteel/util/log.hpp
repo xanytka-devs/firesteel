@@ -140,8 +140,8 @@
 #define LOGF_DBG(format, ...) {LOGF_DEBUG(format,__VA_ARGS__);}
 #endif // FS_PRINT_DEBUG_MSGS
 
-	class Log {
-	public:
+class Log {
+public:
 	static void simple(const bool& tPlaceTime, const std::string& tMsg, const bool& tEndLine=true, const int tModF=CMD_F_WHITE, const int tModB=CMD_BG_BLACK) {
 		log(tMsg, tEndLine, tModF, tModB, tPlaceTime);
 	}
