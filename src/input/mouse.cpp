@@ -1,6 +1,21 @@
 #include <firesteel/input/mouse.hpp>
 
 namespace Firesteel {
+	float Mouse::mX = 0;
+	float Mouse::mY = 0;
+	float Mouse::m_old_x = 0;
+	float Mouse::m_old_y = 0;
+
+	float Mouse::mDX = 0;
+	float Mouse::mDY = 0;
+
+	float Mouse::mWheelDX = 0;
+	float Mouse::mWheelDY = 0;
+
+	bool Mouse::mFirstMove = true;
+	bool Mouse::mButtons[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+	bool Mouse::mButtonsChanged[GLFW_MOUSE_BUTTON_LAST] = { 0 };
+
 	void Mouse::cursorCallback(GLFWwindow* tWindow, double tX, double tY) {
 		mX = static_cast<float>(tX);
 		mY = static_cast<float>(tY);

@@ -1,6 +1,10 @@
 #include <firesteel/input/keyboard.hpp>
 
 namespace Firesteel {
+	bool Keyboard::mKeys[GLFW_KEY_LAST] = { 0 };
+	bool Keyboard::mKeysChanged[GLFW_KEY_LAST] = { 0 };
+	bool Keyboard::mAnyKeyPressed = false;
+
 	void Keyboard::keyCallback(GLFWwindow* tWindow, int tKey, int tScanCode, int tAction, int tMods) {
 		//Check action.
 		if (tKey == -1) return;
